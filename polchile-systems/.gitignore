@@ -1,0 +1,8 @@
+.clasprc.json
+node_modules/
+*.env
+.env.local
+Credencialesbot.json
+*.bak
+.DS_Store
+Thumbs.db
