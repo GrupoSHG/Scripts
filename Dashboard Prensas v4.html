@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Producción · Prensas v4</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+<style>
+  :root{--bg:#F4F3EF;--surface:#FFFFFF;--surface-2:#EEECEA;--text:#18181A;--text-2:#5C5B58;--text-3:#9A9894;--border:rgba(0,0,0,0.07);--border-2:rgba(0,0,0,0.13);--polp:#6B62D4;--polp-bg:#EEEDFC;--polp-text:#3A318E;--purp:#16906A;--purp-bg:#DFF3EC;--purp-text:#074F3A;--coral:#C94F28;--warn-bg:#FDF0E3;--warn-text:#7A480A;--r:10px;--rl:14px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .main{padding:32px 36px 60px;max-width:1400px;margin:0 auto}
+  .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px;padding-bottom:18px;border-bottom:0.5px solid var(--border-2)}
+  .page-title{font-size:22px;font-weight:500;letter-spacing:-0.01em}
+  .page-sub{font-size:13px;color:var(--text-2);margin-top:4px}
+  .meta{font-size:11.5px;color:var(--text-3);text-align:right;line-height:1.8}
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin:24px 0 12px;flex-wrap:wrap;gap:8px}
+  .section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-3);display:flex;align-items:center;gap:8px}
+  .section-title::after{content:'';flex:1;height:0.5px;background:var(--border-2);display:block;width:60px}
+  .kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+  .kpi{background:var(--surface);border:0.5px solid var(--border-2);border-radius:var(--r);padding:16px 18px}
+  .kpi.highlight{border-color:var(--coral);background:var(--warn-bg)}
+  .kpi-label{font-size:10.5px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin-bottom:8px}
+  .kpi-value{font-size:26px;font-weight:500;letter-spacing:-0.02em;line-height:1}
+  .kpi-unit{font-size:13px;color:var(--text-3);font-weight:400;margin-left:3px}
+  .kpi-delta{font-size:11px;color:var(--text-2);margin-top:6px}
+  .kpi.highlight .kpi-delta{color:var(--warn-text)}
+  .card{background:var(--surface);border:0.5px solid var(--border-2);border-radius:var(--rl);padding:20px 22px;margin-bottom:14px}
+  .card-title{font-size:13px;font-weight:500;margin-bottom:14px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+  .card-title-note{font-size:11px;color:var(--text-3);font-weight:400}
+  .prensa-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:14px}
+  .prensa-card{background:var(--surface);border:0.5px solid var(--border-2);border-radius:var(--r);padding:12px 14px;text-align:center}
+  .prensa-card.is-crit{border-color:var(--coral);background:var(--warn-bg)}
+  .prensa-card.no-pur{opacity:0.92}
+  .prensa-name{font-size:11px;font-weight:600;color:var(--text-3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em}
+  .prensa-days{font-size:24px;font-weight:500;letter-spacing:-0.02em;line-height:1}
+  .prensa-days.is-crit{color:var(--coral)}
+  .prensa-chip{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;margin:6px 0 4px}
+  .prensa-chip.polp{background:var(--polp-bg);color:var(--polp-text)}
+  .prensa-chip.purp{background:var(--purp-bg);color:var(--purp-text)}
+  .prensa-chip.both{background:linear-gradient(90deg,var(--polp-bg) 50%,var(--purp-bg) 50%);color:var(--text-2)}
+  .prensa-meta{font-size:10.5px;color:var(--text-3);line-height:1.5}
+  .prensa-bar{height:4px;background:var(--surface-2);border-radius:2px;margin-top:8px;overflow:hidden}
+  .prensa-bar-fill{height:100%;border-radius:2px}
+  .restriction-tag{display:inline-block;font-size:9px;background:#FDF0E3;color:var(--warn-text);padding:1px 5px;border-radius:6px;margin-top:3px;font-weight:600}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{text-align:left;font-weight:600;color:var(--text-3);padding:9px 10px;border-bottom:0.5px solid var(--border-2);font-size:10.5px;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap}
+  td{padding:10px 10px;border-bottom:0.5px solid var(--border);font-variant-numeric:tabular-nums;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:var(--surface-2)}
+  .chip{display:inline-block;padding:2px 9px;border-radius:10px;font-size:10.5px;font-weight:600}
+  .chip.polp{background:var(--polp-bg);color:var(--polp-text)}
+  .chip.purp{background:var(--purp-bg);color:var(--purp-text)}
+  .progress{background:var(--surface-2);height:5px;border-radius:3px;overflow:hidden;margin-bottom:3px}
+  .progress>div{height:100%;border-radius:3px}
+  .alert{border-radius:var(--r);padding:14px 18px;margin-bottom:14px;border-left:3px solid var(--coral);background:var(--warn-bg)}
+  .alert-title{font-size:12.5px;font-weight:600;color:var(--warn-text);margin-bottom:4px}
+  .alert-text{font-size:12.5px;color:var(--warn-text);line-height:1.65}
+  .alert.info{border-left-color:var(--purp);background:var(--purp-bg)}
+  .alert.info .alert-title,.alert.info .alert-text{color:var(--purp-text)}
+  .group-row{display:flex;gap:8px;align-items:center;padding:10px 14px;background:var(--surface-2);border-radius:8px;margin-bottom:6px;flex-wrap:wrap}
+  .group-tag{font-size:10px;font-weight:700;background:var(--text);color:#fff;padding:2px 8px;border-radius:8px;letter-spacing:0.03em}
+  .group-tag.purp-tag{background:var(--purp)}
+  .group-tag.polp-tag{background:var(--polp)}
+  .group-meta{font-size:11.5px;color:var(--text-2)}
+  .group-ops{font-size:11px;color:var(--text-3);margin-left:auto}
+  .gantt-wrap{overflow-x:auto;margin-top:8px}
+  .gantt-row{display:flex;align-items:center;margin-bottom:6px}
+  .gantt-row-label{width:62px;flex-shrink:0;font-size:11px;font-weight:600;color:var(--text-2);text-align:right;padding-right:10px}
+  .gantt-track{flex:1;height:32px;background:var(--surface-2);border-radius:6px;position:relative;min-width:700px}
+  .gantt-bar{position:absolute;top:3px;height:26px;border-radius:5px;display:flex;align-items:center;padding:0 7px;font-size:10px;font-weight:500;color:#fff;overflow:hidden;white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,0.1)}
+  .gantt-bar.cycle{background:repeating-linear-gradient(45deg,rgba(22,144,106,0.3) 0,rgba(22,144,106,0.3) 4px,transparent 4px,transparent 8px);border:1px dashed rgba(22,144,106,0.6);color:var(--purp);font-size:9px;box-shadow:none}
+  .gantt-divider{position:absolute;top:-3px;bottom:-3px;width:1px;background:rgba(0,0,0,0.12)}
+  .gantt-day-label{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em}
+  footer{margin-top:36px;padding-top:14px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;font-size:10.5px;color:var(--text-3);flex-wrap:wrap;gap:6px}
+  .tweaks-btn{appearance:none;border:0.5px solid var(--border-2);background:var(--surface);color:var(--text-2);border-radius:8px;padding:6px 14px;font:inherit;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;letter-spacing:0.01em}
+  .tweaks-btn:hover{background:var(--surface-2);color:var(--text)}
+  @media (max-width:1100px){.kpi-grid{grid-template-columns:repeat(3,1fr)}.prensa-grid{grid-template-columns:repeat(4,1fr)}}
+  @media (max-width:700px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.prensa-grid{grid-template-columns:repeat(2,1fr)}.main{padding:20px 16px 40px}}
+
+  /* ── Tweaks Panel ── */
+  .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
+    max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+    background:rgba(250,249,247,.92);color:#29261b;
+    -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+    border:.5px solid rgba(255,255,255,.6);border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 40px rgba(0,0,0,.18);
+    font:11.5px/1.4 ui-sans-serif,system-ui,-apple-system,sans-serif;overflow:hidden}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;
+    padding:10px 8px 10px 14px;cursor:move;user-select:none}
+  .twk-hd b{font-size:12px;font-weight:600;letter-spacing:.01em}
+  .twk-x{appearance:none;border:0;background:transparent;color:rgba(41,38,27,.55);
+    width:22px;height:22px;border-radius:6px;cursor:pointer;font-size:13px;line-height:1}
+  .twk-x:hover{background:rgba(0,0,0,.06);color:#29261b}
+  .twk-body{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;
+    overflow-y:auto;overflow-x:hidden;min-height:0;
+    scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent}
+  .twk-body::-webkit-scrollbar{width:8px}
+  .twk-body::-webkit-scrollbar-track{background:transparent;margin:2px}
+  .twk-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px;
+    border:2px solid transparent;background-clip:content-box}
+  .twk-row{display:flex;flex-direction:column;gap:5px}
+  .twk-row-h{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+  .twk-lbl{display:flex;justify-content:space-between;align-items:baseline;
+    color:rgba(41,38,27,.72)}
+  .twk-lbl>span:first-child{font-weight:500}
+  .twk-val{color:rgba(41,38,27,.5);font-variant-numeric:tabular-nums}
+  .twk-sect{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(41,38,27,.45);padding:10px 0 0}
+  .twk-sect:first-child{padding-top:0}
+  .twk-slider{appearance:none;-webkit-appearance:none;width:100%;height:4px;margin:6px 0;
+    border-radius:999px;background:rgba(0,0,0,.12);outline:none}
+  .twk-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    width:14px;height:14px;border-radius:50%;background:#fff;
+    border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:pointer}
+  .twk-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
+    background:#fff;border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:pointer}
+  .twk-toggle{position:relative;width:32px;height:18px;border:0;border-radius:999px;
+    background:rgba(0,0,0,.15);transition:background .15s;cursor:pointer;padding:0}
+  .twk-toggle[data-on="1"]{background:#34c759}
+  .twk-toggle i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s;font-style:normal}
+  .twk-toggle[data-on="1"] i{transform:translateX(14px)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState, useRef, useEffect, useCallback} = React;
+
+// ── Tweaks system ─────────────────────────────────────────────────────────────
+
+function useTweaks(defaults) {
+  const [values, setValues] = useState(defaults);
+  // Expose to child components via window
+  window.__tweakVals = values;
+  const setTweak = useCallback((key, val) => {
+    setValues(prev => {
+      const next = {...prev, [key]: val};
+      window.__tweakVals = next;
+      return next;
+    });
+  }, []);
+  window.__tweakSet = setTweak;
+  return [values, setTweak];
+}
+
+function TweaksPanel({title = 'Tweaks', children, open, onClose}) {
+  const dragRef = useRef(null);
+  const offsetRef = useRef({x: 16, y: 16});
+  const PAD = 16;
+
+  const clampToViewport = useCallback(() => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
+    const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
+    offsetRef.current = {
+      x: Math.min(maxRight, Math.max(PAD, offsetRef.current.x)),
+      y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)),
+    };
+    panel.style.right = offsetRef.current.x + 'px';
+    panel.style.bottom = offsetRef.current.y + 'px';
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    clampToViewport();
+    const ro = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(clampToViewport)
+      : null;
+    if (ro) ro.observe(document.documentElement);
+    else window.addEventListener('resize', clampToViewport);
+    return () => { if (ro) ro.disconnect(); else window.removeEventListener('resize', clampToViewport); };
+  }, [open, clampToViewport]);
+
+  const onDragStart = (e) => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const startRight = window.innerWidth - r.right;
+    const startBottom = window.innerHeight - r.bottom;
+    const move = (ev) => {
+      offsetRef.current = {x: startRight - (ev.clientX - sx), y: startBottom - (ev.clientY - sy)};
+      clampToViewport();
+    };
+    const up = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up); };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+
+  if (!open) return null;
+  return (
+    <div ref={dragRef} className="twk-panel" style={{right: offsetRef.current.x, bottom: offsetRef.current.y}}>
+      <div className="twk-hd" onMouseDown={onDragStart}>
+        <b>{title}</b>
+        <button className="twk-x" aria-label="Cerrar" onMouseDown={e => e.stopPropagation()} onClick={onClose}>✕</button>
+      </div>
+      <div className="twk-body">{children}</div>
+    </div>
+  );
+}
+
+function TweakSection({title, children}) {
+  return (
+    <>
+      <div className="twk-sect">{title}</div>
+      {children}
+    </>
+  );
+}
+
+function TweakSlider({id, label, min = 0, max = 100, step = 1, unit = ''}) {
+  const value = window.__tweakVals?.[id] ?? min;
+  const onChange = (v) => window.__tweakSet?.(id, v);
+  return (
+    <div className="twk-row">
+      <div className="twk-lbl">
+        <span>{label}</span>
+        <span className="twk-val">{value}{unit}</span>
+      </div>
+      <input type="range" className="twk-slider" min={min} max={max} step={step}
+             value={value} onChange={e => onChange(Number(e.target.value))} />
+    </div>
+  );
+}
+
+function TweakToggle({id, label}) {
+  const value = window.__tweakVals?.[id] ?? false;
+  const onChange = () => window.__tweakSet?.(id, !value);
+  return (
+    <div className="twk-row twk-row-h">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <button type="button" className="twk-toggle" data-on={value ? '1' : '0'}
+              role="switch" aria-checked={!!value} onClick={onChange}><i/></button>
+    </div>
+  );
+}
+
+// ── Dashboard data & logic ────────────────────────────────────────────────────
+
+const TWEAK_DEFAULTS = {
+  purpUtilM: 10,
+  purpCycleMin: 25,
+  polpSetupMin: 15,
+  jornadaH: 9,
+  isoDoubleLoad: true
+};
+
+const CAP = {P1:29.6, P2:26.0, P3:26.0, P4:29.6, P5:29.6, P6:29.6, P7:29.6};
+const PURP_PRESSES = ['P1','P3','P4','P5'];
+const ALL_PRESSES = ['P1','P2','P3','P4','P5','P6','P7'];
+
+const OPS = [
+  // ── PurP NV (6 OPs) — solo P1/P3/P4/P5
+  {op:'24047',nv:'13476',q:'PurP',tipo:'PurP1000 e30',esp:30,pieles:'PC1000 7024 | Ban 7040',m2:114.3,ml:114.3/1.0,qOp:114.3,qTerm:0,fent:'2026-05-25',group:'PUR-PC1000-Ban-e30',plan:'5500×18; 6000×3'},
+  {op:'24063',nv:'13433',q:'PurP',tipo:'PurP4 e30',esp:30,pieles:'PC4 9003 | Ban 9003',m2:2152.8,ml:2152.8/1.0,qOp:2152.8,qTerm:0,fent:'2026-06-15',group:'PUR-PC4-Ban-e30',plan:'7180×300 (LAB 37)'},
+  {op:'24172',nv:'13534',q:'PurP',tipo:'PurP6 a910 e50',esp:50,pieles:'PC6 9003 | PPP',m2:49.14,ml:49.14/0.91,qOp:49.14,qTerm:0,fent:'2026-05-30',group:'PUR-PC6-PPP-e50',plan:'6000×9 (PC6 ancho 910)'},
+  {op:'24304',nv:'13583',q:'PurP',tipo:'PurP4 e50',esp:50,pieles:'PC4 ZA | Ban 9003',m2:294,ml:294/1.0,qOp:294,qTerm:0,fent:'2026-05-20',group:'PUR-PC4-Ban-e50',plan:'7000×42'},
+  {op:'24364',nv:'13595',q:'PurP',tipo:'PurP-ISO e100',esp:100,pieles:'Ban 9003 | Ban 9003',m2:187.197,ml:187.197/1.15,qOp:187.197,qTerm:0,fent:'2026-05-30',group:'PUR-ISO-Ban-e100',plan:'14000×12'},
+  {op:'24586',nv:'13514',q:'PurP',tipo:'PurP4 e30',esp:30,pieles:'PC4 ZA | Ban ZA',m2:288,ml:288/1.0,qOp:288,qTerm:0,fent:'2026-06-08',group:'PUR-PC4-ZA-e30',plan:'5080×29; 6130×12; 5110×12'},
+
+  // ── PolP NV (9 OPs)
+  {op:'24069',nv:'13482',q:'PolP',tipo:'PolP1000 e50',esp:50,pieles:'PC1000 9003 | Ban 9003',m2:63,ml:63/1.0,qOp:63,qTerm:0,fent:'2026-05-22',group:'POLP-PC1000-Ban-e50',plan:'2700×8; 2900×6; 2000×12'},
+  {op:'24073',nv:'13491',q:'PolP',tipo:'PolP1000 e50',esp:50,pieles:'PC1000 9003 | Ban 9003',m2:9,ml:9/1.0,qOp:9,qTerm:0,fent:'2026-05-22',group:'POLP-PC1000-Ban-e50',plan:'9000×1'},
+  {op:'24240',nv:'13582',q:'PolP',tipo:'PolP4 e50',esp:50,pieles:'PC4 7024 | Ban 7024',m2:13,ml:13/1.0,qOp:196,qTerm:183,fent:'2026-05-20',group:'POLP-PC4-Ban-e50',plan:'7000×15; 6500×14 (resto)'},
+  {op:'24259',nv:'13593',q:'PolP',tipo:'PolP1000 e75',esp:75,pieles:'PC1000 9003 | Ban 9003',m2:7,ml:7/1.0,qOp:7,qTerm:0,fent:'2026-05-21',group:'POLP-PC1000-Ban-e75',plan:'3500×2'},
+  {op:'24286',nv:'13605',q:'PolP',tipo:'PolP4 e50',esp:50,pieles:'PC4 ZA | Ban 9003',m2:16,ml:16/1.0,qOp:72,qTerm:56,fent:'2026-05-13',group:'POLP-PC4-Ban-e50',plan:'8000×9 (resto)'},
+  {op:'24318',nv:'13612',q:'PolP',tipo:'PolP1000 e50',esp:50,pieles:'PC1000 6002 | Ban 9003',m2:13.5,ml:13.5/1.0,qOp:40.5,qTerm:27,fent:'2026-05-25',group:'POLP-PC1000-Ban-e50',plan:'4500×3 (resto)'},
+  {op:'24321',nv:'13621',q:'PolP',tipo:'PolP1000 e50',esp:50,pieles:'PC1000 7024 | Ban 9003',m2:231.39,ml:231.39/1.0,qOp:330.49,qTerm:99.1,fent:'2026-05-26',group:'POLP-PC1000-Ban-e50',plan:'7000×33 (resto)'},
+  {op:'24326',nv:'13619',q:'PolP',tipo:'PolP4 e40',esp:40,pieles:'PC4 5005 | Libre',m2:207.81,ml:207.81/1.0,qOp:219.81,qTerm:12,fent:'2026-05-27',group:'POLP-PC4-Libre-e40',plan:'7000×30 (resto)'},
+  {op:'24538',nv:'13611',q:'PolP',tipo:'PolP-ISO e75',esp:75,pieles:'Ban 9002 | Ban 9002',m2:265.65,ml:265.65/1.15,qOp:265.65,qTerm:0,fent:'2026-06-05',group:'POLP-ISO-Ban-e75',plan:'12000×20'},
+
+  // ── Stock PolP (5 OPs) — distribuidas parejo
+  {op:'24126',nv:'STK',q:'PolP',tipo:'PolP-ISO e100',esp:100,pieles:'Ban 9003 | Ban 9003',m2:60*6*1.15,ml:60*6/1.0,qOp:60,qTerm:0,fent:'2026-04-07',group:'POLP-ISO-Ban-e100',plan:'60 planch L6'},
+  {op:'24438',nv:'STK',q:'PolP',tipo:'PolP-ISO e50',esp:50,pieles:'Ban 9003 | Ban 9003',m2:1*6*1.15,ml:1*6/1.0,qOp:50,qTerm:49,fent:'2026-04-29',group:'POLP-ISO-Ban-e50',plan:'1 planch L6 (resto)'},
+  {op:'24543',nv:'STK',q:'PolP',tipo:'PolP-ISO e100',esp:100,pieles:'Ban 9003 | Ban 9003',m2:200*6*1.15,ml:200*6/1.0,qOp:200,qTerm:0,fent:'2026-05-06',group:'POLP-ISO-Ban-e100',plan:'200 planch L6'},
+  {op:'24545',nv:'STK',q:'PolP',tipo:'PolP-ISO e50',esp:50,pieles:'Ban 9003 | Ban 9003',m2:200*6*1.15,ml:200*6/1.0,qOp:200,qTerm:0,fent:'2026-05-06',group:'POLP-ISO-Ban-e50',plan:'200 planch L6'},
+  {op:'24547',nv:'STK',q:'PolP',tipo:'PolP4 e50',esp:50,pieles:'PC4 9003 | Ban 9003',m2:200*6*1.0,ml:200*6/1.0,qOp:200,qTerm:0,fent:'2026-05-06',group:'POLP-PC4-Ban-e50',plan:'200 planch L6'},
+];
+
+function buildGroups() {
+  const groups = {};
+  OPS.forEach(o => {
+    if (!groups[o.group]) groups[o.group] = {
+      key: o.group, q: o.q, esp: o.esp,
+      tipo: o.tipo.split(' ')[0],
+      pieles: o.pieles.replace(/9003|7024|7040|9017|7021|ZA|FOIL/g, '·'),
+      items: [], totalMl: 0
+    };
+    groups[o.group].items.push(o);
+    groups[o.group].totalMl += o.ml;
+  });
+  return Object.values(groups).sort((a, b) => b.totalMl - a.totalMl);
+}
+
+function distribute(groups, purpUtilM, purpCycleMin, polpSetupMin, jornadaH, isoDoubleLoad) {
+  const presses = ALL_PRESSES.map(p => ({
+    p, cap: CAP[p], canPurp: PURP_PRESSES.includes(p),
+    groups: [], baseH: 0, extraH: 0, totalH: 0, days: 0, ml: 0, m2: 0, ops: 0,
+    groupBuckets: {}
+  }));
+  const purpEligible = presses.filter(p => p.canPurp);
+
+  // PurP: distribute proportional to capacity among P1/P3/P4/P5
+  const purpGroups = groups.filter(g => g.q === 'PurP');
+  const totalPurpCap = purpEligible.reduce((a, p) => a + p.cap, 0);
+
+  purpGroups.forEach(g => {
+    g.cycles = Math.ceil(g.totalMl / purpUtilM);
+    g.doubleLoad = false; g.effectiveMl = g.totalMl;
+    g.baseH = 0; g.extraH = 0;
+    g.items.forEach(it => {
+      let assignedMl = 0;
+      purpEligible.forEach((p, idx) => {
+        const share = p.cap / totalPurpCap;
+        const isLast = idx === purpEligible.length - 1;
+        const portionMl = isLast ? (it.ml - assignedMl) : it.ml * share;
+        const portionM2 = it.m2 * (portionMl / it.ml);
+        if (portionMl < 0.01) return;
+        const dur = portionMl / p.cap;
+        const portionCycles = Math.ceil(portionMl / purpUtilM);
+        const portionExtraH = (portionCycles * purpCycleMin) / 60;
+        if (!p.groupBuckets[g.key]) {
+          const bucket = {
+            g: {...g, items: [], assignedTo: p.p, baseH: 0, extraH: 0, doubleLoad: false, effectiveMl: 0, totalMl: 0, cycles: 0},
+            items: [], baseH: 0, extraH: 0, doubleLoad: false
+          };
+          p.groupBuckets[g.key] = bucket;
+          p.groups.push(bucket.g);
+        }
+        const bk = p.groupBuckets[g.key];
+        const subItem = {...it, ml: portionMl, m2: portionM2, _split: true, _origMl: it.ml};
+        bk.items.push(subItem); bk.g.items.push(subItem);
+        bk.baseH += dur; bk.extraH += portionExtraH;
+        bk.g.baseH += dur; bk.g.extraH += portionExtraH;
+        bk.g.totalMl += portionMl; bk.g.effectiveMl += portionMl; bk.g.cycles += portionCycles;
+        p.baseH += dur; p.extraH += portionExtraH;
+        p.totalH = p.baseH + p.extraH;
+        p.ml += portionMl; p.m2 += portionM2;
+        p.ops += 1 / purpEligible.length;
+        p.days = p.totalH / jornadaH;
+        g.baseH += dur; g.extraH += portionExtraH;
+        assignedMl += portionMl;
+      });
+    });
+  });
+
+  // PolP: balanced distribution — non-PurP presses absorb more PolP so all 7 converge to the same target_H
+  const polpGroups = groups.filter(g => g.q === 'PolP');
+  const totalPolpEffMl = polpGroups.reduce((a, g) => {
+    const isISO = g.tipo === 'PolP-ISO';
+    const dl = isISO && isoDoubleLoad;
+    return a + g.items.reduce((s, it) => s + (dl ? it.ml / 2 : it.ml), 0);
+  }, 0);
+  const totalCap = presses.reduce((a, p) => a + p.cap, 0);
+  const totalPurpMl = purpGroups.reduce((a, g) => a + g.totalMl, 0);
+  const targetH = (totalPurpMl + totalPolpEffMl) / totalCap;
+  const purpHperPurpPress = totalPurpCap > 0 ? totalPurpMl / totalPurpCap : 0;
+  const polpQuotaMl = {};
+  presses.forEach(p => {
+    const purpH = p.canPurp ? purpHperPurpPress : 0;
+    polpQuotaMl[p.p] = Math.max(0, (targetH - purpH) * p.cap);
+  });
+  const totalPolpQuota = Object.values(polpQuotaMl).reduce((a, b) => a + b, 0) || 1;
+
+  polpGroups.forEach(g => {
+    const isISO = g.tipo === 'PolP-ISO';
+    const doubleLoad = isISO && isoDoubleLoad;
+    g.items.forEach(it => {
+      const effItemMl = doubleLoad ? it.ml / 2 : it.ml;
+      let assignedMl = 0;
+      presses.forEach((p, idx) => {
+        const share = polpQuotaMl[p.p] / totalPolpQuota;
+        const isLast = idx === presses.length - 1;
+        const portionEffMl = isLast ? (effItemMl - assignedMl) : effItemMl * share;
+        const portionMl = doubleLoad ? portionEffMl * 2 : portionEffMl;
+        const portionM2 = it.m2 * (portionMl / it.ml);
+        if (portionEffMl < 0.01) return;
+        const dur = portionEffMl / p.cap;
+        if (!p.groupBuckets[g.key]) {
+          const bucket = {
+            g: {...g, items: [], assignedTo: p.p, baseH: 0, extraH: polpSetupMin / 60, doubleLoad, effectiveMl: 0, totalMl: 0},
+            items: [], baseH: 0, extraH: polpSetupMin / 60, doubleLoad
+          };
+          p.groupBuckets[g.key] = bucket;
+          p.groups.push(bucket.g);
+          p.extraH += polpSetupMin / 60;
+        }
+        const bk = p.groupBuckets[g.key];
+        const subItem = {...it, ml: portionMl, m2: portionM2, _split: true, _origMl: it.ml};
+        bk.items.push(subItem); bk.g.items.push(subItem);
+        bk.baseH += dur; bk.g.baseH += dur;
+        bk.g.totalMl += portionMl; bk.g.effectiveMl += portionEffMl;
+        p.baseH += dur;
+        p.totalH = p.baseH + p.extraH;
+        p.ml += portionMl; p.m2 += portionM2;
+        p.ops += 1 / presses.length;
+        p.days = p.totalH / jornadaH;
+        assignedMl += portionEffMl;
+      });
+    });
+  });
+
+  presses.forEach(p => p.ops = Math.round(p.ops));
+
+  const groupPresses = {};
+  presses.forEach(p => Object.keys(p.groupBuckets).forEach(k => {
+    groupPresses[k] = (groupPresses[k] || []);
+    groupPresses[k].push(p.p);
+  }));
+  groups.forEach(g => { g.splitAcross = groupPresses[g.key] || []; });
+
+  return presses;
+}
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [tweaksOpen, setTweaksOpen] = useState(false);
+  const {purpUtilM, purpCycleMin, polpSetupMin, jornadaH, isoDoubleLoad} = tweaks;
+
+  const groups = buildGroups();
+  const presses = distribute(groups, purpUtilM, purpCycleMin, polpSetupMin, jornadaH, isoDoubleLoad);
+  const critP = [...presses].sort((a, b) => b.days - a.days)[0];
+  const totalMl = presses.reduce((a, p) => a + p.ml, 0);
+  const totalM2 = OPS.reduce((a, o) => a + o.m2, 0);
+  const purpOps = OPS.filter(o => o.q === 'PurP');
+  const purpMl = purpOps.reduce((a, o) => a + o.ml, 0);
+  const purpCycles = Math.ceil(purpMl / purpUtilM);
+  const purpExtraH = (purpCycles * purpCycleMin) / 60;
+  const fecha = new Date().toLocaleDateString('es-CL', {year: 'numeric', month: 'long', day: 'numeric'});
+
+  return (
+    <main className="main">
+      <div className="page-header">
+        <div>
+          <div className="page-title">Plan de producción · Distribución parejo v4</div>
+          <div className="page-sub">
+            {OPS.length} OPs ({OPS.filter(o => o.nv === 'STK').length} stock + {OPS.filter(o => o.nv !== 'STK').length} NV) · {groups.length} grupos · distribución parejo · restricción PurP: P2/P6/P7 limitadas a PolP
+          </div>
+        </div>
+        <div style={{display:'flex',gap:10,alignItems:'flex-start'}}>
+          <button className="tweaks-btn" onClick={() => setTweaksOpen(o => !o)}>
+            ⚙ Tweaks
+          </button>
+          <div className="meta">Reporte ejecutivo<br/>{fecha}</div>
+        </div>
+      </div>
+
+      <div className="kpi-grid">
+        <div className="kpi">
+          <div className="kpi-label">Total a producir</div>
+          <div className="kpi-value">{Math.round(totalM2).toLocaleString('es-CL')}<span className="kpi-unit">M²</span></div>
+          <div className="kpi-delta">{Math.round(totalMl).toLocaleString('es-CL')} ML estimados</div>
+        </div>
+        <div className="kpi">
+          <div className="kpi-label">Órdenes pendientes</div>
+          <div className="kpi-value">{OPS.length}<span className="kpi-unit">OP</span></div>
+          <div className="kpi-delta">{groups.length} grupos optimizados</div>
+        </div>
+        <div className="kpi highlight">
+          <div className="kpi-label">Horizonte de entrega</div>
+          <div className="kpi-value">{critP.days.toFixed(2)}<span className="kpi-unit">días</span></div>
+          <div className="kpi-delta">Prensa crítica: {critP.p}</div>
+        </div>
+        <div className="kpi">
+          <div className="kpi-label">Volumen PurP</div>
+          <div className="kpi-value">{purpOps.length}<span className="kpi-unit">OP</span></div>
+          <div className="kpi-delta">{Math.round(purpMl)} ML · {purpCycles} ciclos</div>
+        </div>
+        <div className="kpi">
+          <div className="kpi-label">Tiempo extra PurP</div>
+          <div className="kpi-value">+{purpExtraH.toFixed(1)}<span className="kpi-unit">h</span></div>
+          <div className="kpi-delta">{purpCycleMin} min × {purpCycles} ciclos</div>
+        </div>
+        {(() => {
+          const minD = Math.min(...presses.map(p => p.days));
+          const maxD = Math.max(...presses.map(p => p.days));
+          const spread = maxD - minD;
+          const balance = maxD > 0 ? (1 - spread / maxD) * 100 : 100;
+          return (
+            <div className="kpi" style={{borderColor: balance >= 90 ? 'var(--purp)' : 'var(--coral)', background: balance >= 90 ? 'var(--purp-bg)' : 'var(--warn-bg)'}}>
+              <div className="kpi-label" style={{color: balance >= 90 ? 'var(--purp-text)' : 'var(--warn-text)'}}>Balance carga</div>
+              <div className="kpi-value" style={{color: balance >= 90 ? 'var(--purp-text)' : 'var(--warn-text)'}}>{balance.toFixed(0)}<span className="kpi-unit">%</span></div>
+              <div className="kpi-delta" style={{color: balance >= 90 ? 'var(--purp-text)' : 'var(--warn-text)'}}>Δ {minD.toFixed(2)}–{maxD.toFixed(2)} días</div>
+            </div>
+          );
+        })()}
+      </div>
+
+      <div className="alert info" style={{marginTop:14}}>
+        <div className="alert-title">📋 Reglas de distribución aplicadas</div>
+        <div className="alert-text">
+          <b>PurP — distribución parejo en P1/P3/P4/P5:</b> cada OP de poliuretano se divide proporcional a la capacidad de cada prensa habilitada. P2, P6 y P7 quedan limitadas a PolP.<br/>
+          <b>PolP — distribución parejo en las 7 prensas:</b> cada OP de poliestireno (incluido stock) se trocea proporcional a la capacidad. Cada prensa absorbe su porción.<br/>
+          <b>Capacidad útil PurP:</b> {purpUtilM} m por ciclo · curado {purpCycleMin} min. Cada prensa acumula sus propios ciclos sobre su ML asignado.<br/>
+          <b>Doble carga PolP-ISO:</b> paneles ISO se prensan de a 2 simultáneamente → tiempo efectivo a la mitad ({isoDoubleLoad ? 'ACTIVADO' : 'desactivado en Tweaks'}).<br/>
+          <b>Agrupación por familia:</b> misma química + espesor + pieles corren con un solo setup (los colores 9003/7024/ZA/9017/etc. no afectan).
+        </div>
+      </div>
+
+      <div className="section-header"><div className="section-title">Estado por prensa</div></div>
+      <div className="prensa-grid">
+        {presses.map(r => {
+          const isCrit = r.p === critP.p;
+          const pct = r.days / critP.days * 100;
+          const noPur = !r.canPurp;
+          return (
+            <div key={r.p} className={`prensa-card${isCrit ? ' is-crit' : ''}${noPur ? ' no-pur' : ''}`}>
+              <div className="prensa-name">{r.p}</div>
+              <div className={`prensa-days${isCrit ? ' is-crit' : ''}`}>{r.days.toFixed(2)}</div>
+              <div style={{fontSize:10,color:'var(--text-3)',marginBottom:4}}>días · {r.totalH.toFixed(1)} h</div>
+              <div><span className="prensa-chip both">{r.canPurp ? 'PolP+PurP' : 'Solo PolP'}</span></div>
+              <div className="prensa-meta"><b style={{color:'var(--text-2)'}}>{(r.m2 || 0).toFixed(0)} M²</b> · {r.ml.toFixed(0)} ML · {r.ops} OPs</div>
+              <div className="prensa-bar"><div className="prensa-bar-fill" style={{width: pct + '%', background: r.canPurp ? 'var(--purp)' : 'var(--polp)'}}></div></div>
+              {!r.canPurp && <div className="restriction-tag">Sin PurP</div>}
+              {r.extraH > 0 && r.canPurp && <div style={{fontSize:10,color:'var(--purp)',marginTop:3,fontWeight:500}}>+{r.extraH.toFixed(1)} h ciclos</div>}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="section-header"><div className="section-title">Grupos optimizados (lotes que se corren juntos)</div></div>
+      <div className="card">
+        <div style={{fontSize:11.5,color:'var(--text-2)',marginBottom:12,lineHeight:1.6}}>
+          Las OPs se agrupan por <b>química + espesor + combinación de pieles</b> ignorando color. Cada grupo = 1 setup en la prensa.
+        </div>
+        {groups.map(g => (
+          <div key={g.key} className="group-row">
+            <span className={`group-tag ${g.q === 'PurP' ? 'purp-tag' : 'polp-tag'}`}>{g.q}</span>
+            <span style={{fontSize:12.5,fontWeight:500}}>{g.tipo} · e{g.esp} · {g.pieles}</span>
+            {g.doubleLoad && <span style={{fontSize:9.5,fontWeight:700,background:'var(--polp)',color:'#fff',padding:'2px 6px',borderRadius:6,letterSpacing:'0.04em'}}>×2 DOBLE CARGA</span>}
+            <span className="group-meta">→ <b>{g.splitAcross && g.splitAcross.length > 0 ? g.splitAcross.join('+') : g.assignedTo}</b> · {g.totalMl.toFixed(0)} ML{g.doubleLoad ? ` (efectivo ${g.effectiveMl.toFixed(0)})` : ''} · {((g.baseH || 0) + (g.extraH || 0)).toFixed(1)} h</span>
+            <span className="group-ops">{g.items.length} OP{g.items.length > 1 ? 's' : ''}: {g.items.map(i => i.nv === 'STK' ? `STK·${i.op}` : `NV ${i.nv}`).join(' · ')}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="section-header"><div className="section-title">Asignación detallada</div></div>
+      <div className="card" style={{padding:'16px 0',overflow:'auto'}}>
+        <table>
+          <thead>
+            <tr>
+              <th style={{paddingLeft:22}}>Prensa</th>
+              <th>Restricción</th>
+              <th style={{textAlign:'right'}}>Cap m/h</th>
+              <th style={{textAlign:'right'}}>M²</th>
+              <th style={{textAlign:'right'}}>ML</th>
+              <th style={{textAlign:'right'}}>H base</th>
+              <th style={{textAlign:'right'}}>H extra</th>
+              <th style={{textAlign:'right'}}>H total</th>
+              <th style={{textAlign:'right'}}>Días</th>
+              <th style={{textAlign:'right'}}>OPs</th>
+              <th style={{width:140}}>Utilización</th>
+            </tr>
+          </thead>
+          <tbody>
+            {presses.map(r => {
+              const isCrit = r.p === critP.p;
+              const pct = r.days / critP.days * 100;
+              return (
+                <tr key={r.p}>
+                  <td style={{paddingLeft:22,fontWeight:isCrit?600:500}}>{r.p} {isCrit && <span style={{color:'var(--coral)',fontSize:10}}>▲ crítica</span>}</td>
+                  <td><span className="chip" style={{background:r.canPurp?'var(--purp-bg)':'var(--surface-2)',color:r.canPurp?'var(--purp-text)':'var(--text-2)'}}>{r.canPurp?'PolP + PurP':'Solo PolP'}</span></td>
+                  <td style={{textAlign:'right'}}>{r.cap.toFixed(1)}</td>
+                  <td style={{textAlign:'right',fontWeight:600}}>{(r.m2||0).toLocaleString('es-CL',{maximumFractionDigits:0})}</td>
+                  <td style={{textAlign:'right'}}>{r.ml.toLocaleString('es-CL',{maximumFractionDigits:0})}</td>
+                  <td style={{textAlign:'right',color:'var(--text-2)'}}>{r.baseH.toFixed(1)}</td>
+                  <td style={{textAlign:'right',color:r.extraH>0?'var(--purp)':'var(--text-3)',fontWeight:r.extraH>0?500:400}}>{r.extraH>0?`+${r.extraH.toFixed(1)}`:'—'}</td>
+                  <td style={{textAlign:'right',fontWeight:500}}>{r.totalH.toFixed(1)}</td>
+                  <td style={{textAlign:'right',fontWeight:600,color:isCrit?'var(--coral)':'var(--text)'}}>{r.days.toFixed(2)}</td>
+                  <td style={{textAlign:'right'}}>{r.ops}</td>
+                  <td>
+                    <div className="progress"><div style={{width:pct.toFixed(0)+'%',background:r.canPurp?'var(--purp)':'var(--polp)'}}></div></div>
+                    <span style={{fontSize:10,color:'var(--text-3)'}}>{pct.toFixed(0)}%</span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="section-header"><div className="section-title">Itinerario por prensa · grupos en orden de ejecución</div></div>
+      <div className="card">
+        <div className="card-title">
+          Gantt de producción · días de jornada {jornadaH} h
+          <span className="card-title-note">PurP: {purpUtilM} m útiles / ciclo · {purpCycleMin} min curado por ciclo</span>
+        </div>
+        {(() => {
+          const maxH = Math.max(...presses.map(p => p.totalH), 1);
+          const totalDays = Math.ceil(maxH / jornadaH);
+          return (
+            <div className="gantt-wrap">
+              <div style={{display:'flex',marginLeft:72,marginBottom:6,minWidth:700,position:'relative'}}>
+                {Array.from({length: totalDays}).map((_, d) => (
+                  <div key={d} style={{flex:`0 0 ${(jornadaH/maxH*100).toFixed(2)}%`,fontSize:10,fontWeight:600,color:'var(--text-3)',textAlign:'center',borderLeft:d>0?'1px dashed rgba(0,0,0,0.1)':'none',paddingBottom:4,letterSpacing:'0.05em'}}>DÍA {d+1}</div>
+                ))}
+              </div>
+              {presses.map(r => {
+                let cursor = 0;
+                return (
+                  <div key={r.p} className="gantt-row">
+                    <div className="gantt-row-label">
+                      <span className="prensa-chip both" style={{fontSize:10,padding:'1px 6px'}}>{r.p}</span>
+                      {!r.canPurp && <div style={{fontSize:8,color:'var(--warn-text)',marginTop:1}}>sin PurP</div>}
+                    </div>
+                    <div className="gantt-track" style={{minWidth:700}}>
+                      {Array.from({length: totalDays - 1}).map((_, d) => {
+                        const x = ((d+1)*jornadaH/maxH*100).toFixed(2);
+                        return <div key={d} className="gantt-divider" style={{left: x + '%'}}/>;
+                      })}
+                      {(() => {
+                        const segs = [];
+                        const polpTones = ['#3F4ED1','#5A66E2','#7480ED','#8E98F1','#AAB1F4','#9FA8F2'];
+                        const purpTones = ['#0E6E50','#16906A','#2AA582','#3CB594'];
+                        let pIdx = 0, uIdx = 0;
+                        r.groups.forEach(g => {
+                          g.items.forEach((it) => {
+                            const share = g.totalMl > 0 ? (it.ml / g.totalMl) : 0;
+                            const dur = g.baseH * share;
+                            const color = g.q === 'PurP' ? purpTones[uIdx++ % purpTones.length] : polpTones[pIdx++ % polpTones.length];
+                            segs.push({type:'op', q:g.q, dur, label: it.nv==='STK'?`STK ${it.op}`:`NV ${it.nv}`, op:it, group:g, color});
+                            if (g.q === 'PurP' && g.extraH > 0) {
+                              const curDur = g.extraH / g.items.length;
+                              segs.push({type:'curado', q:'PurP', dur: curDur});
+                            }
+                          });
+                        });
+                        return segs.map((s, i) => {
+                          const left = (cursor / maxH * 100).toFixed(3);
+                          const width = (s.dur / maxH * 100).toFixed(3);
+                          const showLabel = s.dur / maxH > 0.025;
+                          cursor += s.dur;
+                          if (s.type === 'curado') {
+                            return (
+                              <div key={i} className="gantt-bar cycle" style={{left:left+'%',width:width+'%'}} title={`Curado / purga · ${s.dur.toFixed(2)} h`}>
+                                {showLabel && <span>curado</span>}
+                              </div>
+                            );
+                          }
+                          return (
+                            <div key={i} className="gantt-bar" style={{left:left+'%',width:width+'%',background:s.color}}
+                                 title={`${s.label} · ${s.op.tipo} e${s.op.esp}\n${s.op.ml.toFixed(0)} ML · ${s.dur.toFixed(2)} h${s.group.doubleLoad?' · DOBLE CARGA ×2':''}\nGrupo: ${s.group.key}`}>
+                              {showLabel && <span style={{overflow:'hidden',textOverflow:'ellipsis'}}>{s.label}{s.group.doubleLoad?' ×2':''}</span>}
+                            </div>
+                          );
+                        });
+                      })()}
+                    </div>
+                  </div>
+                );
+              })}
+              <div style={{display:'flex',gap:14,fontSize:11,color:'var(--text-2)',marginTop:14,flexWrap:'wrap',marginLeft:72}}>
+                <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:10,height:10,borderRadius:2,background:'var(--polp)'}}/>PolP</span>
+                <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:10,height:10,borderRadius:2,background:'var(--purp)'}}/>PurP (incluye ciclos)</span>
+                <span style={{fontSize:10,color:'var(--text-3)'}}>Tooltip: pasa el mouse para ver OPs, ML y ciclos</span>
+              </div>
+            </div>
+          );
+        })()}
+      </div>
+
+      <div className="section-header"><div className="section-title">Detalle de OPs y planchas (BCS)</div></div>
+      <div className="card" style={{padding:'16px 0',overflow:'auto'}}>
+        <table>
+          <thead>
+            <tr>
+              <th style={{paddingLeft:22}}>OP</th>
+              <th>NV</th>
+              <th>Q</th>
+              <th>Tipo · esp · pieles</th>
+              <th style={{textAlign:'right'}}>M² total</th>
+              <th style={{textAlign:'right'}}>Fabric.</th>
+              <th style={{textAlign:'right'}}>Pendiente</th>
+              <th style={{textAlign:'right'}}>ML</th>
+              <th>Plan de corte (BCS)</th>
+              <th>Asignación</th>
+            </tr>
+          </thead>
+          <tbody>
+            {OPS.map(o => {
+              const g = groups.find(gg => gg.key === o.group);
+              const pctDone = o.qOp > 0 ? (o.qTerm / o.qOp * 100) : 0;
+              return (
+                <tr key={o.op}>
+                  <td style={{paddingLeft:22,fontWeight:500}}>{o.op}</td>
+                  <td>{o.nv === 'STK' ? <span style={{color:'var(--text-3)',fontSize:10}}>STOCK</span> : `NV ${o.nv}`}</td>
+                  <td><span className={`chip ${o.q.toLowerCase()}`}>{o.q}</span></td>
+                  <td style={{fontSize:11.5}}>{o.tipo} · e{o.esp} · {o.pieles}</td>
+                  <td style={{textAlign:'right'}}>{o.qOp.toFixed(0)}</td>
+                  <td style={{textAlign:'right',color:pctDone>0?'var(--purp)':'var(--text-3)',fontWeight:pctDone>0?500:400}}>{o.qTerm>0?`${o.qTerm.toFixed(0)} (${pctDone.toFixed(0)}%)`:'—'}</td>
+                  <td style={{textAlign:'right',fontWeight:600,color:'var(--coral)'}}>{o.m2.toFixed(0)}</td>
+                  <td style={{textAlign:'right'}}>{o.ml.toFixed(0)}</td>
+                  <td style={{fontSize:10.5,color:'var(--text-2)',maxWidth:240}}>{o.plan}</td>
+                  <td style={{fontSize:11}}><b>{g?.splitAcross?.join(' + ') || g?.assignedTo}</b> <span style={{color:'var(--text-3)'}}>({g?.key})</span></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="section-header"><div className="section-title">Recomendaciones</div></div>
+      <div className="card">
+        <ol style={{marginLeft:18,fontSize:12.5,lineHeight:1.8}}>
+          <li><b>PurP repartido en P1/P3/P4/P5:</b> las {purpOps.length} OPs de poliuretano se dividen <b>parejo</b> entre las 4 prensas habilitadas (proporcional a capacidad). Cada prensa acumula sus propios ciclos sobre su porción de ML.</li>
+          <li><b>OP gigante 24063 (LAB 37):</b> 2.152,8 m² de PurP4 e30 9003 — al dividirla parejo, cada prensa PurP toma ~538 m² (~538 ML, ~54 ciclos). Programar como bloque continuo para amortizar setups.</li>
+          <li><b>PolP repartido en las 7 prensas:</b> cada OP PolP se divide proporcional a la capacidad de cada prensa. Las prensas sin PurP (P2/P6/P7) reciben solo PolP, lo que las libera para absorber stock e ISO.</li>
+          <li><b>Stock distribuido parejo:</b> las 5 OPs de stock (24126, 24438, 24543, 24545, 24547) se trocean entre las 7 prensas — el ISO aprovecha doble carga ×2 reduciendo su tiempo a la mitad.</li>
+          <li><b>Aprovechar agrupaciones:</b> el grupo <b>POLP-PC4-Ban-e50</b> reúne {groups.find(g => g.key === 'POLP-PC4-Ban-e50')?.items.length || 0} OPs de distintos colores (9003, 7024, ZA) en un solo setup por prensa.</li>
+          <li><b>⚠ Caso especial — OP 24172 (PurP6 PC6 ancho 910):</b> ancho no estándar y química PC6. Confirmar si va a una prensa específica o si la división parejo es válida.</li>
+        </ol>
+      </div>
+
+      <footer>
+        <span>Fuente: NOMBREOPS 08-05-2026 · BCS 08-05-2026</span>
+        <span>Modelo: agrupación por familia (química+espesor+pieles, ignorando color) · restricción PurP P1/P3/P4/P5 · ciclo PurP {purpUtilM}m/{purpCycleMin}min</span>
+      </footer>
+
+      <TweaksPanel title="Tweaks" open={tweaksOpen} onClose={() => setTweaksOpen(false)}>
+        <TweakSection title="PurP">
+          <TweakSlider id="purpUtilM" label="Metros útiles por ciclo PurP" min={5} max={15} step={1}/>
+          <TweakSlider id="purpCycleMin" label="Min curado/ciclo" min={10} max={60} step={5}/>
+        </TweakSection>
+        <TweakSection title="PolP">
+          <TweakSlider id="polpSetupMin" label="Min setup por grupo PolP" min={5} max={45} step={5}/>
+          <TweakToggle id="isoDoubleLoad" label="ISO: doble carga (×2)"/>
+        </TweakSection>
+        <TweakSection title="Jornada">
+          <TweakSlider id="jornadaH" label="Horas por turno" min={6} max={12} step={0.5}/>
+        </TweakSection>
+      </TweaksPanel>
+    </main>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

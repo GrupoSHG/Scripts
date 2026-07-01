@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Producción · Polchile v7.9</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root {
+    --bg: #F4F3EF; --surface: #FFFFFF; --surface-2: #EEECEA;
+    --text: #18181A; --text-2: #5C5B58; --text-3: #9A9894;
+    --border: rgba(0,0,0,0.07); --border-2: rgba(0,0,0,0.13);
+    --polp: #6B62D4; --purp: #16906A; --coral: #C94F28;
+    --warn-bg: #FDF0E3; --r: 10px; --rl: 14px;
+    --acero: #6366F1; --pol: #D97706;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Helvetica Neue", Helvetica, sans-serif; background: var(--bg); color: var(--text); font-size: 13px; line-height: 1.5; }
+  .main { padding: 32px 36px 60px; max-width: 1400px; margin: 0 auto; }
+  .flex { display: flex; } .between { justify-content: space-between; } .center-y { align-items: center; }
+  .mono { font-family: monospace; }
+  .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; border-bottom: 1px solid var(--border-2); padding-bottom: 18px; }
+  .page-title { font-size: 22px; font-weight: 500; }
+  .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-3); display: flex; align-items: center; gap: 12px; width: 100%; margin: 32px 0 16px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border-2); }
+  .kpi-grid { display: grid; gap: 16px; margin-bottom: 16px; }
+  .grid-4 { grid-template-columns: repeat(4,1fr); }
+  .grid-3 { grid-template-columns: repeat(3,1fr); }
+  .grid-2 { grid-template-columns: repeat(2,1fr); }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); padding: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between; }
+  .kpi-label { font-size: 10.5px; color: var(--text-3); text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+  .kpi-value { font-size: 32px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; display: flex; align-items: baseline; }
+  .kpi-unit { font-size: 14px; color: var(--text-3); margin-left: 6px; font-weight: 500; }
+  .kpi-sub { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-2); font-size: 11px; color: var(--text-2); display: flex; justify-content: space-between; align-items: center; }
+  .kpi-sub b { font-weight: 600; }
+  .kpi-sub span { font-weight: 700; color: var(--purp); font-size: 12.5px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); padding: 20px 22px; margin-bottom: 14px; }
+  .prensa-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 12px; margin-bottom: 30px; }
+  .prensa-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; display: flex; flex-direction: column; }
+  .prensa-bar { height: 4px; background: var(--surface-2); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+  .prensa-bar-fill { height: 100%; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 9px; text-transform: uppercase; color: var(--text-3); padding: 10px 8px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); z-index: 2; box-shadow: 0 1px 0 var(--border); }
+  td { padding: 10px 8px; border-bottom: 1px solid var(--border-2); font-size: 11px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 9px; font-weight: 700; text-transform: uppercase; }
+  .bodega-tag { font-size: 8.5px; color: var(--text-3); background: var(--surface-2); padding: 1px 6px; border-radius: 4px; margin-top: 4px; display: inline-block; }
+  .tweaks-btn { border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 12px; }
+  .sys-error { background: var(--coral); color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; display: flex; justify-content: space-between; }
+
+  /* ── Velocímetro ── */
+  .velo-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); padding: 28px 24px 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: center; }
+  .velo-label { font-size: 10.5px; color: var(--text-3); text-transform: uppercase; font-weight: 600; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .velo-valor { font-size: 44px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; margin-top: 2px; }
+  .velo-unit  { font-size: 16px; color: var(--text-3); font-weight: 500; margin-left: 5px; }
+  .velo-zona  { font-size: 12px; font-weight: 700; margin-top: 10px; padding: 4px 16px; border-radius: 20px; }
+  .velo-fecha { font-size: 11px; color: var(--text-3); margin-top: 6px; }
+  .zona-r { background:#FEE2E2; color:#B91C1C; }
+  .zona-a { background:#FEF3C7; color:#92400E; }
+  .zona-v { background:#DCFCE7; color:#15803D; }
+
+  /* ── Rendimiento ── */
+  .rend-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 10px; margin-bottom: 18px; }
+  .rend-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 14px; }
+  .rend-name { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+  .rend-real { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+  .rend-unit { font-size: 10px; color: var(--text-3); margin-left: 3px; }
+  .rend-target { font-size: 10.5px; color: var(--text-3); white-space: nowrap; }
+  .rend-diff { font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 6px; margin-top: 6px; display: inline-block; }
+  .rend-diff.up { background:#DCFCE7; color:#15803D; }
+  .rend-diff.dn { background:#FEE2E2; color:#B91C1C; }
+  .rend-bar { height: 6px; background: var(--surface-2); border-radius: 3px; margin-top: 8px; overflow: hidden; position: relative; }
+  .rend-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  .rend-bar-target { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--text); border-radius: 1px; }
+  .rend-acum { font-size: 9.5px; color: var(--text-3); margin-top: 4px; display: flex; justify-content: space-between; }
+
+  /* ── Plan prensas ── */
+  .plan-prensa-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 10px; margin-bottom: 16px; }
+  .plan-prensa-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; text-align: center; }
+  .plan-prensa-card.is-crit { border-color: var(--coral); background: var(--warn-bg); }
+  .plan-prensa-name { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+  .plan-prensa-days { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; margin-top: 8px; }
+  .plan-prensa-days.is-crit { color: var(--coral); }
+  .plan-prensa-sub { font-size: 10.5px; color: var(--text-3); margin-top: 4px; line-height: 1.5; }
+  .plan-prensa-tag { display: inline-block; font-size: 9.5px; font-weight: 600; padding: 2px 8px; border-radius: 8px; margin: 8px 0 4px; }
+  .plan-tag-purp { background:#DFF3EC; color:#074F3A; }
+  .plan-tag-polp { background:#EEEDFC; color:#3A318E; }
+  .plan-tag-nopur { background:#FDF0E3; color:#7A480A; }
+  .plan-bar { height: 4px; background: var(--surface-2); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+  .plan-bar-fill { height: 100%; border-radius: 2px; }
+  .gantt-wrap { overflow-x: auto; margin-top: 8px; }
+  .gantt-row { display: flex; align-items: center; margin-bottom: 6px; }
+  .gantt-row-label { width: 64px; flex-shrink: 0; font-size: 11px; font-weight: 600; color: var(--text-2); text-align: right; padding-right: 10px; }
+  .gantt-track { flex: 1; height: 30px; background: var(--surface-2); border-radius: 6px; position: relative; min-width: 700px; }
+  .gantt-bar { position: absolute; top: 3px; height: 24px; border-radius: 4px; display: flex; align-items: center; padding: 0 6px; font-size: 9.5px; font-weight: 500; color: #fff; overflow: hidden; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+  .gantt-bar.cycle { background: repeating-linear-gradient(45deg,rgba(22,144,106,0.3) 0,rgba(22,144,106,0.3) 4px,transparent 4px,transparent 8px); border: 1px dashed rgba(22,144,106,0.6); color: var(--purp); font-size: 8.5px; box-shadow: none; }
+  .gantt-divider { position: absolute; top: -3px; bottom: -3px; width: 1px; background: rgba(0,0,0,0.12); }
+  .gantt-day { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; text-align: center; padding: 0 4px; }
+  .plan-alert { background:#DFF3EC; border-left: 3px solid var(--purp); padding: 12px 18px; border-radius: 10px; margin-bottom: 14px; font-size: 11.5px; color:#074F3A; line-height: 1.6; }
+  .plan-balance-kpi { font-size: 11px; padding: 4px 10px; border-radius: 8px; font-weight: 600; }
+  .plan-balance-good { background:#DFF3EC; color:#074F3A; }
+  .plan-balance-warn { background:#FDF0E3; color:#7A480A; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState, useEffect, useRef} = React;
+
+/* ══════════════════════════════════════════
+   VELOCÍMETRO — Chart.js doughnut
+   Usa la librería ya cargada en el head.
+   Rojo 0-700 | Amarillo 700-1000 | Verde 1000-1500
+══════════════════════════════════════════ */
+function Velocimetro({ valor, fecha }) {
+  const canvasRef = useRef(null);
+  const chartRef  = useRef(null);
+
+  const v  = Math.min(1500, Math.max(0, Number(valor) || 0));
+  const nc = v < 700 ? '#EF4444' : v < 1000 ? '#F59E0B' : '#22C55E';
+  const zi = v < 700
+    ? { txt: '⚠ Bajo meta',    cls: 'zona-r' }
+    : v < 1000
+    ? { txt: '◑ Zona media',   cls: 'zona-a' }
+    : { txt: '✓ Meta cumplida', cls: 'zona-v' };
+
+  useEffect(() => {
+    if (!canvasRef.current || !window.Chart) return;
+    if (chartRef.current) chartRef.current.destroy();
+
+    // Segmentos: cuánto hay de cada zona hasta v, más el resto gris
+    const rojo     = Math.min(v, 700);
+    const amarillo = Math.max(0, Math.min(v, 1000) - 700);
+    const verde    = Math.max(0, Math.min(v, 1500) - 1000);
+    const gris     = 1500 - v;
+
+    chartRef.current = new window.Chart(canvasRef.current, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: [rojo, amarillo, verde, gris],
+          backgroundColor: ['#EF4444', '#F59E0B', '#22C55E', '#E5E7EB'],
+          borderWidth: 0,
+          borderRadius: 4,
+          spacing: 2,
+        }]
+      },
+      options: {
+        cutout: '68%',
+        rotation: -225,      // empieza abajo-izquierda
+        circumference: 270,  // 270° de arco
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        animation: { duration: 800, easing: 'easeInOutQuart' },
+      },
+      plugins: [{
+        id: 'centerText',
+        afterDraw(chart) {
+          const { ctx, chartArea: { left, top, right, bottom } } = chart;
+          const cx = (left + right) / 2;
+          const cy = (top  + bottom) / 2;
+          ctx.save();
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.font = '700 38px "Helvetica Neue", Helvetica, sans-serif';
+          ctx.fillStyle = nc;
+          ctx.fillText(v.toLocaleString('es-CL', { maximumFractionDigits: 0 }), cx, cy - 8);
+          ctx.font = '500 13px "Helvetica Neue", Helvetica, sans-serif';
+          ctx.fillStyle = '#9A9894';
+          ctx.fillText('m²', cx, cy + 20);
+          ctx.restore();
+        }
+      }]
+    });
+
+    return () => { if (chartRef.current) chartRef.current.destroy(); };
+  }, [valor]);
+
+  return (
+    <div className="velo-wrap" style={{ width: '100%', maxWidth: 260, margin: '0 auto' }}>
+      <div className="velo-label">Producción Día Anterior</div>
+      <div style={{ position: 'relative', width: '100%' }}>
+        <canvas ref={canvasRef}/>
+      </div>
+      <span className={`velo-zona ${zi.cls}`}>{zi.txt}</span>
+      <div className="velo-fecha">{fecha || '—'}</div>
+    </div>
+  );
+}
+/* ══════════════════════════════════════════
+   APP PRINCIPAL
+══════════════════════════════════════════ */
+function App() {
+  const [metrics,          setMetrics]          = useState([]);
+  const [wip,              setWip]              = useState({ conAislacion:[], sinAislacion:[], producidoPAMes:0 });
+  const [facturacion,      setFacturacion]      = useState({ facturado:0, porFacturar:0 });
+  const [plan,             setPlan]             = useState({ ops:[], groups:[], presses:[], config:null });
+  const [planError,        setPlanError]        = useState(null);
+  const [rend,             setRend]             = useState({ rows:[], hoursElapsed:0, shiftStart:'', now:'' });
+  const [sysError,         setSysError]         = useState(null);
+  const [produccionDiaria, setProduccionDiaria] = useState({ meta:1000, datos:[] });
+  const [inventario,       setInventario]       = useState({ acero:[], pol:[], kpiAcero:{}, kpiPol:{} });
+  const [m2Ayer,           setM2Ayer]           = useState({ total:0, fecha:'' });
+  const [wipAcero,         setWipAcero]         = useState({ items:[] });
+  const [m2PSA,            setM2PSA]            = useState({ ayer:{total:0,pc4:0,bandejera:0,fecha:''}, mes:{total:0,pc4:0,bandejera:0} });
+
+  const fetchData = () => {
+    if (typeof google === 'undefined') return;
+    setSysError(null);
+    google.script.run.withSuccessHandler(setMetrics).getPrensasMetrics();
+    google.script.run.withSuccessHandler(res => {
+      if (res?.error) setSysError("Error WIP: "+res.error);
+      else if (res) setWip(res);
+    }).getWipData();
+    google.script.run.withSuccessHandler(res => {
+      if (res && !res.error) setFacturacion(res);
+    }).getFacturacionData();
+    google.script.run.withSuccessHandler(res => {
+      if (res?.error) setPlanError("Plan: "+res.error);
+      else if (res) { setPlan(res); setPlanError(null); }
+    }).getPlanPrensas();
+    google.script.run.withSuccessHandler(res => {
+      if (res && !res.error) setRend(res);
+    }).getRendimientoPrensas();
+    google.script.run.withSuccessHandler(res => {
+      if (res && !res.error) setProduccionDiaria(res);
+    }).getProduccionDiariaMes();
+    google.script.run.withSuccessHandler(res => {
+      if (res?.error) setSysError("Error Inventario: "+res.error);
+      else if (res) setInventario(res);
+    }).getInventarioInsumos();
+    google.script.run.withSuccessHandler(res => {
+      if (res && !res.error) setM2Ayer(res);
+    }).getM2Ayer();
+
+    google.script.run.withSuccessHandler(res => {
+      if (res && res.error) setSysError("Error WIP Acero: "+res.error);
+      else if (res) setWipAcero(res);
+    }).getWipAcero();
+
+    google.script.run.withSuccessHandler(res => {
+      if (res && !res.error) setM2PSA(res);
+    }).getM2PSA();
+  };
+
+  useEffect(() => {
+    fetchData();
+    const iv = setInterval(fetchData, 60000);
+    return () => clearInterval(iv);
+  }, []);
+
+  /* helpers */
+  const fmt  = (n,d=0) => (n||0).toLocaleString('es-CL',{maximumFractionDigits:d,minimumFractionDigits:d});
+  const fmtM = (n) => ((n||0)/1e6).toLocaleString('es-CL',{minimumFractionDigits:1,maximumFractionDigits:1});
+
+  const todos              = [...wip.conAislacion,...wip.sinAislacion];
+  const pendGral           = todos.filter(r=>Number(r.pendiente)>0);
+  const cantOps            = pendGral.length;
+  const cantNvs            = new Set(pendGral.map(r=>r.nv).filter(n=>n&&n!=='-')).size;
+  const totalPendientePA   = wip.conAislacion.reduce((a,r)=>a+(Number(r.pendiente)||0),0);
+  const totalProducidoPA   = Number(wip.producidoPAMes)||0;
+  const totalPendientePsa  = wip.sinAislacion.reduce((a,r)=>a+(Number(r.pendiente)||0),0);
+  const totalProducidoPsa  = wip.sinAislacion.reduce((a,r)=>a+(Number(r.producidaMes)||0),0);
+  const pendPsaTerm        = wip.sinAislacion.filter(r=>r.bodega.includes("TERMINADO")).reduce((a,r)=>a+(Number(r.pendiente)||0),0);
+  const prodPsaTerm        = wip.sinAislacion.filter(r=>r.bodega.includes("TERMINADO")).reduce((a,r)=>a+(Number(r.producidaMes)||0),0);
+  const pendPsaIns         = wip.sinAislacion.filter(r=>r.bodega.includes("INSUMO")).reduce((a,r)=>a+(Number(r.pendiente)||0),0);
+  const prodPsaIns         = wip.sinAislacion.filter(r=>r.bodega.includes("INSUMO")).reduce((a,r)=>a+(Number(r.producidaMes)||0),0);
+  const totalFDS = (() => {
+    if (!produccionDiaria?.datos) return 0;
+    return produccionDiaria.datos.reduce((acc,d)=>{
+      let s=d.fecha;
+      if(s.includes('/')&&s.split('/').length===2){const[di,me]=s.split('/');s=`2026-${me.padStart(2,'0')}-${di.padStart(2,'0')}`;}
+      const dw=new Date(s+'T00:00:00').getDay();
+      return (dw===0||dw===6)?acc+(Number(d.produccion)||0):acc;
+    },0);
+  })();
+
+  const badgeCls = (est) => est==="EN PROCESO"?{bg:"#E0F2FE",tx:"#0369A1"}:est==="TERMINADO"?{bg:"#DCFCE7",tx:"#15803D"}:{bg:"#F3F4F6",tx:"#4B5563"};
+
+  /* ── WIP Table ── */
+  const WipTable = ({title,data}) => {
+    const rows = data.filter(r=>Number(r.pendiente)>0);
+    return (
+      <div className="card" style={{padding:0,overflow:'hidden',marginBottom:30}}>
+        <div style={{padding:'16px 22px',borderBottom:'1px solid var(--border)',background:'var(--surface-2)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <b style={{fontSize:13}}>{title}</b>
+          <span style={{fontSize:11,color:'var(--text-3)'}}>{rows.length} OPs Pendientes</span>
+        </div>
+        <div style={{maxHeight:400,overflowY:'auto'}}>
+          <table>
+            <thead><tr>
+              <th style={{paddingLeft:22}}>NV</th><th>OP</th><th>Producto / Bodega</th><th>Cliente</th>
+              <th style={{textAlign:'center'}}>Esp.</th><th style={{textAlign:'center'}}>Largo</th>
+              <th style={{textAlign:'right'}}>Pedida</th><th style={{textAlign:'right'}}>Pendiente</th>
+              <th style={{textAlign:'center'}}>Estado</th>
+            </tr></thead>
+            <tbody>
+              {rows.length===0
+                ?<tr><td colSpan="9" style={{textAlign:'center',padding:20,color:'var(--text-3)'}}>Sin pendientes</td></tr>
+                :rows.map((r,i)=>{const b=badgeCls(r.estado);return(
+                  <tr key={i}>
+                    <td style={{paddingLeft:22}} className="mono">{r.nv||'-'}</td>
+                    <td className="mono">{r.op||'-'}</td>
+                    <td style={{maxWidth:180,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>
+                      <div style={{fontWeight:600}} title={r.producto}>{r.producto}</div>
+                      <div className="bodega-tag">{r.bodega}</div>
+                    </td>
+                    <td style={{maxWidth:150,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',color:'var(--text-3)'}}>{r.cliente}</td>
+                    <td style={{textAlign:'center'}}>{r.espesor}</td>
+                    <td style={{textAlign:'center'}} className="mono">{r.largo}</td>
+                    <td style={{textAlign:'right'}} className="mono">{fmt(Number(r.pedida)||0)}</td>
+                    <td style={{textAlign:'right',color:'var(--coral)',background:'var(--warn-bg)',fontWeight:700}} className="mono">{fmt(Number(r.pendiente)||0)}</td>
+                    <td style={{textAlign:'center'}}><span className="badge" style={{background:b.bg,color:b.tx}}>{r.estado}</span></td>
+                  </tr>
+                );})}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
+  /* ── Plan de prensas ── */
+  const renderPlan = () => {
+    if(!plan.presses||plan.presses.length===0) return null;
+    const {presses,groups,ops,config:cfg,dayLabels=[]}=plan;
+    const critP  = [...presses].sort((a,b)=>b.days-a.days)[0];
+    const minD   = Math.min(...presses.map(p=>p.days));
+    const maxD   = Math.max(...presses.map(p=>p.days));
+    const bal    = maxD>0?(1-(maxD-minD)/maxD)*100:100;
+    const purpOps= ops.filter(o=>o.q==='PurP');
+    const purpMl = purpOps.reduce((a,o)=>a+o.ml,0);
+    const purpCyc= Math.ceil(purpMl/cfg.purpUtilM);
+    const purpXH = (purpCyc*cfg.purpCycleMin)/60;
+    const PT=['#3F4ED1','#5A66E2','#7480ED','#8E98F1','#AAB1F4','#9FA8F2'];
+    const PU=['#0E6E50','#16906A','#2AA582','#3CB594'];
+    const maxH   = Math.max(...presses.map(p=>p.totalH),1);
+    const nDays  = Math.ceil(maxH/cfg.jornadaH);
+    return (
+      <>
+        <div className="section-title">
+          Plan de Distribución de Prensas
+          <span className={`plan-balance-kpi ${bal>=90?'plan-balance-good':'plan-balance-warn'}`}>
+            Balance {bal.toFixed(0)}% · Horizonte {critP.days.toFixed(2)} días
+          </span>
+        </div>
+        <div className="plan-alert">
+          <b>Algoritmo:</b> distribución <b>híbrida</b>. OPs &gt;{cfg.splitThresholdM2} m² se <b>reparten</b>; menores son <b>atómicas</b> (LPT).
+          PurP en P1/P3/P4/P5 ({purpOps.length} OPs · {Math.round(purpMl)} ML · {purpCyc} ciclos × {cfg.purpCycleMin} min = +{purpXH.toFixed(1)} h curado).
+          ISO ×2 {cfg.isoDoubleLoad?'(ACTIVADO)':'(desactivado)'}. Jornada {cfg.jornadaH} h · {cfg.workDays.map(d=>['DOM','LUN','MAR','MIE','JUE','VIE','SAB'][d]).join('/')}.
+        </div>
+        <div className="plan-prensa-grid">
+          {presses.map(r=>{
+            const ic=r.p===critP.p;
+            const pct=critP.days>0?(r.days/critP.days)*100:0;
+            return(
+              <div key={r.p} className={`plan-prensa-card${ic?' is-crit':''}`}>
+                <div className="plan-prensa-name">{r.p}</div>
+                <div className={`plan-prensa-days${ic?' is-crit':''}`}>{r.days.toFixed(2)}</div>
+                <div className="plan-prensa-sub">días · {r.totalH.toFixed(1)} h</div>
+                <span className={`plan-prensa-tag ${r.canPurp?'plan-tag-purp':'plan-tag-polp'}`}>{r.canPurp?'PolP+PurP':'Solo PolP'}</span>
+                <div className="plan-prensa-sub"><b style={{color:'var(--text-2)'}}>{Math.round(r.m2||0).toLocaleString('es-CL')} M²</b><br/>{Math.round(r.ml).toLocaleString('es-CL')} ML · {r.ops} OPs</div>
+                <div className="plan-bar"><div className="plan-bar-fill" style={{width:pct+'%',background:r.canPurp?'var(--purp)':'var(--polp)'}}></div></div>
+                {!r.canPurp&&<span className="plan-prensa-tag plan-tag-nopur" style={{marginTop:6}}>Sin PurP</span>}
+                {r.extraH>0&&r.canPurp&&<div style={{fontSize:10,color:'var(--purp)',marginTop:4,fontWeight:600}}>+{r.extraH.toFixed(1)} h ciclos</div>}
+              </div>
+            );
+          })}
+        </div>
+        <div className="card">
+          <div style={{display:'flex',justifyContent:'space-between',marginBottom:14,alignItems:'baseline'}}>
+            <b style={{fontSize:13}}>Itinerario por prensa · jornada {cfg.jornadaH} h</b>
+            <span style={{fontSize:10.5,color:'var(--text-3)'}}>PurP: {cfg.purpUtilM} m/ciclo · {cfg.purpCycleMin} min curado</span>
+          </div>
+          <div className="gantt-wrap">
+            <div style={{display:'flex',marginLeft:74,marginBottom:6,minWidth:700}}>
+              {Array.from({length:nDays}).map((_,d)=>(
+                <div key={d} className="gantt-day" style={{flex:`0 0 ${(cfg.jornadaH/maxH*100).toFixed(2)}%`,borderLeft:d>0?'1px dashed rgba(0,0,0,0.1)':'none'}}>
+                  {dayLabels[d]?dayLabels[d].label:'DÍA '+(d+1)}
+                </div>
+              ))}
+            </div>
+            {presses.map(r=>{
+              let cursor=0,pI=0,uI=0;
+              return(
+                <div key={r.p} className="gantt-row">
+                  <div className="gantt-row-label">
+                    <span className={`plan-prensa-tag ${r.canPurp?'plan-tag-purp':'plan-tag-polp'}`} style={{fontSize:10,padding:'1px 6px',margin:0}}>{r.p}</span>
+                  </div>
+                  <div className="gantt-track" style={{minWidth:700}}>
+                    {Array.from({length:nDays-1}).map((_,d)=>(
+                      <div key={d} className="gantt-divider" style={{left:`${((d+1)*cfg.jornadaH/maxH*100).toFixed(2)}%`}}/>
+                    ))}
+                    {r.groups.flatMap((g,gi)=>g.items.map((it,ii)=>{
+                      const dur=it.dur!==undefined?it.dur:((g.baseH||0)*(g.totalMl>0?it.ml/g.totalMl:0));
+                      const col=g.q==='PurP'?PU[uI++%PU.length]:PT[pI++%PT.length];
+                      const lft=(cursor/maxH*100).toFixed(3);
+                      const wid=(dur/maxH*100).toFixed(3);
+                      const lbl=it.nv==='STK'?`STK ${it.op}`:`NV ${it.nv}`;
+                      cursor+=dur;
+                      const out=(
+                        <div key={`${gi}-${ii}`} className="gantt-bar" style={{left:lft+'%',width:wid+'%',background:col}}
+                          title={`${lbl}\n${it.tipo} e${it.esp}\n${Math.round(it.ml)} ML · ${dur.toFixed(2)} h`}>
+                          {dur/maxH>0.025&&(lbl+(g.doubleLoad?' ×2':'')+(it.isSplit?' ✂':''))}
+                        </div>
+                      );
+                      const xh=it.extraH||0;
+                      if(g.q==='PurP'&&xh>0){
+                        const cl=(cursor/maxH*100).toFixed(3),cw=(xh/maxH*100).toFixed(3);
+                        cursor+=xh;
+                        return[out,<div key={`${gi}-${ii}-c`} className="gantt-bar cycle" style={{left:cl+'%',width:cw+'%'}} title={`Curado · ${xh.toFixed(2)} h`}>{xh/maxH>0.025&&'curado'}</div>];
+                      }
+                      return out;
+                    }))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="card" style={{padding:0,overflow:'hidden',marginBottom:30}}>
+          <div style={{padding:'14px 22px',borderBottom:'1px solid var(--border)',background:'var(--surface-2)'}}>
+            <b style={{fontSize:13}}>Detalle de asignación · {ops.length} OPs PA</b>
+          </div>
+          <div style={{maxHeight:350,overflowY:'auto'}}>
+            <table>
+              <thead><tr>
+                <th style={{paddingLeft:22}}>OP</th><th>NV</th><th>Q</th><th>Tipo · Pieles</th><th>Cliente</th>
+                <th style={{textAlign:'right'}}>M² total</th><th style={{textAlign:'right'}}>Fabric.</th>
+                <th style={{textAlign:'right'}}>Pendiente</th><th>Asignación</th>
+              </tr></thead>
+              <tbody>
+                {ops.map((o,i)=>{
+                  const pct=o.qOp>0?(o.qTerm/o.qOp*100):0;
+                  const tc=o.q==='PurP'?'plan-tag-purp':'plan-tag-polp';
+                  return(
+                    <tr key={i}>
+                      <td style={{paddingLeft:22}} className="mono">{o.op}</td>
+                      <td className="mono">{o.nv==='STK'?<span style={{color:'var(--text-3)',fontSize:9.5}}>STOCK</span>:o.nv}</td>
+                      <td><span className={`plan-prensa-tag ${tc}`} style={{margin:0}}>{o.q}</span></td>
+                      <td style={{fontSize:10.5}}>{o.tipo} · {o.pieles}</td>
+                      <td style={{maxWidth:140,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',color:'var(--text-3)'}}>{o.cliente}</td>
+                      <td style={{textAlign:'right'}} className="mono">{Math.round(o.qOp)}</td>
+                      <td style={{textAlign:'right',color:pct>0?'var(--purp)':'var(--text-3)'}} className="mono">{o.qTerm>0?`${Math.round(o.qTerm)} (${pct.toFixed(0)}%)`:'—'}</td>
+                      <td style={{textAlign:'right',color:'var(--coral)',background:'var(--warn-bg)',fontWeight:700}} className="mono">{Math.round(o.m2)}</td>
+                      <td style={{fontSize:10.5}}>
+                        <b>{o.assignedTo?.length>0?o.assignedTo.join('+'):'—'}</b>
+                        {o.assignedTo?.length>1&&<span style={{fontSize:9,color:'var(--text-3)',marginLeft:4}}>✂ split</span>}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  /* ── Gráfico diario ── */
+  const GraficoDiario = () => {
+    const ref=useRef(null), ch=useRef(null);
+    useEffect(()=>{
+      if(!ref.current||!window.Chart) return;
+      const ok=produccionDiaria?.datos?.length>0;
+      const meta=produccionDiaria.meta||1000;
+      const labels=ok?produccionDiaria.datos.map(d=>d.fecha):['4/5','5/5','6/5','7/5','8/5','11/5','12/5'];
+      const vals  =ok?produccionDiaria.datos.map(d=>d.produccion):[650,400,850,810,500,750,1000];
+      const glp={id:'glp',afterDraw:(c)=>{
+        const{ctx,chartArea:{left,right},scales:{y}}=c;
+        const yv=y.getPixelForValue(meta);
+        if(yv>=c.chartArea.top&&yv<=c.chartArea.bottom){
+          ctx.save();ctx.strokeStyle='#e11d48';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
+          ctx.beginPath();ctx.moveTo(left,yv);ctx.lineTo(right,yv);ctx.stroke();
+          ctx.fillStyle='#e11d48';ctx.font='bold 10px Helvetica';ctx.fillText('META '+meta,right-65,yv-8);
+          ctx.restore();
+        }
+      }};
+      const dataLabelsPlugin={id:'dataLabels',afterDatasetsDraw:(c)=>{
+        const{ctx}=c;
+        c.data.datasets.forEach((ds,di)=>{
+          const meta=c.getDatasetMeta(di);
+          meta.data.forEach((point,i)=>{
+            const val=ds.data[i];
+            if(val===null||val===undefined) return;
+            ctx.save();
+            ctx.font='700 10px Helvetica Neue, Helvetica, sans-serif';
+            ctx.fillStyle='#3B82F6';
+            ctx.textAlign='center';
+            ctx.textBaseline='bottom';
+            ctx.fillText(Math.round(val).toLocaleString('es-CL'), point.x, point.y-8);
+            ctx.restore();
+          });
+        });
+      }};
+      if(ch.current) ch.current.destroy();
+      ch.current=new window.Chart(ref.current,{
+        type:'line',plugins:[glp,dataLabelsPlugin],
+        data:{labels,datasets:[{data:vals,borderColor:'#3B82F6',backgroundColor:'rgba(59,130,246,0.1)',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#fff',pointBorderColor:'#3B82F6',pointBorderWidth:2}]},
+        options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:20}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+' m²'}}},
+          scales:{x:{grid:{display:false},ticks:{color:'var(--text-3)',font:{size:11}}},y:{min:0,max:1500,grid:{color:'var(--border-2)'},ticks:{color:'var(--text-3)',font:{size:11},stepSize:200}}},animation:{duration:800}}
+      });
+      return ()=>{if(ch.current) ch.current.destroy();};
+    },[produccionDiaria]);
+    return (
+      <>
+        <div className="section-title">&gt; PRODUCCION_DIARIA_DEL_MES</div>
+        {!(produccionDiaria?.datos?.length>0)&&<div style={{color:'var(--coral)',marginBottom:10,fontSize:11,fontWeight:'bold'}}>⚠️ Datos de prueba. Publica nueva versión en Apps Script.</div>}
+        <div className="card" style={{height:350,padding:'20px 22px 10px 10px',marginBottom:30}}>
+          <div style={{position:'relative',height:'100%',width:'100%'}}><canvas ref={ref}></canvas></div>
+        </div>
+      </>
+    );
+  };
+
+  /* ── Inventario ── */
+  const renderInv = (label, rows, kpi, color) => {
+    if(!rows||rows.length===0) return <div style={{color:'var(--text-3)',fontSize:12,padding:'12px 0',marginBottom:24}}>Sin datos para {label}.</div>;
+    const f=n=>(n||0).toLocaleString('es-CL',{maximumFractionDigits:1});
+    return (
+      <>
+        <div className="kpi-grid" style={{gridTemplateColumns:'repeat(4,1fr)',marginBottom:14}}>
+          <div className="kpi" style={{borderLeft:`4px solid ${color}`}}>
+            <div className="kpi-label">Stock Físico Total</div>
+            <div className="kpi-value" style={{color,fontSize:26}}>{f(kpi.totalStk)}</div>
+          </div>
+          <div className="kpi" style={{borderLeft:`4px solid ${kpi.totalDisp>=0?'var(--purp)':'var(--coral)'}`}}>
+            <div className="kpi-label">Disponible Total</div>
+            <div className="kpi-value" style={{color:kpi.totalDisp>=0?'var(--purp)':'var(--coral)',fontSize:26}}>{f(kpi.totalDisp)}</div>
+          </div>
+          <div className="kpi" style={{borderLeft:'4px solid #F59E0B'}}>
+            <div className="kpi-label">Disp. Futuro Total</div>
+            <div className="kpi-value" style={{color:'#D97706',fontSize:26}}>{f(kpi.totalFuturo)}</div>
+          </div>
+          <div className="kpi" style={{borderLeft:kpi.dispNeg>0?'4px solid var(--coral)':'4px solid var(--purp)'}}>
+            <div className="kpi-label">Ítems Disp. Negativo</div>
+            <div className="kpi-value" style={{color:kpi.dispNeg>0?'var(--coral)':'var(--purp)',fontSize:26}}>
+              {kpi.dispNeg||0}<span className="kpi-unit">/ {kpi.totalItems||0}</span>
+            </div>
+          </div>
+        </div>
+        <div className="card" style={{padding:0,overflow:'hidden',marginBottom:30}}>
+          <div style={{padding:'14px 22px',borderBottom:'1px solid var(--border)',background:'var(--surface-2)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <b style={{fontSize:13}}>{label}</b>
+            <span style={{fontSize:11,color:'var(--text-3)'}}>{kpi.conStock||0} con stock · <span style={{color:'var(--coral)',fontWeight:700}}>{kpi.sinStock||0} sin stock</span></span>
+          </div>
+          <div style={{maxHeight:420,overflowY:'auto'}}>
+            <table>
+              <thead><tr>
+                <th style={{paddingLeft:22,width:140}}>Código</th><th>Descripción</th>
+                <th style={{textAlign:'right'}}>Stk. Físico</th><th style={{textAlign:'right'}}>Por Entregar</th>
+                <th style={{textAlign:'right'}}>Disponible</th><th style={{textAlign:'right'}}>Por Llegar</th>
+                <th style={{textAlign:'right'}}>Disp. Futuro</th>
+              </tr></thead>
+              <tbody>
+                {rows.map((r,i)=>{
+                  const dn=r.disponible<0, fn=r.disp_futuro<0, ss=r.stk_fisico<=0;
+                  return(
+                    <tr key={i} style={{background:dn?'#FFF5F5':'transparent'}}>
+                      <td style={{paddingLeft:22,fontFamily:'monospace',fontSize:10,color:'var(--text-3)'}}>{r.codigo}</td>
+                      <td style={{maxWidth:280,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',fontSize:11.5,color:ss?'var(--text-3)':'var(--text)'}} title={r.descripcion}>{r.descripcion}</td>
+                      <td style={{textAlign:'right',fontFamily:'monospace',color:ss?'var(--text-3)':'var(--text-2)',fontWeight:ss?400:600}}>{f(r.stk_fisico)}</td>
+                      <td style={{textAlign:'right',fontFamily:'monospace',color:r.por_entregar>0?'var(--coral)':'var(--text-3)'}}>{f(r.por_entregar)}</td>
+                      <td style={{textAlign:'right',fontFamily:'monospace',fontWeight:dn?700:400,color:dn?'var(--coral)':'var(--purp)',background:dn?'#FEE2E2':'transparent'}}>{f(r.disponible)}</td>
+                      <td style={{textAlign:'right',fontFamily:'monospace',color:'var(--text-3)'}}>{f(r.por_llegar)}</td>
+                      <td style={{textAlign:'right',fontFamily:'monospace',fontWeight:fn?700:400,color:fn?'#D97706':'var(--text-2)'}}>{f(r.disp_futuro)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  /* ── WIP Acero ── */
+  const renderWipAcero = () => {
+    const items = wipAcero.items || [];
+    if (items.length === 0) return null;
+
+    const criticos   = items.filter(r => r.urgencia === 'critico').length;
+    const alertas    = items.filter(r => r.urgencia === 'alerta').length;
+    const sinConsumo = items.filter(r => r.urgencia === 'sin_consumo').length;
+
+    const urgColor = (u) => u==='critico'?'#EF4444':u==='alerta'?'#F59E0B':u==='sin_consumo'?'#9CA3AF':'#22C55E';
+    const urgBg    = (u) => u==='critico'?'#FEE2E2':u==='alerta'?'#FEF3C7':u==='sin_consumo'?'#F3F4F6':'#DCFCE7';
+    const urgTxt   = (u) => u==='critico'?'Crítico':u==='alerta'?'Alerta':u==='sin_consumo'?'Sin datos':'OK';
+
+    const fmtMeses = (m) => {
+      if (m === null || m === undefined || isNaN(m)) return '—';
+      if (m < 1) return `${Math.round(m*30)} días`;
+      return `${m.toFixed(1)} meses`;
+    };
+
+    const barPct = (m) => {
+      if (m === null || m === undefined || isNaN(m)) return 0;
+      return Math.min(100, (m / 3) * 100);
+    };
+    const barColor = (u) => urgColor(u);
+
+    return (
+      <>
+        {/* KPIs resumen */}
+        <div className="kpi-grid" style={{gridTemplateColumns:'repeat(3,1fr)', marginBottom:14}}>
+          <div className="kpi" style={{borderLeft:'4px solid var(--acero)'}}>
+            <div className="kpi-label">Aceros con Stock &gt; 0</div>
+            <div className="kpi-value" style={{color:'var(--acero)', fontSize:28}}>{items.length}<span className="kpi-unit">aceros</span></div>
+          </div>
+          <div className="kpi" style={{borderLeft: criticos>0 ? '4px solid #EF4444' : '4px solid var(--purp)'}}>
+            <div className="kpi-label">Críticos ≤ 1 mes</div>
+            <div className="kpi-value" style={{color: criticos>0?'#EF4444':'var(--purp)', fontSize:28}}>
+              {criticos}<span className="kpi-unit">aceros</span>
+            </div>
+          </div>
+          <div className="kpi" style={{borderLeft: alertas>0 ? '4px solid #F59E0B' : '4px solid var(--purp)'}}>
+            <div className="kpi-label">Alerta 1–2 meses</div>
+            <div className="kpi-value" style={{color: alertas>0?'#D97706':'var(--purp)', fontSize:28}}>
+              {alertas}<span className="kpi-unit">aceros</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabla calendario */}
+        <div className="card" style={{padding:0, overflow:'hidden', marginBottom:30}}>
+          <div style={{padding:'14px 22px', borderBottom:'1px solid var(--border)', background:'var(--surface-2)', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+            <b style={{fontSize:13}}>Proyección de Agotamiento · Aceros con Stock</b>
+            <span style={{fontSize:11, color:'var(--text-3)'}}>Ordenado por urgencia</span>
+          </div>
+          <div style={{maxHeight:480, overflowY:'auto'}}>
+            <table>
+              <thead>
+                <tr>
+                  <th style={{paddingLeft:22, width:130}}>Código</th>
+                  <th>Descripción</th>
+                  <th style={{textAlign:'right'}}>Stock Físico (kg)</th>
+                  <th style={{textAlign:'right'}}>Consumo/Mes (kg)</th>
+                  <th style={{textAlign:'center', width:140}}>Duración estimada</th>
+                  <th style={{textAlign:'center', width:120}}>Se agota</th>
+                  <th style={{textAlign:'center', width:80}}>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((r,i) => {
+                  const pct = barPct(r.meses_restantes);
+                  const bc  = barColor(r.urgencia);
+                  return (
+                    <tr key={i} style={{background: r.urgencia==='critico' ? '#FFF5F5' : r.urgencia==='alerta' ? '#FFFBEB' : r.urgencia==='sin_consumo' ? '#F9FAFB' : 'transparent'}}>
+                      <td style={{paddingLeft:22, fontFamily:'monospace', fontSize:10, color:'var(--text-3)'}}>{r.codigo}</td>
+                      <td style={{maxWidth:220, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', fontSize:11.5}} title={r.descripcion}>{r.descripcion}</td>
+                      <td style={{textAlign:'right', fontFamily:'monospace', fontWeight:600}}>{(r.stk_fisico||0).toLocaleString('es-CL',{maximumFractionDigits:1})}</td>
+                      <td style={{textAlign:'right', fontFamily:'monospace', color: r.consumo_mes_kg>0?'var(--text-2)':'var(--text-3)'}}>
+                        {r.consumo_mes_kg > 0 ? (r.consumo_mes_kg).toLocaleString('es-CL',{maximumFractionDigits:1}) : '—'}
+                      </td>
+                      <td style={{paddingRight:12}}>
+                        <div style={{display:'flex', alignItems:'center', gap:8}}>
+                          <div style={{flex:1, height:6, background:'#E5E7EB', borderRadius:3, overflow:'hidden'}}>
+                            <div style={{width:pct+'%', height:'100%', background:bc, borderRadius:3, transition:'width 0.5s'}}/>
+                          </div>
+                          <span style={{fontSize:11, fontWeight:700, color:bc, whiteSpace:'nowrap', minWidth:60, textAlign:'right'}}>
+                            {fmtMeses(r.meses_restantes ?? null)}
+                          </span>
+                        </div>
+                      </td>
+                      <td style={{textAlign:'center', fontFamily:'monospace', fontSize:11, fontWeight:700, color:urgColor(r.urgencia)}}>
+                        {r.fecha_agotamiento || '—'}
+                      </td>
+                      <td style={{textAlign:'center'}}>
+                        <span style={{display:'inline-block', padding:'2px 8px', borderRadius:10, fontSize:9, fontWeight:700,
+                          background:urgBg(r.urgencia||'ok'), color:urgColor(r.urgencia||'ok')}}>
+                          {urgTxt(r.urgencia)}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  /* ════════════ RENDER ════════════ */
+  const ayerV   = m2Ayer.total||0;
+  const ayerCol = ayerV<700?'#EF4444':ayerV<1000?'#F59E0B':'#22C55E';
+  const diffMeta= ayerV-1000;
+
+  return (
+    <main className="main">
+
+      {/* Header */}
+      <div className="page-header">
+        <div>
+          <div className="page-title">Dashboard Producción · Tiempo Real</div>
+          <div style={{fontSize:12,color:'var(--text-3)',marginTop:4}}>Sincronizado: {new Date().toLocaleTimeString('es-CL')}</div>
+        </div>
+        <button className="tweaks-btn" onClick={fetchData}>↻ Actualizar</button>
+      </div>
+
+      {sysError&&<div className="sys-error"><span>⚠️ {sysError}</span><span style={{cursor:'pointer'}} onClick={()=>setSysError(null)}>✖</span></div>}
+      {planError&&<div className="sys-error"><span>⚠️ {planError}</span><span style={{cursor:'pointer'}} onClick={()=>setPlanError(null)}>✖</span></div>}
+
+      {/* ══ VELOCÍMETRO — tope del dashboard ══ */}
+      <div className="section-title">Producción Día Anterior</div>
+      <div style={{display:'grid',gridTemplateColumns:'280px 1fr',gap:20,marginBottom:30,alignItems:'stretch'}}>
+
+        <Velocimetro valor={ayerV} fecha={m2Ayer.fecha} />
+
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gridTemplateRows:'1fr 1fr',gap:16}}>
+          {/* Diferencia vs meta */}
+          <div className="kpi" style={{borderLeft:`4px solid ${ayerCol}`}}>
+            <div className="kpi-label">Diferencia vs Meta (1.000 m²)</div>
+            <div className="kpi-value" style={{color:ayerCol,fontSize:30}}>
+              {diffMeta>=0?'+':''}{diffMeta.toLocaleString('es-CL',{maximumFractionDigits:0})}
+              <span className="kpi-unit">m²</span>
+            </div>
+            <div className="kpi-sub">
+              <b>Resultado:</b>
+              <span style={{color:ayerCol}}>{ayerV>=1000?'Sobre meta ✓':ayerV>=700?'Zona media ◑':'Bajo meta ⚠'}</span>
+            </div>
+          </div>
+          {/* Total día */}
+          <div className="kpi">
+            <div className="kpi-label">Total Producido Ayer</div>
+            <div className="kpi-value" style={{color:ayerCol,fontSize:30}}>
+              {ayerV.toLocaleString('es-CL',{maximumFractionDigits:0})}
+              <span className="kpi-unit">m²</span>
+            </div>
+            <div className="kpi-sub"><b>Fecha:</b><span style={{color:'var(--text-2)',fontWeight:400}}>{m2Ayer.fecha||'—'}</span></div>
+          </div>
+          {/* Zona roja */}
+          <div className="kpi" style={{borderLeft:'4px solid #EF4444'}}>
+            <div className="kpi-label">🔴 Zona Roja · Crítico</div>
+            <div className="kpi-value" style={{color:'#EF4444',fontSize:22}}>0 – 700<span className="kpi-unit">m²</span></div>
+            <div className="kpi-sub"><b>Acción requerida:</b><span style={{color:'#EF4444'}}>Revisión inmediata</span></div>
+          </div>
+          {/* Zona amarilla/verde */}
+          <div className="kpi" style={{borderLeft:'4px solid #22C55E'}}>
+            <div className="kpi-label">🟡 700–1.000 · 🟢 &gt;1.000 m²</div>
+            <div className="kpi-value" style={{color:'#22C55E',fontSize:22}}>Meta<span className="kpi-unit">1.000 m²</span></div>
+            <div className="kpi-sub"><b>Verde:</b><span style={{color:'#15803D'}}>≥ 1.000 m² = cumplido</span></div>
+          </div>
+        </div>
+      </div>
+
+      {/* ══ PSA: Planchas Sin Aislación ══ */}
+      <div className="section-title">Producción PSA · PC4 y Bandejera</div>
+      <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16, marginBottom:30}}>
+
+        {/* Día anterior total */}
+        <div className="kpi" style={{borderLeft:'4px solid #8B5CF6'}}>
+          <div className="kpi-label">PSA Total Día Anterior</div>
+          <div className="kpi-value" style={{color:'#8B5CF6', fontSize:30}}>
+            {(m2PSA.ayer.total||0).toLocaleString('es-CL',{maximumFractionDigits:0})}
+            <span className="kpi-unit">m²</span>
+          </div>
+          <div className="kpi-sub">
+            <b>Fecha:</b>
+            <span style={{color:'var(--text-2)', fontWeight:400}}>{m2PSA.ayer.fecha||'—'}</span>
+          </div>
+        </div>
+
+        {/* Día anterior desglose */}
+        <div className="kpi">
+          <div className="kpi-label">Desglose Día Anterior</div>
+          <div style={{display:'flex', flexDirection:'column', gap:10, marginTop:6}}>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <span style={{fontSize:11, color:'var(--text-3)', fontWeight:600}}>PC4</span>
+              <div style={{display:'flex', alignItems:'baseline', gap:4}}>
+                <span style={{fontSize:24, fontWeight:700, color:'#6366F1', fontFamily:'monospace'}}>
+                  {(m2PSA.ayer.pc4||0).toLocaleString('es-CL',{maximumFractionDigits:0})}
+                </span>
+                <span style={{fontSize:12, color:'var(--text-3)'}}>m²</span>
+              </div>
+            </div>
+            <div style={{height:1, background:'var(--border-2)'}}/>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <span style={{fontSize:11, color:'var(--text-3)', fontWeight:600}}>Bandejera</span>
+              <div style={{display:'flex', alignItems:'baseline', gap:4}}>
+                <span style={{fontSize:24, fontWeight:700, color:'#EC4899', fontFamily:'monospace'}}>
+                  {(m2PSA.ayer.bandejera||0).toLocaleString('es-CL',{maximumFractionDigits:0})}
+                </span>
+                <span style={{fontSize:12, color:'var(--text-3)'}}>m²</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Acumulado mes */}
+        <div className="kpi" style={{borderLeft:'4px solid #10b981'}}>
+          <div className="kpi-label">PSA Acumulado Mes</div>
+          <div className="kpi-value" style={{color:'#10b981', fontSize:30}}>
+            {(m2PSA.mes.total||0).toLocaleString('es-CL',{maximumFractionDigits:0})}
+            <span className="kpi-unit">m²</span>
+          </div>
+          <div className="kpi-sub" style={{flexDirection:'column', alignItems:'flex-start', gap:4}}>
+            <div style={{display:'flex', justifyContent:'space-between', width:'100%'}}>
+              <span style={{fontSize:10.5}}>PC4</span>
+              <b style={{color:'#6366F1'}}>{(m2PSA.mes.pc4||0).toLocaleString('es-CL',{maximumFractionDigits:0})} m²</b>
+            </div>
+            <div style={{display:'flex', justifyContent:'space-between', width:'100%'}}>
+              <span style={{fontSize:10.5}}>Bandejera</span>
+              <b style={{color:'#EC4899'}}>{(m2PSA.mes.bandejera||0).toLocaleString('es-CL',{maximumFractionDigits:0})} m²</b>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Facturación */}
+      <div className="section-title">Estado de Facturación Comercial</div>
+      <div className="kpi-grid grid-2">
+        <div className="kpi" style={{borderLeft:'4px solid #10b981'}}>
+          <div>
+            <div className="kpi-label">Facturado Neto (Mes Actual)</div>
+            <div className="kpi-value" style={{color:'#10b981'}}>
+              <span style={{fontSize:22,marginRight:6,color:'var(--text-3)'}}>$</span>
+              {fmtM(facturacion.facturado)}<span className="kpi-unit" style={{color:'#10b981'}}>M$</span>
+            </div>
+          </div>
+        </div>
+        <div className="kpi" style={{borderLeft:'4px solid var(--coral)'}}>
+          <div>
+            <div className="kpi-label">Por Facturar (Total Acumulado)</div>
+            <div className="kpi-value" style={{color:'var(--coral)'}}>
+              <span style={{fontSize:22,marginRight:6,color:'var(--text-3)'}}>$</span>
+              {fmtM(facturacion.porFacturar)}<span className="kpi-unit" style={{color:'var(--coral)'}}>M$</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* KPIs PA */}
+      <div className="section-title">Indicadores Generales (Planchas Con Aislación)</div>
+      <div className="kpi-grid grid-4">
+        <div className="kpi">
+          <div><div className="kpi-label">Por Producir PA</div><div className="kpi-value">{fmt(totalPendientePA)}<span className="kpi-unit">M²</span></div></div>
+          <div className="kpi-sub"><b>Producido (mes):</b><span>{fmt(totalProducidoPA)} M²</span></div>
+        </div>
+        <div className="kpi" style={{borderLeft:'4px solid #3B82F6'}}>
+          <div><div className="kpi-label">Producción Fin de Semana</div><div className="kpi-value" style={{color:'#3B82F6'}}>{fmt(totalFDS)}<span className="kpi-unit">M²</span></div></div>
+          <div className="kpi-sub"><b>Sáb y Dom</b><span style={{color:'#3B82F6'}}>Acumulado</span></div>
+        </div>
+        <div className="kpi"><div className="kpi-label">Órdenes Pendientes</div><div className="kpi-value">{cantOps}<span className="kpi-unit">OP</span></div></div>
+        <div className="kpi"><div className="kpi-label">Notas de Venta Pendientes</div><div className="kpi-value">{cantNvs}<span className="kpi-unit">NV</span></div></div>
+      </div>
+
+      {/* KPIs PSA */}
+      <div className="section-title">Indicadores Planchas Sin Aislación (PSA)</div>
+      <div className="kpi-grid grid-3">
+        <div className="kpi">
+          <div><div className="kpi-label">Por Producir PSA (Ambas Bodegas)</div><div className="kpi-value">{fmt(totalPendientePsa)}<span className="kpi-unit">M²</span></div></div>
+          <div className="kpi-sub"><b>Producido (mes):</b><span>{fmt(totalProducidoPsa)} M²</span></div>
+        </div>
+        <div className="kpi">
+          <div><div className="kpi-label">Por Producir PSA (Terminados)</div><div className="kpi-value">{fmt(pendPsaTerm)}<span className="kpi-unit">M²</span></div></div>
+          <div className="kpi-sub"><b>Producido (mes):</b><span>{fmt(prodPsaTerm)} M²</span></div>
+        </div>
+        <div className="kpi">
+          <div><div className="kpi-label">Por Producir PSA (Insumos)</div><div className="kpi-value">{fmt(pendPsaIns)}<span className="kpi-unit">M²</span></div></div>
+          <div className="kpi-sub"><b>Producido (mes):</b><span>{fmt(prodPsaIns)} M²</span></div>
+        </div>
+      </div>
+
+      {/* Avance prensas */}
+      <div className="section-title">Avance por Prensa</div>
+      <div className="prensa-grid">
+        {metrics.map((m,i)=>(
+          <div key={i} className="prensa-card" style={{borderTop:`4px solid ${m.cumple?'var(--purp)':'var(--coral)'}`}}>
+            <div className="flex between center-y">
+              <b>{m.name}</b>
+              <span className="mono" style={{fontSize:16,fontWeight:700,color:m.cumple?'var(--purp)':'var(--coral)'}}>{(Number(m.valor)||0).toLocaleString('es-CL')} m²</span>
+            </div>
+            <div className="prensa-bar"><div className="prensa-bar-fill" style={{width:'70%',background:m.cumple?'var(--purp)':'var(--coral)'}}></div></div>
+          </div>
+        ))}
+      </div>
+
+      {/* Rendimiento por hora */}
+      {rend.rows&&rend.rows.length>0&&(
+        <>
+          <div className="section-title">
+            Rendimiento por Hora · Meta vs Real
+            <span className="plan-balance-kpi plan-balance-good">Turno {rend.shiftStart} → {rend.now} · {rend.hoursElapsed.toFixed(1)} h</span>
+          </div>
+          <div className="rend-grid">
+            {rend.rows.map((r,i)=>{
+              const pct=Math.min(150,r.pct);
+              const tpos=r.target_per_h>0&&r.real_per_h>0?Math.min(100,(r.target_per_h/Math.max(r.real_per_h,r.target_per_h))*100):100;
+              const col=r.cumple?'var(--purp)':r.pct>=70?'#F59E0B':'var(--coral)';
+              return(
+                <div key={i} className="rend-card" style={{borderTop:`4px solid ${col}`}}>
+                  <div className="rend-name">{r.name}</div>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginTop:8}}>
+                    <div><span className="rend-real mono" style={{color:col}}>{r.real_per_h.toFixed(1)}</span><span className="rend-unit">m²/h</span></div>
+                  </div>
+                  <div className="rend-target"><b>Meta:</b> {r.target_per_h.toFixed(1)} m²/h</div>
+                  {r.real_per_h>0&&<span className={`rend-diff ${r.diff_per_h>=0?'up':'dn'}`}>{r.diff_per_h>=0?'▲':'▼'} {Math.abs(r.diff_per_h).toFixed(1)} ({r.pct.toFixed(0)}%)</span>}
+                  <div className="rend-bar">
+                    <div className="rend-bar-fill" style={{width:Math.min(100,pct*(r.real_per_h/Math.max(r.real_per_h,r.target_per_h,0.1)))+'%',background:col}}></div>
+                    <div className="rend-bar-target" style={{left:tpos+'%'}}></div>
+                  </div>
+                  <div className="rend-acum">
+                    <span>Real: <b className="mono" style={{color:'var(--text-2)'}}>{Math.round(r.real_m2).toLocaleString('es-CL')} m²</b></span>
+                    <span>Esp: <b className="mono" style={{color:'var(--text-3)'}}>{Math.round(r.target_total).toLocaleString('es-CL')}</b></span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {renderPlan()}
+      <GraficoDiario />
+
+      <div className="section-title">WIP: Trabajo en Proceso (Planta)</div>
+      <WipTable title="Planchas Con Aislación (PA) — Pendientes"  data={wip.conAislacion} />
+      <WipTable title="Planchas Sin Aislación (PSA) — Pendientes" data={wip.sinAislacion} />
+
+      <div className="section-title">
+        WIP Acero · Proyección de Agotamiento
+        {(wipAcero.items||[]).filter(r=>r.urgencia==='critico').length > 0 && (
+          <span style={{background:'#FEE2E2',color:'#B91C1C',fontWeight:700,fontSize:10,padding:'3px 10px',borderRadius:8}}>
+            ⚠ {(wipAcero.items||[]).filter(r=>r.urgencia==='critico').length} aceros críticos (≤ 1 mes)
+          </span>
+        )}
+      </div>
+      {renderWipAcero()}
+
+      <div className="section-title">
+        Inventario de Insumos · Aceros
+        {inventario.kpiAcero?.dispNeg>0&&<span style={{background:'#FEE2E2',color:'var(--coral)',fontWeight:700,fontSize:10,padding:'3px 10px',borderRadius:8}}>⚠ {inventario.kpiAcero.dispNeg} ítems negativos</span>}
+      </div>
+      {renderInv("Aceros — Stock detallado", inventario.acero, inventario.kpiAcero||{}, 'var(--acero)')}
+
+      <div className="section-title">
+        Inventario de Insumos · Poliestireno
+        {inventario.kpiPol?.dispNeg>0&&<span style={{background:'#FEF3C7',color:'#92400E',fontWeight:700,fontSize:10,padding:'3px 10px',borderRadius:8}}>⚠ {inventario.kpiPol.dispNeg} ítems negativos</span>}
+      </div>
+      {renderInv("Poliestireno (POL) — Stock detallado", inventario.pol, inventario.kpiPol||{}, 'var(--pol)')}
+
+      <footer style={{textAlign:'center',marginTop:40,color:'var(--text-3)',fontSize:11}}>Polchile Dashboard · v7.9</footer>
+    </main>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

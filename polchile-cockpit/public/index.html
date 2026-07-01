@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Polchile · Comercial Cockpit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <style>
+    #login-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:linear-gradient(135deg,#0b0f17 0%,#1a2235 50%,#0b0f17 100%); gap:14px; }
+    .login-logo { width:52px; height:52px; background:linear-gradient(135deg,#5b8cff,#a855f7); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:800; color:white; margin-bottom:8px; }
+    .login-title { color:#e6ebf2; font-family:'Inter',sans-serif; font-size:22px; font-weight:700; letter-spacing:1px; }
+    .login-sub { color:#6c7689; font-family:'Inter',sans-serif; font-size:13px; margin-top:-6px; margin-bottom:8px; }
+    .login-input { padding:11px 16px; width:300px; border-radius:8px; border:1px solid #2a3244; background:#161c27; color:#e6ebf2; font-size:14px; font-family:'Inter',sans-serif; outline:none; transition:border-color 0.2s; }
+    .login-input:focus { border-color:#5b8cff; }
+    .login-input::placeholder { color:#4a5365; }
+    .login-btn { padding:11px 0; width:300px; background:linear-gradient(135deg,#5b8cff,#3b5fd9); color:white; border:none; border-radius:8px; font-size:14px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; transition:opacity 0.2s; margin-top:4px; }
+    .login-btn:hover { opacity:0.88; }
+    .login-error { color:#ef4444; font-size:12px; font-family:'Inter',sans-serif; min-height:16px; }
+    .login-footer { color:#4a5365; font-size:11px; font-family:'Inter',sans-serif; margin-top:12px; }
+  </style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-logo">P</div>
+  <div class="login-title">POLCHILE</div>
+  <div class="login-sub">Comercial Cockpit · Acceso restringido</div>
+  <input id="inp-email"    class="login-input" type="email"    placeholder="Correo corporativo" autocomplete="email"/>
+  <input id="inp-password" class="login-input" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter') doLogin()"/>
+  <button class="login-btn" onclick="doLogin()">Ingresar</button>
+  <span id="login-error" class="login-error"></span>
+  <div class="login-footer">Polchile SpA · Uso interno exclusivo</div>
+</div>
+
+<div id="root" style="display:none;"></div>
+
+<!-- ══ DATA ══════════════════════════════════════════════════ -->
+<script src="data.js"></script>
+
+<!-- ══ FIREBASE ══════════════════════════════════════════════ -->
+<script>
+  firebase.initializeApp({
+    apiKey:            "AIzaSyBE4vPqxZcc6LTIsRDqLqFVjNDa5FM-gxg",
+    authDomain:        "polchile-cockpit.firebaseapp.com",
+    projectId:         "polchile-cockpit",
+    storageBucket:     "polchile-cockpit.firebasestorage.app",
+    messagingSenderId: "745084909262",
+    appId:             "1:745084909262:web:09aede3c95dd6ba8bf429f"
+  });
+  const APPS_SCRIPT_URL = 'https://script.google.com/a/macros/polchile.cl/s/AKfycbyZnxhHco_1WgiF0h4HKciBiL9ikHtcHgCyBd334gs/exec';
+
+  async function doLogin() {
+    const email = document.getElementById('inp-email').value.trim();
+    const pass  = document.getElementById('inp-password').value;
+    const errEl = document.getElementById('login-error');
+    errEl.textContent = '';
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, pass);
+    } catch(e) {
+      errEl.textContent = 'Correo o contraseña incorrectos.';
+    }
+  }
+
+  firebase.auth().onAuthStateChanged(async user => {
+    if (user) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('root').style.display = 'block';
+      if (window.__renderApp) window.__renderApp(null, user.email);
+      try {
+        const res     = await fetch(`${APPS_SCRIPT_URL}?action=data`);
+        const payload = await res.json();
+        if (window.__applyPayload) window.__applyPayload(payload);
+        if (window.__renderApp)    window.__renderApp(payload, user.email);
+      } catch(err) {
+        console.error('Error cargando datos:', err);
+        if (window.__renderApp) window.__renderApp(null, user.email);
+      }
+    } else {
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('root').style.display = 'none';
+    }
+  });
+</script>
+
+<script type="text/babel">
+/* global React, ReactDOM */
+const { useState, useMemo } = React;
+const D = window.PCH;
+
+// ============================================================
+// HELPERS
+// ============================================================
+const fmt = (n, dec=0) => {
+  if (n == null || isNaN(n)) return '—';
+  return n.toLocaleString('es-CL', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+};
+const fmtM        = (n, dec=1) => fmt(n, dec);
+const fmtPct      = (n, dec=0) => (n>=0?'+':'') + fmt(n, dec) + '%';
+const fmtPctSimple= (n, dec=0) => fmt(n, dec) + '%';
+
+const Delta = ({ v, suffix='%' }) => {
+  const cls   = v > 0 ? 'up' : v < 0 ? 'down' : 'flat';
+  const arrow = v > 0 ? '▲' : v < 0 ? '▼' : '–';
+  return <span className={'delta ' + cls}>{arrow} {Math.abs(v).toFixed(1)}{suffix}</span>;
+};
+
+// ============================================================
+// TOPBAR
+// ============================================================
+function Topbar({ tab, setTab, scenario, setScenario, userEmail, onLogout }) {
+  const tabs = [
+    { id:'exec',     label:'Resumen Ejecutivo' },
+    { id:'daily',    label:'Operativa Diaria'  },
+    { id:'team',     label:'Equipo Comercial'  },
+    { id:'glosario', label:'Glosario y Fuentes'},
+  ];
+  const initials = (userEmail || '').split('@')[0].slice(0,2).toUpperCase();
+  return (
+    <div className="topbar">
+      <div className="brand">
+        <div className="brand-mark">P</div>
+        <div className="brand-name">POLCHILE <span>Comercial Cockpit</span></div>
+      </div>
+      <div className="tabs">
+        {tabs.map(t => (
+          <button key={t.id} className={'tab '+(tab===t.id?'active':'')} onClick={() => setTab(t.id)}>
+            <span className="dot"></span>{t.label}
+          </button>
+        ))}
+      </div>
+      <div className="topbar-right">
+        <div className="scenario-pill">
+          {['pesimista','base','optimista'].map(s => (
+            <button key={s} className={scenario===s?'active':''} onClick={() => setScenario(s)}>
+              {s==='pesimista'?'PES -20%':s==='base'?'BASE':'OPT +20%'}
+            </button>
+          ))}
+        </div>
+        <div className="live-status">
+          <span className="live-dot"></span>
+          <span>Manager · GHL</span>
+          <span className="text-3">· En vivo</span>
+        </div>
+        <div className="user-chip">
+          <div className="avatar">{initials}</div>
+          <div>
+            <div className="text-1 fw-6">{userEmail || 'Usuario'}</div>
+            <div className="text-3 fs-10">Polchile SpA</div>
+          </div>
+        </div>
+        <button className="logout-btn" onClick={onLogout}>Salir</button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// RIBBON
+// ============================================================
+function Ribbon() {
+  const fecha           = new Date();
+  const diasSemana      = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const currentMonthIdx = fecha.getMonth();
+  const txtHoy          = `${diasSemana[fecha.getDay()]} ${fecha.getDate()} ${window.PCH.MESES[currentMonthIdx]} ${fecha.getFullYear()}`;
+  const totalDias       = new Date(fecha.getFullYear(), currentMonthIdx+1, 0).getDate();
+  const avanceMes       = Math.round((fecha.getDate() / totalDias) * 100);
+  const txtPeriodo      = `${window.PCH.MESES_LARGO[currentMonthIdx]} ${fecha.getFullYear()} · día ${fecha.getDate()} de ${totalDias}`;
+  const isLoading       = window.PCH.REAL_YTD === undefined;
+  const ytdFacturado    = isLoading ? 0 : window.PCH.REAL_YTD;
+  const presupArray     = window.PCH.presupMensual('base');
+  let   ytdPresupuesto  = 0;
+  for (let i=0; i<=currentMonthIdx; i++) ytdPresupuesto += presupArray[i];
+  const cumplYTD    = ytdPresupuesto > 0 ? (ytdFacturado / ytdPresupuesto) * 100 : 0;
+  const badgeColor  = cumplYTD >= 100 ? 'green' : cumplYTD >= 85 ? 'amber' : 'red';
+  return (
+    <div className="ribbon">
+      <div className="ribbon-item"><span className="label">Hoy:</span><span className="fw-6">{txtHoy}</span></div>
+      <div className="ribbon-divider"></div>
+      <div className="ribbon-item"><span className="label">Período:</span><span className="fw-6">{txtPeriodo}</span></div>
+      <div className="ribbon-divider"></div>
+      <div className="ribbon-item"><span className="label">Avance mes:</span><span className="fw-6">{avanceMes}%</span></div>
+      <div className="ribbon-divider"></div>
+      <div className="ribbon-item"><span className="label">YTD facturado:</span><span className="fw-6 mono">{isLoading ? '...' : fmtM(ytdFacturado)} M$</span></div>
+      <div className="ribbon-divider"></div>
+      <div className="ribbon-item"><span className="label">YTD presupuesto:</span><span className="fw-6 mono">{fmtM(ytdPresupuesto)} M$</span></div>
+      <div className="ribbon-divider"></div>
+      <div className="ribbon-item"><span className="label">Cumplimiento YTD:</span><span className={`badge ${badgeColor}`}>{fmtPctSimple(cumplYTD,1)}</span></div>
+      <div style={{marginLeft:'auto'}} className="ribbon-item">
+        <span className="status-dot sd-warn"></span>
+        <span className="text-2">6 alertas activas</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// MINI SVG CHARTS
+// ============================================================
+function Sparkline({ data, color='#5b8cff', height=40, width=140, fill=true }) {
+  const max   = Math.max(...data, 1);
+  const min   = Math.min(...data, 0);
+  const range = max - min || 1;
+  const pts   = data.map((v,i) => [(i/(data.length-1))*width, height-((v-min)/range)*height]);
+  const path  = pts.map((p,i) => (i===0?'M':'L')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const area  = path + ` L ${width} ${height} L 0 ${height} Z`;
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" style={{width:'100%',height}}>
+      {fill && <path d={area} fill={color} fillOpacity={0.12}/>}
+      <path d={path} fill="none" stroke={color} strokeWidth={1.5}/>
+    </svg>
+  );
+}
+
+// ============================================================
+// KPI STRIP
+// ============================================================
+function KpiStrip() {
+  const k        = window.PCH.KPI_MES;
+  const mesIdx   = new Date().getMonth();
+  const nombreMes= window.PCH.MESES_LARGO[mesIdx];
+  const cumpl    = k.presupuesto > 0 ? k.facturado / k.presupuesto * 100 : 0;
+  const cumplProy= k.presupuesto > 0 ? k.forecast_mes / k.presupuesto * 100 : 0;
+  const diaHoy   = new Date().getDate();
+  const diasHab  = Math.floor(diaHoy * (21/30));
+  const diasRest = Math.max(1, 21 - diasHab);
+  const runRateReq = Math.max(0, (k.presupuesto - k.facturado) / diasRest);
+  return (
+    <div className="kpi-strip">
+      <div className="kpi-cell">
+        <div className="kpi-label uppercase">Presupuesto {nombreMes}</div>
+        <div className="kpi-value mono">{fmtM(k.presupuesto)}<span className="unit">M$</span></div>
+        <div className="kpi-meta"><span className="text-3">Diario req.</span><span className="mono fw-6">{fmtM(runRateReq)}M$</span></div>
+        <div className="kpi-bar"><div style={{width:'100%'}}></div></div>
+      </div>
+      <div className="kpi-cell">
+        <div className="kpi-label">Facturado MTD</div>
+        <div className="kpi-value mono">{fmtM(k.facturado)}<span className="unit">M$</span></div>
+        <div className="kpi-meta"><span className="badge amber">{fmtPctSimple(cumpl)}</span><span className="text-3">vs presup.</span></div>
+        <div className="kpi-bar warn"><div style={{width:Math.min(cumpl,100)+'%'}}></div></div>
+      </div>
+      <div className="kpi-cell">
+        <div className="kpi-label">NV Emitidas MTD</div>
+        <div className="kpi-value mono">{fmtM(k.nv)}<span className="unit">M$</span></div>
+        <div className="kpi-meta"><span className="text-3">Backlog NV→Fact</span><span className="mono fw-6">{fmtM(k.backlog_nv)}M$</span></div>
+        <div className="kpi-bar"><div style={{width:Math.min(k.presupuesto>0?k.nv/k.presupuesto*100:0,100)+'%'}}></div></div>
+      </div>
+      <div className="kpi-cell">
+        <div className="kpi-label">Cotizado MTD</div>
+        <div className="kpi-value mono">{fmtM(k.cotizado)}<span className="unit">M$</span></div>
+        <div className="kpi-meta"><span className="badge blue">Conv. {k.conv_cot_nv}%</span><span className="text-3">→ NV</span></div>
+        <div className="kpi-bar"><div style={{width:'92%',background:'var(--info)'}}></div></div>
+      </div>
+      <div className="kpi-cell">
+        <div className="kpi-label">Forecast Cierre Mes</div>
+        <div className="kpi-value mono">{fmtM(k.forecast_mes)}<span className="unit">M$</span></div>
+        <div className="kpi-meta"><span className={`badge ${cumplProy>=100?'green':cumplProy>=85?'amber':'red'}`}>{fmtPctSimple(cumplProy)}</span><span className="text-3">proy.</span></div>
+        <div className="kpi-bar bad"><div style={{width:Math.min(cumplProy,100)+'%'}}></div></div>
+      </div>
+      <div className="kpi-cell">
+        <div className="kpi-label">Pipeline Ponderado</div>
+        <div className="kpi-value mono">{fmtM(window.PCH.FORECAST_CRM_PONDERADO)}<span className="unit">M$</span></div>
+        <div className="kpi-meta"><span className="text-3">Bruto</span><span className="mono fw-6">{fmtM(window.PCH.PIPELINE_CRM.reduce((a,e)=>a+e.monto,0))}M$</span></div>
+        <div className="kpi-bar good"><div style={{width:'78%'}}></div></div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// FAMILIAS YTD
+// ============================================================
+function FamiliasYTD() {
+  const data = window.PCH.FAMILIAS_MONTO_YTD || [];
+  if (!data.length) return <div className="text-3 fs-11 mt-2">Sin datos de familias disponibles.</div>;
+  const totalNeto   = data.reduce((a,f) => a + f.monto, 0);
+  const totalCto    = data.reduce((a,f) => a + (f.cto||0), 0);
+  const margenTotal = totalNeto > 0 ? ((totalNeto-totalCto)/totalNeto*100) : 0;
+  const mColorTotal = margenTotal>=40?'var(--positive)':margenTotal>=30?'var(--warn)':'var(--negative)';
+  return (
+    <table className="tbl" style={{fontSize:11}}>
+      <thead><tr>
+        <th>FAMILIA</th><th className="num">NETO M$</th><th className="num">COSTO M$</th>
+        <th className="num">MARGEN M$</th><th className="num">MARGEN %</th>
+        <th className="num">PRESUP. %</th><th className="num">Δ MARGEN</th><th className="num">% TOTAL</th>
+      </tr></thead>
+      <tbody>
+        {data.map((f,i) => {
+          const cto    = typeof f.cto         === 'number' ? f.cto         : 0;
+          const margen = typeof f.margen       === 'number' ? f.margen       : 0;
+          const presup = typeof f.margenPresup === 'number' ? f.margenPresup : 0;
+          const delta  = presup > 0 ? margen - presup : null;
+          const pct    = totalNeto > 0 ? (f.monto/totalNeto*100) : 0;
+          const margenM= f.monto - cto;
+          const mColor = margen>=40?'var(--positive)':margen>=30?'var(--warn)':'var(--negative)';
+          return (
+            <tr key={i}>
+              <td className="fw-6" style={{maxWidth:200,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}} title={f.fam}>{f.fam}</td>
+              <td className="num mono">{fmtM(f.monto)}</td>
+              <td className="num mono text-3">{fmtM(cto)}</td>
+              <td className="num mono fw-6" style={{color:mColor}}>{fmtM(margenM)}</td>
+              <td className="num mono fw-6" style={{color:mColor}}>{margen.toFixed(1)}%</td>
+              <td className="num mono text-3">{presup>0?presup.toFixed(1)+'%':'—'}</td>
+              <td className="num mono">
+                {delta!==null
+                  ? <span style={{color:delta>=0?'var(--positive)':'var(--negative)'}}>{delta>=0?'+':''}{delta.toFixed(1)} pp</span>
+                  : <span className="text-3">—</span>}
+              </td>
+              <td className="num mono text-3">{pct.toFixed(1)}%</td>
+            </tr>
+          );
+        })}
+      </tbody>
+      <tfoot>
+        <tr className="total">
+          <td>TOTAL</td>
+          <td className="num mono">{fmtM(totalNeto)}</td>
+          <td className="num mono">{fmtM(totalCto)}</td>
+          <td className="num mono fw-6" style={{color:mColorTotal}}>{fmtM(totalNeto-totalCto)}</td>
+          <td className="num mono fw-6" style={{color:mColorTotal}}>{margenTotal.toFixed(1)}%</td>
+          <td className="num mono text-3">—</td><td className="num mono text-3">—</td>
+          <td className="num mono text-3">100.0%</td>
+        </tr>
+      </tfoot>
+    </table>
+  );
+}
+
+// ============================================================
+// MONTHLY BARS
+// ============================================================
+function MonthlyBars() {
+  const presup  = window.PCH.presupMensual('base');
+  const real    = window.PCH.REAL_2026.facturado;
+  const real25  = window.PCH.REAL_2025_FACTURADO;
+  const mesActual = new Date().getMonth();
+  return (
+    <div>
+      <svg viewBox="0 0 1200 220" style={{width:'100%',height:220,overflow:'visible'}}>
+        {[0,0.25,0.5,0.75,1].map(g => (
+          <g key={g}>
+            <line x1={40} x2={1200} y1={20+(180*(1-g))} y2={20+(180*(1-g))} stroke="#1f2734" strokeDasharray="2,3"/>
+            <text x={2} y={24+(180*(1-g))} fontSize="9" fill="#6c7689">{Math.round(700*g)}</text>
+          </g>
+        ))}
+        {presup.map((p,i) => {
+          const x   = 50 + i*96;
+          const r26 = real[i]   || 0;
+          const r25 = real25[i] || 0;
+          const max = 700;
+          const hP  = p/max*180; const hR = r26/max*180; const hY = r25/max*180;
+          const isPast    = i < mesActual;
+          const isCurrent = i === mesActual;
+          return (
+            <g key={i}>
+              <rect x={x}    y={20+180-hY} width={20} height={hY} fill="#64748b" rx={2}/>
+              <rect x={x+22} y={20+180-hP} width={20} height={hP} fill="#1e40af" rx={2}/>
+              {(isPast||isCurrent) && <rect x={x+44} y={20+180-hR} width={20} height={hR} fill={isCurrent?'#f59e0b':'#3b82f6'} rx={2}/>}
+              <text x={x+32} y={215} fontSize="10" fill="#aab3c2" textAnchor="middle">{window.PCH.MESES[i]}</text>
+              {(isPast||isCurrent)&&r26>0&&<text x={x+32} y={20+180-Math.max(hR,hP)-4} fontSize="9" fill="#e6ebf2" textAnchor="middle" fontWeight="600">{Math.round(r26/p*100)}%</text>}
+            </g>
+          );
+        })}
+      </svg>
+      <div className="flex gap-3 fs-11 mt-2" style={{justifyContent:'center'}}>
+        <span><span style={{display:'inline-block',width:10,height:10,background:'#64748b',borderRadius:2,marginRight:4}}></span>Real 2025</span>
+        <span><span style={{display:'inline-block',width:10,height:10,background:'#1e40af',borderRadius:2,marginRight:4}}></span>Presup. 2026</span>
+        <span><span style={{display:'inline-block',width:10,height:10,background:'#3b82f6',borderRadius:2,marginRight:4}}></span>Real 2026</span>
+        <span><span style={{display:'inline-block',width:10,height:10,background:'#f59e0b',borderRadius:2,marginRight:4}}></span>Mes actual</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// MIX PRODUCTOS
+// ============================================================
+function MixProductos() {
+  const data = window.PCH.MIX_FAMILIA || [];
+  if (!data.length) return <div className="card"><div className="text-center text-3 mt-4">Esperando datos...</div></div>;
+  return (
+    <div className="card">
+      <div className="card-head"><div className="card-title uppercase">Mix de Productos · Margen Real vs Presupuestado</div></div>
+      <table className="tbl" style={{fontSize:11}}>
+        <thead><tr>
+          <th>FAMILIA</th><th className="num">PRESUP. %</th><th className="num">REAL %</th>
+          <th className="num">Δ PP</th><th>DISTRIB.</th>
+          <th className="num">MRG REAL</th><th className="num">MRG PRESUP.</th><th className="num">Δ MRG</th>
+        </tr></thead>
+        <tbody>
+          {data.map((r,i) => {
+            const p_pct=typeof r.p_pct==='number'?r.p_pct:0;
+            const r_pct=typeof r.r_pct==='number'?r.r_pct:0;
+            const d_pp =typeof r.d_pp ==='number'?r.d_pp :0;
+            const m_real=typeof r.m_real==='number'?r.m_real:0;
+            const m_pre =typeof r.m_pre ==='number'?r.m_pre :0;
+            const m_d   =typeof r.m_d   ==='number'?r.m_d   :0;
+            return (
+              <tr key={i}>
+                <td className="fw-6" style={{maxWidth:120,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}} title={r.fam||'—'}>{r.fam||'—'}</td>
+                <td className="num mono">{p_pct.toFixed(1)}%</td>
+                <td className="num mono">{r_pct.toFixed(1)}%</td>
+                <td className={'num mono '+(d_pp>0?'t-up':d_pp<0?'t-down':'')}>{d_pp>0?'+':''}{d_pp.toFixed(1)}</td>
+                <td><div style={{width:60,height:4,background:'#1f2734',borderRadius:2,position:'relative'}}>
+                  <div style={{position:'absolute',width:Math.min(100,p_pct*2)+'%',height:'100%',background:'#475569',borderRadius:2}}></div>
+                  <div style={{position:'absolute',width:Math.min(100,r_pct*2)+'%',height:'100%',background:'#3b82f6',borderRadius:2,opacity:0.8}}></div>
+                </div></td>
+                <td className="num mono">{m_real.toFixed(1)}%</td>
+                <td className="num mono">{m_pre.toFixed(1)}%</td>
+                <td className={'num mono '+(m_d>0?'t-up':m_d<0?'t-down':'')}>{m_d>0?'+':''}{m_d.toFixed(1)} pp</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ============================================================
+// TOP 10 CLIENTES
+// ============================================================
+function Top10Clientes() {
+  const data = window.PCH.TOP_CLIENTES || [];
+  if (!data.length) return <div className="card"><div className="text-center text-3 mt-4">Esperando datos...</div></div>;
+  const concentracion = data.reduce((a,c) => a+(c.pct||0), 0);
+  return (
+    <div className="card">
+      <div className="flex between mb-3"><div className="card-title uppercase">Top 10 Clientes YTD</div><div className="text-3 fs-10">Concentración Pareto</div></div>
+      {data.map((c,i) => {
+        const valor = typeof c.val==='number'?c.val:0;
+        const pct   = typeof c.pct==='number'?c.pct:0;
+        const nom   = c.n || 'Sin Razón Social';
+        return (
+          <div key={i} className="flex between center-y mb-2" style={{fontSize:11}}>
+            <div className="flex center-y gap-2" style={{width:'60%'}}>
+              <span className="text-3">#{i+1}</span>
+              <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:180}} title={nom}>{nom}</span>
+            </div>
+            <div className="flex center-y gap-2" style={{width:'40%',justifyContent:'flex-end'}}>
+              <span className="badge gray" style={{fontSize:9}}>{c.type||'REC'}</span>
+              <div style={{width:40,height:4,background:'#1f2734',borderRadius:2}}>
+                <div style={{width:(pct*2)+'%',height:'100%',background:'#3b82f6',borderRadius:2}}></div>
+              </div>
+              <span className="fw-6 mono" style={{width:35,textAlign:'right'}}>{valor.toFixed(1)}</span>
+              <span className="text-3 mono" style={{width:30,textAlign:'right'}}>{pct.toFixed(1)}%</span>
+            </div>
+          </div>
+        );
+      })}
+      <div className="mt-3 pt-2 flex between fw-6" style={{borderTop:'1px solid var(--border-soft)',fontSize:11}}>
+        <span className="uppercase text-3">Top 10 % del total</span>
+        <span>{concentracion.toFixed(1)}%</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// ALERTAS + COBRANZAS
+// ============================================================
+function Alertas() {
+  return (
+    <div>
+      {window.PCH.ALERTAS.map((a,i) => (
+        <div key={i} className={'alert-item '+a.tipo}>
+          <div className="alert-icon">{a.icon}</div>
+          <div>
+            <div className="alert-text fs-12">{a.texto}</div>
+            <div className="alert-action mt-1">→ {a.accion}</div>
+          </div>
+          <button className="icon-btn">→</button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Cobranzas() {
+  const backlog = window.PCH.BACKLOG_NV;
+  return (
+    <div>
+      <div className="flex gap-3 mb-3">
+        <div style={{flex:1}}>
+          <div className="text-3 fs-10 uppercase">DSO actual</div>
+          <div className="mono fw-7 fs-16 t-warn">47 días</div>
+          <div className="text-3 fs-10">objetivo: 35</div>
+        </div>
+        <div style={{flex:1}}>
+          <div className="text-3 fs-10 uppercase">Backlog NV→Fact</div>
+          <div className="mono fw-7 fs-16">{backlog!=null?fmtM(backlog):'...'} M$</div>
+          <div className="text-3 fs-10">Vinculado a Manager</div>
+        </div>
+      </div>
+      <div style={{paddingTop:8,borderTop:'1px solid var(--border-soft)'}}>
+        <div className="text-3 fs-10 uppercase mb-2">Aging cobranzas</div>
+        <table className="tbl" style={{fontSize:11}}>
+          <tbody>
+            <tr><td>Por vencer</td><td className="num mono">412,3</td><td className="num"><span className="badge green">62%</span></td></tr>
+            <tr><td>1–30 días</td><td className="num mono">148,7</td><td className="num"><span className="badge blue">22%</span></td></tr>
+            <tr><td>31–60 días</td><td className="num mono">68,1</td><td className="num"><span className="badge amber">10%</span></td></tr>
+            <tr><td>61–90 días</td><td className="num mono">28,4</td><td className="num"><span className="badge amber">4%</span></td></tr>
+            <tr><td>&gt;90 días</td><td className="num mono">14,2</td><td className="num"><span className="badge red">2%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// TAB EJECUTIVO
+// ============================================================
+function ExecTab() {
+  const isLoading = window.PCH.REAL_YTD === undefined;
+  return (
+    <>
+      <KpiStrip/>
+      <div className="section-title" style={{color:'var(--accent)'}}>Estado Operativo · Ventas Full Manager</div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10,marginBottom:10}}>
+        <div className="card" style={{borderLeft:'4px solid #22c55e'}}>
+          <div className="card-head"><div className="card-title">Venta Facturada YTD (FAV−NCV)</div><span className="badge green">YTD Real</span></div>
+          <div className="mono fw-7 fs-16 text-1">{isLoading?'Cargando...':fmtM(window.PCH.REAL_YTD)+' M$'}</div>
+        </div>
+        <div className="card" style={{borderLeft:'4px solid #6366f1'}}>
+          <div className="card-head"><div className="card-title">Notas de Venta YTD</div><span className="badge blue">NV Emitidas</span></div>
+          <div className="mono fw-7 fs-16 text-1">{isLoading?'Cargando...':fmtM(window.PCH.KPI_MES.nvYTD||0)+' M$'}</div>
+        </div>
+        <div className="card" style={{borderLeft:'4px solid #22c55e'}}>
+          <div className="card-head"><div className="card-title">Margen Bruto Real YTD</div><span className="badge green">Costo Promedio</span></div>
+          <div className="mono fw-7 fs-16 text-1">{isLoading?'Cargando...':fmtM(window.PCH.MARGEN_REAL||0)+' M$'}</div>
+        </div>
+      </div>
+
+      <div className="card" style={{borderLeft:'4px solid #f59e0b',marginBottom:20}}>
+        <div className="card-head">
+          <div className="card-title uppercase">Venta por Familia · YTD (CLASE1 desde Manager)</div>
+          <span className="badge amber">M$ CLP</span>
+        </div>
+        <FamiliasYTD/>
+      </div>
+
+      <div className="section-title">Cumplimiento mensual 2026 vs Presupuesto vs 2025</div>
+      <div style={{marginBottom:20}}>
+        <div className="card">
+          <div className="card-head">
+            <div><div className="card-title">Facturación mensual</div><div className="card-sub">Presupuesto vs Real 2026 vs Real 2025 — M$ CLP</div></div>
+            <div className="seg"><button className="on">2026</button><button>YoY</button><button>YTD acum.</button></div>
+          </div>
+          <MonthlyBars/>
+        </div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'2.5fr 1.5fr',gap:10,marginBottom:20}}>
+        <MixProductos/>
+        <Top10Clientes/>
+      </div>
+
+      <div className="section-title">Alertas · Cobranzas</div>
+      <div style={{display:'grid',gridTemplateColumns:'1.5fr 1fr',gap:10}}>
+        <div className="card">
+          <div className="card-head"><div className="card-title">Alertas activas</div><span className="badge red">2 críticas</span></div>
+          <Alertas/>
+        </div>
+        <div className="card">
+          <div className="card-head"><div className="card-title">Cobranzas y Backlog</div></div>
+          <Cobranzas/>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Exponer globales ───────────────────────────────────────
+window.Topbar    = Topbar;
+window.Ribbon    = Ribbon;
+window.KpiStrip  = KpiStrip;
+window.ExecTab   = ExecTab;
+window.Sparkline = Sparkline;
+window.Delta     = Delta;
+window.fmtM      = fmtM;
+window.fmt       = fmt;
+window.fmtPct    = fmtPct;
+window.fmtPctSimple = fmtPctSimple;
+</script>
+<script type="text/babel">
+/* global React */
+const D2 = window.PCH;
+
+// ============================================================
+// TAB 2: OPERATIVA DIARIA
+// ============================================================
+function DailyTab() {
+  const f7 = D2.flow7d || { cotizaciones:{total:0,n:0}, nv:{total:0,n:0}, facturacion:{total:0,n:0} };
+  const fecha          = new Date();
+  const mesesLabels    = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const mesesCortos    = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const diasSemana     = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const mesActualNombre= mesesLabels[fecha.getMonth()];
+  const anioActual     = fecha.getFullYear();
+  const textoHoy       = `${diasSemana[fecha.getDay()]} ${fecha.getDate()} ${mesesCortos[fecha.getMonth()]}`;
+
+  return (
+    <>
+      <window.KpiStrip/>
+
+      <div className="section-title" style={{textTransform:'capitalize'}}>
+        Día a día {mesActualNombre.toLowerCase()} · Run-rate y proyección de cierre
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:10}}>
+        <div className="card">
+          <div className="card-head">
+            <div>
+              <div className="card-title" style={{textTransform:'capitalize'}}>
+                Facturación y NV diarias {mesActualNombre.toLowerCase()} {anioActual}
+              </div>
+              <div className="card-sub">Facturación (azul) vs NV emitidas (verde) · M$ CLP</div>
+            </div>
+            <div className="seg"><button className="on">Diario</button><button>Acum.</button></div>
+          </div>
+          <DailyChart/>
+        </div>
+        <div className="card">
+          <div className="card-head"><div className="card-title" style={{textTransform:'capitalize'}}>Hoy · {textoHoy}</div></div>
+          <HoyCard/>
+        </div>
+      </div>
+
+      <div className="section-title">Cumplimiento semanal · WoW</div>
+      <div style={{display:'grid',gridTemplateColumns:'1.6fr 1fr 1fr',gap:10}}>
+        <div className="card"><div className="card-head"><div className="card-title">Semanas del mes</div></div><Semanas/></div>
+        <div className="card"><div className="card-head"><div className="card-title">Heatmap día x día YTD</div><div className="card-sub">Intensidad = facturación</div></div><Heatmap/></div>
+        <div className="card"><div className="card-head"><div className="card-title">Cierres pendientes hoy</div></div><CierresHoy/></div>
+      </div>
+
+      <div className="section-title">Cotizaciones, NV y Facturación · Últimos 7 días</div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10}}>
+        <div className="card"><FlowCard label="Cotizaciones emitidas" total={(f7.cotizaciones.total/1000000).toFixed(1)+' M$'} n={f7.cotizaciones.n} delta={0} color="#0ea5e9"/></div>
+        <div className="card"><FlowCard label="NV generadas"         total={(f7.nv.total/1000000).toFixed(1)+' M$'}          n={f7.nv.n}          delta={0} color="#f59e0b"/></div>
+        <div className="card"><FlowCard label="Facturación emitida"  total={(f7.facturacion.total/1000000).toFixed(1)+' M$'} n={f7.facturacion.n}  delta={0} color="#22c55e"/></div>
+      </div>
+
+      <div className="section-title">Pipeline CRM y Conversión</div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:20}}>
+        <div className="card">
+          <div className="card-head">
+            <div>
+              <div className="card-title">Etapas del pipeline</div>
+              <div className="card-sub">{D2.PIPELINE_CRM.reduce((a,e)=>a+e.n,0)} oportunidades · {window.fmtM(D2.PIPELINE_CRM.reduce((a,e)=>a+e.monto,0))} M$ bruto</div>
+            </div>
+          </div>
+          <PipelineFunnel/>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          <TasasDeConversion/>
+          <MixPorPilar/>
+        </div>
+      </div>
+
+      <div className="section-title">Movimientos del día · Tiempo real desde Manager + GHL</div>
+      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:10}}>
+        <div className="card tight"><MovTable/></div>
+        <div className="card"><div className="card-head"><div className="card-title">Cotizaciones sin movimiento</div></div><Cotizaciones/></div>
+      </div>
+    </>
+  );
+}
+
+// ============================================================
+// PIPELINE FUNNEL
+// ============================================================
+function PipelineFunnel() {
+  const max = Math.max(...D2.PIPELINE_CRM.map(e=>e.monto), 1);
+  return (
+    <div>
+      {D2.PIPELINE_CRM.map((e,i) => (
+        <div key={i} className="funnel-row">
+          <div><div className="fw-6 text-1 fs-12">{e.etapa}</div><div className="text-3 fs-10">{e.n} oportunidades</div></div>
+          <div className="funnel-bar"><div className={'stage-'+e.colorIdx} style={{width:(e.monto/max*100)+'%'}}>{window.fmtM(e.monto)} M$</div></div>
+          <div className="text-right mono fw-6 fs-12">{e.prob}%</div>
+          <div className="text-3 fs-10 text-right">prob.</div>
+          <div className="text-right mono fw-6 fs-12">{window.fmtM(e.monto*e.prob/100)} M$</div>
+        </div>
+      ))}
+      <div className="flex between mt-2 fs-11" style={{paddingTop:8,borderTop:'1px solid var(--border)'}}>
+        <span className="text-3 uppercase">Total ponderado pipeline</span>
+        <span className="mono fw-7 text-1">{window.fmtM(D2.FORECAST_CRM_PONDERADO)} M$</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// TASAS DE CONVERSIÓN
+// ============================================================
+function TasasDeConversion() {
+  const funnel = [
+    { label:'Lead → Contactado',       val:81, color:'#8b5cf6' },
+    { label:'Contactado → Calificado', val:76, color:'#3b82f6' },
+    { label:'Calificado → Cotizado',   val:83, color:'#06b6d4' },
+    { label:'Cotizado → Negociación',  val:58, color:'#10b981' },
+    { label:'Negociación → NV',        val:64, color:'#22c55e' },
+    { label:'NV → Facturado',          val:96, color:'#84cc16' },
+  ];
+  return (
+    <div className="card">
+      <div className="card-head"><div className="card-title uppercase">Tasas de Conversión</div></div>
+      {funnel.map((f,i) => (
+        <div key={i} className="mb-2">
+          <div className="flex between fs-11 text-2 mb-1"><span>{f.label}</span><span className="fw-6">{f.val}%</span></div>
+          <div style={{height:4,background:'#1f2734',borderRadius:2}}>
+            <div style={{width:f.val+'%',height:'100%',background:f.color,borderRadius:2}}></div>
+          </div>
+        </div>
+      ))}
+      <div className="mt-3 pt-2" style={{borderTop:'1px solid var(--border-soft)',fontSize:11}}>
+        <div className="flex between mb-1"><span className="text-3 uppercase">Win Rate Global</span><span className="fw-6">34%</span></div>
+        <div className="flex between mb-1"><span className="text-3 uppercase">Ciclo Promedio</span><span className="fw-6">28 días</span></div>
+        <div className="flex between mb-1"><span className="text-3 uppercase">Ticket Promedio</span><span className="fw-6">1,8 M$</span></div>
+        <div className="flex between"><span className="text-3 uppercase">Ticket Mediana</span><span className="fw-6">2,4 M$</span></div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// MIX POR PILAR
+// ============================================================
+function MixPorPilar() {
+  return (
+    <div className="card">
+      <div className="flex between mb-3"><div className="card-title uppercase">Mix por Pilar</div><div className="text-3 fs-10">Real vs Presupuesto</div></div>
+      <div className="flex center-y gap-3 mt-2">
+        <div style={{width:100,height:100,borderRadius:'50%',
+          background:'conic-gradient(#3b82f6 0% 93.7%, #0ea5e9 93.7% 98.4%, #f59e0b 98.4% 100%)',
+          display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+          <div style={{width:72,height:72,borderRadius:'50%',background:'var(--bg-1)'}}></div>
+        </div>
+        <div style={{flex:1,fontSize:11}}>
+          <div className="mb-2">
+            <div className="flex between center-y"><span className="fw-6"><span style={{color:'#3b82f6'}}>●</span> Proyectos</span><span className="fw-6">93.7%</span></div>
+            <div className="flex between text-3"><span>Presup: 90%</span><span className="t-up">+3.7 pp</span></div>
+          </div>
+          <div className="mb-2">
+            <div className="flex between center-y"><span className="fw-6"><span style={{color:'#0ea5e9'}}>●</span> Ecommerce</span><span className="fw-6">4.7%</span></div>
+            <div className="flex between text-3"><span>Presup: 5%</span><span className="t-down">-0.3 pp</span></div>
+          </div>
+          <div>
+            <div className="flex between center-y"><span className="fw-6"><span style={{color:'#f59e0b'}}>●</span> Distribución</span><span className="fw-6">1.6%</span></div>
+            <div className="flex between text-3"><span>Presup: 5%</span><span className="t-down">-3.4 pp</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// DAILY CHART
+// ============================================================
+function DailyChart() {
+  if (!D2.graficoDiario || D2.graficoDiario.length === 0) {
+    return <div className="text-center text-3 mt-4" style={{padding:20}}>Sincronizando datos diarios desde Manager...</div>;
+  }
+  const days        = D2.graficoDiario;
+  const daysNV      = D2.graficoDiarioNV || days.map(d => ({d:d.d,nv:0}));
+  const presupDiario= (D2.KPI_MES&&D2.KPI_MES.presupuesto)?(D2.KPI_MES.presupuesto/days.length):1;
+  const max = Math.max(
+    ...days.map(d   => d&&d.fact?d.fact:0),
+    ...daysNV.map(d => d&&d.nv  ?d.nv  :0),
+    presupDiario*1.2
+  )||30;
+  const diaHoy = new Date().getDate();
+  return (
+    <div>
+      <svg viewBox="0 0 1200 220" style={{width:'100%',height:220,overflow:'visible'}}>
+        {[0,0.25,0.5,0.75,1].map(g => (
+          <g key={g}>
+            <line x1={30} x2={1200} y1={20+(170*(1-g))} y2={20+(170*(1-g))} stroke="#1f2734" strokeDasharray="2,3"/>
+            <text x={2} y={24+(170*(1-g))} fontSize="9" fill="#6c7689">{(max*g).toFixed(0)}</text>
+          </g>
+        ))}
+        <line x1={40} x2={1200} y1={20+170-(presupDiario/max*170)} y2={20+170-(presupDiario/max*170)} stroke="#f59e0b" strokeWidth={1.5} strokeDasharray="4,3"/>
+        <text x={1150} y={20+170-(presupDiario/max*170)-4} fontSize="9" fill="#f59e0b">Presup. {presupDiario.toFixed(1)}</text>
+        {days.map((d,i) => {
+          const x      = 48+i*35;
+          const fact   = d&&d.fact?d.fact:0;
+          const nv     = daysNV[i]&&daysNV[i].nv?daysNV[i].nv:0;
+          const diaNum = d&&d.d?d.d:(i+1);
+          const hF     = fact/max*170;
+          const hN     = nv  /max*170;
+          return (
+            <g key={i}>
+              <rect x={x}    y={20+170-hF} width={15} height={hF||1} fill={fact===0?'#1a2235':'#3b82f6'} rx={2}/>
+              {fact>0&&<text x={x+7} y={20+170-hF-3} fontSize="8" fill="#93c5fd" textAnchor="middle">{fact.toFixed(0)}</text>}
+              <rect x={x+17} y={20+170-hN} width={15} height={hN||1} fill={nv===0?'#1a2235':'#22c55e'} rx={2}/>
+              {nv>0&&<text x={x+24} y={20+170-hN-3} fontSize="8" fill="#86efac" textAnchor="middle">{nv.toFixed(0)}</text>}
+              <text x={x+16} y={212} fontSize="9" fill="#6c7689" textAnchor="middle">{diaNum}</text>
+            </g>
+          );
+        })}
+        <line x1={48+(diaHoy-1)*35+16} x2={48+(diaHoy-1)*35+16} y1={18} y2={192} stroke="#f59e0b" strokeDasharray="3,3" opacity="0.5"/>
+        <text x={48+(diaHoy-1)*35+18} y={26} fontSize="10" fill="#f59e0b">HOY</text>
+      </svg>
+      <div className="flex gap-4 fs-11 mt-1" style={{justifyContent:'center'}}>
+        <span><span style={{display:'inline-block',width:10,height:10,background:'#3b82f6',borderRadius:2,marginRight:4}}></span>Facturación FAV</span>
+        <span><span style={{display:'inline-block',width:10,height:10,background:'#22c55e',borderRadius:2,marginRight:4}}></span>NV Emitidas</span>
+        <span style={{borderLeft:'2px dashed #f59e0b',paddingLeft:8,color:'#f59e0b'}}>— Presup. diario</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// HOY CARD
+// ============================================================
+function HoyCard() {
+  const k      = D2.KPI_MES || {};
+  const diaIdx = new Date().getDate()-1;
+  const grafHoy= D2.graficoDiario&&D2.graficoDiario[diaIdx];
+  const facHoy = grafHoy&&grafHoy.fact?grafHoy.fact:0;
+  const nvHoy  = D2.graficoDiarioNV&&D2.graficoDiarioNV[diaIdx]?(D2.graficoDiarioNV[diaIdx].nv||0):0;
+  const ppto   = k.presupuesto||0;
+  const facMes = k.facturado  ||0;
+  const diaHoy = new Date().getDate();
+  const diasHab= Math.floor(diaHoy*(21/30));
+  const diasRest=Math.max(1,21-diasHab);
+  const faltante   = Math.max(0,ppto-facMes);
+  const runRateReq = faltante/diasRest;
+  const runRateAct = facMes/Math.max(1,diasHab);
+  return (
+    <div>
+      <div className="text-3 fs-10 uppercase">Facturado hoy</div>
+      <div className="mono fw-7" style={{fontSize:30,color:'var(--accent)'}}>
+        {window.fmtM(facHoy)}<span className="text-3 fs-12" style={{marginLeft:4}}>M$</span>
+      </div>
+      <div className="flex center-y gap-2 mt-1">
+        <span className="text-3 fs-11">Run-rate actual: {window.fmtM(runRateAct)} M$/día</span>
+      </div>
+      <div className="mt-3" style={{paddingTop:10,borderTop:'1px solid var(--border-soft)'}}>
+        <div className="text-3 fs-10 uppercase mb-2">Resumen del día</div>
+        <table className="tbl" style={{fontSize:11}}>
+          <tbody>
+            <tr><td>Facturas Manager</td><td className="num mono">—</td><td className="num mono strong" style={{color:'#22c55e'}}>{window.fmtM(facHoy)} M$</td></tr>
+            <tr><td>NV emitidas hoy</td><td className="num mono">—</td><td className="num mono strong" style={{color:'#22c55e'}}>{window.fmtM(nvHoy)} M$</td></tr>
+            <tr><td>Cotizaciones</td><td className="num mono">—</td><td className="num mono strong">Monitor GHL</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div className="mt-3" style={{paddingTop:10,borderTop:'1px solid var(--border-soft)'}}>
+        <div className="text-3 fs-10 uppercase mb-2">Faltante para cumplir mes</div>
+        <div className="flex between center-y">
+          <div><div className="mono fw-7 fs-16 t-warn">{window.fmtM(faltante)}</div><div className="text-3 fs-10">M$ faltantes</div></div>
+          <div><div className="mono fw-7 fs-16">{diasRest}</div><div className="text-3 fs-10">días hábiles</div></div>
+          <div><div className="mono fw-7 fs-16 t-warn">{window.fmtM(runRateReq)}</div><div className="text-3 fs-10">M$/día req.</div></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// SEMANAS
+// ============================================================
+function Semanas() {
+  let data = D2.SEMANAS;
+  const mesesCortos = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const mesActual   = mesesCortos[new Date().getMonth()];
+  if (!data||data.length===0||typeof data[0].vendido==='undefined') {
+    const ppto=(D2.KPI_MES&&D2.KPI_MES.presupuesto)?D2.KPI_MES.presupuesto/5:100;
+    data=[{sem:'S1',presup:ppto,vendido:0,isFuture:false},{sem:'S2',presup:ppto,vendido:0,isFuture:true},
+          {sem:'S3',presup:ppto,vendido:0,isFuture:true},{sem:'S4',presup:ppto,vendido:0,isFuture:true},
+          {sem:'S5',presup:ppto,vendido:0,isFuture:true}];
+  }
+  const semanas = data.map((s,idx) => ({...s,semLimpia:`S${idx+1} ${mesActual}`+(s.isFuture?' (proy)':''),vendido:s.vendido||0}));
+  const max = Math.max(...semanas.map(s=>Math.max(s.vendido,s.presup,s.proy||0)))||1;
+  return (
+    <div>
+      {semanas.map((s,i) => {
+        const cumpl=!s.isFuture?(s.vendido/s.presup*100):null;
+        const bc=cumpl!==null?(cumpl>=100?'green':cumpl>=85?'amber':cumpl===0?'gray':'red'):'gray';
+        return (
+          <div key={i} className="mb-2" style={{paddingBottom:8,borderBottom:'1px solid var(--border-soft)'}}>
+            <div className="flex between center-y mb-1">
+              <span className="fw-6 fs-12">{s.semLimpia}</span>
+              {cumpl!==null?<span className={`badge ${bc}`}>{cumpl.toFixed(0)}%</span>:<span className="badge gray">Proyectada</span>}
+            </div>
+            <div style={{position:'relative',height:22}}>
+              <div style={{position:'absolute',left:0,top:0,height:'100%',width:Math.min(100,(s.presup/max*100))+'%',background:'#1f2734',borderRadius:3}}></div>
+              {s.vendido>0&&<div style={{position:'absolute',left:0,top:0,height:'100%',width:Math.min(100,(s.vendido/max*100))+'%',background:'#5b8cff',borderRadius:3}}></div>}
+              {s.isFuture&&s.proy>0&&<div style={{position:'absolute',left:0,top:0,height:'100%',width:Math.min(100,(s.proy/max*100))+'%',background:'repeating-linear-gradient(45deg,#475569 0 4px,#1f2734 4px 8px)',borderRadius:3}}></div>}
+            </div>
+            <div className="flex between fs-10 text-3 mt-1">
+              <span>Presup: {s.presup.toFixed(1)} M$</span>
+              <span>{!s.isFuture?`Real: ${s.vendido.toFixed(1)} M$`:`Proy: ${(s.proy||0).toFixed(1)} M$`}</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ============================================================
+// HEATMAP
+// ============================================================
+function Heatmap() {
+  const weeks       = 16;
+  const mesesCortos = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const currentM    = new Date().getMonth();
+  const labelsMeses = [];
+  for (let i=3;i>=0;i--){let m=currentM-i;if(m<0)m+=12;labelsMeses.push(mesesCortos[m]);}
+  return (
+    <div>
+      <div style={{display:'grid',gridTemplateColumns:'24px repeat('+weeks+', 1fr)',gap:2}}>
+        <div></div>
+        {Array.from({length:weeks}).map((_,w)=>(
+          <div key={w} style={{fontSize:8,color:'var(--text-3)',textAlign:'center'}}>{w%4===0?'S'+(w+1):''}</div>
+        ))}
+        {['L','M','M','J','V'].map((d,row)=>(
+          <React.Fragment key={row}>
+            <div style={{fontSize:9,color:'var(--text-3)'}}>{d}</div>
+            {Array.from({length:weeks}).map((_,w)=>{
+              const idx=w*5+row;
+              if(idx>75)return <div key={w}></div>;
+              const intensity=Math.random();
+              const bg=intensity>0.7?'#22c55e':intensity>0.5?'#10b981':intensity>0.3?'#5b8cff':intensity>0.15?'#3b4a64':'#1f2734';
+              return <div key={w} className="heat-cell" style={{background:bg}}></div>;
+            })}
+          </React.Fragment>
+        ))}
+      </div>
+      <div className="flex between fs-10 text-3 mt-2">{labelsMeses.map((l,i)=><span key={i}>{l}</span>)}</div>
+      <div className="flex gap-2 fs-10 mt-2 center-y">
+        <span className="text-3">Menos</span>
+        {['#1f2734','#3b4a64','#5b8cff','#10b981','#22c55e'].map(c=><div key={c} style={{width:14,height:14,background:c,borderRadius:2}}></div>)}
+        <span className="text-3">Más</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// CIERRES HOY
+// ============================================================
+const getStageScore = (stage) => {
+  const s=(stage||'').toLowerCase();
+  if(s.includes('ganad'))return 100; if(s.includes('compromiso'))return 80;
+  if(s.includes('negociacion'))return 60; if(s.includes('seguimiento'))return 40;
+  if(s.includes('cotizacion'))return 20; if(s.includes('lead'))return 10;
+  return 0;
+};
+
+function CierresHoy() {
+  let items=(D2.diarias&&D2.diarias.cierresPendientes)?[...D2.diarias.cierresPendientes]:[];
+  items=items.sort((a,b)=>{const d=getStageScore(b.etapa)-getStageScore(a.etapa);return d!==0?d:(b.monto||0)-(a.monto||0);});
+  const total=items.reduce((s,it)=>s+(it.monto||0),0);
+  if(!items.length)return <div className="text-center text-3 mt-3 fs-11">No hay cierres pendientes detectados.</div>;
+  return (
+    <div>
+      <div style={{maxHeight:220,overflowY:'auto',paddingRight:8}}>
+        {items.map((it,i)=>(
+          <div key={i} className="mb-2" style={{paddingBottom:8,borderBottom:'1px solid var(--border-soft)'}}>
+            <div className="flex between center-y">
+              <span className="fs-12 fw-6">{it.negocio}</span>
+              <span className="mono fw-7">{it.monto.toFixed(1)} M$</span>
+            </div>
+            <div className="flex between fs-10 text-3 mt-1">
+              <span>{it.etapa} · {it.vendedor}</span>
+              <span className={it.dias>=15?'t-down':it.dias>=10?'t-warn':'text-3'}>{it.dias} días</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="text-center fs-11 mt-2 pt-2" style={{borderTop:'1px solid var(--border-soft)'}}>
+        <span className="text-2 fw-6">Total: {total.toFixed(1)} M$</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// FLOW CARD
+// ============================================================
+function FlowCard({ label, total, n, delta, color }) {
+  const trend=[4,7,6,9,8,10,12];
+  return (
+    <div>
+      <div className="card-head"><div className="card-title">{label}</div><window.Delta v={delta}/></div>
+      <div className="flex between center-y">
+        <div><div className="mono fw-7" style={{fontSize:22}}>{total}</div><div className="text-3 fs-10">{n} operaciones</div></div>
+        <div style={{width:120}}><window.Sparkline data={trend} color={color} height={36}/></div>
+      </div>
+      <div className="flex between mt-2 fs-10 text-3">
+        <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Lun</span><span>HOY</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// MOV TABLE
+// ============================================================
+function MovTable() {
+  let movs=(D2.diarias&&D2.diarias.movimientosHoy)?D2.diarias.movimientosHoy:[];
+  movs=movs.sort((a,b)=>getStageScore(b.etapa)-getStageScore(a.etapa));
+  if(!movs.length)return <div className="text-center text-3 mt-4" style={{padding:'20px 0'}}>Aún no hay movimientos registrados hoy en el CRM.</div>;
+  const tipoColor={COT:'blue',NV:'amber',FACT:'green',ETAPA:'gray',WIN:'green'};
+  return (
+    <div style={{maxHeight:350,overflowY:'auto',paddingRight:5}}>
+      <table className="tbl">
+        <thead style={{position:'sticky',top:0,backgroundColor:'var(--bg-2)',zIndex:1}}>
+          <tr><th>Fecha</th><th>Tipo</th><th>Cliente</th><th>Vendedor</th><th className="num">Monto</th><th>Origen</th><th>Detalle</th></tr>
+        </thead>
+        <tbody>
+          {movs.map((m,i)=>{
+            let tipoStr='ETAPA',claseTipo=tipoColor.ETAPA;
+            const et=(m.etapa||'').toLowerCase();
+            if(et.includes('cot')){tipoStr='COT';claseTipo=tipoColor.COT;}
+            else if(et.includes('nv')||et.includes('nota de venta')){tipoStr='NV';claseTipo=tipoColor.NV;}
+            else if(et.includes('ganad')){tipoStr='WIN';claseTipo=tipoColor.WIN;}
+            return (
+              <tr key={i}>
+                <td className="mono text-3">Hoy</td>
+                <td><span className={'badge '+claseTipo}>{tipoStr}</span></td>
+                <td className="strong">{m.negocio}</td>
+                <td className="text-2">{m.vendedor}</td>
+                <td className="num mono strong">{m.monto.toFixed(1)} M$</td>
+                <td><span className="text-3 fs-10 mono">{m.origen}</span></td>
+                <td className="text-3 fs-11">{m.etapa}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ============================================================
+// COTIZACIONES SIN MOVIMIENTO
+// ============================================================
+function Cotizaciones() {
+  let cots=(D2.diarias&&D2.diarias.sinMovimiento)?D2.diarias.sinMovimiento:[];
+  cots=cots.sort((a,b)=>{const d=getStageScore(b.etapa)-getStageScore(a.etapa);return d!==0?d:b.dias-a.dias;});
+  const total=cots.reduce((s,c)=>s+(c.monto||0),0);
+  if(!cots.length)return <div className="text-center text-3 mt-3 fs-11">¡Sin cotizaciones estancadas!</div>;
+  return (
+    <div>
+      <div style={{maxHeight:350,overflowY:'auto',paddingRight:8}}>
+        {cots.map((c,i)=>(
+          <div key={i} className="mb-2" style={{paddingBottom:8,borderBottom:'1px solid var(--border-soft)'}}>
+            <div className="flex between">
+              <span className="fs-12 fw-6">{c.negocio}</span>
+              <span className="badge red">{c.dias}d</span>
+            </div>
+            <div className="flex between mt-1 fs-11">
+              <span className="text-3">[{c.etapa||'Sin etapa'}] {c.vendedor}</span>
+              <span className="mono fw-6">{c.monto.toFixed(1)} M$</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="text-center fs-11 mt-2 pt-2" style={{borderTop:'1px solid var(--border-soft)'}}>
+        <span className="text-2 fw-6">Total estancado: {total.toFixed(1)} M$</span>
+      </div>
+    </div>
+  );
+}
+
+window.DailyTab = DailyTab;
+</script>
+<script type="text/babel">
+/* global React */
+const D3 = window.PCH;
+
+// ============================================================
+// TAB 3: EQUIPO COMERCIAL
+// ============================================================
+function TeamTab() {
+  const mesActual = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'][new Date().getMonth()];
+  return (
+    <>
+      <window.KpiStrip/>
+
+      <div className="section-title">Ranking del equipo · Cumplimiento individual {mesActual} MTD</div>
+      <div className="card tight"><RankingTable/></div>
+
+      <div className="section-title">Detalle por vendedor</div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10}}>
+        {D3.VENDEDORES.map(v => <VendedorCard key={v.id} v={v}/>)}
+      </div>
+
+      <div className="section-title">Estructura de costos del equipo · {mesActual} 2026</div>
+      <div style={{display:'grid',gridTemplateColumns:'1.4fr 1fr 1fr',gap:10}}>
+        <div className="card"><div className="card-head"><div className="card-title">Costos del depto. comercial</div><div className="card-sub">Mensual</div></div><CostosTable/></div>
+        <div className="card"><div className="card-head"><div className="card-title">Ahorro Gerencia Comercial</div><span className="badge green">Activo</span></div><AhorroGerencia/></div>
+        <div className="card"><div className="card-head"><div className="card-title">Bono Jefe de Ventas</div><span className="badge blue">3 meses</span></div><BonoCB/></div>
+      </div>
+
+      <div className="section-title">Productividad y conversión · Por vendedor</div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+        <div className="card"><div className="card-head"><div className="card-title">Win rate, ciclo y ticket promedio</div></div><ProductividadTable/></div>
+        <div className="card"><div className="card-head"><div className="card-title">Mix de cartera por vendedor</div></div><MixVendedor/></div>
+      </div>
+    </>
+  );
+}
+
+// ============================================================
+// RANKING TABLE
+// ============================================================
+function RankingTable() {
+  const activos = D3.VENDEDORES.filter(v => v.activo);
+  return (
+    <table className="tbl">
+      <thead>
+        <tr>
+          <th>#</th><th>Vendedor</th><th>Cargo</th>
+          <th className="num">Meta M$</th><th className="num">Cotizado MTD</th>
+          <th className="num">NV MTD</th><th className="num">Facturado MTD</th>
+          <th>Cumpl. MTD</th><th className="num">Comisión proy.</th>
+        </tr>
+      </thead>
+      <tbody>
+        {activos.map((v,i) => {
+          const facturado = v.real?(v.real.facturado||0):0;
+          const nv        = v.real?(v.real.nv       ||0):0;
+          const cotizado  = v.real?(v.real.cotizado ||0):0;
+          const meta      = v.metaMensual||0;
+          const cumpl     = meta>0?(facturado/meta*100):null;
+          const comision  = facturado*((v.comision||0)/100);
+          return (
+            <tr key={v.id}>
+              <td className="text-3 mono">{i+1}</td>
+              <td className="strong">
+                <span className="flex center-y gap-2">
+                  <span style={{display:'inline-flex',alignItems:'center',justifyContent:'center',
+                    width:22,height:22,fontSize:9,borderRadius:'50%',fontWeight:700,color:'white',
+                    background:v.color||'#475569'}}>{v.avatar}</span>
+                  {v.nombre}
+                </span>
+              </td>
+              <td className="text-2 fs-11">{v.cargo}</td>
+              <td className="num mono">{meta||'—'}</td>
+              <td className="num mono">{cotizado>0?cotizado.toFixed(1):'—'}</td>
+              <td className="num mono">{nv>0?nv.toFixed(1):'—'}</td>
+              <td className="num mono strong">{facturado>0?facturado.toFixed(1):'—'}</td>
+              <td>
+                {cumpl!==null?(
+                  <div className="flex center-y gap-2">
+                    <div className="mini-bar" style={{width:80}}>
+                      <div style={{width:Math.min(cumpl,100)+'%',
+                        background:cumpl>=100?'var(--positive)':cumpl>=80?'var(--accent)':cumpl>=60?'var(--warn)':'var(--negative)'}}></div>
+                    </div>
+                    <span className="mono fw-6 fs-11">{cumpl.toFixed(0)}%</span>
+                  </div>
+                ):<span className="text-3 fs-11">Sin meta directa</span>}
+              </td>
+              <td className="num mono">{comision>0?comision.toFixed(2)+' M$':'—'}</td>
+            </tr>
+          );
+        })}
+        <tr className="total">
+          <td colSpan={3}>TOTAL EQUIPO ACTIVO</td>
+          <td className="num mono">{activos.reduce((a,v)=>a+(v.metaMensual||0),0)}</td>
+          <td className="num mono">{activos.reduce((a,v)=>a+(v.real?.cotizado||0),0).toFixed(1)}</td>
+          <td className="num mono">{activos.reduce((a,v)=>a+(v.real?.nv||0),0).toFixed(1)}</td>
+          <td className="num mono">{activos.reduce((a,v)=>a+(v.real?.facturado||0),0).toFixed(1)}</td>
+          <td colSpan={2}></td>
+        </tr>
+      </tbody>
+    </table>
+  );
+}
+
+// ============================================================
+// VENDEDOR CARD
+// ============================================================
+function VendedorCard({ v }) {
+  if (v.vacante) {
+    return (
+      <div className="vendedor-card vacante">
+        <div className="vendedor-head">
+          <div className="v-avatar" style={{background:'#475569',color:'#aab3c2'}}>?</div>
+          <div className="v-info"><div className="v-name">{v.nombre}</div><div className="v-cargo">{v.cargo}</div></div>
+        </div>
+        <div className="text-3 fs-11 mb-2">Posición vacante</div>
+        <div className="flex between fs-11">
+          <span className="text-3">Meta proyectada</span>
+          <span className="mono fw-6">{v.metaMensual} M$</span>
+        </div>
+        <div className="text-center mt-3"><span className="badge amber">En búsqueda</span></div>
+      </div>
+    );
+  }
+  const facturado = v.real?(v.real.facturado||0):0;
+  const nv        = v.real?(v.real.nv       ||0):0;
+  const cotizado  = v.real?(v.real.cotizado ||0):0;
+  const meta      = v.metaMensual||0;
+  const cumpl     = meta>0?(facturado/meta*100):null;
+  return (
+    <div className="vendedor-card">
+      <div className="vendedor-head">
+        <div className="v-avatar" style={{background:v.color}}>{v.avatar}</div>
+        <div className="v-info"><div className="v-name">{v.nombre}</div><div className="v-cargo">{v.cargo}</div></div>
+        <span className="status-dot sd-good"></span>
+      </div>
+      {cumpl!==null?(
+        <>
+          <div className="flex between fs-10 text-3 mb-1">
+            <span>Cumplimiento MTD</span>
+            <span className="mono fw-6 text-1">{cumpl.toFixed(0)}%</span>
+          </div>
+          <div className="mini-bar mb-2">
+            <div style={{width:Math.min(cumpl,100)+'%',
+              background:cumpl>=100?'var(--positive)':cumpl>=80?'var(--accent)':'var(--warn)'}}></div>
+          </div>
+        </>
+      ):<div className="text-3 fs-11 mb-2">Sin meta directa · gestión de equipo</div>}
+      <table className="tbl" style={{fontSize:11}}>
+        <tbody>
+          <tr><td className="text-3">Meta mes</td><td className="num mono">{meta||'—'} M$</td></tr>
+          <tr><td className="text-3">Cotizado MTD</td><td className="num mono">{cotizado>0?cotizado.toFixed(1):'—'} M$</td></tr>
+          <tr><td className="text-3">NV emitidas MTD</td><td className="num mono">{nv>0?nv.toFixed(1):'—'} M$</td></tr>
+          <tr><td className="text-3">Facturado MTD</td><td className="num mono strong">{facturado>0?facturado.toFixed(1):'—'} M$</td></tr>
+          <tr><td className="text-3">Sueldo fijo</td><td className="num mono">{v.sueldoFijo||'—'} M$</td></tr>
+          <tr><td className="text-3">Comisión</td><td className="num mono">{v.comision||'—'}%</td></tr>
+          {v.bonoExtra&&<tr><td className="text-3">Bono extra</td><td className="num mono t-up">+{v.bonoExtra} M$</td></tr>}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ============================================================
+// COSTOS TABLE
+// ============================================================
+function CostosTable() {
+  const c = D3.COSTOS_MES;
+  return (
+    <table className="tbl">
+      <thead><tr><th>Concepto</th><th className="num">Mensual</th><th className="num">Anual proy.</th><th>%</th></tr></thead>
+      <tbody>
+        <tr><td className="strong">Sueldos fijos</td><td className="num mono">{c.remuneraciones_fijo}</td><td className="num mono text-2">205,5</td><td><div className="mini-bar"><div style={{width:'63%',background:'var(--accent)'}}></div></div></td></tr>
+        <tr><td>Comisiones (proy.)</td><td className="num mono">{c.comisiones}</td><td className="num mono text-2">66,7</td><td><div className="mini-bar"><div style={{width:'17%',background:'var(--info)'}}></div></div></td></tr>
+        <tr><td>Bono Cristóbal Bretón</td><td className="num mono">{c.bono_cb}</td><td className="num mono text-2">4,2</td><td><div className="mini-bar"><div style={{width:'1%',background:'var(--purple)'}}></div></div></td></tr>
+        <tr><td>Marketing Digital</td><td className="num mono">{c.marketing}</td><td className="num mono text-2">66,9</td><td><div className="mini-bar"><div style={{width:'19%',background:'var(--warn)'}}></div></div></td></tr>
+        <tr><td>Gastos representación</td><td className="num mono">{c.representacion}</td><td className="num mono text-2">1,8</td><td></td></tr>
+        <tr><td>Suscripciones</td><td className="num mono">{c.suscripciones}</td><td className="num mono text-2">0,7</td><td></td></tr>
+        <tr className="total">
+          <td>Costo total comercial</td><td className="num mono">{c.total}</td><td className="num mono">345,8</td>
+          <td><span className="badge gray">6,4% s/ventas</span></td>
+        </tr>
+        <tr>
+          <td className="t-up strong">(–) Ahorro Gerente Comercial</td>
+          <td className="num mono t-up">−{c.ahorro_gerente}</td>
+          <td className="num mono t-up">−59,4</td>
+          <td><span className="badge green">Activo</span></td>
+        </tr>
+        <tr className="total">
+          <td>Costo neto</td>
+          <td className="num mono">{(c.total-c.ahorro_gerente).toFixed(2)}</td>
+          <td className="num mono">286,4</td>
+          <td><span className="badge green">5,3% s/ventas</span></td>
+        </tr>
+      </tbody>
+    </table>
+  );
+}
+
+// ============================================================
+// AHORRO GERENCIA
+// ============================================================
+function AhorroGerencia() {
+  return (
+    <div>
+      <div className="text-3 fs-10 uppercase">Ahorro mensual</div>
+      <div className="mono fw-7" style={{fontSize:30}}>4,94<span className="text-3 fs-12" style={{marginLeft:4}}>M$</span></div>
+      <div className="mt-2 fs-11 text-2">Pedro Teani · Gerente Comercial</div>
+      <div className="badge red mt-2" style={{display:'inline-block'}}>Cargo no ocupado</div>
+      <div className="mt-3" style={{paddingTop:10,borderTop:'1px solid var(--border-soft)'}}>
+        <div className="flex between fs-11 mb-1"><span className="text-3">Ahorro YTD (Ene–Jun)</span><span className="mono fw-6 t-up">29,6 M$</span></div>
+        <div className="flex between fs-11 mb-1"><span className="text-3">Ahorro proyectado 2026</span><span className="mono fw-6 t-up">59,4 M$</span></div>
+        <div className="flex between fs-11"><span className="text-3">Costo bono CB compensación</span><span className="mono fw-6 t-down">−4,2 M$</span></div>
+        <div className="flex between fs-11 mt-2" style={{paddingTop:8,borderTop:'1px solid var(--border-soft)'}}>
+          <span className="text-2 fw-6">Ahorro neto 2026</span><span className="mono fw-7 t-up">+55,2 M$</span>
+        </div>
+      </div>
+      <div className="mt-3 fs-11 text-3" style={{paddingTop:10,borderTop:'1px solid var(--border-soft)'}}>
+        Cristóbal Bretón asume gerencia interina con bono compensatorio.
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// BONO CB
+// ============================================================
+function BonoCB() {
+  return (
+    <div>
+      <div className="text-3 fs-10 uppercase">Bono mensual</div>
+      <div className="mono fw-7" style={{fontSize:30}}>350<span className="text-3 fs-12" style={{marginLeft:4}}>K$</span></div>
+      <div className="mt-2 fs-11 text-2">Cristóbal Bretón · Jefe de Ventas</div>
+      <div className="mt-3" style={{paddingTop:10,borderTop:'1px solid var(--border-soft)'}}>
+        <div className="text-3 fs-10 uppercase mb-2">Plan original vs proyectado</div>
+        <div className="flex gap-2">
+          {Array.from({length:12}).map((_,i) => {
+            const isProy=i>=3;
+            return (
+              <div key={i} style={{flex:1,textAlign:'center'}}>
+                <div style={{height:24,background:isProy?'repeating-linear-gradient(45deg,#475569 0 3px,#1d2532 3px 6px)':'var(--accent)',borderRadius:3,border:i<=3?'none':'1px dashed #475569'}}></div>
+                <div className="fs-10 text-3 mt-1">{D3.MESES[i]}</div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex gap-3 mt-2 fs-10 text-3">
+          <span><span style={{display:'inline-block',width:10,height:10,background:'var(--accent)',borderRadius:2,marginRight:4}}></span>Original (3 meses)</span>
+          <span><span style={{display:'inline-block',width:10,height:10,background:'#475569',borderRadius:2,marginRight:4}}></span>Extensión 12 meses</span>
+        </div>
+      </div>
+      <div className="mt-3" style={{paddingTop:10,borderTop:'1px solid var(--border-soft)'}}>
+        <div className="flex between fs-11 mb-1"><span className="text-3">Plan original</span><span className="mono fw-6">1,05 M$</span></div>
+        <div className="flex between fs-11 mb-1"><span className="text-3">Proyectado año completo</span><span className="mono fw-6 t-warn">4,20 M$</span></div>
+        <div className="flex between fs-11"><span className="text-3">Diferencial</span><span className="mono fw-6 t-down">+3,15 M$</span></div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// PRODUCTIVIDAD TABLE
+// ============================================================
+function ProductividadTable() {
+  const activos = D3.VENDEDORES.filter(v => v.activo && v.real);
+  return (
+    <table className="tbl">
+      <thead>
+        <tr>
+          <th>Vendedor</th>
+          <th className="num">Cotizado MTD</th><th className="num">NV MTD</th>
+          <th className="num">Facturado MTD</th><th className="num">Conv. cot→NV</th><th className="num">Conv. NV→Fact</th>
+        </tr>
+      </thead>
+      <tbody>
+        {activos.map((v) => {
+          const cot  = v.real.cotizado ||0;
+          const nv   = v.real.nv       ||0;
+          const fact = v.real.facturado||0;
+          const convCotNV  = cot >0?Math.round(nv  /cot *100):null;
+          const convNVFact = nv  >0?Math.round(fact/nv  *100):null;
+          return (
+            <tr key={v.id}>
+              <td className="strong">{v.nombre} <span className="text-3 fs-10">· {v.rol}</span></td>
+              <td className="num mono">{cot >0?cot.toFixed(1) +' M$':'—'}</td>
+              <td className="num mono">{nv  >0?nv.toFixed(1)  +' M$':'—'}</td>
+              <td className="num mono">{fact>0?fact.toFixed(1)+' M$':'—'}</td>
+              <td className="num mono">{convCotNV !==null?convCotNV +'%':'—'}</td>
+              <td className="num mono">{convNVFact!==null?convNVFact+'%':'—'}</td>
+            </tr>
+          );
+        })}
+        <tr className="total">
+          <td>Total equipo</td>
+          <td className="num mono">{activos.reduce((a,v)=>a+(v.real?.cotizado||0),0).toFixed(1)} M$</td>
+          <td className="num mono">{activos.reduce((a,v)=>a+(v.real?.nv||0),0).toFixed(1)} M$</td>
+          <td className="num mono">{activos.reduce((a,v)=>a+(v.real?.facturado||0),0).toFixed(1)} M$</td>
+          <td colSpan={2}></td>
+        </tr>
+      </tbody>
+    </table>
+  );
+}
+
+// ============================================================
+// MIX VENDEDOR
+// ============================================================
+function MixVendedor() {
+  const activos   = D3.VENDEDORES.filter(v => v.activo && v.real && v.real.facturado>0);
+  const totalFact = activos.reduce((a,v) => a+(v.real?.facturado||0), 0);
+  if (!activos.length) return <div className="text-3 fs-11 text-center mt-3">Cargando datos del equipo...</div>;
+  return (
+    <div>
+      {activos.map((v,i) => {
+        const pct   = totalFact>0?(v.real.facturado/totalFact*100):0;
+        const cumpl = v.metaMensual>0?(v.real.facturado/v.metaMensual*100):0;
+        return (
+          <div key={i} className="mb-3">
+            <div className="flex between fs-12 mb-1">
+              <span className="fw-6">{v.nombre}</span>
+              <span className="mono fw-6 fs-11">{v.real.facturado.toFixed(1)} M$ · {pct.toFixed(1)}% del total</span>
+            </div>
+            <div style={{height:20,background:'var(--bg-3)',borderRadius:3,overflow:'hidden',position:'relative'}}>
+              <div style={{width:Math.min(100,cumpl)+'%',height:'100%',
+                background:cumpl>=100?'var(--positive)':cumpl>=80?'var(--accent)':'var(--warn)',
+                borderRadius:3,display:'flex',alignItems:'center',paddingLeft:6,
+                fontSize:10,color:'white',fontWeight:600}}>
+                {cumpl>10?cumpl.toFixed(0)+'% de meta':''}
+              </div>
+            </div>
+            <div className="flex between fs-10 text-3 mt-1">
+              <span>Meta: {v.metaMensual||'—'} M$</span>
+              <span>Facturado: {v.real.facturado.toFixed(1)} M$</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+window.TeamTab = TeamTab;
+</script>
+<script type="text/babel">
+/* global React */
+
+// ============================================================
+// TAB 4: GLOSARIO Y FUENTES DE DATOS
+// ============================================================
+function GlosarioTab() {
+  return (
+    <React.Fragment>
+      <div style={{padding:'12px 16px',background:'var(--bg-2)',borderBottom:'1px solid var(--border)'}}>
+        <div className="flex between center-y">
+          <div>
+            <div className="fs-14 fw-7">Glosario de métricas y fuentes de datos</div>
+            <div className="text-3 fs-11 mt-1">
+              Todos los montos expresados en M$ CLP
+              <span className="badge gray" style={{marginLeft:6}}>NETOS · SIN IVA</span>
+              · Origen: Presupuesto P&amp;L 2026 + Manager ERP + GHL CRM
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <span className="badge green">3 fuentes integradas</span>
+            <span className="badge blue">Sync horario</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="section-title">Convenciones generales</div>
+      <div className="card" style={{marginBottom:10}}>
+        <table className="tbl">
+          <thead><tr><th style={{width:180}}>Concepto</th><th>Definición usada en este dashboard</th></tr></thead>
+          <tbody>
+            <tr><td className="strong">M$</td><td>Millones de pesos chilenos. Ej: <span className="mono">437,4 M$</span> = $437.400.000.</td></tr>
+            <tr><td className="strong">Neto / sin IVA</td><td><strong>Todos</strong> los montos están expresados netos. El P&amp;L de Polchile se mide en valores netos.</td></tr>
+            <tr><td className="strong">MTD</td><td><em>Month-to-date.</em> Acumulado desde el día 1 del mes actual hasta hoy.</td></tr>
+            <tr><td className="strong">YTD</td><td><em>Year-to-date.</em> Acumulado desde enero hasta hoy.</td></tr>
+            <tr><td className="strong">YoY</td><td><em>Year-over-year.</em> Mismo período del año anterior.</td></tr>
+            <tr><td className="strong">WoW</td><td><em>Week-over-week.</em> Misma semana de la semana previa.</td></tr>
+            <tr><td className="strong">Día hábil</td><td>Lunes a viernes excluyendo feriados oficiales.</td></tr>
+            <tr><td className="strong">"Hoy"</td><td>Fecha de visualización. Se toma de <span className="mono">Date.now()</span> en zona horaria <span className="mono">America/Santiago</span>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="section-title">Fuentes de datos · 3 sistemas integrados</div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,marginBottom:10}}>
+        <FuenteCard
+          color="#5b8cff" nombre="Presupuesto P&L 2026"
+          tipo="Google Sheet · estático" frecuencia="Carga única + ajustes mensuales"
+          owner="Hugo Ponce / Cristóbal Bretón"
+          datos={['Presupuesto anual: 5.400 M$ neto (escenario base)','Estacionalidad mensual oficial (12 valores)','Mix por pilar (Proyectos 90% / Ecom 5% / Distrib. 5%)','Mix por familia y márgenes objetivo','Costos depto. comercial','Metas individuales por vendedor']}
+        />
+        <FuenteCard
+          color="#10b981" nombre="Manager ERP"
+          tipo="Sistema transaccional · base de datos" frecuencia="Sync diario vía pipeline Python"
+          owner="IT / Administración"
+          datos={['Cotizaciones emitidas (monto neto, cliente, vendedor, fecha)','Notas de Venta (NV) con monto neto','Facturas emitidas (FAV − NCV)','Despachos confirmados','Cuentas por cobrar (aging por cliente)','Detalle por familia/clase de producto (CLASE1)']}
+        />
+        <FuenteCard
+          color="#a855f7" nombre="Go High Level (GHL)"
+          tipo="CRM · API REST" frecuencia="Sync cada 1h vía Apps Script"
+          owner="Cristóbal Bretón / Hugo Ponce"
+          datos={['Pipeline "Televenta" — etapas y oportunidades','Monto bruto pipeline (suma de oportunidades abiertas)','Probabilidades por etapa (configurables en Sheet)','Atribución de leads por fuente (Google Ads, Meta, etc.)','Tags de cliente (Nuevo / Recurrente)','Última actividad por contacto']}
+        />
+      </div>
+
+      <div className="section-title">KPIs principales (strip superior)</div>
+      <div className="card tight" style={{marginBottom:10}}>
+        <table className="tbl">
+          <thead><tr><th style={{width:170}}>KPI</th><th style={{width:120}}>Fuente</th><th>Cálculo</th><th style={{width:100}}>Unidad</th></tr></thead>
+          <tbody>
+            <MetricRow nombre="Presupuesto Mes"      fuente="Presupuesto" calc="Presupuesto anual × % estacionalidad del mes. Ej. junio = 5.400 × 9,30% = 502,2 M$."                            unit="M$ neto"/>
+            <MetricRow nombre="Facturado MTD"        fuente="Manager ERP" calc="Σ monto neto de todas las FAV emitidas desde día 1 del mes hasta hoy, menos NCV."                               unit="M$ neto"/>
+            <MetricRow nombre="NV Emitidas MTD"      fuente="Manager ERP" calc="Σ monto neto de las Notas de Venta emitidas en el mes."                                                          unit="M$ neto"/>
+            <MetricRow nombre="Cotizado MTD"         fuente="Manager ERP" calc="Σ monto neto de cotizaciones emitidas en el mes (no necesariamente convertidas)."                                unit="M$ neto"/>
+            <MetricRow nombre="Forecast Cierre Mes"  fuente="Calculado"   calc="Facturado + NV + (Backlog × 70%) + (Cotizado × 24%)."                                                           unit="M$ neto"/>
+            <MetricRow nombre="Pipeline Ponderado"   fuente="GHL"         calc="Σ (monto_etapa × prob_etapa). Probabilidades por etapa configurables en GHL_PipelineSummary."                   unit="M$ neto"/>
+            <MetricRow nombre="Cumplimiento"         fuente="Calculado"   calc="Forecast mes ÷ Presupuesto del mes × 100."                                                                       unit="%"/>
+            <MetricRow nombre="Run-rate requerido"   fuente="Calculado"   calc="(Presupuesto mes − Facturado MTD) ÷ días hábiles restantes."                                                    unit="M$/día"/>
+            <MetricRow nombre="Backlog NV→Fact"      fuente="Manager ERP" calc="Σ NV emitidas con status abierto, sin factura asociada al cierre del día."                                      unit="M$ neto"/>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="section-title">Pipeline CRM y conversión</div>
+      <div className="card tight" style={{marginBottom:10}}>
+        <table className="tbl">
+          <thead><tr><th style={{width:170}}>Métrica</th><th style={{width:120}}>Fuente</th><th>Cálculo</th><th style={{width:100}}>Unidad</th></tr></thead>
+          <tbody>
+            <MetricRow nombre="Etapas pipeline"       fuente="GHL"       calc='Pipeline "Televenta". Etapas: Lead Nuevo → Contactado → Calificado → Cotización Enviada → Negociación → NV en Proceso → Ganado.' unit="—"/>
+            <MetricRow nombre="Monto bruto pipeline"  fuente="GHL"       calc="Σ monto neto de oportunidades abiertas."                                                                                           unit="M$ neto"/>
+            <MetricRow nombre="Probabilidad por etapa" fuente="Manual"   calc="Default: 5/15/30/50/70/90/100%. Sobrescribible vía pestaña GHL_PipelineSummary."                                                  unit="%"/>
+            <MetricRow nombre="Forecast ponderado"    fuente="Calculado" calc="Σ (monto × prob ÷ 100) por etapa."                                                                                                 unit="M$ neto"/>
+            <MetricRow nombre="Win rate"              fuente="Calculado" calc="Oportunidades Ganadas ÷ oportunidades cerradas (Ganado + Perdido) en el período."                                                  unit="%"/>
+            <MetricRow nombre="Ciclo promedio"        fuente="GHL"       calc="Promedio de días entre fecha de creación de oportunidad y fecha de cierre."                                                        unit="días"/>
+            <MetricRow nombre="Conv. cot → NV"        fuente="Manager"   calc="N° cotizaciones convertidas a NV ÷ N° cotizaciones emitidas (mismo período)."                                                     unit="%"/>
+            <MetricRow nombre="Conv. NV → Factura"    fuente="Manager"   calc="Monto NV facturado ÷ Monto NV emitido (con desfase de hasta 30 días)."                                                            unit="%"/>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="section-title">Mix de productos y clientes</div>
+      <div className="card tight" style={{marginBottom:10}}>
+        <table className="tbl">
+          <thead><tr><th style={{width:170}}>Métrica</th><th style={{width:120}}>Fuente</th><th>Cálculo</th><th style={{width:100}}>Unidad</th></tr></thead>
+          <tbody>
+            <MetricRow nombre="Mix por pilar"         fuente="Manager ERP" calc="Proyectos / Ecommerce / Distribución. Mix = facturado pilar ÷ facturado total mes."   unit="%"/>
+            <MetricRow nombre="Mix por familia"       fuente="Manager ERP" calc="Familias desde campo CLASE1. Mix por familia = facturado familia ÷ total."            unit="%"/>
+            <MetricRow nombre="Margen real"           fuente="Manager ERP" calc="(TOTAL_NETO − CTO_PROMEDIO_TOTAL) ÷ TOTAL_NETO. Desde hoja Ventas Full Manager."     unit="%"/>
+            <MetricRow nombre="Margen presupuestado"  fuente="Presupuesto" calc="Margen objetivo definido en P&L 2026 por familia desde Supuestos y Parámetros."       unit="%"/>
+            <MetricRow nombre="Top 10 clientes YTD"   fuente="Manager ERP" calc="Ranking por Σ FAV neto YTD. Tipo (Nuevo/Recurrente) según fecha primer compra."      unit="M$ neto"/>
+            <MetricRow nombre="Concentración Pareto"  fuente="Calculado"   calc="% del total YTD que representan los Top 10. Sobre 60% = concentración alta."          unit="%"/>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="section-title">Equipo comercial y costos</div>
+      <div className="card tight" style={{marginBottom:10}}>
+        <table className="tbl">
+          <thead><tr><th style={{width:170}}>Métrica</th><th style={{width:120}}>Fuente</th><th>Cálculo</th><th style={{width:100}}>Unidad</th></tr></thead>
+          <tbody>
+            <MetricRow nombre="Meta mensual vendedor" fuente="Presupuesto" calc="Ejecutivos: 81 M$/mes; KAM: 22,5; Ecommerce: 22,5; Jefe Ventas: 0 (gestiona equipo)." unit="M$ neto"/>
+            <MetricRow nombre="Cumplimiento individual" fuente="Calculado" calc="Facturado MTD del vendedor ÷ Meta mes × 100."                                          unit="%"/>
+            <MetricRow nombre="Comisión proyectada"   fuente="Calculado"   calc="Facturado MTD × % comisión (0,75% ejecutivos / 0,35% jefatura)."                      unit="M$"/>
+            <MetricRow nombre="Ahorro Gerente Comercial" fuente="Presupuesto" calc="Sueldo presupuestado del cargo no ocupado (~4,94 M$/mes)."                          unit="M$"/>
+            <MetricRow nombre="Bono Jefe de Ventas"   fuente="Acuerdo"     calc="350 K$/mes por asumir gerencia interina."                                              unit="K$/mes"/>
+            <MetricRow nombre="Costo neto comercial"  fuente="Calculado"   calc="Costo total comercial − Ahorro Gerente Comercial."                                     unit="M$/mes"/>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="section-title">Frecuencia de actualización por origen</div>
+      <div className="card" style={{marginBottom:10}}>
+        <table className="tbl">
+          <thead><tr><th>Origen</th><th>Frecuencia actual</th><th>Frecuencia objetivo</th><th>Tecnología</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span className="status-dot" style={{background:'#5b8cff',marginRight:6}}></span>Presupuesto P&amp;L 2026</td>
+              <td className="text-2">Carga única</td><td className="text-2">Ajuste mensual</td>
+              <td className="mono fs-11">Google Sheet</td>
+            </tr>
+            <tr>
+              <td><span className="status-dot" style={{background:'#10b981',marginRight:6}}></span>Manager ERP</td>
+              <td className="text-2 t-up">Activo · diario</td><td className="text-2">Cada 1 hora</td>
+              <td className="mono fs-11">Python + SQL Server + Google Sheets</td>
+            </tr>
+            <tr>
+              <td><span className="status-dot" style={{background:'#a855f7',marginRight:6}}></span>GHL CRM</td>
+              <td className="text-2 t-up">Activo · 1h</td><td className="text-2">Cada 15 min (webhook)</td>
+              <td className="mono fs-11">REST API · Apps Script</td>
+            </tr>
+            <tr>
+              <td><span className="status-dot" style={{background:'#f59e0b',marginRight:6}}></span>BUK (RRHH)</td>
+              <td className="text-2 t-warn">Manual</td><td className="text-2">Mensual al cierre planilla</td>
+              <td className="mono fs-11">Carga CSV</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="section-title">Alertas automáticas</div>
+      <div className="card" style={{marginBottom:10}}>
+        <table className="tbl">
+          <thead><tr><th>Alerta</th><th style={{width:120}}>Severidad</th><th>Trigger</th></tr></thead>
+          <tbody>
+            <tr><td className="strong">Forecast por debajo de meta</td><td><span className="badge red">Crítica</span></td><td>Forecast cierre mes &lt; 90% de presupuesto.</td></tr>
+            <tr><td className="strong">Pipeline insuficiente</td><td><span className="badge red">Crítica</span></td><td>Pipeline ponderado &lt; 80% del faltante mensual.</td></tr>
+            <tr><td className="strong">Cotizaciones estancadas</td><td><span className="badge amber">Alta</span></td><td>Cotización con &gt;15 días sin cambio de etapa.</td></tr>
+            <tr><td className="strong">NV sin facturar</td><td><span className="badge amber">Alta</span></td><td>NV emitida &gt;7 días sin factura asociada.</td></tr>
+            <tr><td className="strong">Vendedor bajo cumplimiento</td><td><span className="badge amber">Media</span></td><td>Cumplimiento individual &lt;75% al día 16 del mes.</td></tr>
+            <tr><td className="strong">DSO subiendo</td><td><span className="badge amber">Media</span></td><td>DSO &gt;40 días por 2 meses consecutivos.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="section-title">Notas importantes</div>
+      <div className="card" style={{marginBottom:20}}>
+        <ul style={{paddingLeft:18,lineHeight:1.7}} className="fs-12 text-2">
+          <li><strong className="text-1">IVA:</strong> el dashboard nunca muestra montos con IVA. Para valor bruto multiplicar × 1,19.</li>
+          <li><strong className="text-1">Seguridad:</strong> el dashboard requiere autenticación Firebase. Sin sesión activa no se muestran datos reales.</li>
+          <li><strong className="text-1">Escenarios:</strong> el switch PES / BASE / OPT reescala el presupuesto anual ±20%. No afecta datos reales.</li>
+          <li><strong className="text-1">Zona horaria:</strong> America/Santiago. Días hábiles calculados según calendario chileno.</li>
+          <li><strong className="text-1">Persistencia:</strong> el dashboard no almacena datos localmente. Los lee del Google Sheet en cada sesión via Firebase Function.</li>
+          <li><strong className="text-1">Refresco:</strong> los datos se actualizan automáticamente cada 5 minutos mientras la sesión esté activa.</li>
+        </ul>
+      </div>
+    </React.Fragment>
+  );
+}
+
+// ============================================================
+// FUENTE CARD
+// ============================================================
+function FuenteCard({ color, nombre, tipo, frecuencia, owner, datos }) {
+  return (
+    <div className="card">
+      <div className="flex center-y gap-2 mb-2">
+        <span style={{width:10,height:10,borderRadius:2,background:color,display:'inline-block'}}></span>
+        <span className="fw-7 fs-13">{nombre}</span>
+      </div>
+      <div className="text-3 fs-10 uppercase mb-1">Tipo</div>
+      <div className="fs-12 mb-2">{tipo}</div>
+      <div className="text-3 fs-10 uppercase mb-1">Frecuencia</div>
+      <div className="fs-12 mb-2">{frecuencia}</div>
+      <div className="text-3 fs-10 uppercase mb-1">Owner</div>
+      <div className="fs-12 mb-2">{owner}</div>
+      <div className="text-3 fs-10 uppercase mb-1" style={{paddingTop:6,borderTop:'1px solid var(--border-soft)'}}>Datos que aporta</div>
+      <ul style={{paddingLeft:16,marginTop:4}} className="fs-11 text-2">
+        {datos.map((d,i) => <li key={i} style={{marginBottom:3}}>{d}</li>)}
+      </ul>
+    </div>
+  );
+}
+
+// ============================================================
+// METRIC ROW
+// ============================================================
+function MetricRow({ nombre, fuente, calc, unit }) {
+  const colores = {
+    'Presupuesto':'blue','Manager ERP':'green','Manager':'green',
+    'GHL':'gray','Calculado':'amber','Manual':'gray',
+    'Acuerdo':'gray','BUK / RRHH':'gray',
+  };
+  const bc = colores[fuente] || 'gray';
+  return (
+    <tr>
+      <td className="strong">{nombre}</td>
+      <td><span className={'badge '+bc}>{fuente}</span></td>
+      <td className="text-2 fs-12">{calc}</td>
+      <td className="mono text-3 fs-11">{unit}</td>
+    </tr>
+  );
+}
+
+window.GlosarioTab = GlosarioTab;
+</script>
+
+<!-- ══ REACT APP ROOT ════════════════════════════════════════ -->
+<script type="text/babel">
+  const { useState, useEffect } = React;
+
+  function App({ initialPayload, userEmail }) {
+    const [tab,      setTab]      = useState('exec');
+    const [scenario, setScenario] = useState('base');
+    const [,         force]       = useState(0);
+
+    useEffect(() => {
+      window.__rerender = () => force(x => x + 1);
+      const interval = setInterval(async () => {
+        const user = firebase.auth().currentUser;
+        if (!user) return;
+        try {
+          const res     = await fetch(`${APPS_SCRIPT_URL}?action=data`);
+          const payload = await res.json();
+          if (window.__applyPayload) window.__applyPayload(payload);
+          force(x => x + 1);
+        } catch(e) { console.warn('Refresco fallido:', e); }
+      }, 300000);
+      return () => clearInterval(interval);
+    }, []);
+
+    return (
+      <>
+        {window.Topbar && (
+          <window.Topbar
+            tab={tab} setTab={setTab}
+            scenario={scenario} setScenario={setScenario}
+            userEmail={userEmail}
+            onLogout={() => firebase.auth().signOut()}
+          />
+        )}
+        <div className="page">
+          {window.Ribbon   && <window.Ribbon/>}
+          {tab === 'exec'     && window.ExecTab     && <window.ExecTab/>}
+          {tab === 'daily'    && window.DailyTab    && <window.DailyTab/>}
+          {tab === 'team'     && window.TeamTab     && <window.TeamTab/>}
+          {tab === 'glosario' && window.GlosarioTab && <window.GlosarioTab/>}
+        </div>
+      </>
+    );
+  }
+
+  window.__renderApp = function(payload, userEmail) {
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <App initialPayload={payload} userEmail={userEmail}/>
+    );
+  };
+</script>
+
+</body>
+</html>

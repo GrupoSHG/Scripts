@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "site": "hojalateria-el-abuelo",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "deploy.bat",
+      "token",
+      "*.bat",
+      "*.exe",
+      "*.py",
+      "*.sql"
+    ]
+  }
+}

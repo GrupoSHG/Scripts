@@ -1,0 +1,771 @@
+2026-05-11 14:33:29,288  INFO  =======================================================
+2026-05-11 14:33:29,288  INFO    PASO 1 — Restaurar BD y extraer Ventas Full
+2026-05-11 14:33:29,290  INFO  =======================================================
+2026-05-11 14:33:29,302  INFO  Usando .bak de ultimo_bak.txt: 2026-5-8-T779354202A_2026-05-08_1778265181.bak
+2026-05-11 14:33:29,302  INFO  Usando backup: 2026-5-8-T779354202A_2026-05-08_1778265181.bak
+2026-05-11 14:33:29,302  INFO  Restaurando 2026-5-8-T779354202A_2026-05-08_1778265181.bak como 'T779354202A'...
+2026-05-11 14:33:29,303  INFO  Copiando .bak a C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQL\DATA\2026-5-8-T779354202A_2026-05-08_1778265181.bak...
+2026-05-11 14:33:34,151  INFO  Archivos lógicos → Data: Newdata_cv, Log: Newdata_cv_log
+2026-05-11 14:33:34,152  INFO  Ejecutando RESTORE DATABASE...
+2026-05-11 14:33:37,196  INFO  Esperando que la BD quede en línea...
+2026-05-11 14:33:42,187  INFO    Estado actual: RESTORING
+2026-05-11 14:33:45,191  INFO    Estado actual: RESTORING
+2026-05-11 14:33:48,193  INFO    Estado actual: RESTORING
+2026-05-11 14:33:51,195  INFO  ✅ BD en línea tras 4 intentos.
+2026-05-11 14:33:51,196  INFO  Configurando MULTI_USER...
+2026-05-11 14:34:00,222  WARNING    Intento 1/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:34:09,241  WARNING    Intento 2/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:34:18,249  WARNING    Intento 3/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:34:27,266  WARNING    Intento 4/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:34:36,284  WARNING    Intento 5/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:34:45,295  WARNING    Intento 6/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:34:54,310  WARNING    Intento 7/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:35:03,316  WARNING    Intento 8/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:35:12,323  WARNING    Intento 9/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:35:21,327  WARNING    Intento 10/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:35:22,580  INFO  ✅ BD 'T779354202A' restaurada correctamente.
+2026-05-11 14:35:22,581  INFO  Conectando a 'T779354202A' para extraer ventas 2026...
+2026-05-11 14:35:22,849  INFO  Registros extraídos: 0
+2026-05-11 14:35:22,851  INFO  Exportando a Excel: C:\Reportes\VentasFull\VentasFull_2026-05-11.xlsx
+2026-05-11 14:35:22,910  INFO  ✅ Excel generado: C:\Reportes\VentasFull\VentasFull_2026-05-11.xlsx (0.0 MB)
+2026-05-11 14:35:22,912  INFO  ✅ Listo → C:\Reportes\VentasFull\VentasFull_2026-05-11.xlsx
+2026-05-11 14:47:36,072  INFO  =======================================================
+2026-05-11 14:47:36,073  INFO    PASO 1 — Restaurar BD y extraer Ventas Full
+2026-05-11 14:47:36,073  INFO  =======================================================
+2026-05-11 14:47:36,075  INFO  Usando .bak de ultimo_bak.txt: 2026-5-8-T779354202A_2026-05-08_1778265181.bak
+2026-05-11 14:47:36,075  INFO  Usando backup: 2026-5-8-T779354202A_2026-05-08_1778265181.bak
+2026-05-11 14:47:36,075  INFO  Restaurando 2026-5-8-T779354202A_2026-05-08_1778265181.bak como 'T779354202A'...
+2026-05-11 14:47:36,075  INFO  Copiando .bak a C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQL\DATA\2026-5-8-T779354202A_2026-05-08_1778265181.bak...
+2026-05-11 14:47:40,132  INFO  Archivos lógicos → Data: Newdata_cv, Log: Newdata_cv_log
+2026-05-11 14:47:40,132  INFO  Ejecutando RESTORE DATABASE...
+2026-05-11 14:47:40,600  INFO  Esperando que la BD quede en línea...
+2026-05-11 14:47:43,676  INFO    Estado actual: RESTORING
+2026-05-11 14:47:46,678  INFO    Estado actual: RESTORING
+2026-05-11 14:47:49,681  INFO  ✅ BD en línea tras 3 intentos.
+2026-05-11 14:47:49,681  INFO  Configurando MULTI_USER...
+2026-05-11 14:47:58,690  WARNING    Intento 1/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:48:07,710  WARNING    Intento 2/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:48:16,713  WARNING    Intento 3/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:48:25,724  WARNING    Intento 4/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:48:34,728  WARNING    Intento 5/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:48:43,744  WARNING    Intento 6/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:48:52,761  WARNING    Intento 7/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:49:01,775  WARNING    Intento 8/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:49:10,778  WARNING    Intento 9/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:49:19,799  WARNING    Intento 10/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 14:49:20,999  INFO  ✅ BD 'T779354202A' restaurada correctamente.
+2026-05-11 14:49:21,000  INFO  Conectando a 'T779354202A' para extraer ventas 2026...
+2026-05-11 14:49:21,223  INFO  Registros extraídos: 0
+2026-05-11 14:49:21,223  INFO  Exportando a Excel: C:\Reportes\VentasFull\VentasFull_2026-05-11.xlsx
+2026-05-11 14:49:21,255  INFO  ✅ Excel generado: C:\Reportes\VentasFull\VentasFull_2026-05-11.xlsx (0.0 MB)
+2026-05-11 14:49:21,256  INFO  ✅ Listo → C:\Reportes\VentasFull\VentasFull_2026-05-11.xlsx
+2026-05-11 15:00:46,222  INFO  =======================================================
+2026-05-11 15:00:46,222  INFO    PASO 1 — Restaurar BD y extraer Ventas Full
+2026-05-11 15:00:46,222  INFO  =======================================================
+2026-05-11 15:00:46,223  INFO  Usando backup: 2026-5-8-T779354202A_2026-05-08.bak
+2026-05-11 15:00:46,223  INFO  Restaurando 2026-5-8-T779354202A_2026-05-08.bak como 'T779354202A'...
+2026-05-11 15:00:46,223  INFO  Copiando .bak a C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQL\DATA\2026-5-8-T779354202A_2026-05-08.bak...
+2026-05-11 15:00:46,938  INFO  Archivos lógicos → Data: Newdata_cv, Log: Newdata_cv_log
+2026-05-11 15:00:46,939  INFO  Ejecutando RESTORE DATABASE...
+2026-05-11 15:00:47,890  INFO  Esperando que la BD quede en línea...
+2026-05-11 15:00:50,945  INFO  ✅ BD en línea tras 1 intentos.
+2026-05-11 15:00:50,945  INFO  Configurando MULTI_USER...
+2026-05-11 15:00:59,948  WARNING    Intento 1/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:01:08,965  WARNING    Intento 2/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:01:17,981  WARNING    Intento 3/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:01:26,998  WARNING    Intento 4/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:01:36,015  WARNING    Intento 5/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:01:45,031  WARNING    Intento 6/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:01:54,046  WARNING    Intento 7/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:02:03,051  WARNING    Intento 8/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:02:12,062  WARNING    Intento 9/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:02:21,082  WARNING    Intento 10/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:02:22,305  INFO  ✅ BD 'T779354202A' restaurada correctamente.
+2026-05-11 15:02:22,306  INFO  Conectando a 'T779354202A' para extraer ventas 2026...
+2026-05-11 15:02:22,564  INFO  Registros extraídos: 0
+2026-05-11 15:02:22,565  INFO  Exportando a Excel: C:\Reportes\VentasFull\VentasFull_2026-05-11.xlsx
+2026-05-11 15:02:22,605  INFO  ✅ Excel generado: C:\Reportes\VentasFull\VentasFull_2026-05-11.xlsx (0.0 MB)
+2026-05-11 15:02:22,606  INFO  ✅ Listo → C:\Reportes\VentasFull\VentasFull_2026-05-11.xlsx
+2026-05-11 15:06:26,307  INFO  =======================================================
+2026-05-11 15:06:26,308  INFO    PASO 1 — Restaurar BD y extraer Ventas Full
+2026-05-11 15:06:26,308  INFO  =======================================================
+2026-05-11 15:06:26,309  INFO  Usando backup: 2026-5-8-T779354202A.bak
+2026-05-11 15:06:26,309  INFO  Restaurando 2026-5-8-T779354202A.bak como 'T779354202A'...
+2026-05-11 15:06:26,309  INFO  Copiando .bak a C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQL\DATA\2026-5-8-T779354202A.bak...
+2026-05-11 15:06:30,845  INFO  Archivos lógicos → Data: Newdata_cv, Log: Newdata_cv_log
+2026-05-11 15:06:30,845  INFO  Ejecutando RESTORE DATABASE...
+2026-05-11 15:06:33,321  INFO  Esperando que la BD quede en línea...
+2026-05-11 15:06:36,432  INFO    Estado actual: RESTORING
+2026-05-11 15:06:39,434  INFO    Estado actual: RESTORING
+2026-05-11 15:06:42,436  INFO    Estado actual: RESTORING
+2026-05-11 15:06:45,439  INFO  ✅ BD en línea tras 4 intentos.
+2026-05-11 15:06:45,439  INFO  Configurando MULTI_USER...
+2026-05-11 15:06:54,455  WARNING    Intento 1/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:07:03,466  WARNING    Intento 2/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:07:12,477  WARNING    Intento 3/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:07:21,484  WARNING    Intento 4/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:07:30,495  WARNING    Intento 5/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:07:39,502  WARNING    Intento 6/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:07:48,516  WARNING    Intento 7/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:07:57,528  WARNING    Intento 8/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:08:06,535  WARNING    Intento 9/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:08:15,546  WARNING    Intento 10/10: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE failed because a lock could not be placed on database 'T779354202A'. Try again later. (5061) (SQLExecDirectW); [42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ALTER DATABASE statement failed. (5069)")
+2026-05-11 15:08:16,580  INFO  ✅ BD 'T779354202A' restaurada correctamente.
+2026-05-11 15:08:16,581  INFO  Conectando a 'T779354202A' para extraer ventas 2026...
+2026-05-11 15:08:16,772  INFO  Registros extraídos: 0
+2026-05-11 15:08:16,773  INFO  Exportando a Excel: C:\Reportes\VentasFull\VentasFull_2026-05-11.xlsx
+2026-05-11 15:08:16,796  INFO  ✅ Excel generado: C:\Reportes\VentasFull\VentasFull_2026-05-11.xlsx (0.0 MB)
+2026-05-11 15:08:16,797  INFO  ✅ Listo → C:\Reportes\VentasFull\VentasFull_2026-05-11.xlsx
+2026-05-14 09:34:27,017  INFO  ============================================================
+2026-05-14 09:34:27,018  INFO    PASO 1 — Restaurar BD y extraer Múltiples Reportes
+2026-05-14 09:34:27,018  INFO  ============================================================
+2026-05-14 09:34:27,033  INFO  Usando backup: 2026-5-14-T779354202C_2026-05-14_1778765298.bak
+2026-05-14 09:34:27,033  INFO  Restaurando 2026-5-14-T779354202C_2026-05-14_1778765298.bak como 'T779354202A'...
+2026-05-14 09:34:27,033  INFO  Copiando .bak a C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQL\DATA\2026-5-14-T779354202C_2026-05-14_1778765298.bak...
+2026-05-14 09:34:27,458  INFO  Ejecutando RESTORE DATABASE...
+2026-05-14 09:35:11,700  INFO  ✅ BD 'T779354202A' restaurada correctamente.
+2026-05-14 09:35:11,701  INFO  Conectando a 'T779354202A' para extraer reportes...
+2026-05-14 09:35:11,758  INFO  Ejecutando: base_completo...
+2026-05-14 09:35:13,051  INFO    └─ 8,463 filas extraídas.
+2026-05-14 09:35:13,051  INFO  Ejecutando: Ordenes_de_Compra...
+2026-05-14 09:35:13,191  INFO    └─ 2,988 filas extraídas.
+2026-05-14 09:35:13,191  INFO  Ejecutando: Ordenes_de_Produccion...
+2026-05-14 09:35:13,334  INFO    └─ 18 filas extraídas.
+2026-05-14 09:35:13,335  INFO  Ejecutando: Pendiente_a_facturar...
+2026-05-14 09:35:13,410  INFO    └─ 137 filas extraídas.
+2026-05-14 09:35:13,410  INFO  Ejecutando: Vales_de_Salida...
+2026-05-14 09:35:13,889  INFO    └─ 10,875 filas extraídas.
+2026-05-14 09:35:13,890  INFO  Ejecutando: Ventas_Full...
+2026-05-14 09:35:14,173  INFO    └─ 1,491 filas extraídas.
+2026-05-14 09:35:14,174  INFO  Exportando a Excel multipestaña: C:\Reportes\VentasFull\Reportes_Completos_2026-05-14.xlsx
+2026-05-14 09:36:15,764  INFO  ✅ Excel generado: C:\Reportes\VentasFull\Reportes_Completos_2026-05-14.xlsx (3.2 MB)
+2026-05-14 09:36:15,766  INFO  ✅ Proceso Completado → C:\Reportes\VentasFull\Reportes_Completos_2026-05-14.xlsx
+2026-05-15 13:09:17,973  INFO  =======================================================
+2026-05-15 13:09:17,974  INFO    PASO 2 — Subir Excel a Google Drive
+2026-05-15 13:09:17,974  INFO  =======================================================
+2026-05-15 13:09:17,985  INFO  Subiendo: Reportes_Completos_2026-05-14.xlsx (2.9 MB)
+2026-05-15 13:09:17,985  INFO  Autenticando con cuenta de servicio...
+2026-05-15 13:09:18,034  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-05-15 13:09:19,149  INFO  Creando archivo nuevo en Drive...
+2026-05-15 13:09:19,702  WARNING  Encountered 403 Forbidden with reason "storageQuotaExceeded"
+2026-05-15 13:10:37,679  INFO  =======================================================
+2026-05-15 13:10:37,679  INFO    PASO 2 — Subir Excel a Google Drive
+2026-05-15 13:10:37,679  INFO  =======================================================
+2026-05-15 13:10:37,680  INFO  Subiendo: Reportes_Completos_2026-05-14.xlsx (2.9 MB)
+2026-05-15 13:10:37,680  INFO  Autenticando con cuenta de servicio...
+2026-05-15 13:10:37,762  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-05-15 13:10:38,761  INFO  Creando archivo nuevo en Drive...
+2026-05-15 13:10:39,257  WARNING  Encountered 403 Forbidden with reason "storageQuotaExceeded"
+2026-05-15 13:11:37,392  INFO  =======================================================
+2026-05-15 13:11:37,393  INFO    PASO 2 — Subir Excel a Google Drive
+2026-05-15 13:11:37,393  INFO  =======================================================
+2026-05-15 13:11:37,394  INFO  Subiendo: Reportes_Completos_2026-05-14.xlsx (2.9 MB)
+2026-05-15 13:11:37,394  INFO  Autenticando con cuenta de servicio...
+2026-05-15 13:11:37,446  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-05-15 13:11:38,492  INFO  Creando archivo nuevo en Drive...
+2026-05-15 13:11:38,938  WARNING  Encountered 403 Forbidden with reason "storageQuotaExceeded"
+2026-05-15 13:14:13,437  INFO  =======================================================
+2026-05-15 13:14:13,437  INFO    PASO 2 — Subir Excel a Google Drive
+2026-05-15 13:14:13,437  INFO  =======================================================
+2026-05-15 13:14:13,438  INFO  Subiendo: Reportes_Completos_2026-05-14.xlsx (2.9 MB)
+2026-05-15 13:14:13,438  INFO  Autenticando con cuenta de servicio...
+2026-05-15 13:14:13,482  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-05-15 13:14:14,545  INFO  Creando archivo nuevo en Drive...
+2026-05-15 13:14:16,627  WARNING  Encountered 403 Forbidden with reason "storageQuotaExceeded"
+2026-05-15 13:14:16,628  ERROR  ❌ Error crítico al subir: <HttpError 403 when requesting https://www.googleapis.com/upload/drive/v3/files?fields=id&alt=json&uploadType=multipart returned "Service Accounts do not have storage quota. Leverage shared drives (https://developers.google.com/workspace/drive/api/guides/about-shareddrives), or use OAuth delegation (http://support.google.com/a/answer/7281227) instead.". Details: "[{'message': 'Service Accounts do not have storage quota. Leverage shared drives (https://developers.google.com/workspace/drive/api/guides/about-shareddrives), or use OAuth delegation (http://support.google.com/a/answer/7281227) instead.', 'domain': 'usageLimits', 'reason': 'storageQuotaExceeded'}]">
+2026-05-15 13:16:50,495  INFO  =======================================================
+2026-05-15 13:16:50,495  INFO    PASO 2 — Subir Excel a Google Drive
+2026-05-15 13:16:50,496  INFO  =======================================================
+2026-05-15 13:16:50,497  INFO  Subiendo: Reportes_Completos_2026-05-14.xlsx (2.9 MB)
+2026-05-15 13:16:50,498  INFO  Autenticando con cuenta de servicio...
+2026-05-15 13:16:50,543  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-05-15 13:16:50,545  INFO  Creando archivo nuevo en Unidad Compartida...
+2026-05-15 13:16:51,677  ERROR  Error crítico: <HttpError 404 when requesting https://www.googleapis.com/upload/drive/v3/files?fields=id&supportsAllDrives=true&alt=json&uploadType=multipart returned "File not found: ID_DE_LA_UNIDAD_COMPARTIDA.". Details: "[{'message': 'File not found: ID_DE_LA_UNIDAD_COMPARTIDA.', 'domain': 'global', 'reason': 'notFound', 'location': 'fileId', 'locationType': 'parameter'}]">
+2026-05-15 13:17:13,378  INFO  =======================================================
+2026-05-15 13:17:13,379  INFO    PASO 2 — Subir Excel a Google Drive
+2026-05-15 13:17:13,379  INFO  =======================================================
+2026-05-15 13:17:13,380  INFO  Subiendo: Reportes_Completos_2026-05-14.xlsx (2.9 MB)
+2026-05-15 13:17:13,380  INFO  Autenticando con cuenta de servicio...
+2026-05-15 13:17:13,422  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-05-15 13:17:13,425  INFO  Creando archivo nuevo en Unidad Compartida...
+2026-05-15 13:17:16,710  ERROR  Error crítico: <HttpError 404 when requesting https://www.googleapis.com/upload/drive/v3/files?fields=id&supportsAllDrives=true&alt=json&uploadType=multipart returned "File not found: ID_DE_LA_UNIDAD_COMPARTIDA.". Details: "[{'message': 'File not found: ID_DE_LA_UNIDAD_COMPARTIDA.', 'domain': 'global', 'reason': 'notFound', 'location': 'fileId', 'locationType': 'parameter'}]">
+2026-05-15 13:18:22,353  INFO  =======================================================
+2026-05-15 13:18:22,353  INFO    PASO 2 — Subir Excel a Google Drive
+2026-05-15 13:18:22,353  INFO  =======================================================
+2026-05-15 13:18:22,354  INFO  Subiendo: Reportes_Completos_2026-05-14.xlsx (2.9 MB)
+2026-05-15 13:18:22,354  INFO  Autenticando con cuenta de servicio...
+2026-05-15 13:18:22,396  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-05-15 13:18:22,400  INFO  Creando archivo nuevo en Unidad Compartida...
+2026-05-15 13:18:24,976  INFO  ✅ ¡POR FIN! Subida exitosa en Unidad Compartida. ID: 1xptZV32ipe-eOG7z_Bwi1CDZatEJA4sK
+2026-05-15 13:27:47,303  INFO  ╔═════════════════════════════════════════════════════╗
+2026-05-15 13:27:47,304  INFO  ║   PIPELINE VENTAS FULL — Inicio: 2026-05-15 13:27   ║
+2026-05-15 13:27:47,304  INFO  ╚═════════════════════════════════════════════════════╝
+2026-05-15 13:27:47,304  INFO  
+2026-05-15 13:27:47,304  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 13:27:47,304  INFO    PASO 1/3 — Descargar backup desde Manager
+2026-05-15 13:27:47,305  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 13:27:47,745  INFO  =======================================================
+2026-05-15 13:27:47,746  INFO    Iniciando descarga automática de backup Manager
+2026-05-15 13:27:47,746  INFO  =======================================================
+2026-05-15 13:27:47,747  INFO  ====== WebDriver manager ======
+2026-05-15 13:27:50,842  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-15 13:27:51,261  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-15 13:27:51,594  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\148.0.7778.167\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-15 13:27:53,128  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-15 13:27:55,087  INFO  Inputs visibles: 3
+2026-05-15 13:27:55,437  INFO  Login enviado...
+2026-05-15 13:27:59,450  INFO  ✅ Login exitoso. session_id: d9c92795...
+2026-05-15 13:27:59,450  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=d9c92795fc8f34b32082519c9893bb0b&cd=prodkernel
+2026-05-15 13:27:59,544  INFO  Recarga 1/10...
+2026-05-15 13:28:03,629  INFO    filas .bak encontradas: 3
+2026-05-15 13:28:03,629  INFO  ✅ Tabla cargada en recarga 1.
+2026-05-15 13:28:03,663  INFO    Ignorando: 2026-5-15-T779354202A.bak
+2026-05-15 13:28:03,689  INFO    Ignorando: 2026-5-15-T779354202B.bak
+2026-05-15 13:28:03,715  INFO  Backup seleccionado: 2026-5-15-T779354202C.bak (2026-05-15 10:08:25+00:00)
+2026-05-15 13:28:03,724  INFO  HTML fila completa: <td class="bucket">mng-respaldos-poliuretano</td><td class="Key">2026-5-15-T779354202C.bak</td><td class="LastModified">2026-05-15 10:08:25+00:00</td><td class="Size">0.12 GB</td><td class="presigned_url" style="display: none;">https://mng-respaldos-poliuretano.s3.amazonaws.com/2026-5-15-T779354202C.bak?AWSAccessKeyId=AKIAZPIFFWJDVFW267ZG&amp;Signature=T9hiJF9iuiIl9b%2FDqJwfrKrYAuI%3D&amp;Expires=1778866374</td><td><i onclick="downloadbackup($(this).parent().parent())" class="fas fa-download"></
+2026-05-15 13:28:05,944  INFO  Descargando 2026-5-15-T779354202C.bak desde S3...
+2026-05-15 13:28:12,124  INFO    10 MB / 123 MB (9%)
+2026-05-15 13:28:17,145  INFO    21 MB / 123 MB (17%)
+2026-05-15 13:28:21,668  INFO    31 MB / 123 MB (26%)
+2026-05-15 13:28:25,005  INFO    42 MB / 123 MB (34%)
+2026-05-15 13:28:27,866  INFO    52 MB / 123 MB (43%)
+2026-05-15 13:28:30,766  INFO    63 MB / 123 MB (51%)
+2026-05-15 13:28:33,809  INFO    73 MB / 123 MB (60%)
+2026-05-15 13:28:36,790  INFO    84 MB / 123 MB (68%)
+2026-05-15 13:28:40,063  INFO    94 MB / 123 MB (77%)
+2026-05-15 13:28:43,051  INFO    105 MB / 123 MB (86%)
+2026-05-15 13:28:46,096  INFO    115 MB / 123 MB (94%)
+2026-05-15 13:28:48,323  INFO  ✅ Descarga completa: 2026-5-15-T779354202C.bak (122.6 MB)
+2026-05-15 13:28:48,326  INFO  Backup guardado en: C:\Backups\Manager\2026-5-15-T779354202C_2026-05-15_1778866128.bak
+2026-05-15 13:28:48,326  INFO  ✅ Éxito — backup guardado en: C:\Backups\Manager\2026-5-15-T779354202C_2026-05-15_1778866128.bak
+2026-05-15 13:28:52,387  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=57780): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/0904140e9913d7f779934f30e6944449
+2026-05-15 13:28:56,471  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=57780): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/0904140e9913d7f779934f30e6944449
+2026-05-15 13:29:00,537  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=57780): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/0904140e9913d7f779934f30e6944449
+2026-05-15 13:29:04,617  INFO  
+2026-05-15 13:29:04,617  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 13:29:04,617  INFO    PASO 2/3 — Restaurar BD y extraer Ventas Full
+2026-05-15 13:29:04,618  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 13:29:06,023  INFO  ============================================================
+2026-05-15 13:29:06,023  INFO    PASO 1 — Restaurar BD y extraer Múltiples Reportes
+2026-05-15 13:29:06,023  INFO  ============================================================
+2026-05-15 13:29:06,035  INFO  Usando .bak de ultimo_bak.txt: 2026-5-15-T779354202C_2026-05-15_1778866128.bak
+2026-05-15 13:29:06,035  INFO  Usando backup: 2026-5-15-T779354202C_2026-05-15_1778866128.bak
+2026-05-15 13:29:06,036  INFO  Restaurando 2026-5-15-T779354202C_2026-05-15_1778866128.bak como 'T779354202A'...
+2026-05-15 13:29:06,036  INFO  Copiando .bak a C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQL\DATA\2026-5-15-T779354202C_2026-05-15_1778866128.bak...
+2026-05-15 13:29:09,510  INFO  Ejecutando RESTORE DATABASE...
+2026-05-15 13:29:53,675  INFO  ✅ BD 'T779354202A' restaurada correctamente.
+2026-05-15 13:29:53,676  INFO  Conectando a 'T779354202A' para extraer reportes...
+2026-05-15 13:29:53,718  INFO  Ejecutando: base_completo...
+2026-05-15 13:29:55,479  INFO    └─ 8,464 filas extraídas.
+2026-05-15 13:29:55,480  INFO  Ejecutando: Ordenes_de_Compra...
+2026-05-15 13:29:55,520  INFO    └─ 142 filas extraídas.
+2026-05-15 13:29:55,521  INFO  Ejecutando: Ordenes_de_produccion...
+2026-05-15 13:29:55,542  INFO    └─ 223 filas extraídas.
+2026-05-15 13:29:55,543  INFO  Ejecutando: Pendiente_a_facturar...
+2026-05-15 13:29:55,609  INFO    └─ 127 filas extraídas.
+2026-05-15 13:29:55,610  INFO  Ejecutando: Vales_de_Salida...
+2026-05-15 13:29:56,353  INFO    └─ 11,065 filas extraídas.
+2026-05-15 13:29:56,353  INFO  Ejecutando: Ventas_Full...
+2026-05-15 13:29:56,819  INFO    └─ 1,509 filas extraídas.
+2026-05-15 13:29:56,819  INFO  Ejecutando: WIP...
+2026-05-15 13:29:56,943  INFO    └─ 21 filas extraídas.
+2026-05-15 13:29:56,946  INFO  Exportando a Excel multipestaña: C:\Reportes\VentasFull\Reportes_Completos_2026-05-15.xlsx
+2026-05-15 13:30:50,081  INFO  ✅ Excel generado: C:\Reportes\VentasFull\Reportes_Completos_2026-05-15.xlsx (2.9 MB)
+2026-05-15 13:30:50,082  INFO  ✅ Proceso Completado → C:\Reportes\VentasFull\Reportes_Completos_2026-05-15.xlsx
+2026-05-15 13:30:50,094  INFO  
+2026-05-15 13:30:50,094  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 13:30:50,095  INFO    PASO 3/3 — Subir Excel a Google Drive
+2026-05-15 13:30:50,095  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 13:30:50,851  INFO  =======================================================
+2026-05-15 13:30:50,852  INFO    PASO 2 — Subir Excel a Google Drive
+2026-05-15 13:30:50,852  INFO  =======================================================
+2026-05-15 13:30:50,853  INFO  Subiendo: Reportes_Completos_2026-05-15.xlsx (2.9 MB)
+2026-05-15 13:30:50,853  INFO  Autenticando con cuenta de servicio...
+2026-05-15 13:30:50,911  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-05-15 13:30:50,930  INFO  Creando archivo nuevo en Unidad Compartida...
+2026-05-15 13:30:53,852  INFO  ✅ ¡POR FIN! Subida exitosa en Unidad Compartida. ID: 1hM2XlHk9iGMUjUy0n1SqfIFrAArzwXAs
+2026-05-15 13:30:53,852  INFO  
+2026-05-15 13:30:53,852  INFO  ╔═════════════════════════════════════════════════════╗
+2026-05-15 13:30:53,853  INFO  ║  ✅ PIPELINE COMPLETADO en 186s                      ║
+2026-05-15 13:30:53,854  INFO  ║  📊 Excel en Drive: VentasFull_Actualizado.xlsx      ║
+2026-05-15 13:30:53,854  INFO  ╚═════════════════════════════════════════════════════╝
+2026-05-15 15:45:17,609  INFO  ╔═════════════════════════════════════════════════════╗
+2026-05-15 15:45:17,611  INFO  ║   PIPELINE VENTAS FULL — Inicio: 2026-05-15 15:45   ║
+2026-05-15 15:45:17,611  INFO  ╚═════════════════════════════════════════════════════╝
+2026-05-15 15:45:17,612  INFO  
+2026-05-15 15:45:17,612  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 15:45:17,612  INFO    PASO 1/3 — Descargar backup desde Manager
+2026-05-15 15:45:17,612  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 15:45:18,014  INFO  =======================================================
+2026-05-15 15:45:18,014  INFO    Iniciando descarga automática de backup Manager
+2026-05-15 15:45:18,015  INFO  =======================================================
+2026-05-15 15:45:18,016  INFO  ====== WebDriver manager ======
+2026-05-15 15:45:21,294  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-15 15:45:21,734  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-15 15:45:22,069  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\148.0.7778.167\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-15 15:45:23,682  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-15 15:45:25,617  INFO  Inputs visibles: 3
+2026-05-15 15:45:25,913  INFO  Login enviado...
+2026-05-15 15:45:29,925  INFO  ✅ Login exitoso. session_id: bead7919...
+2026-05-15 15:45:29,928  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=bead7919c0671aca82c7e1aa0d0b21f6&cd=prodkernel
+2026-05-15 15:45:30,017  INFO  Recarga 1/10...
+2026-05-15 15:45:34,098  INFO    filas .bak encontradas: 3
+2026-05-15 15:45:34,098  INFO  ✅ Tabla cargada en recarga 1.
+2026-05-15 15:45:34,131  INFO    Ignorando: 2026-5-15-T779354202A.bak
+2026-05-15 15:45:34,176  INFO    Ignorando: 2026-5-15-T779354202B.bak
+2026-05-15 15:45:34,203  INFO  Backup seleccionado: 2026-5-15-T779354202C.bak (2026-05-15 10:08:25+00:00)
+2026-05-15 15:45:34,211  INFO  HTML fila completa: <td class="bucket">mng-respaldos-poliuretano</td><td class="Key">2026-5-15-T779354202C.bak</td><td class="LastModified">2026-05-15 10:08:25+00:00</td><td class="Size">0.12 GB</td><td class="presigned_url" style="display: none;">https://mng-respaldos-poliuretano.s3.amazonaws.com/2026-5-15-T779354202C.bak?AWSAccessKeyId=AKIAZPIFFWJDVFW267ZG&amp;Signature=tm6A7gMEqCRfdJBIrSoXg7YGuWw%3D&amp;Expires=1778874624</td><td><i onclick="downloadbackup($(this).parent().parent())" class="fas fa-download"></i>
+2026-05-15 15:45:36,450  INFO  Descargando 2026-5-15-T779354202C.bak desde S3...
+2026-05-15 15:45:42,867  INFO    10 MB / 123 MB (9%)
+2026-05-15 15:45:48,500  INFO    21 MB / 123 MB (17%)
+2026-05-15 15:45:53,679  INFO    31 MB / 123 MB (26%)
+2026-05-15 15:45:58,099  INFO    42 MB / 123 MB (34%)
+2026-05-15 15:46:02,512  INFO    52 MB / 123 MB (43%)
+2026-05-15 15:46:06,854  INFO    63 MB / 123 MB (51%)
+2026-05-15 15:46:10,658  INFO    73 MB / 123 MB (60%)
+2026-05-15 15:46:14,956  INFO    84 MB / 123 MB (68%)
+2026-05-15 15:46:19,093  INFO    94 MB / 123 MB (77%)
+2026-05-15 15:46:23,202  INFO    105 MB / 123 MB (86%)
+2026-05-15 15:46:27,561  INFO    115 MB / 123 MB (94%)
+2026-05-15 15:46:30,682  INFO  ✅ Descarga completa: 2026-5-15-T779354202C.bak (122.6 MB)
+2026-05-15 15:46:30,685  INFO  Backup guardado en: C:\Backups\Manager\2026-5-15-T779354202C_2026-05-15_1778874390.bak
+2026-05-15 15:46:30,686  INFO  ✅ Éxito — backup guardado en: C:\Backups\Manager\2026-5-15-T779354202C_2026-05-15_1778874390.bak
+2026-05-15 15:46:34,788  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=49966): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/31594c20d60c20d15d2a9ca0f177ec4d
+2026-05-15 15:46:38,888  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=49966): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/31594c20d60c20d15d2a9ca0f177ec4d
+2026-05-15 15:46:42,995  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=49966): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/31594c20d60c20d15d2a9ca0f177ec4d
+2026-05-15 15:46:47,103  INFO  
+2026-05-15 15:46:47,103  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 15:46:47,103  INFO    PASO 2/3 — Restaurar BD y extraer Ventas Full
+2026-05-15 15:46:47,104  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 15:46:48,551  INFO  ============================================================
+2026-05-15 15:46:48,551  INFO    PASO 1 — Restaurar BD y extraer Múltiples Reportes
+2026-05-15 15:46:48,551  INFO  ============================================================
+2026-05-15 15:46:48,563  INFO  Usando .bak de ultimo_bak.txt: 2026-5-15-T779354202C_2026-05-15_1778874390.bak
+2026-05-15 15:46:48,563  INFO  Usando backup: 2026-5-15-T779354202C_2026-05-15_1778874390.bak
+2026-05-15 15:46:48,563  INFO  Restaurando 2026-5-15-T779354202C_2026-05-15_1778874390.bak como 'T779354202A'...
+2026-05-15 15:46:48,564  INFO  Copiando .bak a C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQL\DATA\2026-5-15-T779354202C_2026-05-15_1778874390.bak...
+2026-05-15 15:46:49,123  INFO  Ejecutando RESTORE DATABASE...
+2026-05-15 15:47:33,482  INFO  ✅ BD 'T779354202A' restaurada correctamente.
+2026-05-15 15:47:33,483  INFO  Conectando a 'T779354202A' para extraer reportes...
+2026-05-15 15:47:33,521  INFO  Ejecutando: base_completo...
+2026-05-15 15:47:34,801  INFO    └─ 8,464 filas extraídas.
+2026-05-15 15:47:34,801  INFO  Ejecutando: Ordenes_de_Compra...
+2026-05-15 15:47:34,834  INFO    └─ 142 filas extraídas.
+2026-05-15 15:47:34,834  INFO  Ejecutando: Ordenes_de_produccion...
+2026-05-15 15:47:34,863  INFO    └─ 223 filas extraídas.
+2026-05-15 15:47:34,864  INFO  Ejecutando: Pendiente_a_facturar...
+2026-05-15 15:47:34,923  INFO    └─ 127 filas extraídas.
+2026-05-15 15:47:34,924  INFO  Ejecutando: Vales_de_Salida...
+2026-05-15 15:47:35,395  INFO    └─ 11,065 filas extraídas.
+2026-05-15 15:47:35,396  INFO  Ejecutando: Ventas_Full...
+2026-05-15 15:47:35,687  INFO    └─ 1,509 filas extraídas.
+2026-05-15 15:47:35,688  INFO  Ejecutando: WIP...
+2026-05-15 15:47:35,813  INFO    └─ 21 filas extraídas.
+2026-05-15 15:47:35,814  INFO  Exportando a Excel multipestaña: C:\Reportes\VentasFull\Reportes_Completos_2026-05-15.xlsx
+2026-05-15 15:48:25,428  INFO  ✅ Excel generado: C:\Reportes\VentasFull\Reportes_Completos_2026-05-15.xlsx (2.9 MB)
+2026-05-15 15:48:25,430  INFO  ✅ Proceso Completado → C:\Reportes\VentasFull\Reportes_Completos_2026-05-15.xlsx
+2026-05-15 15:48:25,441  INFO  
+2026-05-15 15:48:25,442  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 15:48:25,442  INFO    PASO 3/3 — Subir Excel a Google Drive
+2026-05-15 15:48:25,442  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 15:48:26,272  INFO  =======================================================
+2026-05-15 15:48:26,275  INFO    PASO 2 — Subir Excel a Google Drive
+2026-05-15 15:48:26,276  INFO  =======================================================
+2026-05-15 15:48:26,277  INFO  Subiendo: Reportes_Completos_2026-05-15.xlsx (2.9 MB)
+2026-05-15 15:48:26,277  INFO  Autenticando con cuenta de servicio...
+2026-05-15 15:48:26,343  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-05-15 15:48:26,366  INFO  Creando archivo nuevo en Unidad Compartida...
+2026-05-15 15:48:29,130  INFO  ✅ ¡POR FIN! Subida exitosa en Unidad Compartida. ID: 1OE_j5Ls52h_KttFANgzWjHvr-viLUwlZ
+2026-05-15 15:48:29,130  INFO  
+2026-05-15 15:48:29,131  INFO  ╔═════════════════════════════════════════════════════╗
+2026-05-15 15:48:29,133  INFO  ║  ✅ PIPELINE COMPLETADO en 191s                      ║
+2026-05-15 15:48:29,134  INFO  ║  📊 Excel en Drive: VentasFull_Actualizado.xlsx      ║
+2026-05-15 15:48:29,134  INFO  ╚═════════════════════════════════════════════════════╝
+2026-05-15 15:58:12,785  INFO  ╔═════════════════════════════════════════════════════╗
+2026-05-15 15:58:12,786  INFO  ║   PIPELINE VENTAS FULL — Inicio: 2026-05-15 15:58   ║
+2026-05-15 15:58:12,786  INFO  ╚═════════════════════════════════════════════════════╝
+2026-05-15 15:58:12,786  INFO  
+2026-05-15 15:58:12,786  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 15:58:12,786  INFO    PASO 1/3 — Descargar backup desde Manager
+2026-05-15 15:58:12,786  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 15:58:13,135  INFO  =======================================================
+2026-05-15 15:58:13,135  INFO    Iniciando descarga automática de backup Manager
+2026-05-15 15:58:13,135  INFO  =======================================================
+2026-05-15 15:58:13,136  INFO  ====== WebDriver manager ======
+2026-05-15 15:58:16,235  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-15 15:58:16,588  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-15 15:58:16,933  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\148.0.7778.167\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-15 15:58:18,085  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-15 15:58:19,906  INFO  Inputs visibles: 3
+2026-05-15 15:58:20,180  INFO  Login enviado...
+2026-05-15 15:58:24,192  INFO  ✅ Login exitoso. session_id: b811d580...
+2026-05-15 15:58:24,192  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=b811d5806d6e33d1419bcbe79c0720c6&cd=prodkernel
+2026-05-15 15:58:24,328  INFO  Recarga 1/10...
+2026-05-15 15:58:28,448  INFO    filas .bak encontradas: 0
+2026-05-15 15:58:28,448  INFO  Recarga 2/10...
+2026-05-15 15:58:32,524  INFO    filas .bak encontradas: 3
+2026-05-15 15:58:32,525  INFO  ✅ Tabla cargada en recarga 2.
+2026-05-15 15:58:32,558  INFO    Ignorando: 2026-5-15-T779354202A.bak
+2026-05-15 15:58:32,582  INFO    Ignorando: 2026-5-15-T779354202B.bak
+2026-05-15 15:58:32,613  INFO  Backup seleccionado: 2026-5-15-T779354202C.bak (2026-05-15 10:08:25+00:00)
+2026-05-15 15:58:32,621  INFO  HTML fila completa: <td class="bucket">mng-respaldos-poliuretano</td><td class="Key">2026-5-15-T779354202C.bak</td><td class="LastModified">2026-05-15 10:08:25+00:00</td><td class="Size">0.12 GB</td><td class="presigned_url" style="display: none;">https://mng-respaldos-poliuretano.s3.amazonaws.com/2026-5-15-T779354202C.bak?AWSAccessKeyId=AKIAZPIFFWJDVFW267ZG&amp;Signature=G3Z5W1XqySK%2BjMC02%2BBgmZ9Ki3I%3D&amp;Expires=1778875402</td><td><i onclick="downloadbackup($(this).parent().parent())" class="fas fa-download">
+2026-05-15 15:58:34,855  INFO  Descargando 2026-5-15-T779354202C.bak desde S3...
+2026-05-15 15:58:41,584  INFO    10 MB / 123 MB (9%)
+2026-05-15 15:58:46,446  INFO    21 MB / 123 MB (17%)
+2026-05-15 15:58:50,836  INFO    31 MB / 123 MB (26%)
+2026-05-15 15:58:58,544  INFO    42 MB / 123 MB (34%)
+2026-05-15 15:59:03,739  INFO    52 MB / 123 MB (43%)
+2026-05-15 15:59:10,176  INFO    63 MB / 123 MB (51%)
+2026-05-15 15:59:18,495  INFO    73 MB / 123 MB (60%)
+2026-05-15 15:59:22,792  INFO    84 MB / 123 MB (68%)
+2026-05-15 15:59:26,061  INFO    94 MB / 123 MB (77%)
+2026-05-15 15:59:29,667  INFO    105 MB / 123 MB (86%)
+2026-05-15 15:59:33,123  INFO    115 MB / 123 MB (94%)
+2026-05-15 15:59:36,244  INFO  ✅ Descarga completa: 2026-5-15-T779354202C.bak (122.6 MB)
+2026-05-15 15:59:36,247  INFO  Backup guardado en: C:\Backups\Manager\2026-5-15-T779354202C_2026-05-15_1778875176.bak
+2026-05-15 15:59:36,247  INFO  ✅ Éxito — backup guardado en: C:\Backups\Manager\2026-5-15-T779354202C_2026-05-15_1778875176.bak
+2026-05-15 15:59:40,353  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=57627): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/6c6675a0e4c9da6b22981a872a84053c
+2026-05-15 15:59:44,458  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=57627): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/6c6675a0e4c9da6b22981a872a84053c
+2026-05-15 15:59:48,562  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=57627): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/6c6675a0e4c9da6b22981a872a84053c
+2026-05-15 15:59:52,656  INFO  
+2026-05-15 15:59:52,657  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 15:59:52,657  INFO    PASO 2/3 — Restaurar BD y extraer Ventas Full
+2026-05-15 15:59:52,657  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 15:59:53,511  INFO  ============================================================
+2026-05-15 15:59:53,511  INFO    PASO 1 — Restaurar BD y extraer Múltiples Reportes
+2026-05-15 15:59:53,511  INFO  ============================================================
+2026-05-15 15:59:53,523  INFO  Usando .bak de ultimo_bak.txt: 2026-5-15-T779354202C_2026-05-15_1778875176.bak
+2026-05-15 15:59:53,524  INFO  Usando backup: 2026-5-15-T779354202C_2026-05-15_1778875176.bak
+2026-05-15 15:59:53,524  INFO  Restaurando 2026-5-15-T779354202C_2026-05-15_1778875176.bak como 'T779354202A'...
+2026-05-15 15:59:53,524  INFO  Copiando .bak a C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQL\DATA\2026-5-15-T779354202C_2026-05-15_1778875176.bak...
+2026-05-15 15:59:54,067  INFO  Ejecutando RESTORE DATABASE...
+2026-05-15 16:00:38,214  INFO  ✅ BD 'T779354202A' restaurada correctamente.
+2026-05-15 16:00:38,215  INFO  Conectando a 'T779354202A' para extraer reportes...
+2026-05-15 16:00:38,251  INFO  Ejecutando: base_completo...
+2026-05-15 16:00:39,544  INFO    └─ 8,464 filas extraídas.
+2026-05-15 16:00:39,544  INFO  Ejecutando: Ordenes_de_Compra...
+2026-05-15 16:00:39,578  INFO    └─ 142 filas extraídas.
+2026-05-15 16:00:39,578  INFO  Ejecutando: Ordenes_de_produccion...
+2026-05-15 16:00:39,595  INFO    └─ 223 filas extraídas.
+2026-05-15 16:00:39,595  INFO  Ejecutando: Pendiente_a_facturar...
+2026-05-15 16:00:39,661  INFO    └─ 127 filas extraídas.
+2026-05-15 16:00:39,661  INFO  Ejecutando: Vales_de_Salida...
+2026-05-15 16:00:40,149  INFO    └─ 11,065 filas extraídas.
+2026-05-15 16:00:40,150  INFO  Ejecutando: Ventas_Full...
+2026-05-15 16:00:40,498  INFO    └─ 1,509 filas extraídas.
+2026-05-15 16:00:40,498  INFO  Ejecutando: WIP...
+2026-05-15 16:00:40,615  INFO    └─ 21 filas extraídas.
+2026-05-15 16:00:40,616  INFO  Exportando a Excel multipestaña: C:\Reportes\VentasFull\Reportes_Completos_2026-05-15.xlsx
+2026-05-15 16:01:29,297  INFO  ✅ Excel generado: C:\Reportes\VentasFull\Reportes_Completos_2026-05-15.xlsx (2.9 MB)
+2026-05-15 16:01:29,298  INFO  ✅ Proceso Completado → C:\Reportes\VentasFull\Reportes_Completos_2026-05-15.xlsx
+2026-05-15 16:01:29,309  INFO  
+2026-05-15 16:01:29,309  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 16:01:29,309  INFO    PASO 3/3 — Subir Excel a Google Drive
+2026-05-15 16:01:29,310  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-15 16:01:29,860  INFO  =======================================================
+2026-05-15 16:01:29,860  INFO    PASO 2 — Subir Excel a Google Drive
+2026-05-15 16:01:29,860  INFO  =======================================================
+2026-05-15 16:01:29,861  INFO  Subiendo: Reportes_Completos_2026-05-15.xlsx (2.9 MB)
+2026-05-15 16:01:29,861  INFO  Autenticando con cuenta de servicio...
+2026-05-15 16:01:29,902  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-05-15 16:01:29,921  INFO  Creando archivo nuevo en Unidad Compartida...
+2026-05-15 16:01:33,149  INFO  ✅ ¡POR FIN! Subida exitosa en Unidad Compartida. ID: 1iqDEbyi1wUwKRmjqqq2f9mtSD5yGSigY
+2026-05-15 16:01:33,149  INFO  
+2026-05-15 16:01:33,149  INFO  ╔═════════════════════════════════════════════════════╗
+2026-05-15 16:01:33,150  INFO  ║  ✅ PIPELINE COMPLETADO en 200s                      ║
+2026-05-15 16:01:33,150  INFO  ║  📊 Excel en Drive: VentasFull_Actualizado.xlsx      ║
+2026-05-15 16:01:33,150  INFO  ╚═════════════════════════════════════════════════════╝
+2026-05-18 08:09:55,318  INFO  ╔═════════════════════════════════════════════════════╗
+2026-05-18 08:09:55,319  INFO  ║   PIPELINE VENTAS FULL — Inicio: 2026-05-18 08:09   ║
+2026-05-18 08:09:55,319  INFO  ╚═════════════════════════════════════════════════════╝
+2026-05-18 08:09:55,319  INFO  
+2026-05-18 08:09:55,320  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 08:09:55,320  INFO    PASO 1/3 — Descargar backup desde Manager
+2026-05-18 08:09:55,320  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 08:09:55,723  INFO  =======================================================
+2026-05-18 08:09:55,723  INFO    Iniciando descarga automática de backup Manager
+2026-05-18 08:09:55,723  INFO  =======================================================
+2026-05-18 08:09:55,725  INFO  ====== WebDriver manager ======
+2026-05-18 08:09:59,708  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-18 08:10:00,238  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-18 08:10:00,613  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-18 08:10:01,447  INFO  WebDriver version 148.0.7778.167 selected
+2026-05-18 08:10:01,457  INFO  Modern chrome version https://storage.googleapis.com/chrome-for-testing-public/148.0.7778.167/win32/chromedriver-win32.zip
+2026-05-18 08:10:01,458  INFO  About to download new driver from https://storage.googleapis.com/chrome-for-testing-public/148.0.7778.167/win32/chromedriver-win32.zip
+2026-05-18 08:10:01,824  INFO  Driver downloading response is 200
+2026-05-18 08:10:03,681  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-18 08:10:04,160  INFO  Driver has been saved in cache [C:\Users\atorr\.wdm\drivers\chromedriver\win64\148.0.7778.167]
+2026-05-18 08:10:07,156  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-18 08:10:09,368  INFO  Inputs visibles: 3
+2026-05-18 08:10:09,717  INFO  Login enviado...
+2026-05-18 08:10:13,728  INFO  ✅ Login exitoso. session_id: 27aec5f5...
+2026-05-18 08:10:13,729  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=27aec5f58c6b155d9850127c39995877&cd=prodkernel
+2026-05-18 08:10:13,833  INFO  Recarga 1/10...
+2026-05-18 08:10:17,919  INFO    filas .bak encontradas: 0
+2026-05-18 08:10:17,919  INFO  Recarga 2/10...
+2026-05-18 08:10:22,458  INFO    filas .bak encontradas: 0
+2026-05-18 08:10:22,458  INFO  Recarga 3/10...
+2026-05-18 08:10:26,671  INFO    filas .bak encontradas: 3
+2026-05-18 08:10:26,671  INFO  ✅ Tabla cargada en recarga 3.
+2026-05-18 08:10:26,705  INFO    Ignorando: 2026-5-18-T779354202A.bak
+2026-05-18 08:10:26,729  INFO    Ignorando: 2026-5-18-T779354202B.bak
+2026-05-18 08:10:26,773  INFO  Backup seleccionado: 2026-5-18-T779354202C.bak (2026-05-18 10:07:44+00:00)
+2026-05-18 08:10:26,780  INFO  HTML fila completa: <td class="bucket">mng-respaldos-poliuretano</td><td class="Key">2026-5-18-T779354202C.bak</td><td class="LastModified">2026-05-18 10:07:44+00:00</td><td class="Size">0.12 GB</td><td class="presigned_url" style="display: none;">https://mng-respaldos-poliuretano.s3.amazonaws.com/2026-5-18-T779354202C.bak?AWSAccessKeyId=AKIAZPIFFWJDVFW267ZG&amp;Signature=kCivdjOC65niK3JxsTaVk0CZxE0%3D&amp;Expires=1779106515</td><td><i onclick="downloadbackup($(this).parent().parent())" class="fas fa-download"></i>
+2026-05-18 08:10:29,007  INFO  Descargando 2026-5-18-T779354202C.bak desde S3...
+2026-05-18 08:10:39,973  INFO    10 MB / 124 MB (8%)
+2026-05-18 08:10:50,875  INFO    21 MB / 124 MB (17%)
+2026-05-18 08:10:59,272  INFO    31 MB / 124 MB (25%)
+2026-05-18 08:11:07,256  INFO    42 MB / 124 MB (34%)
+2026-05-18 08:11:17,303  INFO    52 MB / 124 MB (42%)
+2026-05-18 08:11:41,406  INFO    63 MB / 124 MB (51%)
+2026-05-18 08:11:59,351  INFO    73 MB / 124 MB (59%)
+2026-05-18 08:12:08,899  INFO    84 MB / 124 MB (68%)
+2026-05-18 08:12:15,684  INFO    94 MB / 124 MB (76%)
+2026-05-18 08:12:21,131  INFO    105 MB / 124 MB (85%)
+2026-05-18 08:12:29,376  INFO    115 MB / 124 MB (93%)
+2026-05-18 08:12:36,170  INFO  ✅ Descarga completa: 2026-5-18-T779354202C.bak (123.7 MB)
+2026-05-18 08:12:36,175  INFO  Backup guardado en: C:\Backups\Manager\2026-5-18-T779354202C_2026-05-18.bak
+2026-05-18 08:12:36,175  INFO  ✅ Éxito — backup guardado en: C:\Backups\Manager\2026-5-18-T779354202C_2026-05-18.bak
+2026-05-18 08:12:40,278  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=56922): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/496ad3950ed1b037032f4299694e65ab
+2026-05-18 08:12:44,366  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=56922): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/496ad3950ed1b037032f4299694e65ab
+2026-05-18 08:12:48,448  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=56922): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/496ad3950ed1b037032f4299694e65ab
+2026-05-18 08:12:52,559  INFO  
+2026-05-18 08:12:52,560  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 08:12:52,560  INFO    PASO 2/3 — Restaurar BD y extraer Ventas Full
+2026-05-18 08:12:52,560  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 08:12:57,098  INFO  ============================================================
+2026-05-18 08:12:57,098  INFO    PASO 1 — Restaurar BD y extraer Múltiples Reportes
+2026-05-18 08:12:57,099  INFO  ============================================================
+2026-05-18 08:12:57,109  INFO  Usando .bak de ultimo_bak.txt: 2026-5-18-T779354202C_2026-05-18.bak
+2026-05-18 08:12:57,109  INFO  Usando backup: 2026-5-18-T779354202C_2026-05-18.bak
+2026-05-18 08:12:57,110  INFO  Restaurando 2026-5-18-T779354202C_2026-05-18.bak como 'T779354202A'...
+2026-05-18 08:12:57,110  INFO  Copiando .bak a C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQL\DATA\2026-5-18-T779354202C_2026-05-18.bak...
+2026-05-18 08:12:58,046  INFO  Ejecutando RESTORE DATABASE...
+2026-05-18 08:13:42,921  INFO  ✅ BD 'T779354202A' restaurada correctamente.
+2026-05-18 08:13:42,922  INFO  Conectando a 'T779354202A' para extraer reportes...
+2026-05-18 08:13:42,983  INFO  Ejecutando: base_completo...
+2026-05-18 08:16:49,521  INFO    └─ 8,504 filas extraídas.
+2026-05-18 08:16:49,522  INFO  Ejecutando: Ordenes_de_Compra...
+2026-05-18 08:16:49,765  INFO    └─ 157 filas extraídas.
+2026-05-18 08:16:49,766  INFO  Ejecutando: Ordenes_de_produccion...
+2026-05-18 08:16:49,815  INFO    └─ 213 filas extraídas.
+2026-05-18 08:16:49,815  INFO  Ejecutando: Pendiente_a_facturar...
+2026-05-18 08:16:49,950  INFO    └─ 124 filas extraídas.
+2026-05-18 08:16:49,950  INFO  Ejecutando: Vales_de_Salida...
+2026-05-18 08:16:50,960  INFO    └─ 11,204 filas extraídas.
+2026-05-18 08:16:50,961  INFO  Ejecutando: Ventas_Full...
+2026-05-18 08:16:51,819  INFO    └─ 1,532 filas extraídas.
+2026-05-18 08:16:51,819  INFO  Ejecutando: WIP...
+2026-05-18 08:16:52,310  INFO    └─ 21 filas extraídas.
+2026-05-18 08:16:52,322  INFO  Exportando a Excel multipestaña: C:\Reportes\VentasFull\Reportes_Completos_2026-05-18.xlsx
+2026-05-18 08:18:37,442  INFO  ✅ Excel generado: C:\Reportes\VentasFull\Reportes_Completos_2026-05-18.xlsx (2.9 MB)
+2026-05-18 08:18:37,444  INFO  ✅ Proceso Completado → C:\Reportes\VentasFull\Reportes_Completos_2026-05-18.xlsx
+2026-05-18 08:18:37,457  INFO  
+2026-05-18 08:18:37,457  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 08:18:37,457  INFO    PASO 3/3 — Subir Excel a Google Drive
+2026-05-18 08:18:37,458  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 08:18:40,810  INFO  =======================================================
+2026-05-18 08:18:40,810  INFO    PASO 2 — Subir Excel a Google Drive
+2026-05-18 08:18:40,810  INFO  =======================================================
+2026-05-18 08:18:40,811  INFO  Subiendo: Reportes_Completos_2026-05-18.xlsx (2.9 MB)
+2026-05-18 08:18:40,811  INFO  Autenticando con cuenta de servicio...
+2026-05-18 08:18:40,907  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-05-18 08:18:40,947  INFO  Creando archivo nuevo en Unidad Compartida...
+2026-05-18 08:18:45,148  INFO  ✅ ¡POR FIN! Subida exitosa en Unidad Compartida. ID: 1eM4M_g6BrJOMjjEkDcLArOKwlMdhv6VI
+2026-05-18 08:18:45,148  INFO  
+2026-05-18 08:18:45,149  INFO  ╔═════════════════════════════════════════════════════╗
+2026-05-18 08:18:45,149  INFO  ║  ✅ PIPELINE COMPLETADO en 529s                      ║
+2026-05-18 08:18:45,150  INFO  ║  📊 Excel en Drive: VentasFull_Actualizado.xlsx      ║
+2026-05-18 08:18:45,150  INFO  ╚═════════════════════════════════════════════════════╝
+2026-05-18 08:22:26,144  INFO  ╔═════════════════════════════════════════════════════╗
+2026-05-18 08:22:26,146  INFO  ║   PIPELINE VENTAS FULL — Inicio: 2026-05-18 08:22   ║
+2026-05-18 08:22:26,146  INFO  ╚═════════════════════════════════════════════════════╝
+2026-05-18 08:22:26,146  INFO  
+2026-05-18 08:22:26,146  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 08:22:26,147  INFO    PASO 1/3 — Descargar backup desde Manager
+2026-05-18 08:22:26,147  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 08:22:26,957  INFO  =======================================================
+2026-05-18 08:22:26,957  INFO    Iniciando descarga automática de backup Manager
+2026-05-18 08:22:26,958  INFO  =======================================================
+2026-05-18 08:22:26,962  INFO  ====== WebDriver manager ======
+2026-05-18 08:22:31,890  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-18 08:22:32,391  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-18 08:22:32,782  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\148.0.7778.167\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-18 08:22:35,951  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-18 08:22:38,015  INFO  Inputs visibles: 3
+2026-05-18 08:22:38,336  INFO  Login enviado...
+2026-05-18 08:22:42,349  INFO  ✅ Login exitoso. session_id: 17b19cae...
+2026-05-18 08:22:42,350  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=17b19caee2426c7c4286edad00bbce75&cd=prodkernel
+2026-05-18 08:22:42,440  INFO  Recarga 1/10...
+2026-05-18 08:22:46,521  INFO    filas .bak encontradas: 0
+2026-05-18 08:22:46,521  INFO  Recarga 2/10...
+2026-05-18 08:22:50,590  INFO    filas .bak encontradas: 0
+2026-05-18 08:22:50,591  INFO  Recarga 3/10...
+2026-05-18 08:22:55,224  INFO    filas .bak encontradas: 0
+2026-05-18 08:22:55,224  INFO  Recarga 4/10...
+2026-05-18 08:22:59,316  INFO    filas .bak encontradas: 0
+2026-05-18 08:22:59,317  INFO  Recarga 5/10...
+2026-05-18 08:23:03,401  INFO    filas .bak encontradas: 3
+2026-05-18 08:23:03,402  INFO  ✅ Tabla cargada en recarga 5.
+2026-05-18 08:23:03,439  INFO    Ignorando: 2026-5-18-T779354202A.bak
+2026-05-18 08:23:03,469  INFO    Ignorando: 2026-5-18-T779354202B.bak
+2026-05-18 08:23:03,496  INFO  Backup seleccionado: 2026-5-18-T779354202C.bak (2026-05-18 10:07:44+00:00)
+2026-05-18 08:23:03,512  INFO  HTML fila completa: <td class="bucket">mng-respaldos-poliuretano</td><td class="Key">2026-5-18-T779354202C.bak</td><td class="LastModified">2026-05-18 10:07:44+00:00</td><td class="Size">0.12 GB</td><td class="presigned_url" style="display: none;">https://mng-respaldos-poliuretano.s3.amazonaws.com/2026-5-18-T779354202C.bak?AWSAccessKeyId=AKIAZPIFFWJDVFW267ZG&amp;Signature=L9Q5amKNAehp5c9qrzfAYs9RBIo%3D&amp;Expires=1779107272</td><td><i onclick="downloadbackup($(this).parent().parent())" class="fas fa-download"></i>
+2026-05-18 08:23:05,775  INFO  Descargando 2026-5-18-T779354202C.bak desde S3...
+2026-05-18 08:23:15,234  INFO    10 MB / 124 MB (8%)
+2026-05-18 08:23:28,084  INFO    21 MB / 124 MB (17%)
+2026-05-18 08:23:36,057  INFO    31 MB / 124 MB (25%)
+2026-05-18 08:23:40,006  INFO    42 MB / 124 MB (34%)
+2026-05-18 08:23:45,964  INFO    52 MB / 124 MB (42%)
+2026-05-18 08:23:52,781  INFO    63 MB / 124 MB (51%)
+2026-05-18 08:23:58,082  INFO    73 MB / 124 MB (59%)
+2026-05-18 08:24:01,165  INFO    84 MB / 124 MB (68%)
+2026-05-18 08:24:04,976  INFO    94 MB / 124 MB (76%)
+2026-05-18 08:24:09,589  INFO    105 MB / 124 MB (85%)
+2026-05-18 08:24:13,392  INFO    115 MB / 124 MB (93%)
+2026-05-18 08:24:15,605  INFO  ✅ Descarga completa: 2026-5-18-T779354202C.bak (123.7 MB)
+2026-05-18 08:24:15,611  INFO  Backup guardado en: C:\Backups\Manager\2026-5-18-T779354202C_2026-05-18_1779107055.bak
+2026-05-18 08:24:15,611  INFO  ✅ Éxito — backup guardado en: C:\Backups\Manager\2026-5-18-T779354202C_2026-05-18_1779107055.bak
+2026-05-18 08:24:19,677  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=53020): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/235e7b920014c67096762a3067ff0737
+2026-05-18 08:24:23,747  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=53020): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/235e7b920014c67096762a3067ff0737
+2026-05-18 08:24:27,825  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=53020): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/235e7b920014c67096762a3067ff0737
+2026-05-18 08:24:31,898  INFO  
+2026-05-18 08:24:31,899  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 08:24:31,899  INFO    PASO 2/3 — Restaurar BD y extraer Ventas Full
+2026-05-18 08:24:31,899  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 08:24:34,298  INFO  ============================================================
+2026-05-18 08:24:34,298  INFO    PASO 1 — Restaurar BD y extraer Múltiples Reportes
+2026-05-18 08:24:34,298  INFO  ============================================================
+2026-05-18 08:24:34,311  INFO  Usando .bak de ultimo_bak.txt: 2026-5-18-T779354202C_2026-05-18_1779107055.bak
+2026-05-18 08:24:34,311  INFO  Usando backup: 2026-5-18-T779354202C_2026-05-18_1779107055.bak
+2026-05-18 08:24:34,312  INFO  Restaurando 2026-5-18-T779354202C_2026-05-18_1779107055.bak como 'T779354202A'...
+2026-05-18 08:24:34,313  INFO  Copiando .bak a C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQL\DATA\2026-5-18-T779354202C_2026-05-18_1779107055.bak...
+2026-05-18 08:24:35,463  INFO  Ejecutando RESTORE DATABASE...
+2026-05-18 08:25:20,271  INFO  ✅ BD 'T779354202A' restaurada correctamente.
+2026-05-18 08:25:20,271  INFO  Conectando a 'T779354202A' para extraer reportes...
+2026-05-18 08:25:20,325  INFO  Ejecutando: base_completo...
+2026-05-18 08:25:21,984  INFO    └─ 8,504 filas extraídas.
+2026-05-18 08:25:21,984  INFO  Ejecutando: Ordenes_de_Compra...
+2026-05-18 08:25:22,022  INFO    └─ 157 filas extraídas.
+2026-05-18 08:25:22,022  INFO  Ejecutando: Ordenes_de_produccion...
+2026-05-18 08:25:22,094  INFO    └─ 537 filas extraídas.
+2026-05-18 08:25:22,095  INFO  Ejecutando: Pendiente_a_facturar...
+2026-05-18 08:25:22,166  INFO    └─ 124 filas extraídas.
+2026-05-18 08:25:22,167  INFO  Ejecutando: Vales_de_Salida...
+2026-05-18 08:25:22,780  INFO    └─ 11,204 filas extraídas.
+2026-05-18 08:25:22,781  INFO  Ejecutando: Ventas_Full...
+2026-05-18 08:25:23,133  INFO    └─ 1,532 filas extraídas.
+2026-05-18 08:25:23,133  INFO  Ejecutando: WIP...
+2026-05-18 08:25:23,270  INFO    └─ 21 filas extraídas.
+2026-05-18 08:25:23,272  INFO  Exportando a Excel multipestaña: C:\Reportes\VentasFull\Reportes_Completos_2026-05-18.xlsx
+2026-05-18 08:26:19,000  INFO  ✅ Excel generado: C:\Reportes\VentasFull\Reportes_Completos_2026-05-18.xlsx (3.0 MB)
+2026-05-18 08:26:19,001  INFO  ✅ Proceso Completado → C:\Reportes\VentasFull\Reportes_Completos_2026-05-18.xlsx
+2026-05-18 08:26:19,015  INFO  
+2026-05-18 08:26:19,015  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 08:26:19,016  INFO    PASO 3/3 — Subir Excel a Google Drive
+2026-05-18 08:26:19,016  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 08:26:20,201  INFO  =======================================================
+2026-05-18 08:26:20,201  INFO    PASO 2 — Subir Excel a Google Drive
+2026-05-18 08:26:20,201  INFO  =======================================================
+2026-05-18 08:26:20,202  INFO  Subiendo: Reportes_Completos_2026-05-18.xlsx (3.0 MB)
+2026-05-18 08:26:20,203  INFO  Autenticando con cuenta de servicio...
+2026-05-18 08:26:20,265  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-05-18 08:26:20,287  INFO  Creando archivo nuevo en Unidad Compartida...
+2026-05-18 08:26:24,979  INFO  ✅ ¡POR FIN! Subida exitosa en Unidad Compartida. ID: 1QqJCDW1oU8Rl5DFBOK0Vkwu26tfzyNwc
+2026-05-18 08:26:24,979  INFO  
+2026-05-18 08:26:24,979  INFO  ╔═════════════════════════════════════════════════════╗
+2026-05-18 08:26:24,980  INFO  ║  ✅ PIPELINE COMPLETADO en 238s                      ║
+2026-05-18 08:26:24,980  INFO  ║  📊 Excel en Drive: VentasFull_Actualizado.xlsx      ║
+2026-05-18 08:26:24,981  INFO  ╚═════════════════════════════════════════════════════╝
+2026-05-18 09:18:20,355  INFO  ╔═════════════════════════════════════════════════════╗
+2026-05-18 09:18:20,356  INFO  ║   PIPELINE VENTAS FULL — Inicio: 2026-05-18 09:18   ║
+2026-05-18 09:18:20,356  INFO  ╚═════════════════════════════════════════════════════╝
+2026-05-18 09:18:20,356  INFO  
+2026-05-18 09:18:20,357  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 09:18:20,357  INFO    PASO 1/3 — Descargar backup desde Manager
+2026-05-18 09:18:20,357  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 09:18:20,924  INFO  =======================================================
+2026-05-18 09:18:20,924  INFO    Iniciando descarga automática de backup Manager
+2026-05-18 09:18:20,925  INFO  =======================================================
+2026-05-18 09:18:20,927  INFO  ====== WebDriver manager ======
+2026-05-18 09:18:25,578  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-18 09:18:26,155  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-18 09:18:26,605  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\148.0.7778.167\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-18 09:18:29,389  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-18 09:18:31,488  INFO  Inputs visibles: 3
+2026-05-18 09:18:31,922  INFO  Login enviado...
+2026-05-18 09:18:35,937  INFO  ✅ Login exitoso. session_id: 8125d417...
+2026-05-18 09:18:35,938  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=8125d4178e6e2ad5c1471095e176a2e2&cd=prodkernel
+2026-05-18 09:18:36,088  INFO  Recarga 1/10...
+2026-05-18 09:18:40,188  INFO    filas .bak encontradas: 3
+2026-05-18 09:18:40,188  INFO  ✅ Tabla cargada en recarga 1.
+2026-05-18 09:18:40,255  INFO    Ignorando: 2026-5-18-T779354202A.bak
+2026-05-18 09:18:40,289  INFO    Ignorando: 2026-5-18-T779354202B.bak
+2026-05-18 09:18:40,323  INFO  Backup seleccionado: 2026-5-18-T779354202C.bak (2026-05-18 10:07:44+00:00)
+2026-05-18 09:18:40,333  INFO  HTML fila completa: <td class="bucket">mng-respaldos-poliuretano</td><td class="Key">2026-5-18-T779354202C.bak</td><td class="LastModified">2026-05-18 10:07:44+00:00</td><td class="Size">0.12 GB</td><td class="presigned_url" style="display: none;">https://mng-respaldos-poliuretano.s3.amazonaws.com/2026-5-18-T779354202C.bak?AWSAccessKeyId=AKIAZPIFFWJDVFW267ZG&amp;Signature=0iPbZ7yTMxdkl6ok2k4fzmC6gfM%3D&amp;Expires=1779110609</td><td><i onclick="downloadbackup($(this).parent().parent())" class="fas fa-download"></i>
+2026-05-18 09:18:42,644  INFO  Descargando 2026-5-18-T779354202C.bak desde S3...
+2026-05-18 09:18:48,232  INFO    10 MB / 124 MB (8%)
+2026-05-18 09:18:52,670  INFO    21 MB / 124 MB (17%)
+2026-05-18 09:18:56,659  INFO    31 MB / 124 MB (25%)
+2026-05-18 09:19:00,468  INFO    42 MB / 124 MB (34%)
+2026-05-18 09:19:03,366  INFO    52 MB / 124 MB (42%)
+2026-05-18 09:19:05,721  INFO    63 MB / 124 MB (51%)
+2026-05-18 09:19:08,838  INFO    73 MB / 124 MB (59%)
+2026-05-18 09:19:12,480  INFO    84 MB / 124 MB (68%)
+2026-05-18 09:19:16,020  INFO    94 MB / 124 MB (76%)
+2026-05-18 09:19:18,982  INFO    105 MB / 124 MB (85%)
+2026-05-18 09:19:21,320  INFO    115 MB / 124 MB (93%)
+2026-05-18 09:19:23,184  INFO  ✅ Descarga completa: 2026-5-18-T779354202C.bak (123.7 MB)
+2026-05-18 09:19:23,188  INFO  Backup guardado en: C:\Backups\Manager\2026-5-18-T779354202C_2026-05-18_1779110363.bak
+2026-05-18 09:19:23,188  INFO  ✅ Éxito — backup guardado en: C:\Backups\Manager\2026-5-18-T779354202C_2026-05-18_1779110363.bak
+2026-05-18 09:19:27,335  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=64047): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/207b9ad247d84e7f0fdcdc9cee149545
+2026-05-18 09:19:31,439  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=64047): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/207b9ad247d84e7f0fdcdc9cee149545
+2026-05-18 09:19:35,536  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=64047): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/207b9ad247d84e7f0fdcdc9cee149545
+2026-05-18 09:19:39,619  INFO  
+2026-05-18 09:19:39,619  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 09:19:39,620  INFO    PASO 2/3 — Restaurar BD y extraer Ventas Full
+2026-05-18 09:19:39,620  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 09:19:41,663  INFO  ============================================================
+2026-05-18 09:19:41,664  INFO    PASO 1 — Restaurar BD y extraer Múltiples Reportes
+2026-05-18 09:19:41,664  INFO  ============================================================
+2026-05-18 09:19:41,681  INFO  Usando .bak de ultimo_bak.txt: 2026-5-18-T779354202C_2026-05-18_1779110363.bak
+2026-05-18 09:19:41,681  INFO  Usando backup: 2026-5-18-T779354202C_2026-05-18_1779110363.bak
+2026-05-18 09:19:41,681  INFO  Restaurando 2026-5-18-T779354202C_2026-05-18_1779110363.bak como 'T779354202A'...
+2026-05-18 09:19:41,682  INFO  Copiando .bak a C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQL\DATA\2026-5-18-T779354202C_2026-05-18_1779110363.bak...
+2026-05-18 09:19:42,468  INFO  Ejecutando RESTORE DATABASE...
+2026-05-18 09:20:27,538  INFO  ✅ BD 'T779354202A' restaurada correctamente.
+2026-05-18 09:20:27,539  INFO  Conectando a 'T779354202A' para extraer reportes...
+2026-05-18 09:20:27,601  INFO  Ejecutando: base_completo...
+2026-05-18 09:20:29,668  INFO    └─ 8,504 filas extraídas.
+2026-05-18 09:20:29,669  INFO  Ejecutando: Ordenes_de_Compra...
+2026-05-18 09:20:29,734  INFO    └─ 157 filas extraídas.
+2026-05-18 09:20:29,734  INFO  Ejecutando: Ordenes_de_produccion...
+2026-05-18 09:20:29,944  INFO    └─ 3,023 filas extraídas.
+2026-05-18 09:20:29,945  INFO  Ejecutando: Pendiente_a_facturar...
+2026-05-18 09:20:30,034  INFO    └─ 124 filas extraídas.
+2026-05-18 09:20:30,035  INFO  Ejecutando: Vales_de_Salida...
+2026-05-18 09:20:30,789  INFO    └─ 11,204 filas extraídas.
+2026-05-18 09:20:30,789  INFO  Ejecutando: Ventas_Full...
+2026-05-18 09:20:31,198  INFO    └─ 1,532 filas extraídas.
+2026-05-18 09:20:31,198  INFO  Ejecutando: WIP...
+2026-05-18 09:20:31,522  INFO    └─ 21 filas extraídas.
+2026-05-18 09:20:31,578  INFO  Exportando a Excel multipestaña: C:\Reportes\VentasFull\Reportes_Completos_2026-05-18.xlsx
+2026-05-18 09:21:46,412  INFO  ✅ Excel generado: C:\Reportes\VentasFull\Reportes_Completos_2026-05-18.xlsx (3.3 MB)
+2026-05-18 09:21:46,413  INFO  ✅ Proceso Completado → C:\Reportes\VentasFull\Reportes_Completos_2026-05-18.xlsx
+2026-05-18 09:21:46,430  INFO  
+2026-05-18 09:21:46,430  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 09:21:46,431  INFO    PASO 3/3 — Subir Excel a Google Drive
+2026-05-18 09:21:46,431  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-05-18 09:21:48,161  INFO  =======================================================
+2026-05-18 09:21:48,161  INFO    PASO 2 — Subir Excel a Google Drive
+2026-05-18 09:21:48,162  INFO  =======================================================
+2026-05-18 09:21:48,163  INFO  Subiendo: Reportes_Completos_2026-05-18.xlsx (3.3 MB)
+2026-05-18 09:21:48,163  INFO  Autenticando con cuenta de servicio...
+2026-05-18 09:21:48,239  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-05-18 09:21:48,265  INFO  Creando archivo nuevo en Unidad Compartida...
+2026-05-18 09:21:54,003  INFO  ✅ ¡POR FIN! Subida exitosa en Unidad Compartida. ID: 1Gv226zIU2Z6K0RGeFQfBlO6_GtnpOi5x
+2026-05-18 09:21:54,003  INFO  
+2026-05-18 09:21:54,003  INFO  ╔═════════════════════════════════════════════════════╗
+2026-05-18 09:21:54,025  INFO  ║  ✅ PIPELINE COMPLETADO en 213s                      ║
+2026-05-18 09:21:54,025  INFO  ║  📊 Excel en Drive: VentasFull_Actualizado.xlsx      ║
+2026-05-18 09:21:54,026  INFO  ╚═════════════════════════════════════════════════════╝

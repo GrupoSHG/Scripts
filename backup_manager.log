@@ -1,0 +1,214 @@
+2026-05-08 08:35:07,561  INFO  =======================================================
+2026-05-08 08:35:07,562  INFO    Iniciando descarga automática de backup Manager
+2026-05-08 08:35:07,562  INFO  =======================================================
+2026-05-08 08:35:07,572  INFO  ====== WebDriver manager ======
+2026-05-08 08:35:09,284  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-08 08:35:10,130  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-08 08:35:10,881  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-08 08:35:12,630  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-08 08:35:15,153  INFO  Inputs visibles: 3
+2026-05-08 08:35:15,491  INFO  Login enviado...
+2026-05-08 08:35:19,508  INFO  ✅ Login exitoso. session_id: 514ef6f9...
+2026-05-08 08:35:19,509  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=514ef6f9c0eb94f510f06ca1405a01ce&cd=prodkernel
+2026-05-08 08:35:19,675  INFO  Recarga 1/10...
+2026-05-08 08:35:23,980  INFO    filas .bak encontradas: 3
+2026-05-08 08:35:23,981  INFO  ✅ Tabla cargada en recarga 1.
+2026-05-08 08:35:24,141  INFO  Backup seleccionado: 2026-5-8-T779354202C.bak (2026-05-08 10:10:42+00:00)
+2026-05-08 08:35:24,169  INFO  HTML última celda: <i onclick="downloadbackup($(this).parent().parent())" class="fas fa-download"></i>
+2026-05-08 08:35:24,214  INFO  Botón outerHTML: <i onclick="downloadbackup($(this).parent().parent())" class="fas fa-download"></i>
+2026-05-08 08:35:24,215  INFO  Haciendo clic en descarga: 2026-5-8-T779354202C.bak
+2026-05-08 08:35:26,814  INFO  Esperando descarga (máx 400s)...
+2026-05-08 08:42:07,144  ERROR  ❌ Error: No apareció ningún .bak tras 400s.
+2026-05-08 08:42:07,304  INFO  Captura guardada: error_screenshot.png
+2026-05-08 08:46:01,052  INFO  =======================================================
+2026-05-08 08:46:01,053  INFO    Iniciando descarga automática de backup Manager
+2026-05-08 08:46:01,053  INFO  =======================================================
+2026-05-08 08:46:01,055  INFO  ====== WebDriver manager ======
+2026-05-08 08:46:02,770  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-08 08:46:03,563  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-08 08:46:04,313  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-08 08:46:05,921  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-08 08:46:08,770  INFO  Inputs visibles: 3
+2026-05-08 08:46:09,149  INFO  Login enviado...
+2026-05-08 08:46:13,166  INFO  ✅ Login exitoso. session_id: 78f5e4ef...
+2026-05-08 08:46:13,167  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=78f5e4ef841719cf578add9d059c70e7&cd=prodkernel
+2026-05-08 08:46:13,396  INFO  Recarga 1/10...
+2026-05-08 08:46:17,564  INFO    filas .bak encontradas: 3
+2026-05-08 08:46:17,564  INFO  ✅ Tabla cargada en recarga 1.
+2026-05-08 08:46:17,721  INFO  Backup seleccionado: 2026-5-8-T779354202C.bak (2026-05-08 10:10:42+00:00)
+2026-05-08 08:46:17,756  INFO  Presigned URL obtenida: ...
+2026-05-08 08:46:17,757  INFO  Haciendo clic en descarga: 2026-5-8-T779354202C.bak
+2026-05-08 08:46:17,758  ERROR  ❌ Error: 'str' object has no attribute 'click'
+2026-05-08 08:46:17,883  INFO  Captura guardada: error_screenshot.png
+2026-05-08 08:47:24,172  INFO  =======================================================
+2026-05-08 08:47:24,172  INFO    Iniciando descarga automática de backup Manager
+2026-05-08 08:47:24,173  INFO  =======================================================
+2026-05-08 08:47:24,174  INFO  ====== WebDriver manager ======
+2026-05-08 08:47:26,022  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-08 08:47:26,768  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-08 08:47:27,513  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-08 08:47:28,896  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-08 08:47:31,784  INFO  Inputs visibles: 3
+2026-05-08 08:47:32,232  INFO  Login enviado...
+2026-05-08 08:47:36,247  INFO  ✅ Login exitoso. session_id: e9872c90...
+2026-05-08 08:47:36,248  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=e9872c9009f508f39d8b601abc177d45&cd=prodkernel
+2026-05-08 08:47:36,461  INFO  Recarga 1/10...
+2026-05-08 08:47:40,656  INFO    filas .bak encontradas: 0
+2026-05-08 08:47:40,656  INFO  Recarga 2/10...
+2026-05-08 08:47:45,407  INFO    filas .bak encontradas: 3
+2026-05-08 08:47:45,407  INFO  ✅ Tabla cargada en recarga 2.
+2026-05-08 08:47:45,554  INFO  Backup seleccionado: 2026-5-8-T779354202C.bak (2026-05-08 10:10:42+00:00)
+2026-05-08 08:47:45,585  ERROR  ❌ Error: Presigned URL vacía — la tabla puede no haber cargado completamente.
+2026-05-08 08:47:45,677  INFO  Captura guardada: error_screenshot.png
+2026-05-08 08:49:42,314  INFO  =======================================================
+2026-05-08 08:49:42,314  INFO    Iniciando descarga automática de backup Manager
+2026-05-08 08:49:42,314  INFO  =======================================================
+2026-05-08 08:49:42,316  INFO  ====== WebDriver manager ======
+2026-05-08 08:49:44,005  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-08 08:49:44,894  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-08 08:49:45,641  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-08 08:49:46,955  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-08 08:49:49,405  INFO  Inputs visibles: 3
+2026-05-08 08:49:49,850  INFO  Login enviado...
+2026-05-08 08:49:53,868  INFO  ✅ Login exitoso. session_id: 9e62c858...
+2026-05-08 08:49:53,869  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=9e62c8583d7242f55d8d7214edd8c2dc&cd=prodkernel
+2026-05-08 08:49:54,007  INFO  Recarga 1/10...
+2026-05-08 08:49:58,173  INFO    filas .bak encontradas: 0
+2026-05-08 08:49:58,174  INFO  Recarga 2/10...
+2026-05-08 08:50:02,380  INFO    filas .bak encontradas: 3
+2026-05-08 08:50:02,380  INFO  ✅ Tabla cargada en recarga 2.
+2026-05-08 08:50:02,458  INFO    Ignorando: 2026-5-8-T779354202B.bak
+2026-05-08 08:50:02,494  INFO    Ignorando: 2026-5-8-T779354202C.bak
+2026-05-08 08:50:02,495  INFO  Backup seleccionado: 2026-5-8-T779354202A.bak (2026-05-08 10:09:13+00:00)
+2026-05-08 08:50:02,506  INFO  HTML fila completa: <td class="bucket">mng-respaldos-poliuretano</td><td class="Key">2026-5-8-T779354202A.bak</td><td class="LastModified">2026-05-08 10:09:13+00:00</td><td class="Size">0.28 GB</td><td class="presigned_url" style="display: none;">https://mng-respaldos-poliuretano.s3.amazonaws.com/2026-5-8-T779354202A.bak?AWSAccessKeyId=AKIAZPIFFWJDVFW267ZG&amp;Signature=mlh%2BAiG7wl3izY%2BeKSQMY0gVJus%3D&amp;Expires=1778244896</td><td><i onclick="downloadbackup($(this).parent().parent())" class="fas fa-download"></
+2026-05-08 08:50:02,543  INFO  Presigned URL encontrada: 'https://mng-respaldos-poliuretano.s3.amazonaws.com/2026-5-8-T779354202A.bak?AWSAccessKeyId=AKIAZPIFF'
+2026-05-08 08:50:04,812  INFO  Descargando 2026-5-8-T779354202A.bak desde S3...
+2026-05-08 08:50:05,925  ERROR  ❌ Error: 403 Client Error: Forbidden for url: https://mng-respaldos-poliuretano.s3.amazonaws.com/2026-5-8-T779354202A.bak?AWSAccessKeyId=AKIAZPIFFWJDVFW267ZG&amp;Signature=mlh%2BAiG7wl3izY%2BeKSQMY0gVJus%3D&amp;Expires=1778244896
+2026-05-08 08:50:10,065  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=59438): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/3ba5e63f96450a3c3ecb2ed3e8248ed0/screenshot
+2026-05-08 08:50:14,149  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=59438): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/3ba5e63f96450a3c3ecb2ed3e8248ed0/screenshot
+2026-05-08 08:50:18,255  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=59438): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/3ba5e63f96450a3c3ecb2ed3e8248ed0/screenshot
+2026-05-08 08:50:26,419  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=59438): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/3ba5e63f96450a3c3ecb2ed3e8248ed0
+2026-05-08 08:50:30,487  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=59438): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/3ba5e63f96450a3c3ecb2ed3e8248ed0
+2026-05-08 08:50:34,586  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=59438): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/3ba5e63f96450a3c3ecb2ed3e8248ed0
+2026-05-08 08:52:41,551  INFO  =======================================================
+2026-05-08 08:52:41,552  INFO    Iniciando descarga automática de backup Manager
+2026-05-08 08:52:41,552  INFO  =======================================================
+2026-05-08 08:52:41,554  INFO  ====== WebDriver manager ======
+2026-05-08 08:52:43,267  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-08 08:52:44,115  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-08 08:52:44,856  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-08 08:52:46,168  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-08 08:52:48,751  INFO  Inputs visibles: 3
+2026-05-08 08:52:49,187  INFO  Login enviado...
+2026-05-08 08:52:53,205  INFO  ✅ Login exitoso. session_id: f78e0291...
+2026-05-08 08:52:53,206  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=f78e0291baf834e6dad6b07029ea37da&cd=prodkernel
+2026-05-08 08:52:53,396  INFO  Recarga 1/10...
+2026-05-08 08:52:57,713  INFO    filas .bak encontradas: 0
+2026-05-08 08:52:57,714  INFO  Recarga 2/10...
+2026-05-08 08:53:02,409  INFO    filas .bak encontradas: 3
+2026-05-08 08:53:02,409  INFO  ✅ Tabla cargada en recarga 2.
+2026-05-08 08:53:02,534  INFO    Ignorando: 2026-5-8-T779354202B.bak
+2026-05-08 08:53:02,574  INFO    Ignorando: 2026-5-8-T779354202C.bak
+2026-05-08 08:53:02,575  INFO  Backup seleccionado: 2026-5-8-T779354202A.bak (2026-05-08 10:09:13+00:00)
+2026-05-08 08:53:02,586  INFO  HTML fila completa: <td class="bucket">mng-respaldos-poliuretano</td><td class="Key">2026-5-8-T779354202A.bak</td><td class="LastModified">2026-05-08 10:09:13+00:00</td><td class="Size">0.28 GB</td><td class="presigned_url" style="display: none;">https://mng-respaldos-poliuretano.s3.amazonaws.com/2026-5-8-T779354202A.bak?AWSAccessKeyId=AKIAZPIFFWJDVFW267ZG&amp;Signature=513D9N56lZZ2cUwp7wUaRTTltfI%3D&amp;Expires=1778245076</td><td><i onclick="downloadbackup($(this).parent().parent())" class="fas fa-download"></i></
+2026-05-08 08:53:04,918  INFO  Descargando 2026-5-8-T779354202A.bak desde S3...
+2026-05-08 08:53:42,690  INFO    10 MB / 283 MB (4%)
+2026-05-08 08:57:40,299  INFO    21 MB / 283 MB (7%)
+2026-05-08 09:00:52,611  INFO    31 MB / 283 MB (11%)
+2026-05-08 09:04:29,153  INFO    42 MB / 283 MB (15%)
+2026-05-08 09:04:59,139  INFO    52 MB / 283 MB (19%)
+2026-05-08 09:05:27,211  INFO    63 MB / 283 MB (22%)
+2026-05-08 09:05:54,449  INFO    73 MB / 283 MB (26%)
+2026-05-08 09:06:20,834  INFO    84 MB / 283 MB (30%)
+2026-05-08 09:06:47,479  INFO    94 MB / 283 MB (33%)
+2026-05-08 09:07:14,253  INFO    105 MB / 283 MB (37%)
+2026-05-08 09:07:40,351  INFO    115 MB / 283 MB (41%)
+2026-05-08 09:08:07,880  INFO    126 MB / 283 MB (44%)
+2026-05-08 09:08:34,695  INFO    136 MB / 283 MB (48%)
+2026-05-08 09:09:04,188  INFO    147 MB / 283 MB (52%)
+2026-05-08 09:09:31,201  INFO    157 MB / 283 MB (56%)
+2026-05-08 09:09:58,648  INFO    168 MB / 283 MB (59%)
+2026-05-08 09:10:27,803  INFO    178 MB / 283 MB (63%)
+2026-05-08 09:10:58,443  INFO    189 MB / 283 MB (67%)
+2026-05-08 09:11:25,272  INFO    199 MB / 283 MB (70%)
+2026-05-08 09:11:52,527  INFO    210 MB / 283 MB (74%)
+2026-05-08 09:12:20,103  INFO    220 MB / 283 MB (78%)
+2026-05-08 09:12:47,042  INFO    231 MB / 283 MB (81%)
+2026-05-08 09:13:26,284  INFO    241 MB / 283 MB (85%)
+2026-05-08 09:13:53,304  INFO    252 MB / 283 MB (89%)
+2026-05-08 09:14:23,033  INFO    262 MB / 283 MB (93%)
+2026-05-08 09:14:50,224  INFO    273 MB / 283 MB (96%)
+2026-05-08 09:15:24,129  INFO    283 MB / 283 MB (100%)
+2026-05-08 09:15:24,609  INFO    283 MB / 283 MB (100%)
+2026-05-08 09:15:24,613  INFO  ✅ Descarga completa: 2026-5-8-T779354202A.bak (283.2 MB)
+2026-05-08 09:15:24,621  INFO  Backup guardado en: C:\Backups\Manager\2026-5-8-T779354202A_2026-05-08.bak
+2026-05-08 09:15:24,622  INFO  ✅ Éxito — backup guardado en: C:\Backups\Manager\2026-5-8-T779354202A_2026-05-08.bak
+2026-05-08 09:15:28,751  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=54020): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/00c0accb98dcdcd2b2bdcd0224217da0
+2026-05-08 09:15:32,845  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=54020): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/00c0accb98dcdcd2b2bdcd0224217da0
+2026-05-08 09:15:36,967  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=54020): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/00c0accb98dcdcd2b2bdcd0224217da0
+2026-05-08 14:11:21,643  INFO  =======================================================
+2026-05-08 14:11:21,644  INFO    Iniciando descarga automática de backup Manager
+2026-05-08 14:11:21,644  INFO  =======================================================
+2026-05-08 14:11:21,647  INFO  ====== WebDriver manager ======
+2026-05-08 14:11:23,970  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-08 14:11:25,115  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-08 14:11:26,397  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-08 14:11:28,856  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-08 14:11:32,527  INFO  Inputs visibles: 3
+2026-05-08 14:11:32,929  INFO  Login enviado...
+2026-05-08 14:11:36,941  INFO  ✅ Login exitoso. session_id: 2f625fba...
+2026-05-08 14:11:36,942  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=2f625fbac1962770ef704b485f5a4866&cd=prodkernel
+2026-05-08 14:11:37,260  INFO  Recarga 1/10...
+2026-05-08 14:11:41,508  INFO    filas .bak encontradas: 0
+2026-05-08 14:11:41,508  INFO  Recarga 2/10...
+2026-05-08 14:11:46,277  INFO    filas .bak encontradas: 0
+2026-05-08 14:11:46,277  INFO  Recarga 3/10...
+2026-05-08 14:11:50,541  INFO    filas .bak encontradas: 3
+2026-05-08 14:11:50,542  INFO  ✅ Tabla cargada en recarga 3.
+2026-05-08 14:11:50,605  INFO    Ignorando: 2026-5-8-T779354202B.bak
+2026-05-08 14:11:50,631  INFO    Ignorando: 2026-5-8-T779354202C.bak
+2026-05-08 14:11:50,631  INFO  Backup seleccionado: 2026-5-8-T779354202A.bak (2026-05-08 10:09:13+00:00)
+2026-05-08 14:11:50,640  INFO  HTML fila completa: <td class="bucket">mng-respaldos-poliuretano</td><td class="Key">2026-5-8-T779354202A.bak</td><td class="LastModified">2026-05-08 10:09:13+00:00</td><td class="Size">0.28 GB</td><td class="presigned_url" style="display: none;">https://mng-respaldos-poliuretano.s3.amazonaws.com/2026-5-8-T779354202A.bak?AWSAccessKeyId=AKIAZPIFFWJDVFW267ZG&amp;Signature=RO6JB7aJmOAVIsk4JAG%2BZkSJqUU%3D&amp;Expires=1778264200</td><td><i onclick="downloadbackup($(this).parent().parent())" class="fas fa-download"></i>
+2026-05-08 14:11:52,906  INFO  Descargando 2026-5-8-T779354202A.bak desde S3...
+2026-05-08 14:12:29,475  INFO    10 MB / 283 MB (4%)
+2026-05-08 14:13:08,404  INFO    21 MB / 283 MB (7%)
+2026-05-08 14:14:22,804  INFO    31 MB / 283 MB (11%)
+2026-05-08 14:15:00,025  INFO    42 MB / 283 MB (15%)
+2026-05-08 14:15:27,961  INFO    52 MB / 283 MB (19%)
+2026-05-08 14:16:07,087  INFO    63 MB / 283 MB (22%)
+2026-05-08 14:16:44,088  INFO    73 MB / 283 MB (26%)
+2026-05-08 14:17:31,680  INFO    84 MB / 283 MB (30%)
+2026-05-08 14:17:59,546  INFO    94 MB / 283 MB (33%)
+2026-05-08 14:18:57,392  INFO    105 MB / 283 MB (37%)
+2026-05-08 14:20:15,745  INFO    115 MB / 283 MB (41%)
+2026-05-08 14:20:59,897  INFO    126 MB / 283 MB (44%)
+2026-05-08 14:21:35,261  INFO    136 MB / 283 MB (48%)
+2026-05-08 14:22:25,613  INFO    147 MB / 283 MB (52%)
+2026-05-08 14:24:10,403  INFO    157 MB / 283 MB (56%)
+2026-05-08 14:25:25,050  INFO    168 MB / 283 MB (59%)
+2026-05-08 14:26:14,915  INFO    178 MB / 283 MB (63%)
+2026-05-08 14:27:16,653  INFO    189 MB / 283 MB (67%)
+2026-05-08 14:28:30,076  INFO    199 MB / 283 MB (70%)
+2026-05-08 14:29:14,369  INFO    210 MB / 283 MB (74%)
+2026-05-08 14:29:49,688  INFO    220 MB / 283 MB (78%)
+2026-05-08 14:30:24,797  INFO    231 MB / 283 MB (81%)
+2026-05-08 14:30:49,862  INFO    241 MB / 283 MB (85%)
+2026-05-08 14:31:12,262  INFO    252 MB / 283 MB (89%)
+2026-05-08 14:31:33,824  INFO    262 MB / 283 MB (93%)
+2026-05-08 14:32:13,039  INFO    273 MB / 283 MB (96%)
+2026-05-08 14:33:00,574  INFO    283 MB / 283 MB (100%)
+2026-05-08 14:33:01,233  INFO    283 MB / 283 MB (100%)
+2026-05-08 14:33:01,236  INFO  ✅ Descarga completa: 2026-5-8-T779354202A.bak (283.2 MB)
+2026-05-08 14:33:01,245  INFO  Backup guardado en: C:\Backups\Manager\2026-5-8-T779354202A_2026-05-08_1778265181.bak
+2026-05-08 14:33:01,246  INFO  ✅ Éxito — backup guardado en: C:\Backups\Manager\2026-5-8-T779354202A_2026-05-08_1778265181.bak
+2026-05-08 14:33:05,302  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=50717): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/8abd73ab35ae8e5521e8401e3c432256
+2026-05-08 14:33:09,349  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=50717): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/8abd73ab35ae8e5521e8401e3c432256
+2026-05-08 14:33:13,419  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=50717): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/8abd73ab35ae8e5521e8401e3c432256
+2026-06-30 07:55:23,978  INFO  =======================================================
+2026-06-30 07:55:23,978  INFO    Iniciando descarga automática de backup Manager
+2026-06-30 07:55:23,979  INFO  =======================================================
+2026-06-30 07:55:23,980  INFO  ====== WebDriver manager ======
+2026-06-30 07:55:25,846  INFO  Get LATEST chromedriver version for google-chrome
+2026-06-30 07:55:26,298  INFO  Get LATEST chromedriver version for google-chrome
+2026-06-30 07:55:26,644  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\149.0.7827.155\chromedriver-win32/chromedriver.exe] found in cache
+2026-06-30 07:55:28,740  INFO  Abriendo login: https://prodkernel.manager.cl/index.html

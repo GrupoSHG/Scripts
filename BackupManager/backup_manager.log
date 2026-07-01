@@ -1,0 +1,628 @@
+2026-05-06 08:46:19,012  INFO  =======================================================
+2026-05-06 08:46:19,012  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 08:46:19,013  INFO  =======================================================
+2026-05-06 08:46:19,015  INFO  ====== WebDriver manager ======
+2026-05-06 08:46:20,824  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 08:46:21,265  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 08:46:21,610  INFO  There is no [win64] chromedriver "147.0.7727.117" for browser google-chrome "147.0.7727" in cache
+2026-05-06 08:46:21,611  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 08:46:22,514  INFO  WebDriver version 147.0.7727.117 selected
+2026-05-06 08:46:22,524  INFO  Modern chrome version https://storage.googleapis.com/chrome-for-testing-public/147.0.7727.117/win32/chromedriver-win32.zip
+2026-05-06 08:46:22,525  INFO  About to download new driver from https://storage.googleapis.com/chrome-for-testing-public/147.0.7727.117/win32/chromedriver-win32.zip
+2026-05-06 08:46:22,880  INFO  Driver downloading response is 200
+2026-05-06 08:46:25,121  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 08:46:25,576  INFO  Driver has been saved in cache [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117]
+2026-05-06 08:46:28,654  INFO  Abriendo login: https://prodkernel.manager.cl?cd=prodkernel
+2026-05-06 08:46:30,266  INFO  Login enviado, esperando redirección...
+2026-05-06 08:46:34,274  INFO  Navegando a backups: https://prodkernel.manager.cl/managerbackups.html?cd=prodkernel
+2026-05-06 08:46:54,429  ERROR  ❌ Error: Message: 
+Stacktrace:
+	chromedriver!GetHandleVerifier [0xcfb373+10553]
+	chromedriver!GetHandleVerifier [0xcfb4a4+10684]
+	chromedriver!(No symbol) [0xb01e10]
+	chromedriver!(No symbol) [0xb4a9da]
+	chromedriver!(No symbol) [0xb4ac7b]
+	chromedriver!(No symbol) [0xb8d162]
+	chromedriver!(No symbol) [0xb6d8b4]
+	chromedriver!(No symbol) [0xb8aa36]
+	chromedriver!(No symbol) [0xb6d606]
+	chromedriver!(No symbol) [0xb40039]
+	chromedriver!(No symbol) [0xb40df4]
+	chromedriver!GetHandleVerifier [0xf7ddb4+292f94]
+	chromedriver!GetHandleVerifier [0xf7937d+28e55d]
+	chromedriver!GetHandleVerifier [0xf98215+2ad3f5]
+	chromedriver!GetHandleVerifier [0xd14c18+29df8]
+	chromedriver!GetHandleVerifier [0xd1c6fd+318dd]
+	chromedriver!GetHandleVerifier [0xd03c78+18e58]
+	chromedriver!GetHandleVerifier [0xd03e42+19022]
+	chromedriver!GetHandleVerifier [0xced45f+263f]
+	KERNEL32!BaseThreadInitThunk [0x76515d49+19]
+	ntdll!RtlInitializeExceptionChain [0x7742d83b+6b]
+	ntdll!RtlGetAppContainerNamedObjectPath [0x7742d7c1+231]
+
+2026-05-06 08:46:54,566  INFO  Captura guardada: C:\Scripts\BackupManager\error_screenshot.png
+2026-05-06 09:35:06,094  INFO  =======================================================
+2026-05-06 09:35:06,095  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 09:35:06,096  INFO  =======================================================
+2026-05-06 09:35:06,098  INFO  ====== WebDriver manager ======
+2026-05-06 09:35:08,241  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 09:35:08,741  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 09:35:09,093  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 09:35:11,878  INFO  Abriendo login: https://prodkernel.manager.cl?cd=prodkernel
+2026-05-06 09:35:13,161  INFO  Login enviado, esperando redirección...
+2026-05-06 09:35:17,168  INFO  Navegando a backups: https://prodkernel.manager.cl/managerbackups.html?cd=prodkernel
+2026-05-06 09:36:17,714  ERROR  ❌ Error: Message: 
+
+2026-05-06 09:36:17,833  INFO  Captura guardada: C:\Scripts\BackupManager\error_screenshot.png
+2026-05-06 09:41:22,647  INFO  =======================================================
+2026-05-06 09:41:22,647  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 09:41:22,647  INFO  =======================================================
+2026-05-06 09:41:22,649  INFO  ====== WebDriver manager ======
+2026-05-06 09:41:23,896  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 09:41:24,315  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 09:41:24,705  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 09:41:25,939  INFO  Abriendo login: https://prodkernel.manager.cl?cd=prodkernel
+2026-05-06 09:41:27,201  INFO  Login enviado, esperando redirección...
+2026-05-06 09:41:31,207  INFO  Buscando menú Respaldos...
+2026-05-06 09:42:31,646  ERROR  ❌ Error: Message: 
+Stacktrace:
+	chromedriver!GetHandleVerifier [0xc5b373+10553]
+	chromedriver!GetHandleVerifier [0xc5b4a4+10684]
+	chromedriver!(No symbol) [0xa61e10]
+	chromedriver!(No symbol) [0xaaa9da]
+	chromedriver!(No symbol) [0xaaac7b]
+	chromedriver!(No symbol) [0xaed162]
+	chromedriver!(No symbol) [0xacd8b4]
+	chromedriver!(No symbol) [0xaeaa36]
+	chromedriver!(No symbol) [0xacd606]
+	chromedriver!(No symbol) [0xaa0039]
+	chromedriver!(No symbol) [0xaa0df4]
+	chromedriver!GetHandleVerifier [0xedddb4+292f94]
+	chromedriver!GetHandleVerifier [0xed937d+28e55d]
+	chromedriver!GetHandleVerifier [0xef8215+2ad3f5]
+	chromedriver!GetHandleVerifier [0xc74c18+29df8]
+	chromedriver!GetHandleVerifier [0xc7c6fd+318dd]
+	chromedriver!GetHandleVerifier [0xc63c78+18e58]
+	chromedriver!GetHandleVerifier [0xc63e42+19022]
+	chromedriver!GetHandleVerifier [0xc4d45f+263f]
+	KERNEL32!BaseThreadInitThunk [0x76515d49+19]
+	ntdll!RtlInitializeExceptionChain [0x7742d83b+6b]
+	ntdll!RtlGetAppContainerNamedObjectPath [0x7742d7c1+231]
+
+2026-05-06 09:42:31,796  INFO  Captura guardada: C:\Scripts\BackupManager\error_screenshot.png
+2026-05-06 09:52:21,728  INFO  =======================================================
+2026-05-06 09:52:21,729  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 09:52:21,729  INFO  =======================================================
+2026-05-06 09:52:21,730  INFO  ====== WebDriver manager ======
+2026-05-06 09:52:23,013  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 09:52:23,423  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 09:52:23,774  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 09:52:24,948  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 09:52:26,125  INFO  Login enviado, esperando sesión...
+2026-05-06 09:52:30,205  INFO  URL tras login: https://prodkernel.manager.cl/dashboard.html?session_id=9ef3cc835be3077825f7ec7035154317&cd=prodkernel
+2026-05-06 09:52:30,215  INFO  session_id: 9ef3cc83...
+2026-05-06 09:52:30,216  INFO  Buscando menú Respaldos...
+2026-05-06 09:52:30,314  INFO  Clic en Respaldos del menú.
+2026-05-06 09:52:32,458  INFO  Clic en submenú Respaldos.
+2026-05-06 09:53:34,644  ERROR  ❌ Error: Message: 
+Stacktrace:
+	chromedriver!GetHandleVerifier [0xc5b373+10553]
+	chromedriver!GetHandleVerifier [0xc5b4a4+10684]
+	chromedriver!(No symbol) [0xa61e10]
+	chromedriver!(No symbol) [0xaaa9da]
+	chromedriver!(No symbol) [0xaaac7b]
+	chromedriver!(No symbol) [0xaed162]
+	chromedriver!(No symbol) [0xacd8b4]
+	chromedriver!(No symbol) [0xaeaa36]
+	chromedriver!(No symbol) [0xacd606]
+	chromedriver!(No symbol) [0xaa0039]
+	chromedriver!(No symbol) [0xaa0df4]
+	chromedriver!GetHandleVerifier [0xedddb4+292f94]
+	chromedriver!GetHandleVerifier [0xed937d+28e55d]
+	chromedriver!GetHandleVerifier [0xef8215+2ad3f5]
+	chromedriver!GetHandleVerifier [0xc74c18+29df8]
+	chromedriver!GetHandleVerifier [0xc7c6fd+318dd]
+	chromedriver!GetHandleVerifier [0xc63c78+18e58]
+	chromedriver!GetHandleVerifier [0xc63e42+19022]
+	chromedriver!GetHandleVerifier [0xc4d45f+263f]
+	KERNEL32!BaseThreadInitThunk [0x76515d49+19]
+	ntdll!RtlInitializeExceptionChain [0x7742d83b+6b]
+	ntdll!RtlGetAppContainerNamedObjectPath [0x7742d7c1+231]
+
+2026-05-06 09:53:34,728  INFO  Captura guardada: C:\Scripts\BackupManager\error_screenshot.png
+2026-05-06 10:14:27,377  INFO  =======================================================
+2026-05-06 10:14:27,378  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 10:14:27,378  INFO  =======================================================
+2026-05-06 10:14:27,379  INFO  ====== WebDriver manager ======
+2026-05-06 10:14:28,595  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:14:28,951  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:14:29,321  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 10:14:30,539  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 10:14:31,866  INFO  Login enviado, esperando sesión...
+2026-05-06 10:14:35,965  INFO  URL tras login: https://prodkernel.manager.cl/dashboard.html?session_id=d2ed814f58f0c5436cde4e892ed33f6b&cd=prodkernel
+2026-05-06 10:14:35,976  INFO  session_id: d2ed814f...
+2026-05-06 10:14:35,976  INFO  Haciendo clic en Respaldos...
+2026-05-06 10:14:36,074  INFO  Clic exitoso con: //*[contains(text(), 'Respaldos')]
+2026-05-06 10:14:39,244  INFO  Clic en submenú Respaldos.
+2026-05-06 10:15:42,573  ERROR  ❌ Error: Message: 
+Stacktrace:
+	chromedriver!GetHandleVerifier [0xc5b373+10553]
+	chromedriver!GetHandleVerifier [0xc5b4a4+10684]
+	chromedriver!(No symbol) [0xa61e10]
+	chromedriver!(No symbol) [0xaaa9da]
+	chromedriver!(No symbol) [0xaaac7b]
+	chromedriver!(No symbol) [0xaed162]
+	chromedriver!(No symbol) [0xacd8b4]
+	chromedriver!(No symbol) [0xaeaa36]
+	chromedriver!(No symbol) [0xacd606]
+	chromedriver!(No symbol) [0xaa0039]
+	chromedriver!(No symbol) [0xaa0df4]
+	chromedriver!GetHandleVerifier [0xedddb4+292f94]
+	chromedriver!GetHandleVerifier [0xed937d+28e55d]
+	chromedriver!GetHandleVerifier [0xef8215+2ad3f5]
+	chromedriver!GetHandleVerifier [0xc74c18+29df8]
+	chromedriver!GetHandleVerifier [0xc7c6fd+318dd]
+	chromedriver!GetHandleVerifier [0xc63c78+18e58]
+	chromedriver!GetHandleVerifier [0xc63e42+19022]
+	chromedriver!GetHandleVerifier [0xc4d45f+263f]
+	KERNEL32!BaseThreadInitThunk [0x76515d49+19]
+	ntdll!RtlInitializeExceptionChain [0x7742d83b+6b]
+	ntdll!RtlGetAppContainerNamedObjectPath [0x7742d7c1+231]
+
+2026-05-06 10:15:42,652  INFO  Captura guardada: C:\Scripts\BackupManager\error_screenshot.png
+2026-05-06 10:20:11,397  INFO  =======================================================
+2026-05-06 10:20:11,397  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 10:20:11,397  INFO  =======================================================
+2026-05-06 10:20:11,398  INFO  ====== WebDriver manager ======
+2026-05-06 10:20:12,595  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:20:12,947  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:20:13,321  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 10:20:14,691  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 10:20:16,175  INFO  Login enviado, esperando sesión...
+2026-05-06 10:20:20,264  INFO  URL tras login: https://prodkernel.manager.cl/dashboard.html?session_id=d9a5ec9eb532d067d03fa09c067411ce&cd=prodkernel
+2026-05-06 10:20:20,278  INFO  session_id: d9a5ec9e...
+2026-05-06 10:20:20,279  INFO  Haciendo clic en Respaldos...
+2026-05-06 10:20:20,391  INFO  Clic exitoso con: //*[contains(text(), 'Respaldos')]
+2026-05-06 10:20:23,537  INFO  Clic en submenú Respaldos.
+2026-05-06 10:20:26,538  INFO  Esperando que cargue la página de backups...
+2026-05-06 10:21:26,921  ERROR  ❌ Error: Message: 
+
+2026-05-06 10:21:27,001  INFO  Captura guardada: C:\Scripts\BackupManager\error_screenshot.png
+2026-05-06 10:24:18,517  INFO  =======================================================
+2026-05-06 10:24:18,518  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 10:24:18,518  INFO  =======================================================
+2026-05-06 10:24:18,519  INFO  ====== WebDriver manager ======
+2026-05-06 10:24:19,782  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:24:20,123  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:24:20,471  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 10:24:21,645  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 10:24:22,882  INFO  Login enviado, esperando sesión...
+2026-05-06 10:24:26,966  INFO  URL tras login: https://prodkernel.manager.cl/dashboard.html?session_id=a1a50d021385adf0d529d6c88e5c9c33&cd=prodkernel
+2026-05-06 10:24:26,974  INFO  session_id: a1a50d02...
+2026-05-06 10:24:26,974  INFO  Haciendo clic en menú Respaldos...
+2026-05-06 10:24:29,255  INFO  Clic en submenú Respaldos.
+2026-05-06 10:24:29,255  INFO  Esperando tabla de backups en el DOM...
+2026-05-06 10:25:29,495  ERROR  ❌ Error: Message: 
+Stacktrace:
+	chromedriver!GetHandleVerifier [0xc5b373+10553]
+	chromedriver!GetHandleVerifier [0xc5b4a4+10684]
+	chromedriver!(No symbol) [0xa61e10]
+	chromedriver!(No symbol) [0xaaa9da]
+	chromedriver!(No symbol) [0xaaac7b]
+	chromedriver!(No symbol) [0xaed162]
+	chromedriver!(No symbol) [0xacd8b4]
+	chromedriver!(No symbol) [0xaeaa36]
+	chromedriver!(No symbol) [0xacd606]
+	chromedriver!(No symbol) [0xaa0039]
+	chromedriver!(No symbol) [0xaa0df4]
+	chromedriver!GetHandleVerifier [0xedddb4+292f94]
+	chromedriver!GetHandleVerifier [0xed937d+28e55d]
+	chromedriver!GetHandleVerifier [0xef8215+2ad3f5]
+	chromedriver!GetHandleVerifier [0xc74c18+29df8]
+	chromedriver!GetHandleVerifier [0xc7c6fd+318dd]
+	chromedriver!GetHandleVerifier [0xc63c78+18e58]
+	chromedriver!GetHandleVerifier [0xc63e42+19022]
+	chromedriver!GetHandleVerifier [0xc4d45f+263f]
+	KERNEL32!BaseThreadInitThunk [0x76515d49+19]
+	ntdll!RtlInitializeExceptionChain [0x7742d83b+6b]
+	ntdll!RtlGetAppContainerNamedObjectPath [0x7742d7c1+231]
+
+2026-05-06 10:25:29,577  INFO  Captura guardada: C:\Scripts\BackupManager\error_screenshot.png
+2026-05-06 10:27:21,069  INFO  =======================================================
+2026-05-06 10:27:21,069  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 10:27:21,069  INFO  =======================================================
+2026-05-06 10:27:21,070  INFO  ====== WebDriver manager ======
+2026-05-06 10:27:22,311  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:27:22,693  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:27:23,088  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 10:27:24,349  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 10:27:25,507  INFO  Login enviado, esperando sesión...
+2026-05-06 10:27:29,589  INFO  URL tras login: https://prodkernel.manager.cl/dashboard.html?session_id=a12fe55aa162d9645332188d450facc0&cd=prodkernel
+2026-05-06 10:27:29,605  INFO  session_id: a12fe55a...
+2026-05-06 10:27:29,605  INFO  Haciendo clic en menú Respaldos...
+2026-05-06 10:27:31,934  INFO  Clic en submenú Respaldos.
+2026-05-06 10:27:31,977  INFO  Página Backups cargada.
+2026-05-06 10:27:36,984  INFO  HTML guardado en debug_page_source.html
+2026-05-06 10:27:37,088  INFO  Llamadas API detectadas: ['https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,700,800', 'https://8yujhtogt7.execute-api.us-east-1.amazonaws.com/prod/']
+2026-05-06 10:27:37,108  ERROR  ❌ Error: No se encontraron filas con archivos .bak en la tabla.
+2026-05-06 10:27:37,184  INFO  Captura guardada: C:\Scripts\BackupManager\error_screenshot.png
+2026-05-06 10:29:04,564  INFO  =======================================================
+2026-05-06 10:29:04,564  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 10:29:04,564  INFO  =======================================================
+2026-05-06 10:29:04,566  INFO  ====== WebDriver manager ======
+2026-05-06 10:29:05,769  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:29:06,156  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:29:06,500  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 10:29:07,713  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 10:29:08,885  INFO  Login enviado, esperando sesión...
+2026-05-06 10:29:12,992  INFO  URL tras login: https://prodkernel.manager.cl/dashboard.html?session_id=172aa04c1c526e2b33af8e059fd6a493&cd=prodkernel
+2026-05-06 10:29:13,007  INFO  session_id: 172aa04c...
+2026-05-06 10:29:13,007  INFO  Haciendo clic en menú Respaldos...
+2026-05-06 10:29:15,285  INFO  Clic en submenú Respaldos.
+2026-05-06 10:29:15,307  INFO  Página Backups cargada.
+2026-05-06 10:29:18,318  INFO  API call: https://8yujhtogt7.execute-api.us-east-1.amazonaws.com/prod/
+2026-05-06 10:29:18,324  INFO  HTML tabla: NO HAY TABLA
+2026-05-06 10:29:18,337  INFO  Total filas TR en página: 0
+2026-05-06 10:29:18,349  ERROR  ❌ Error: No se encontraron filas con archivos .bak en la tabla.
+2026-05-06 10:29:18,417  INFO  Captura guardada: C:\Scripts\BackupManager\error_screenshot.png
+2026-05-06 10:33:26,171  INFO  =======================================================
+2026-05-06 10:33:26,172  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 10:33:26,172  INFO  =======================================================
+2026-05-06 10:33:26,173  INFO  ====== WebDriver manager ======
+2026-05-06 10:33:27,540  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:33:27,980  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:33:28,340  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 10:33:30,181  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 10:33:32,112  INFO  Login enviado, esperando sesión...
+2026-05-06 10:33:36,113  ERROR  ❌ Error: name 'd' is not defined
+2026-05-06 10:33:36,207  INFO  Captura guardada: C:\Scripts\BackupManager\error_screenshot.png
+2026-05-06 10:34:11,944  INFO  =======================================================
+2026-05-06 10:34:11,944  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 10:34:11,944  INFO  =======================================================
+2026-05-06 10:34:11,946  INFO  ====== WebDriver manager ======
+2026-05-06 10:34:13,215  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:34:13,576  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:34:13,944  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 10:34:15,216  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 10:34:16,466  INFO  Login enviado, esperando sesión...
+2026-05-06 10:34:20,467  INFO  Esperando que la API responda y renderice la tabla...
+2026-05-06 10:34:22,479  INFO  Intento 1: 0 filas en DOM
+2026-05-06 10:34:24,494  INFO  Intento 2: 0 filas en DOM
+2026-05-06 10:34:26,528  INFO  Intento 3: 0 filas en DOM
+2026-05-06 10:34:28,543  INFO  Intento 4: 0 filas en DOM
+2026-05-06 10:34:30,556  INFO  Intento 5: 0 filas en DOM
+2026-05-06 10:34:32,583  INFO  Intento 6: 0 filas en DOM
+2026-05-06 10:34:34,598  INFO  Intento 7: 0 filas en DOM
+2026-05-06 10:34:36,612  INFO  Intento 8: 0 filas en DOM
+2026-05-06 10:34:38,628  INFO  Intento 9: 0 filas en DOM
+2026-05-06 10:34:40,640  INFO  Intento 10: 0 filas en DOM
+2026-05-06 10:34:42,655  INFO  Intento 11: 0 filas en DOM
+2026-05-06 10:34:44,670  INFO  Intento 12: 0 filas en DOM
+2026-05-06 10:34:46,689  INFO  Intento 13: 0 filas en DOM
+2026-05-06 10:34:48,705  INFO  Intento 14: 0 filas en DOM
+2026-05-06 10:34:50,718  INFO  Intento 15: 0 filas en DOM
+2026-05-06 10:34:52,731  INFO  Intento 16: 0 filas en DOM
+2026-05-06 10:34:54,746  INFO  Intento 17: 0 filas en DOM
+2026-05-06 10:34:56,759  INFO  Intento 18: 0 filas en DOM
+2026-05-06 10:34:58,772  INFO  Intento 19: 0 filas en DOM
+2026-05-06 10:35:00,787  INFO  Intento 20: 0 filas en DOM
+2026-05-06 10:35:02,799  INFO  Intento 21: 0 filas en DOM
+2026-05-06 10:35:04,839  INFO  Intento 22: 0 filas en DOM
+2026-05-06 10:35:06,853  INFO  Intento 23: 0 filas en DOM
+2026-05-06 10:35:08,866  INFO  Intento 24: 0 filas en DOM
+2026-05-06 10:35:10,879  INFO  Intento 25: 0 filas en DOM
+2026-05-06 10:35:12,894  INFO  Intento 26: 0 filas en DOM
+2026-05-06 10:35:14,908  INFO  Intento 27: 0 filas en DOM
+2026-05-06 10:35:16,921  INFO  Intento 28: 0 filas en DOM
+2026-05-06 10:35:18,937  INFO  Intento 29: 0 filas en DOM
+2026-05-06 10:35:20,949  INFO  Intento 30: 0 filas en DOM
+2026-05-06 10:35:20,966  INFO  session_id: d47d2406...
+2026-05-06 10:35:20,966  INFO  Haciendo clic en menú Respaldos...
+2026-05-06 10:35:23,649  INFO  Clic en submenú Respaldos.
+2026-05-06 10:35:23,685  INFO  Página Backups cargada.
+2026-05-06 10:35:26,699  INFO  API call: https://8yujhtogt7.execute-api.us-east-1.amazonaws.com/prod/
+2026-05-06 10:35:26,708  INFO  HTML tabla: NO HAY TABLA
+2026-05-06 10:35:26,721  INFO  Total filas TR en página: 0
+2026-05-06 10:35:26,733  ERROR  ❌ Error: No se encontraron filas con archivos .bak en la tabla.
+2026-05-06 10:35:26,830  INFO  Captura guardada: C:\Scripts\BackupManager\error_screenshot.png
+2026-05-06 10:51:31,637  INFO  =======================================================
+2026-05-06 10:51:31,638  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 10:51:31,638  INFO  =======================================================
+2026-05-06 10:51:31,640  INFO  ====== WebDriver manager ======
+2026-05-06 10:51:32,943  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:51:33,315  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:51:33,684  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 10:51:34,942  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 10:51:37,450  INFO  Inputs visibles encontrados: 3
+2026-05-06 10:51:37,775  INFO  Login enviado, esperando sesión...
+2026-05-06 10:51:41,861  INFO  ✅ Login exitoso. session_id: 38f2a918...
+2026-05-06 10:51:41,861  INFO  Navegando al menú Respaldos...
+2026-05-06 10:51:44,195  INFO  Clic en submenú Respaldos.
+2026-05-06 10:51:46,206  INFO  Página Backups cargada.
+2026-05-06 10:51:46,293  INFO  Consultando API de backups directamente...
+2026-05-06 10:51:47,227  INFO  GET status: 403 — respuesta: {"message":"Missing Authentication Token"}
+2026-05-06 10:51:48,036  INFO  POST status: 200 — respuesta: {"resp_code": 1, "sub_code": "MISSING_KEY", "resp_message": "Missing api_id", "statusCode": 403, "id_trace": "4463e712-43aa-445c-b4a8-10dcf8080167", "lambda_execution_time_milliseconds": 1.0}
+2026-05-06 10:51:48,038  INFO  API retornó datos: {'resp_code': 1, 'sub_code': 'MISSING_KEY', 'resp_message': 'Missing api_id', 'statusCode': 403, 'id_trace': '4463e712-43aa-445c-b4a8-10dcf8080167', 'lambda_execution_time_milliseconds': 1.0}
+2026-05-06 10:51:48,039  INFO  Esperando que la tabla renderice en el DOM...
+2026-05-06 10:51:50,061  INFO  Intento 1/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:51:52,095  INFO  Intento 2/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:51:54,121  INFO  Intento 3/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:51:56,154  INFO  Intento 4/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:51:58,184  INFO  Intento 5/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:00,210  INFO  Intento 6/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:02,235  INFO  Intento 7/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:04,260  INFO  Intento 8/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:06,285  INFO  Intento 9/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:08,311  INFO  Intento 10/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:10,340  INFO  Intento 11/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:12,367  INFO  Intento 12/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:14,392  INFO  Intento 13/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:16,416  INFO  Intento 14/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:18,441  INFO  Intento 15/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:20,467  INFO  Intento 16/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:22,491  INFO  Intento 17/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:24,516  INFO  Intento 18/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:26,541  INFO  Intento 19/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:28,569  INFO  Intento 20/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:30,603  INFO  Intento 21/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:32,629  INFO  Intento 22/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:34,659  INFO  Intento 23/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:36,686  INFO  Intento 24/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:38,712  INFO  Intento 25/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:40,735  INFO  Intento 26/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:42,760  INFO  Intento 27/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:44,787  INFO  Intento 28/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:46,815  INFO  Intento 29/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:48,838  INFO  Intento 30/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:50,864  INFO  Intento 31/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:52,887  INFO  Intento 32/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:54,911  INFO  Intento 33/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:56,935  INFO  Intento 34/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:52:58,960  INFO  Intento 35/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:53:00,984  INFO  Intento 36/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:53:03,010  INFO  Intento 37/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:53:05,032  INFO  Intento 38/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:53:07,056  INFO  Intento 39/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:53:09,081  INFO  Intento 40/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:53:11,106  INFO  Intento 41/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:53:13,130  INFO  Intento 42/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:53:15,156  INFO  Intento 43/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:53:17,182  INFO  Intento 44/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:53:19,206  INFO  Intento 45/45 — TR totales: 0, filas .bak: 0
+2026-05-06 10:53:19,291  ERROR  ❌ Error: La tabla no se cargó en 90 segundos. Ver debug_tabla_timeout.png
+2026-05-06 10:53:19,376  INFO  Captura guardada: error_screenshot.png
+2026-05-06 10:56:17,522  INFO  =======================================================
+2026-05-06 10:56:17,523  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 10:56:17,523  INFO  =======================================================
+2026-05-06 10:56:17,524  INFO  ====== WebDriver manager ======
+2026-05-06 10:56:18,865  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:56:19,211  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:56:19,572  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 10:56:20,771  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 10:56:22,674  INFO  Inputs visibles: 3
+2026-05-06 10:56:22,960  INFO  Login enviado...
+2026-05-06 10:56:26,978  INFO  ✅ Login exitoso. session_id: be4203e9...
+2026-05-06 10:56:29,202  INFO  Consultando API con prefijo: 2026-5-6
+2026-05-06 10:56:29,202  INFO  Payload: {'api_id': 'get_customer_backup2', 'session_id': 'be4203e9ccaa0ddfa6b0117a53579a86', 'cd': 'prodkernel', 'presigned': 'True', 'prefijo': '2026-5-6', 'maxkeys': 1000, 'seconds': 300, 'page_size': 5, 'field_list': ['bucket', 'Key', 'LastModified', 'Size', 'presigned_url']}
+2026-05-06 10:56:30,113  INFO  Status: 200
+2026-05-06 10:56:30,113  INFO  Respuesta completa: {"resp_code": 1, "sub_code": "MISSING_KEY", "resp_message": "Missing environment", "statusCode": 403, "id_trace": "a57bed1e-53fa-463e-81c5-6587dc6a157f", "lambda_execution_time_milliseconds": 1.0, "api_id": "get_customer_backup2"}
+2026-05-06 10:56:30,115  INFO  Estructura de datos API: <class 'dict'> — {'resp_code': 1, 'sub_code': 'MISSING_KEY', 'resp_message': 'Missing environment', 'statusCode': 403, 'id_trace': 'a57bed1e-53fa-463e-81c5-6587dc6a157f', 'lambda_execution_time_milliseconds': 1.0, 'api_id': 'get_customer_backup2'}
+2026-05-06 10:56:30,115  INFO  Items encontrados: 0
+2026-05-06 10:56:30,116  ERROR  ❌ Error: No se encontraron backups en la respuesta. Respuesta: {'resp_code': 1, 'sub_code': 'MISSING_KEY', 'resp_message': 'Missing environment', 'statusCode': 403, 'id_trace': 'a57bed1e-53fa-463e-81c5-6587dc6a157f', 'lambda_execution_time_milliseconds': 1.0, 'api_id': 'get_customer_backup2'}
+2026-05-06 10:56:34,241  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=53429): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/82e23da1f60d2b4893af1c08b516c94f/screenshot
+2026-05-06 10:56:38,354  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=53429): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/82e23da1f60d2b4893af1c08b516c94f/screenshot
+2026-05-06 10:56:42,463  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=53429): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/82e23da1f60d2b4893af1c08b516c94f/screenshot
+2026-05-06 10:56:48,618  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=53429): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/82e23da1f60d2b4893af1c08b516c94f
+2026-05-06 10:59:44,225  INFO  =======================================================
+2026-05-06 10:59:44,225  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 10:59:44,225  INFO  =======================================================
+2026-05-06 10:59:44,227  INFO  ====== WebDriver manager ======
+2026-05-06 10:59:45,468  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:59:45,801  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 10:59:46,245  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 10:59:47,477  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 10:59:49,624  INFO  Inputs visibles: 3
+2026-05-06 10:59:49,963  INFO  Login enviado...
+2026-05-06 10:59:53,974  INFO  ✅ Login exitoso. session_id: d0609a67...
+2026-05-06 10:59:53,974  INFO  Navegando directo a: https://prodkernel.manager.cl/managerbackups.html?session_id=d0609a6782eb2353f061a556471db7cc&cd=prodkernel
+2026-05-06 10:59:54,095  INFO  Div gridmngbkps encontrado.
+2026-05-06 10:59:54,095  INFO  Esperando que la API inyecte la tabla en gridmngbkps...
+2026-05-06 10:59:56,132  INFO  Intento 1/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 10:59:58,166  INFO  Intento 2/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:00,194  INFO  Intento 3/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:02,230  INFO  Intento 4/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:04,267  INFO  Intento 5/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:06,298  INFO  Intento 6/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:08,328  INFO  Intento 7/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:10,360  INFO  Intento 8/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:12,387  INFO  Intento 9/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:14,414  INFO  Intento 10/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:16,445  INFO  Intento 11/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:18,473  INFO  Intento 12/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:20,500  INFO  Intento 13/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:22,537  INFO  Intento 14/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:24,564  INFO  Intento 15/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:26,611  INFO  Intento 16/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:28,644  INFO  Intento 17/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:30,674  INFO  Intento 18/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:32,704  INFO  Intento 19/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:34,736  INFO  Intento 20/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:36,768  INFO  Intento 21/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:38,796  INFO  Intento 22/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:40,828  INFO  Intento 23/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:42,855  INFO  Intento 24/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:44,887  INFO  Intento 25/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:46,916  INFO  Intento 26/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:48,945  INFO  Intento 27/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:50,976  INFO  Intento 28/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:53,006  INFO  Intento 29/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:55,038  INFO  Intento 30/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:57,069  INFO  Intento 31/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:00:59,102  INFO  Intento 32/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:01,130  INFO  Intento 33/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:03,160  INFO  Intento 34/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:05,191  INFO  Intento 35/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:07,221  INFO  Intento 36/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:09,251  INFO  Intento 37/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:11,281  INFO  Intento 38/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:13,312  INFO  Intento 39/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:15,341  INFO  Intento 40/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:17,369  INFO  Intento 41/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:19,397  INFO  Intento 42/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:21,425  INFO  Intento 43/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:23,455  INFO  Intento 44/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:25,486  INFO  Intento 45/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:01:25,580  ERROR  ❌ Error: Tabla no cargó en 90s. Ver debug_timeout.png
+2026-05-06 11:01:25,662  INFO  Captura guardada: error_screenshot.png
+2026-05-06 11:02:22,335  INFO  =======================================================
+2026-05-06 11:02:22,335  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 11:02:22,336  INFO  =======================================================
+2026-05-06 11:02:22,337  INFO  ====== WebDriver manager ======
+2026-05-06 11:02:23,599  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 11:02:23,968  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 11:02:24,318  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 11:02:25,584  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 11:02:27,462  INFO  Inputs visibles: 3
+2026-05-06 11:02:27,780  INFO  Login enviado...
+2026-05-06 11:02:31,792  INFO  ✅ Login exitoso. session_id: bb657c3a...
+2026-05-06 11:02:31,792  INFO  Navegando directo a: https://prodkernel.manager.cl/managerbackups.html?session_id=bb657c3a0ae458108204396e60b81e8f&cd=prodkernel
+2026-05-06 11:02:31,906  INFO  Div gridmngbkps encontrado.
+2026-05-06 11:02:31,906  INFO  Esperando que la API inyecte la tabla en gridmngbkps...
+2026-05-06 11:02:33,943  INFO  Intento 1/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:02:35,980  INFO  Intento 2/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:02:38,016  INFO  Intento 3/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:02:40,055  INFO  Intento 4/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:02:42,087  INFO  Intento 5/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:02:44,119  INFO  Intento 6/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:02:46,180  INFO  Intento 7/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:02:48,222  INFO  Intento 8/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:02:50,256  INFO  Intento 9/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:02:52,300  INFO  Intento 10/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:02:54,338  INFO  Intento 11/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:02:56,379  INFO  Intento 12/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:02:58,407  INFO  Intento 13/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:03:00,441  INFO  Intento 14/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:03:02,478  INFO  Intento 15/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:03:04,515  INFO  Intento 16/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:03:06,549  INFO  Intento 17/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:03:08,580  INFO  Intento 18/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:03:10,611  INFO  Intento 19/45 — TR: 4, filas .bak: 3, innerHTML: 6174 chars
+2026-05-06 11:03:10,611  INFO  ✅ Tabla cargada con 3 backups.
+2026-05-06 11:03:10,697  INFO  Backup seleccionado: 2026-5-6-T779354202C.bak (2026-05-06 10:08:49+00:00)
+2026-05-06 11:03:10,718  INFO  Haciendo clic en descarga: 2026-5-6-T779354202C.bak
+2026-05-06 11:03:11,557  INFO  Esperando descarga (máx 120s)...
+2026-05-06 11:04:57,603  INFO  Descargado: 2026-5-6-T779354202C.bak (99.7 MB)
+2026-05-06 11:04:57,606  INFO  Backup guardado en: C:\Backups\Manager\2026-5-6-T779354202C_2026-05-06.bak
+2026-05-06 11:04:57,607  INFO  ✅ Éxito — backup guardado en: C:\Backups\Manager\2026-5-6-T779354202C_2026-05-06.bak
+2026-05-06 11:09:23,955  INFO  =======================================================
+2026-05-06 11:09:23,955  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 11:09:23,955  INFO  =======================================================
+2026-05-06 11:09:23,956  INFO  ====== WebDriver manager ======
+2026-05-06 11:09:25,180  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 11:09:25,519  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 11:09:25,852  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 11:09:27,220  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 11:09:29,039  INFO  Inputs visibles: 3
+2026-05-06 11:09:29,303  INFO  Login enviado...
+2026-05-06 11:09:33,315  INFO  ✅ Login exitoso. session_id: 1c9fa114...
+2026-05-06 11:09:33,316  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=1c9fa114ce9189024ab32480b84fb762&cd=prodkernel
+2026-05-06 11:09:36,402  INFO  Recargando página para activar JS...
+2026-05-06 11:09:39,481  INFO  Div gridmngbkps encontrado. Esperando tabla...
+2026-05-06 11:09:41,516  INFO  Intento 1/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:09:43,543  INFO  Intento 2/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:09:45,588  INFO  Intento 3/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:09:47,620  INFO  Intento 4/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:09:49,660  INFO  Intento 5/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:09:51,700  INFO  Intento 6/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:09:53,740  INFO  Intento 7/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:09:55,778  INFO  Intento 8/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:09:57,818  INFO  Intento 9/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:09:59,857  INFO  Intento 10/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:09:59,857  INFO  Sin respuesta tras 20s, recargando...
+2026-05-06 11:10:05,510  INFO  Intento 11/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:07,549  INFO  Intento 12/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:09,592  INFO  Intento 13/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:11,631  INFO  Intento 14/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:13,671  INFO  Intento 15/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:15,780  INFO  Intento 16/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:17,809  INFO  Intento 17/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:19,836  INFO  Intento 18/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:21,865  INFO  Intento 19/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:23,900  INFO  Intento 20/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:25,927  INFO  Intento 21/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:27,960  INFO  Intento 22/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:29,996  INFO  Intento 23/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:32,024  INFO  Intento 24/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:34,051  INFO  Intento 25/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:36,078  INFO  Intento 26/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:38,115  INFO  Intento 27/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:40,143  INFO  Intento 28/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:42,175  INFO  Intento 29/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:44,205  INFO  Intento 30/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:46,235  INFO  Intento 31/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:48,270  INFO  Intento 32/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:50,298  INFO  Intento 33/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:52,332  INFO  Intento 34/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:54,376  INFO  Intento 35/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:56,420  INFO  Intento 36/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:10:58,459  INFO  Intento 37/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:11:00,490  INFO  Intento 38/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:11:02,519  INFO  Intento 39/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:11:04,549  INFO  Intento 40/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:11:06,582  INFO  Intento 41/45 — TR: 0, filas .bak: 0, innerHTML: 0 chars
+2026-05-06 11:11:07,121  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None)': /session/1d9cd1219254840cbc5b52ffd95a934e
+2026-05-06 11:11:11,223  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=53460): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/1d9cd1219254840cbc5b52ffd95a934e
+2026-05-06 11:11:15,313  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=53460): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/1d9cd1219254840cbc5b52ffd95a934e
+2026-05-06 11:12:09,648  INFO  =======================================================
+2026-05-06 11:12:09,648  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 11:12:09,648  INFO  =======================================================
+2026-05-06 11:12:09,649  INFO  ====== WebDriver manager ======
+2026-05-06 11:12:10,875  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 11:12:11,292  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 11:12:11,628  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 11:12:12,809  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 11:12:14,752  INFO  Inputs visibles: 3
+2026-05-06 11:12:15,049  INFO  Login enviado...
+2026-05-06 11:12:19,062  INFO  ✅ Login exitoso. session_id: 6e3977f3...
+2026-05-06 11:12:19,062  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=6e3977f3bba7ab0870f712b1bae07815&cd=prodkernel
+2026-05-06 11:12:19,167  INFO  Recarga 1/10...
+2026-05-06 11:12:23,263  INFO    filas .bak encontradas: 0
+2026-05-06 11:12:23,264  INFO  Recarga 2/10...
+2026-05-06 11:12:27,338  INFO    filas .bak encontradas: 0
+2026-05-06 11:12:27,338  INFO  Recarga 3/10...
+2026-05-06 11:12:31,928  INFO    filas .bak encontradas: 0
+2026-05-06 11:12:31,928  INFO  Recarga 4/10...
+2026-05-06 11:12:36,170  INFO    filas .bak encontradas: 3
+2026-05-06 11:12:36,171  INFO  ✅ Tabla cargada en recarga 4.
+2026-05-06 11:12:36,273  INFO  Backup seleccionado: 2026-5-6-T779354202C.bak (2026-05-06 10:08:49+00:00)
+2026-05-06 11:12:36,297  INFO  Haciendo clic en descarga: 2026-5-6-T779354202C.bak
+2026-05-06 11:12:37,017  INFO  Esperando descarga (máx 120s)...
+2026-05-06 11:14:37,060  ERROR  ❌ Error: No apareció ningún .bak tras 120s.
+2026-05-06 11:14:37,147  INFO  Captura guardada: error_screenshot.png
+2026-05-06 11:16:30,639  INFO  =======================================================
+2026-05-06 11:16:30,640  INFO    Iniciando descarga automática de backup Manager
+2026-05-06 11:16:30,640  INFO  =======================================================
+2026-05-06 11:16:30,641  INFO  ====== WebDriver manager ======
+2026-05-06 11:16:31,777  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 11:16:32,157  INFO  Get LATEST chromedriver version for google-chrome
+2026-05-06 11:16:32,531  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\147.0.7727.117\chromedriver-win32/chromedriver.exe] found in cache
+2026-05-06 11:16:33,711  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-05-06 11:16:35,565  INFO  Inputs visibles: 3
+2026-05-06 11:16:35,837  INFO  Login enviado...
+2026-05-06 11:16:39,848  INFO  ✅ Login exitoso. session_id: bde051e6...
+2026-05-06 11:16:39,848  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=bde051e621d3bc479ca2ccb15268134e&cd=prodkernel
+2026-05-06 11:16:39,964  INFO  Recarga 1/10...
+2026-05-06 11:16:44,050  INFO    filas .bak encontradas: 0
+2026-05-06 11:16:44,050  INFO  Recarga 2/10...
+2026-05-06 11:16:48,146  INFO    filas .bak encontradas: 0
+2026-05-06 11:16:48,146  INFO  Recarga 3/10...
+2026-05-06 11:16:52,705  INFO    filas .bak encontradas: 0
+2026-05-06 11:16:52,705  INFO  Recarga 4/10...
+2026-05-06 11:16:57,210  INFO    filas .bak encontradas: 3
+2026-05-06 11:16:57,210  INFO  ✅ Tabla cargada en recarga 4.
+2026-05-06 11:16:57,323  INFO  Backup seleccionado: 2026-5-6-T779354202C.bak (2026-05-06 10:08:49+00:00)
+2026-05-06 11:16:57,371  INFO  Haciendo clic en descarga: 2026-5-6-T779354202C.bak
+2026-05-06 11:16:58,132  INFO  Esperando descarga (máx 300s)...
+2026-05-06 11:20:20,201  INFO  Descargado: 2026-5-6-T779354202C.bak (99.7 MB)
+2026-05-06 11:20:20,202  INFO  Backup guardado en: C:\Backups\Manager\2026-5-6-T779354202C_2026-05-06_1778080820.bak
+2026-05-06 11:20:20,203  INFO  ✅ Éxito — backup guardado en: C:\Backups\Manager\2026-5-6-T779354202C_2026-05-06_1778080820.bak

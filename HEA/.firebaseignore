@@ -1,0 +1,6 @@
+deploy.bat
+token
+*.bat
+*.exe
+*.py
+*.sql
