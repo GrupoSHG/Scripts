@@ -75,7 +75,6 @@ def main():
         from bulk_sync_supabase import main as bulk_sync
         bulk_sync()
 
-
         # ── PASO 6: Sincronizar NVs pendientes por vendedor ────
         paso(6, "Sincronizar NVs pendientes por vendedor")
         from sync_nv_pendientes import main as sync_pendientes
