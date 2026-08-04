@@ -11,6 +11,9 @@ jobs:
   pipeline:
     runs-on: windows-latest
     timeout-minutes: 45  # margen sobre los ~11 min que ya toma, por si CI va más lento
+    defaults:
+      run:
+        working-directory: BackupManager
 
     steps:
       - name: Checkout del repo
@@ -27,6 +30,7 @@ jobs:
         with:
           python-version: '3.13'
           cache: 'pip'
+          cache-dependency-path: BackupManager/requirements.txt
 
       - name: Instalar dependencias
         run: pip install -r requirements.txt
@@ -75,5 +79,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pipeline-log
-          path: pipeline_main.log
+          path: BackupManager/pipeline_main.log
           retention-days: 14
