@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>OC Polchile</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --ink:#1a1d1a;
+  --steel:#3d4a4a;
+  --steel-light:#6b7a7a;
+  --panel:#f0efe9;
+  --panel-white:#ffffff;
+  --border:#d8d5cc;
+  --safe:#3d6b4f;
+  --safe-bg:#e6efe8;
+  --warn:#a3661a;
+  --warn-bg:#f5ead9;
+  --danger:#a33d3d;
+  --danger-bg:#f5e0e0;
+  --accent:#c9622b;
+  --radius:10px;
+  --font-display:'Zilla Slab','Georgia',serif;
+  --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --font-mono:'SF Mono','Consolas',monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{
+  margin:0;
+  background:var(--panel);
+  color:var(--ink);
+  font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:80px;
+}
+.hidden{display:none !important;}
+
+/* ---------- TOP BAR ---------- */
+.topbar{
+  background:var(--ink);
+  color:#fff;
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:50;
+}
+.topbar .brand{
+  font-family:var(--font-display);
+  font-size:20px;
+  font-weight:600;
+  letter-spacing:0.3px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.brand .mark{
+  width:10px;height:10px;background:var(--accent);
+  transform:rotate(45deg);
+  display:inline-block;
+}
+.topbar .user{
+  font-size:12px;
+  color:#b8bcb8;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.logout-btn{
+  background:none;border:1px solid #4a4f4a;color:#b8bcb8;
+  border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;
+}
+
+/* ---------- TABS ---------- */
+.tabs{
+  display:flex;
+  background:var(--panel-white);
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:53px;
+  z-index:40;
+}
+.tab{
+  flex:1;
+  text-align:center;
+  padding:12px 8px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--steel-light);
+  cursor:pointer;
+  border-bottom:3px solid transparent;
+  letter-spacing:0.2px;
+}
+.tab.active{
+  color:var(--ink);
+  border-bottom-color:var(--accent);
+}
+
+.view{padding:16px;max-width:900px;margin:0 auto;}
+
+/* ---------- LOGIN ---------- */
+.login-screen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--ink);
+  padding:20px;
+}
+.login-box{
+  background:var(--panel-white);
+  border-radius:var(--radius);
+  padding:36px 28px;
+  width:100%;
+  max-width:360px;
+  text-align:center;
+}
+.login-box .mark-big{
+  width:36px;height:36px;background:var(--accent);
+  transform:rotate(45deg);
+  margin:0 auto 24px;
+}
+.login-box h1{
+  font-family:var(--font-display);
+  font-size:26px;
+  margin:0 0 4px;
+}
+.login-box p{
+  color:var(--steel-light);
+  font-size:13px;
+  margin:0 0 28px;
+}
+.pin-input{
+  width:100%;
+  font-size:28px;
+  letter-spacing:10px;
+  text-align:center;
+  padding:14px;
+  border:2px solid var(--border);
+  border-radius:8px;
+  font-family:var(--font-mono);
+  margin-bottom:16px;
+}
+.pin-input:focus{outline:none;border-color:var(--accent);}
+.btn-primary{
+  width:100%;
+  background:var(--ink);
+  color:#fff;
+  border:none;
+  padding:14px;
+  border-radius:8px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+}
+.login-error{color:var(--danger);font-size:13px;margin-top:10px;min-height:16px;}
+
+/* ---------- CARDS ---------- */
+.card{
+  background:var(--panel-white);
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  padding:16px;
+  margin-bottom:12px;
+}
+.card-title{
+  font-family:var(--font-display);
+  font-size:17px;
+  font-weight:600;
+  margin:0 0 12px;
+}
+
+/* ---------- FORM ---------- */
+label{
+  display:block;
+  font-size:12px;
+  font-weight:600;
+  color:var(--steel);
+  text-transform:uppercase;
+  letter-spacing:0.4px;
+  margin-bottom:5px;
+  margin-top:14px;
+}
+label:first-child{margin-top:0;}
+input[type=text],input[type=number],input[type=date],select,textarea{
+  width:100%;
+  padding:10px 12px;
+  border:1.5px solid var(--border);
+  border-radius:7px;
+  font-size:15px;
+  font-family:var(--font-body);
+  background:var(--panel-white);
+  color:var(--ink);
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);}
+textarea{resize:vertical;min-height:60px;}
+.field-row{display:flex;gap:10px;}
+.field-row > div{flex:1;}
+.helper{font-size:11px;color:var(--steel-light);margin-top:4px;}
+
+/* autocomplete */
+.autocomplete-wrap{position:relative;}
+.autocomplete-list{
+  position:absolute;
+  top:calc(100% + 2px);
+  left:0;right:0;
+  background:#fff;
+  border:1.5px solid var(--border);
+  border-radius:7px;
+  max-height:220px;
+  overflow-y:auto;
+  z-index:30;
+  box-shadow:0 6px 20px rgba(0,0,0,0.1);
+}
+.autocomplete-item{
+  padding:10px 12px;
+  font-size:14px;
+  cursor:pointer;
+  border-bottom:1px solid var(--panel);
+}
+.autocomplete-item:last-child{border-bottom:none;}
+.autocomplete-item:hover,.autocomplete-item.hi{background:var(--panel);}
+.autocomplete-item .sub{font-size:11px;color:var(--steel-light);}
+.autocomplete-new{
+  padding:10px 12px;
+  font-size:13px;
+  color:var(--accent);
+  font-weight:600;
+  cursor:pointer;
+  background:var(--panel);
+}
+
+/* ---------- ITEMS TABLE ---------- */
+.items-table{width:100%;border-collapse:collapse;margin-top:8px;}
+.items-table th{
+  text-align:left;
+  font-size:10px;
+  text-transform:uppercase;
+  color:var(--steel-light);
+  letter-spacing:0.4px;
+  padding:6px 6px;
+  border-bottom:1.5px solid var(--border);
+}
+.items-table td{padding:6px 6px;vertical-align:top;}
+.items-table input{padding:8px;font-size:13px;}
+.item-remove{
+  background:none;border:none;color:var(--danger);
+  font-size:18px;cursor:pointer;padding:4px 8px;
+}
+.item-amount{
+  font-family:var(--font-mono);
+  font-weight:600;
+  padding-top:10px;
+  white-space:nowrap;
+  font-size:13px;
+}
+.add-item-btn{
+  background:none;
+  border:1.5px dashed var(--border);
+  color:var(--steel);
+  padding:10px;
+  width:100%;
+  border-radius:7px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:8px;
+}
+.total-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  padding-top:14px;
+  margin-top:10px;
+  border-top:2px solid var(--ink);
+}
+.total-row .label{font-size:13px;font-weight:600;color:var(--steel);}
+.total-row .value{font-family:var(--font-mono);font-size:24px;font-weight:700;}
+
+.btn-save{
+  width:100%;
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:15px;
+  border-radius:8px;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:18px;
+  letter-spacing:0.2px;
+}
+.btn-save:disabled{opacity:0.5;}
+.btn-secondary{
+  width:100%;
+  background:none;
+  border:1.5px solid var(--border);
+  color:var(--steel);
+  padding:12px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:8px;
+}
+
+/* ---------- DASHBOARD / CONTROL ---------- */
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:16px;
+}
+.stat-box{
+  background:var(--panel-white);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px;
+}
+.stat-box .num{font-family:var(--font-mono);font-size:26px;font-weight:700;}
+.stat-box .lbl{font-size:11px;color:var(--steel-light);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px;}
+
+.search-bar{
+  width:100%;
+  padding:12px 14px;
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  font-size:14px;
+  margin-bottom:12px;
+  background:var(--panel-white);
+}
+
+.filter-chips{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px;}
+.chip{
+  padding:7px 14px;
+  border-radius:20px;
+  border:1.5px solid var(--border);
+  font-size:12px;
+  font-weight:600;
+  white-space:nowrap;
+  cursor:pointer;
+  color:var(--steel);
+  background:var(--panel-white);
+}
+.chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+.nv-card{
+  background:var(--panel-white);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  margin-bottom:14px;
+  overflow:hidden;
+}
+.nv-head{
+  padding:14px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+  cursor:pointer;
+}
+.nv-head-left .nv-num{font-family:var(--font-display);font-weight:700;font-size:17px;}
+.nv-head-left .nv-cliente{font-size:12px;color:var(--steel-light);margin-top:2px;}
+.nv-head-left .badges{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;}
+.badge{
+  font-size:10px;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:20px;
+  text-transform:uppercase;
+  letter-spacing:0.3px;
+}
+.badge.ok{background:var(--safe-bg);color:var(--safe);}
+.badge.warn{background:var(--warn-bg);color:var(--warn);}
+.badge.danger{background:var(--danger-bg);color:var(--danger);}
+.nv-head-right{text-align:right;}
+.nv-pct{font-family:var(--font-mono);font-size:24px;font-weight:700;}
+.nv-pct.ok{color:var(--safe);}
+.nv-pct.warn{color:var(--warn);}
+.nv-pct.danger{color:var(--danger);}
+.nv-pct-lbl{font-size:10px;color:var(--steel-light);text-transform:uppercase;}
+.nv-sum{font-size:11px;color:var(--steel-light);margin-top:2px;font-family:var(--font-mono);}
+
+.nv-body{border-top:1px solid var(--border);}
+.po-row{
+  padding:12px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--panel);
+  gap:10px;
+}
+.po-row:last-child{border-bottom:none;}
+.po-info .po-num{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--steel);}
+.po-info .po-prov{font-size:13px;font-weight:600;margin-top:2px;}
+.po-info .po-desc{font-size:11px;color:var(--steel-light);margin-top:1px;}
+.po-right{text-align:right;flex-shrink:0;}
+.po-amount{font-family:var(--font-mono);font-weight:700;font-size:13px;}
+.po-pct{font-size:10px;color:var(--steel-light);margin-top:1px;}
+.po-actions{margin-top:6px;}
+.btn-mini{
+  border:none;
+  padding:5px 12px;
+  border-radius:14px;
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+}
+.btn-mini.approve{background:var(--safe);color:#fff;}
+.btn-mini.revoke{background:none;border:1px solid var(--border);color:var(--steel-light);}
+
+.empty-state{
+  text-align:center;
+  padding:50px 20px;
+  color:var(--steel-light);
+}
+.empty-state .mark{width:24px;height:24px;background:var(--border);transform:rotate(45deg);margin:0 auto 14px;}
+.empty-state p{font-size:13px;}
+
+.toast{
+  position:fixed;
+  bottom:20px;left:50%;
+  transform:translateX(-50%);
+  background:var(--ink);
+  color:#fff;
+  padding:12px 20px;
+  border-radius:30px;
+  font-size:13px;
+  font-weight:600;
+  z-index:100;
+  box-shadow:0 6px 20px rgba(0,0,0,0.25);
+  opacity:0;
+  transition:opacity 0.25s, transform 0.25s;
+  pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+
+/* new NV modal */
+.modal-backdrop{
+  position:fixed;inset:0;
+  background:rgba(26,29,26,0.5);
+  z-index:80;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+}
+.modal-sheet{
+  background:var(--panel-white);
+  border-radius:16px 16px 0 0;
+  width:100%;
+  max-width:500px;
+  max-height:88vh;
+  overflow-y:auto;
+  padding:20px;
+  animation:slideup 0.2s ease-out;
+}
+@keyframes slideup{from{transform:translateY(30px);opacity:0.5;}to{transform:translateY(0);opacity:1;}}
+.modal-title{font-family:var(--font-display);font-size:19px;font-weight:700;margin:0 0 4px;}
+.modal-close{
+  position:absolute;
+  right:20px;
+  background:none;border:none;
+  font-size:22px;
+  color:var(--steel-light);
+  cursor:pointer;
+}
+
+@media (min-width:640px){
+  .stats-row{grid-template-columns:repeat(4,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <div class="mark-big"></div>
+    <h1>OC Polchile</h1>
+    <p>Ingresa tu PIN para continuar</p>
+    <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" class="pin-input" id="pinInput" placeholder="••••" autocomplete="off">
+    <button class="btn-primary" id="loginBtn">Entrar</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="hidden">
+  <div class="topbar">
+    <div class="brand"><span class="mark"></span>OC Polchile</div>
+    <div class="user">
+      <span id="userName"></span>
+      <button class="logout-btn" id="logoutBtn">Salir</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="control">Control</div>
+    <div class="tab" data-tab="nueva">Nueva OC</div>
+    <div class="tab" data-tab="nvs">NVs</div>
+  </div>
+
+  <!-- ===== TAB: CONTROL (dashboard tipo imagen 3) ===== -->
+  <div class="view" id="viewControl">
+    <div class="stats-row">
+      <div class="stat-box"><div class="num" id="statTotalOcs">0</div><div class="lbl">OCs totales</div></div>
+      <div class="stat-box"><div class="num" id="statPendientes">0</div><div class="lbl">Pendientes</div></div>
+      <div class="stat-box"><div class="num" id="statFueraMargen">0</div><div class="lbl">Fuera de margen</div></div>
+      <div class="stat-box"><div class="num" id="statAutorizadas">0</div><div class="lbl">Autorizadas</div></div>
+    </div>
+
+    <input class="search-bar" id="searchControl" placeholder="Buscar NV, OC o proveedor…">
+
+    <div class="filter-chips">
+      <div class="chip active" data-filter="todas">Todas</div>
+      <div class="chip" data-filter="pendiente">Pendientes</div>
+      <div class="chip" data-filter="fuera">Fuera de margen</div>
+      <div class="chip" data-filter="autorizada">Autorizadas</div>
+    </div>
+
+    <div id="controlList"></div>
+  </div>
+
+  <!-- ===== TAB: NUEVA OC (form tipo imagen 1/2) ===== -->
+  <div class="view hidden" id="viewNueva">
+    <div class="card">
+      <div class="card-title">Nota de Venta</div>
+      <label>NV asociada</label>
+      <div class="autocomplete-wrap">
+        <input type="text" id="ocNvSearch" placeholder="Buscar NV por número o cliente…" autocomplete="off">
+        <div class="autocomplete-list hidden" id="ocNvList"></div>
+      </div>
+      <div class="helper" id="ocNvSelectedInfo"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Proveedor</div>
+      <label>Vendor</label>
+      <div class="autocomplete-wrap">
+        <input type="text" id="ocProvSearch" placeholder="Buscar o crear proveedor…" autocomplete="off">
+        <div class="autocomplete-list hidden" id="ocProvList"></div>
+      </div>
+      <div id="ocProvInfo" class="helper"></div>
+
+      <div id="ocContactWrap" class="hidden">
+        <label>Contacto</label>
+        <div class="field-row">
+          <select id="ocContactSelect"><option value="">Sin contacto específico</option></select>
+        </div>
+        <div class="helper" id="ocContactNewToggle" style="cursor:pointer;color:var(--accent);font-weight:600;">+ Agregar nuevo contacto</div>
+        <input type="text" id="ocContactNewInput" class="hidden" placeholder="Nombre del nuevo contacto" style="margin-top:6px;">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Ship To</div>
+      <label>Nombre</label>
+      <input type="text" id="shipName">
+      <div class="field-row">
+        <div><label>Dirección</label><input type="text" id="shipAddress1"></div>
+      </div>
+      <div class="field-row">
+        <div><label>Ciudad</label><input type="text" id="shipCity"></div>
+        <div><label>Región / Comuna</label><input type="text" id="shipState"></div>
+      </div>
+      <div class="field-row">
+        <div><label>Código Postal</label><input type="text" id="shipPostal"></div>
+        <div><label>País</label><input type="text" id="shipCountry" value="Chile"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Detalle</div>
+      <label>Descripción de la OC</label>
+      <textarea id="ocDescripcion" placeholder="Ej: retiro de vb en Publigoo y entregar en Huechuraba"></textarea>
+      <div class="field-row">
+        <div><label>Fecha de llegada</label><input type="date" id="ocFechaLlegada"></div>
+        <div><label>Freight</label><input type="number" id="ocFreight" value="0" step="0.01"></div>
+      </div>
+      <label>Notas (aparecen en la OC)</label>
+      <textarea id="ocNotas"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Items</div>
+      <table class="items-table">
+        <thead>
+          <tr><th style="width:22%">N° Parte</th><th>Descripción</th><th style="width:14%">Qty</th><th style="width:20%">Rate</th><th style="width:20%">Monto</th><th></th></tr>
+        </thead>
+        <tbody id="itemsBody"></tbody>
+      </table>
+      <button class="add-item-btn" id="addItemBtn">+ Agregar ítem</button>
+
+      <div class="total-row">
+        <div class="label">TOTAL OC</div>
+        <div class="value" id="ocTotalDisplay">$0</div>
+      </div>
+    </div>
+
+    <button class="btn-save" id="saveOcBtn">Guardar Orden de Compra</button>
+  </div>
+
+  <!-- ===== TAB: NVs (crear / listar) ===== -->
+  <div class="view hidden" id="viewNvs">
+    <div class="card">
+      <div class="card-title">Nueva Nota de Venta</div>
+      <label>Número NV</label>
+      <input type="text" id="nvNumero" placeholder="Ej: NV 13804">
+      <label>Cliente</label>
+      <input type="text" id="nvCliente">
+      <label>Descripción</label>
+      <input type="text" id="nvDescripcion">
+      <div class="field-row">
+        <div><label>Monto neto</label><input type="number" id="nvMonto" step="1"></div>
+        <div><label>% Umbral de control</label><input type="number" id="nvUmbral" value="65" step="0.1"></div>
+      </div>
+      <button class="btn-save" id="saveNvBtn">Crear NV</button>
+    </div>
+
+    <div class="card-title" style="margin:20px 0 10px;">NVs existentes</div>
+    <div id="nvsList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================== CONFIG ================== */
+const SUPABASE_URL = 'https://hauricnpsamnwyhondse.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_JdCZQMZNHyLixuDDmtTdlA_rj_8rsgG';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ================== STATE ================== */
+let currentUser = null;
+let itemIdCounter = 0;
+let selectedNv = null;
+let selectedProv = null;
+let selectedContactId = null;
+let allNvs = [];
+let allProveedores = [];
+let controlFilter = 'todas';
+
+const money = n => '$' + Math.round(n||0).toLocaleString('es-CL');
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+/* ================== LOGIN ================== */
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('pinInput').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+
+async function doLogin(){
+  const pin = document.getElementById('pinInput').value.trim();
+  const errEl = document.getElementById('loginError');
+  errEl.textContent = '';
+  if(!pin){ errEl.textContent = 'Ingresa tu PIN'; return; }
+  const { data, error } = await sb.from('usuarios').select('*').eq('pin', pin).eq('activo', true).maybeSingle();
+  if(error || !data){ errEl.textContent = 'PIN incorrecto'; return; }
+  currentUser = data;
+  localStorage.setItem('oc_polchile_user', JSON.stringify(data));
+  enterApp();
+}
+
+function enterApp(){
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('userName').textContent = currentUser.nombre + (currentUser.rol==='admin' ? ' · Admin' : '');
+  applyRoleVisibility();
+  loadEverything();
+}
+
+function applyRoleVisibility(){
+  const isAdmin = currentUser.rol === 'admin';
+  const controlTab = document.querySelector('.tab[data-tab="control"]');
+  const nvsTab = document.querySelector('.tab[data-tab="nvs"]');
+  if(!isAdmin){
+    controlTab.classList.add('hidden');
+    nvsTab.classList.add('hidden');
+    // si por alguna razón esas vistas quedaron activas, forzar a "Nueva OC"
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelector('.tab[data-tab="nueva"]').classList.add('active');
+    document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));
+    document.getElementById('viewNueva').classList.remove('hidden');
+  } else {
+    controlTab.classList.remove('hidden');
+    nvsTab.classList.remove('hidden');
+  }
+}
+
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+  localStorage.removeItem('oc_polchile_user');
+  currentUser = null;
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('pinInput').value='';
+});
+
+// auto-login si hay sesión guardada
+(function tryAutoLogin(){
+  const saved = localStorage.getItem('oc_polchile_user');
+  if(saved){
+    try{
+      currentUser = JSON.parse(saved);
+      enterApp();
+    }catch(e){}
+  }
+})();
+
+/* ================== TABS ================== */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));
+    const map = {control:'viewControl', nueva:'viewNueva', nvs:'viewNvs'};
+    document.getElementById(map[tab.dataset.tab]).classList.remove('hidden');
+    if(tab.dataset.tab==='control') loadControl();
+    if(tab.dataset.tab==='nvs') loadNvsTab();
+  });
+});
+
+/* ================== LOAD DATA ================== */
+async function loadEverything(){
+  await Promise.all([loadNvsRaw(), loadProveedoresRaw()]);
+  resetItemsTable();
+  loadControl();
+}
+
+async function loadNvsRaw(){
+  let all = [];
+  let from = 0;
+  const pageSize = 1000;
+  while(true){
+    const { data, error } = await sb.from('nvs')
+      .select('*')
+      .order('created_at', {ascending:false})
+      .range(from, from + pageSize - 1);
+    if(error){ console.error(error); break; }
+    if(!data || data.length===0) break;
+    all = all.concat(data);
+    if(data.length < pageSize) break; // última página
+    from += pageSize;
+  }
+  allNvs = all;
+}
+async function loadProveedoresRaw(){
+  let all = [];
+  let from = 0;
+  const pageSize = 1000;
+  while(true){
+    const { data, error } = await sb.from('proveedores')
+      .select('*')
+      .order('nombre')
+      .range(from, from + pageSize - 1);
+    if(error){ console.error(error); break; }
+    if(!data || data.length===0) break;
+    all = all.concat(data);
+    if(data.length < pageSize) break;
+    from += pageSize;
+  }
+  allProveedores = all;
+}
+
+/* ================== NV AUTOCOMPLETE (Nueva OC) ================== */
+const ocNvSearch = document.getElementById('ocNvSearch');
+const ocNvList = document.getElementById('ocNvList');
+ocNvSearch.addEventListener('input', ()=>{
+  const q = ocNvSearch.value.trim().toLowerCase();
+  selectedNv = null;
+  document.getElementById('ocNvSelectedInfo').textContent = '';
+  if(!q){ ocNvList.classList.add('hidden'); return; }
+  const matches = allNvs.filter(n => n.numero.toLowerCase().includes(q) || (n.cliente||'').toLowerCase().includes(q)).slice(0,8);
+  renderNvAutocomplete(matches);
+});
+function renderNvAutocomplete(matches){
+  const isAdmin = currentUser.rol === 'admin';
+  if(matches.length===0){ ocNvList.innerHTML = '<div class="autocomplete-item sub">Sin resultados. Crea la NV en la pestaña "NVs".</div>'; ocNvList.classList.remove('hidden'); return; }
+  ocNvList.innerHTML = matches.map(n=>`
+    <div class="autocomplete-item" data-id="${n.id}">
+      <div>${n.numero}${n.cliente? ' — '+n.cliente:''}</div>
+      <div class="sub">Monto neto: ${money(n.monto_neto)}${isAdmin ? ' · Umbral '+n.umbral_pct+'%' : ''}</div>
+    </div>`).join('');
+  ocNvList.querySelectorAll('.autocomplete-item[data-id]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const nv = allNvs.find(n=>n.id===el.dataset.id);
+      selectedNv = nv;
+      ocNvSearch.value = nv.numero;
+      document.getElementById('ocNvSelectedInfo').textContent = isAdmin
+        ? `Cliente: ${nv.cliente||'—'} · Monto neto: ${money(nv.monto_neto)} · Umbral: ${nv.umbral_pct}%`
+        : `Cliente: ${nv.cliente||'—'} · Monto neto: ${money(nv.monto_neto)}`;
+      ocNvList.classList.add('hidden');
+    });
+  });
+  ocNvList.classList.remove('hidden');
+}
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.autocomplete-wrap')) {
+    document.querySelectorAll('.autocomplete-list').forEach(l=>l.classList.add('hidden'));
+  }
+});
+
+/* ================== PROVEEDOR AUTOCOMPLETE + CREAR AL VUELO ================== */
+const ocProvSearch = document.getElementById('ocProvSearch');
+const ocProvList = document.getElementById('ocProvList');
+ocProvSearch.addEventListener('input', ()=>{
+  const q = ocProvSearch.value.trim().toLowerCase();
+  selectedProv = null;
+  document.getElementById('ocProvInfo').textContent = '';
+  document.getElementById('ocContactWrap').classList.add('hidden');
+  if(!q){ ocProvList.classList.add('hidden'); return; }
+  const matches = allProveedores.filter(p => p.nombre.toLowerCase().includes(q)).slice(0,8);
+  renderProvAutocomplete(matches, q);
+});
+function renderProvAutocomplete(matches, q){
+  let html = matches.map(p=>`
+    <div class="autocomplete-item" data-id="${p.id}">
+      <div>${p.nombre}</div>
+      <div class="sub">${p.direccion || 'Sin dirección registrada'}</div>
+    </div>`).join('');
+  html += `<div class="autocomplete-new" id="createProvOption">+ Crear proveedor "${q}"</div>`;
+  ocProvList.innerHTML = html;
+  ocProvList.querySelectorAll('.autocomplete-item[data-id]').forEach(el=>{
+    el.addEventListener('click', ()=>selectProveedor(allProveedores.find(p=>p.id===el.dataset.id)));
+  });
+  document.getElementById('createProvOption').addEventListener('click', ()=>openNewProveedorFlow(q));
+  ocProvList.classList.remove('hidden');
+}
+
+async function selectProveedor(prov){
+  selectedProv = prov;
+  ocProvSearch.value = prov.nombre;
+  document.getElementById('ocProvInfo').textContent = `${prov.direccion||''} ${prov.ciudad||''} ${prov.comuna||''}`.trim() || 'Proveedor registrado';
+  ocProvList.classList.add('hidden');
+  // ship-to autocompletado con dirección del proveedor como sugerencia inicial (editable)
+  document.getElementById('shipAddress1').placeholder = prov.direccion || '';
+  // cargar contactos
+  const { data: contactos } = await sb.from('proveedor_contactos').select('*').eq('proveedor_id', prov.id).order('nombre');
+  const sel = document.getElementById('ocContactSelect');
+  sel.innerHTML = '<option value="">Sin contacto específico</option>' + (contactos||[]).map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
+  document.getElementById('ocContactWrap').classList.remove('hidden');
+}
+
+function openNewProveedorFlow(nombreSugerido){
+  ocProvList.classList.add('hidden');
+  // formulario inline simple vía prompt-like modal
+  showNewProveedorModal(nombreSugerido);
+}
+
+function showNewProveedorModal(nombreSugerido){
+  const backdrop = document.createElement('div');
+  backdrop.className = 'modal-backdrop';
+  backdrop.innerHTML = `
+    <div class="modal-sheet">
+      <button class="modal-close" id="closeProvModal">×</button>
+      <div class="modal-title">Nuevo proveedor</div>
+      <div class="helper" style="margin-bottom:14px;">Se guarda en Supabase para futuras OC</div>
+      <label>Nombre</label>
+      <input type="text" id="newProvNombre" value="${nombreSugerido||''}">
+      <label>RUT</label>
+      <input type="text" id="newProvRut">
+      <label>Dirección</label>
+      <input type="text" id="newProvDireccion">
+      <div class="field-row">
+        <div><label>Ciudad</label><input type="text" id="newProvCiudad"></div>
+        <div><label>Comuna / Región</label><input type="text" id="newProvComuna"></div>
+      </div>
+      <label>Contacto inicial (opcional)</label>
+      <input type="text" id="newProvContacto" placeholder="Ej: Despacho Motos">
+      <button class="btn-save" id="confirmNewProv">Crear proveedor</button>
+    </div>`;
+  document.body.appendChild(backdrop);
+  document.getElementById('closeProvModal').addEventListener('click', ()=>backdrop.remove());
+  backdrop.addEventListener('click', e=>{ if(e.target===backdrop) backdrop.remove(); });
+  document.getElementById('confirmNewProv').addEventListener('click', async ()=>{
+    const nombre = document.getElementById('newProvNombre').value.trim();
+    if(!nombre){ toast('El nombre es obligatorio'); return; }
+    const payload = {
+      nombre,
+      rut: document.getElementById('newProvRut').value.trim() || null,
+      direccion: document.getElementById('newProvDireccion').value.trim() || null,
+      ciudad: document.getElementById('newProvCiudad').value.trim() || null,
+      comuna: document.getElementById('newProvComuna').value.trim() || null,
+      created_by: currentUser.id
+    };
+    const { data, error } = await sb.from('proveedores').insert(payload).select().single();
+    if(error){ toast('Error al crear proveedor'); console.error(error); return; }
+    const contactoNombre = document.getElementById('newProvContacto').value.trim();
+    if(contactoNombre){
+      await sb.from('proveedor_contactos').insert({ proveedor_id: data.id, nombre: contactoNombre });
+    }
+    allProveedores.push(data);
+    await selectProveedor(data);
+    backdrop.remove();
+    toast('Proveedor creado');
+  });
+}
+
+/* contacto nuevo inline */
+document.getElementById('ocContactNewToggle').addEventListener('click', ()=>{
+  document.getElementById('ocContactNewInput').classList.remove('hidden');
+});
+
+/* ================== ITEMS TABLE ================== */
+function resetItemsTable(){
+  document.getElementById('itemsBody').innerHTML = '';
+  itemIdCounter = 0;
+  addItemRow();
+}
+function addItemRow(){
+  const id = 'item_' + (itemIdCounter++);
+  const tr = document.createElement('tr');
+  tr.id = id;
+  tr.innerHTML = `
+    <td><input type="text" class="it-part"></td>
+    <td><input type="text" class="it-desc"></td>
+    <td><input type="number" class="it-qty" value="1" min="0" step="0.01"></td>
+    <td><input type="number" class="it-rate" value="0" min="0" step="0.01"></td>
+    <td class="item-amount">$0</td>
+    <td><button class="item-remove" data-id="${id}">×</button></td>
+  `;
+  document.getElementById('itemsBody').appendChild(tr);
+  tr.querySelector('.it-qty').addEventListener('input', ()=>updateRowAmount(tr));
+  tr.querySelector('.it-rate').addEventListener('input', ()=>updateRowAmount(tr));
+  tr.querySelector('.item-remove').addEventListener('click', ()=>{
+    if(document.getElementById('itemsBody').children.length > 1){
+      tr.remove();
+      updateOcTotal();
+    }
+  });
+}
+function updateRowAmount(tr){
+  const qty = parseFloat(tr.querySelector('.it-qty').value) || 0;
+  const rate = parseFloat(tr.querySelector('.it-rate').value) || 0;
+  tr.querySelector('.item-amount').textContent = money(qty*rate);
+  updateOcTotal();
+}
+function updateOcTotal(){
+  let total = 0;
+  document.querySelectorAll('#itemsBody tr').forEach(tr=>{
+    const qty = parseFloat(tr.querySelector('.it-qty').value) || 0;
+    const rate = parseFloat(tr.querySelector('.it-rate').value) || 0;
+    total += qty*rate;
+  });
+  total += parseFloat(document.getElementById('ocFreight').value) || 0;
+  document.getElementById('ocTotalDisplay').textContent = money(total);
+}
+document.getElementById('addItemBtn').addEventListener('click', addItemRow);
+document.getElementById('ocFreight').addEventListener('input', updateOcTotal);
+
+/* ================== SAVE OC ================== */
+document.getElementById('saveOcBtn').addEventListener('click', async ()=>{
+  if(!selectedNv){ toast('Selecciona una NV'); return; }
+  if(!selectedProv){ toast('Selecciona o crea un proveedor'); return; }
+  const items = [];
+  document.querySelectorAll('#itemsBody tr').forEach(tr=>{
+    const desc = tr.querySelector('.it-desc').value.trim();
+    const qty = parseFloat(tr.querySelector('.it-qty').value) || 0;
+    const rate = parseFloat(tr.querySelector('.it-rate').value) || 0;
+    if(desc && qty>0){
+      items.push({
+        vendor_part_number: tr.querySelector('.it-part').value.trim() || null,
+        descripcion: desc, qty, rate
+      });
+    }
+  });
+  if(items.length===0){ toast('Agrega al menos un ítem con descripción'); return; }
+
+  const freightValue = parseFloat(document.getElementById('ocFreight').value) || 0;
+  const totalCalculado = items.reduce((s, it) => s + (it.qty * it.rate), 0) + freightValue;
+
+  const contactSelect = document.getElementById('ocContactSelect');
+  const contactoId = contactSelect.value || null;
+  const contactoNombre = contactoId ? contactSelect.options[contactSelect.selectedIndex].text : null;
+
+  const btn = document.getElementById('saveOcBtn');
+  btn.disabled = true; btn.textContent = 'Guardando…';
+
+  const ocPayload = {
+    nv_id: selectedNv.id,
+    proveedor_id: selectedProv.id,
+    contacto_id: contactoId,
+    contacto_nombre: contactoNombre,
+    ship_name: document.getElementById('shipName').value.trim() || null,
+    ship_address1: document.getElementById('shipAddress1').value.trim() || null,
+    ship_city: document.getElementById('shipCity').value.trim() || null,
+    ship_state: document.getElementById('shipState').value.trim() || null,
+    ship_postal_code: document.getElementById('shipPostal').value.trim() || null,
+    ship_country: document.getElementById('shipCountry').value.trim() || 'Chile',
+    descripcion: document.getElementById('ocDescripcion').value.trim() || null,
+    notas: document.getElementById('ocNotas').value.trim() || null,
+    fecha_llegada: document.getElementById('ocFechaLlegada').value || null,
+    freight: parseFloat(document.getElementById('ocFreight').value) || 0,
+    created_by: currentUser.id
+  };
+
+  const { data: oc, error } = await sb.from('ocs').insert(ocPayload).select().single();
+  if(error){ toast('Error al guardar OC'); console.error(error); btn.disabled=false; btn.textContent='Guardar Orden de Compra'; return; }
+
+  const itemsPayload = items.map((it,idx)=>({ ...it, oc_id: oc.id, orden: idx }));
+  const { error: itemsError } = await sb.from('oc_items').insert(itemsPayload);
+  if(itemsError){ toast('OC creada, pero error al guardar ítems'); console.error(itemsError); }
+  else { toast(`OC ${oc.numero} creada`); }
+
+  notificarNuevaOc(oc, totalCalculado); // fire-and-forget, no bloquea el flujo si falla
+
+  btn.disabled = false; btn.textContent = 'Guardar Orden de Compra';
+  clearOcForm();
+  await loadNvsRaw();
+});
+
+/* ================== NOTIFICACIÓN POR EMAIL A ADMINS ================== */
+const NOTIFICACION_WEBHOOK_URL = 'https://script.google.com/a/macros/polchile.cl/s/AKfycbzhwPHnqb1vmKHutZIuWJfW4h45juKuZejU1E1XZtxR4dlVWO2_WziCogyLb_iz77xD/exec';
+const NOTIFICACION_TOKEN = 'PiH8bjMfQBduYNf-G-j9k1QeFs3Rk5li'; // debe calzar con TOKEN_SECRETO del Apps Script
+
+async function notificarNuevaOc(oc, total){
+  if(!NOTIFICACION_WEBHOOK_URL || NOTIFICACION_WEBHOOK_URL.includes('PEGAR_AQUI')) return; // aún no configurado
+  try{
+    await fetch(NOTIFICACION_WEBHOOK_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Apps Script Web Apps no siempre responden CORS; no necesitamos leer la respuesta
+      headers: { 'Content-Type': 'text/plain' }, // evita preflight OPTIONS, que Apps Script no maneja bien
+      body: JSON.stringify({
+        token: NOTIFICACION_TOKEN,
+        numero: oc.numero,
+        proveedor: selectedProv ? selectedProv.nombre : '',
+        descripcion: oc.descripcion,
+        total: total,
+        nv_numero: selectedNv ? selectedNv.numero : ''
+      })
+    });
+  }catch(e){
+    console.error('No se pudo notificar por email (no crítico):', e);
+  }
+}
+
+function clearOcForm(){
+  ocNvSearch.value=''; selectedNv=null;
+  document.getElementById('ocNvSelectedInfo').textContent='';
+  ocProvSearch.value=''; selectedProv=null;
+  document.getElementById('ocProvInfo').textContent='';
+  document.getElementById('ocContactWrap').classList.add('hidden');
+  ['shipName','shipAddress1','shipCity','shipState','shipPostal','ocDescripcion','ocNotas','ocFechaLlegada'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('shipCountry').value='Chile';
+  document.getElementById('ocFreight').value='0';
+  resetItemsTable();
+  updateOcTotal();
+}
+
+/* ================== NVs TAB ================== */
+document.getElementById('saveNvBtn').addEventListener('click', async ()=>{
+  const numero = document.getElementById('nvNumero').value.trim();
+  const monto = parseFloat(document.getElementById('nvMonto').value) || 0;
+  if(!numero){ toast('El número de NV es obligatorio'); return; }
+  const payload = {
+    numero,
+    cliente: document.getElementById('nvCliente').value.trim() || null,
+    descripcion: document.getElementById('nvDescripcion').value.trim() || null,
+    monto_neto: monto,
+    umbral_pct: parseFloat(document.getElementById('nvUmbral').value) || 65,
+    created_by: currentUser.id
+  };
+  const { error } = await sb.from('nvs').insert(payload);
+  if(error){ toast('Error: ¿número de NV repetido?'); console.error(error); return; }
+  toast('NV creada');
+  ['nvNumero','nvCliente','nvDescripcion','nvMonto'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('nvUmbral').value='65';
+  await loadNvsRaw();
+  loadNvsTab();
+});
+
+async function loadNvsTab(){
+  if(currentUser.rol !== 'admin') return;
+  await loadNvsRaw();
+  const el = document.getElementById('nvsList');
+  if(allNvs.length===0){ el.innerHTML = '<div class="empty-state"><div class="mark"></div><p>Aún no hay NVs registradas</p></div>'; return; }
+  el.innerHTML = allNvs.map(nv=>`
+    <div class="card" style="margin-bottom:8px;padding:12px 16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-family:var(--font-display);">${nv.numero}</div>
+          <div class="helper">${nv.cliente||'Sin cliente'}</div>
+        </div>
+        <div style="text-align:right;font-family:var(--font-mono);font-weight:700;white-space:nowrap;">${money(nv.monto_neto)}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--panel);">
+        <label style="margin:0;flex-shrink:0;">Umbral %</label>
+        <input type="number" class="umbral-input" data-nv-id="${nv.id}" value="${nv.umbral_pct}" step="0.1" min="0" max="100" style="max-width:90px;padding:6px 8px;font-size:14px;">
+        <span class="umbral-saved" id="umbral-saved-${nv.id}" style="font-size:11px;color:var(--safe);opacity:0;transition:opacity 0.3s;">Guardado ✓</span>
+      </div>
+    </div>
+  `).join('');
+
+  el.querySelectorAll('.umbral-input').forEach(input=>{
+    input.addEventListener('change', async ()=>{
+      const nvId = input.dataset.nvId;
+      const nuevoValor = parseFloat(input.value);
+      if(isNaN(nuevoValor) || nuevoValor < 0 || nuevoValor > 100){
+        toast('Umbral inválido (0-100)');
+        return;
+      }
+      const { error } = await sb.from('nvs').update({ umbral_pct: nuevoValor }).eq('id', nvId);
+      if(error){ toast('Error al guardar umbral'); console.error(error); return; }
+      const nvLocal = allNvs.find(n=>n.id===nvId);
+      if(nvLocal) nvLocal.umbral_pct = nuevoValor;
+      const savedEl = document.getElementById('umbral-saved-'+nvId);
+      savedEl.style.opacity = '1';
+      setTimeout(()=>{ savedEl.style.opacity = '0'; }, 1800);
+      toast(`Umbral de ${nvLocal ? nvLocal.numero : ''} actualizado a ${nuevoValor}%`);
+    });
+  });
+}
+
+/* ================== CONTROL DASHBOARD ================== */
+async function loadControl(){
+  if(currentUser.rol !== 'admin') return;
+
+  let ocs = [];
+  let from = 0;
+  const pageSize = 1000;
+  while(true){
+    const { data, error } = await sb.from('ocs')
+      .select('*, proveedores(nombre), nvs(*)')
+      .order('created_at', {ascending:false})
+      .range(from, from + pageSize - 1);
+    if(error){ console.error(error); break; }
+    if(!data || data.length===0) break;
+    ocs = ocs.concat(data);
+    if(data.length < pageSize) break;
+    from += pageSize;
+  }
+
+  // agrupar por NV
+  const groups = {};
+  ocs.forEach(oc=>{
+    const nvId = oc.nv_id;
+    if(!groups[nvId]) groups[nvId] = { nv: oc.nvs, ocs: [] };
+    groups[nvId].ocs.push(oc);
+  });
+
+  let totalOcs = ocs.length;
+  let pendientes = ocs.filter(o=>o.estado==='pendiente').length;
+  let autorizadas = ocs.filter(o=>o.estado==='autorizada').length;
+  let fueraMargen = 0;
+
+  const searchQ = document.getElementById('searchControl').value.trim().toLowerCase();
+
+  let groupArr = Object.values(groups).filter(g=>g.nv).map(g=>{
+    const sumaOcs = g.ocs.reduce((s,o)=>s+parseFloat(o.total||0),0);
+    const pct = g.nv.monto_neto>0 ? (sumaOcs/g.nv.monto_neto*100) : 0;
+    const fuera = pct > parseFloat(g.nv.umbral_pct);
+    if(fuera) fueraMargen++;
+    return { ...g, sumaOcs, pct, fuera };
+  });
+
+  document.getElementById('statTotalOcs').textContent = totalOcs;
+  document.getElementById('statPendientes').textContent = pendientes;
+  document.getElementById('statFueraMargen').textContent = fueraMargen;
+  document.getElementById('statAutorizadas').textContent = autorizadas;
+
+  // filtro por chip
+  if(controlFilter==='pendiente') groupArr = groupArr.filter(g=>g.ocs.some(o=>o.estado==='pendiente'));
+  if(controlFilter==='fuera') groupArr = groupArr.filter(g=>g.fuera);
+  if(controlFilter==='autorizada') groupArr = groupArr.filter(g=>g.ocs.every(o=>o.estado==='autorizada'));
+
+  // filtro búsqueda
+  if(searchQ){
+    groupArr = groupArr.filter(g=>
+      g.nv.numero.toLowerCase().includes(searchQ) ||
+      (g.nv.cliente||'').toLowerCase().includes(searchQ) ||
+      g.ocs.some(o=> (o.proveedores?.nombre||'').toLowerCase().includes(searchQ) || o.numero.toLowerCase().includes(searchQ))
+    );
+  }
+
+  const listEl = document.getElementById('controlList');
+  if(groupArr.length===0){
+    listEl.innerHTML = '<div class="empty-state"><div class="mark"></div><p>Sin resultados</p></div>';
+    return;
+  }
+
+  listEl.innerHTML = groupArr.map(g=>{
+    const pctClass = g.fuera ? 'danger' : (g.pct > parseFloat(g.nv.umbral_pct)*0.85 ? 'warn' : 'ok');
+    const allAuth = g.ocs.every(o=>o.estado==='autorizada');
+    return `
+    <div class="nv-card">
+      <div class="nv-head" data-toggle="${g.nv.id}">
+        <div class="nv-head-left">
+          <div class="nv-num">${g.nv.numero}</div>
+          <div class="nv-cliente">${g.nv.cliente||'Sin cliente'}</div>
+          <div class="badges">
+            <span class="badge ${g.fuera?'danger':'ok'}">${g.fuera?'Fuera del '+g.nv.umbral_pct+'%':'Dentro del '+g.nv.umbral_pct+'%'}</span>
+            ${allAuth?'<span class="badge ok">Todas autorizadas</span>':''}
+          </div>
+        </div>
+        <div class="nv-head-right">
+          <div class="nv-pct ${pctClass}">${g.pct.toFixed(0)}%</div>
+          <div class="nv-pct-lbl">del monto NV</div>
+          <div class="nv-sum">Suma OCs: ${money(g.sumaOcs)}</div>
+        </div>
+      </div>
+      <div class="nv-body hidden" id="body_${g.nv.id}">
+        ${g.ocs.map(o=>{
+          const pctOc = g.nv.monto_neto>0 ? (parseFloat(o.total)/g.nv.monto_neto*100) : 0;
+          return `
+          <div class="po-row">
+            <div class="po-info">
+              <div class="po-num">${o.numero}</div>
+              <div class="po-prov">${o.proveedores?.nombre||'—'}</div>
+              <div class="po-desc">${o.descripcion||''}</div>
+            </div>
+            <div class="po-right">
+              <div class="po-amount">${money(o.total)}</div>
+              <div class="po-pct">${pctOc.toFixed(0)}%</div>
+              <div class="po-actions">
+                ${o.estado==='autorizada'
+                  ? `<button class="btn-mini revoke" data-revoke="${o.id}">Revocar</button>`
+                  : `<button class="btn-mini approve" data-approve="${o.id}">Aprobar</button>`}
+              </div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  listEl.querySelectorAll('[data-toggle]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      document.getElementById('body_'+el.dataset.toggle).classList.toggle('hidden');
+    });
+  });
+  listEl.querySelectorAll('[data-approve]').forEach(el=>{
+    el.addEventListener('click', async (e)=>{
+      e.stopPropagation();
+      if(currentUser.rol!=='admin'){ toast('Solo el admin puede aprobar'); return; }
+      await sb.from('ocs').update({estado:'autorizada', authorized_at:new Date().toISOString(), authorized_by:currentUser.id}).eq('id', el.dataset.approve);
+      toast('OC autorizada');
+      loadControl();
+    });
+  });
+  listEl.querySelectorAll('[data-revoke]').forEach(el=>{
+    el.addEventListener('click', async (e)=>{
+      e.stopPropagation();
+      if(currentUser.rol!=='admin'){ toast('Solo el admin puede revocar'); return; }
+      await sb.from('ocs').update({estado:'pendiente', authorized_at:null, authorized_by:null}).eq('id', el.dataset.revoke);
+      toast('Autorización revocada');
+      loadControl();
+    });
+  });
+}
+
+document.getElementById('searchControl').addEventListener('input', loadControl);
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    controlFilter = chip.dataset.filter;
+    loadControl();
+  });
+});
+</script>
+</body>
+</html>

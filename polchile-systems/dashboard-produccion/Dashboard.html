@@ -50,7 +50,6 @@
   .tweaks-btn { border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 12px; }
   .sys-error { background: var(--coral); color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; display: flex; justify-content: space-between; }
 
-  /* ── Velocímetro ── */
   .velo-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); padding: 28px 24px 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: center; }
   .velo-label { font-size: 10.5px; color: var(--text-3); text-transform: uppercase; font-weight: 600; letter-spacing: 0.06em; margin-bottom: 6px; }
   .velo-valor { font-size: 44px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; margin-top: 2px; }
@@ -61,7 +60,6 @@
   .zona-a { background:#FEF3C7; color:#92400E; }
   .zona-v { background:#DCFCE7; color:#15803D; }
 
-  /* ── Rendimiento ── */
   .rend-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 10px; margin-bottom: 18px; }
   .rend-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 14px; }
   .rend-name { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
@@ -76,7 +74,6 @@
   .rend-bar-target { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--text); border-radius: 1px; }
   .rend-acum { font-size: 9.5px; color: var(--text-3); margin-top: 4px; display: flex; justify-content: space-between; }
 
-  /* ── Plan prensas ── */
   .plan-prensa-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 10px; margin-bottom: 16px; }
   .plan-prensa-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; text-align: center; }
   .plan-prensa-card.is-crit { border-color: var(--coral); background: var(--warn-bg); }
@@ -105,15 +102,39 @@
 </style>
 </head>
 <body>
+<style>
+#polchile-nav{display:flex;align-items:center;background:#000;padding:0 20px;height:40px;border-bottom:1px solid #232932;font-family:'JetBrains Mono',monospace;gap:4px;position:sticky;top:0;z-index:9999;}
+#polchile-nav .nav-logo{font-size:10px;font-weight:700;letter-spacing:2px;color:#d4ff5a;margin-right:12px;cursor:pointer;}
+#polchile-nav button{padding:4px 12px;font-size:10px;font-weight:700;letter-spacing:1px;border-radius:4px;border:1px solid transparent;color:#8a94a3;background:transparent;cursor:pointer;transition:all 0.15s;font-family:'JetBrains Mono',monospace;}
+#polchile-nav button:hover{color:#d4ff5a;border-color:#d4ff5a;}
+#polchile-nav button.active{color:#d4ff5a;border-color:#d4ff5a;background:rgba(212,255,90,0.08);}
+#polchile-nav .nav-time{margin-left:auto;font-size:10px;color:#8a94a3;letter-spacing:1px;}
+</style>
+<div id="polchile-nav">
+  <span class="nav-logo" onclick="window.top.location.href='https://melodic-dasik-d903ff.netlify.app/command-center/'">&#x2B21; POLCHILE</span>
+  <button onclick="window.top.location.href='https://script.google.com/a/macros/polchile.cl/s/AKfycbzdTfqrkCRPTMa0HBcDrDHjxuYBZTSe7G3nGB5EfK_FvElA6jmgsF7-ShQFc-4ntclb/exec'">COMERCIAL</button>
+  <button class="active">PRODUCCION</button>
+  <button onclick="window.top.location.href='https://script.google.com/a/macros/polchile.cl/s/AKfycby0pnIUuRy8bjn108mc9ly4eET4Aa8_B0qD4qZrkqJZAGOtKmvYIOmq-M_mv3Fjuc0Y/exec'">FINANZAS</button>
+  <button onclick="window.top.location.href='https://script.google.com/a/macros/polchile.cl/s/AKfycbzqtyzqc9YdCWMZMJd8FRGonBkyAve3Er4WB9MEJxRncEsYuyVSudu_yLzdUWfz2HiR_A/exec'">CALENDARIO</button>
+  <span class="nav-time" id="nav-clock"></span>
+</div>
+<script>
+(function(){
+  var clk=document.getElementById('nav-clock');
+  function tick(){
+    var d=new Date(),
+        h=d.getHours().toString().padStart(2,'0'),
+        m=d.getMinutes().toString().padStart(2,'0'),
+        s=d.getSeconds().toString().padStart(2,'0');
+    if(clk) clk.textContent=h+':'+m+':'+s;
+  }
+  tick(); setInterval(tick,1000);
+})();
+</script>
 <div id="root"></div>
 <script type="text/babel">
 const {useState, useEffect, useRef} = React;
 
-/* ══════════════════════════════════════════
-   VELOCÍMETRO — Chart.js doughnut
-   Usa la librería ya cargada en el head.
-   Rojo 0-700 | Amarillo 700-1000 | Verde 1000-1500
-══════════════════════════════════════════ */
 function Velocimetro({ valor, fecha }) {
   const canvasRef = useRef(null);
   const chartRef  = useRef(null);
@@ -130,7 +151,6 @@ function Velocimetro({ valor, fecha }) {
     if (!canvasRef.current || !window.Chart) return;
     if (chartRef.current) chartRef.current.destroy();
 
-    // Segmentos: cuánto hay de cada zona hasta v, más el resto gris
     const rojo     = Math.min(v, 700);
     const amarillo = Math.max(0, Math.min(v, 1000) - 700);
     const verde    = Math.max(0, Math.min(v, 1500) - 1000);
@@ -149,8 +169,8 @@ function Velocimetro({ valor, fecha }) {
       },
       options: {
         cutout: '68%',
-        rotation: -225,      // empieza abajo-izquierda
-        circumference: 270,  // 270° de arco
+        rotation: -225,
+        circumference: 270,
         responsive: true,
         maintainAspectRatio: true,
         plugins: { legend: { display: false }, tooltip: { enabled: false } },
@@ -190,13 +210,10 @@ function Velocimetro({ valor, fecha }) {
     </div>
   );
 }
-/* ══════════════════════════════════════════
-   APP PRINCIPAL
-══════════════════════════════════════════ */
 function App() {
   const [metrics,          setMetrics]          = useState([]);
   const [wip,              setWip]              = useState({ conAislacion:[], sinAislacion:[], producidoPAMes:0 });
-  const [facturacion,      setFacturacion]      = useState({ facturado:0, porFacturar:0 });
+  const [facturacion,      setFacturacion]      = useState({ facturado:0, porFacturar:0, presupuestoMes:0, cumplimientoPct:0 });
   const [plan,             setPlan]             = useState({ ops:[], groups:[], presses:[], config:null });
   const [planError,        setPlanError]        = useState(null);
   const [rend,             setRend]             = useState({ rows:[], hoursElapsed:0, shiftStart:'', now:'' });
@@ -205,7 +222,21 @@ function App() {
   const [inventario,       setInventario]       = useState({ acero:[], pol:[], kpiAcero:{}, kpiPol:{} });
   const [m2Ayer,           setM2Ayer]           = useState({ total:0, fecha:'' });
   const [wipAcero,         setWipAcero]         = useState({ items:[] });
+  const [frecuenciaAcero,  setFrecuenciaAcero]  = useState(30);
+  const [diasLlegada,      setDiasLlegada]      = useState(() => {
+    const saved = localStorage.getItem('polchile_dias_llegada');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      const guardado = new Date(parsed.fecha);
+      const hoy = new Date();
+      const diff = Math.round((hoy - guardado) / (1000*60*60*24));
+      const restante = parsed.dias - diff;
+      return restante > 0 ? restante : 0;
+    }
+    return 90;
+  });
   const [m2PSA,            setM2PSA]            = useState({ ayer:{total:0,pc4:0,bandejera:0,fecha:''}, mes:{total:0,pc4:0,bandejera:0} });
+  const [catalogo,         setCatalogo]          = useState({ items:[], totalValor:0, totalUnidades:0, totalItems:0 });
 
   const fetchData = () => {
     if (typeof google === 'undefined') return;
@@ -244,6 +275,11 @@ function App() {
     google.script.run.withSuccessHandler(res => {
       if (res && !res.error) setM2PSA(res);
     }).getM2PSA();
+
+    google.script.run.withSuccessHandler(res => {
+      if (res?.error) setSysError("Error Catálogo: "+res.error);
+      else if (res) setCatalogo(res);
+    }).getCatalogoStock();
   };
 
   useEffect(() => {
@@ -252,7 +288,6 @@ function App() {
     return () => clearInterval(iv);
   }, []);
 
-  /* helpers */
   const fmt  = (n,d=0) => (n||0).toLocaleString('es-CL',{maximumFractionDigits:d,minimumFractionDigits:d});
   const fmtM = (n) => ((n||0)/1e6).toLocaleString('es-CL',{minimumFractionDigits:1,maximumFractionDigits:1});
 
@@ -280,7 +315,6 @@ function App() {
 
   const badgeCls = (est) => est==="EN PROCESO"?{bg:"#E0F2FE",tx:"#0369A1"}:est==="TERMINADO"?{bg:"#DCFCE7",tx:"#15803D"}:{bg:"#F3F4F6",tx:"#4B5563"};
 
-  /* ── WIP Table ── */
   const WipTable = ({title,data}) => {
     const rows = data.filter(r=>Number(r.pendiente)>0);
     return (
@@ -323,7 +357,6 @@ function App() {
     );
   };
 
-  /* ── Plan de prensas ── */
   const renderPlan = () => {
     if(!plan.presses||plan.presses.length===0) return null;
     const {presses,groups,ops,config:cfg,dayLabels=[]}=plan;
@@ -461,7 +494,6 @@ function App() {
     );
   };
 
-  /* ── Gráfico diario ── */
   const GraficoDiario = () => {
     const ref=useRef(null), ch=useRef(null);
     useEffect(()=>{
@@ -517,7 +549,6 @@ function App() {
     );
   };
 
-  /* ── Inventario ── */
   const renderInv = (label, rows, kpi, color) => {
     if(!rows||rows.length===0) return <div style={{color:'var(--text-3)',fontSize:12,padding:'12px 0',marginBottom:24}}>Sin datos para {label}.</div>;
     const f=n=>(n||0).toLocaleString('es-CL',{maximumFractionDigits:1});
@@ -579,7 +610,15 @@ function App() {
     );
   };
 
-  /* ── WIP Acero ── */
+  const handleDiasLlegada = (val) => {
+    const dias = Math.max(0, parseInt(val) || 0);
+    setDiasLlegada(dias);
+    localStorage.setItem('polchile_dias_llegada', JSON.stringify({
+      dias: dias,
+      fecha: new Date().toISOString()
+    }));
+  };
+
   const renderWipAcero = () => {
     const items = wipAcero.items || [];
     if (items.length === 0) return null;
@@ -606,7 +645,6 @@ function App() {
 
     return (
       <>
-        {/* KPIs resumen */}
         <div className="kpi-grid" style={{gridTemplateColumns:'repeat(3,1fr)', marginBottom:14}}>
           <div className="kpi" style={{borderLeft:'4px solid var(--acero)'}}>
             <div className="kpi-label">Aceros con Stock &gt; 0</div>
@@ -626,54 +664,125 @@ function App() {
           </div>
         </div>
 
-        {/* Tabla calendario */}
-        <div className="card" style={{padding:0, overflow:'hidden', marginBottom:30}}>
-          <div style={{padding:'14px 22px', borderBottom:'1px solid var(--border)', background:'var(--surface-2)', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+        <div className="card" style={{padding:0, overflow:'hidden', marginBottom:16}}>
+          <div style={{padding:'14px 22px', borderBottom:'1px solid var(--border)', background:'var(--surface-2)', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:12}}>
             <b style={{fontSize:13}}>Proyección de Agotamiento · Aceros con Stock</b>
-            <span style={{fontSize:11, color:'var(--text-3)'}}>Ordenado por urgencia</span>
+            <div style={{display:'flex', alignItems:'center', gap:12}}>
+              <span style={{fontSize:11, color:'var(--text-3)'}}>Importación llega en:</span>
+              <div style={{display:'flex', alignItems:'center', gap:6}}>
+                <input
+                  type="number" min="0" max="365"
+                  value={diasLlegada}
+                  onChange={e => handleDiasLlegada(e.target.value)}
+                  style={{width:64, padding:'4px 8px', borderRadius:6, border:'1px solid var(--border-2)',
+                    fontFamily:'monospace', fontSize:13, fontWeight:700, color:'#2563EB',
+                    background:'var(--surface)', textAlign:'center'}}
+                />
+                <span style={{fontSize:11, color:'var(--text-3)'}}>días</span>
+                {diasLlegada === 0 && <span style={{fontSize:10, fontWeight:700, color:'var(--coral)', background:'#FEE2E2', padding:'2px 8px', borderRadius:6}}>🚨 Llegó hoy</span>}
+                {diasLlegada > 0 && diasLlegada <= 30 && <span style={{fontSize:10, fontWeight:700, color:'#92400E', background:'#FEF3C7', padding:'2px 8px', borderRadius:6}}>⚡ Próxima llegada</span>}
+              </div>
+              <span style={{fontSize:11, color:'var(--text-3)'}}>Ordenado por consumo mensual</span>
+            </div>
           </div>
-          <div style={{maxHeight:480, overflowY:'auto'}}>
+          <div style={{maxHeight:460, overflowY:'auto'}}>
             <table>
               <thead>
                 <tr>
-                  <th style={{paddingLeft:22, width:130}}>Código</th>
+                  <th style={{paddingLeft:22, width:120}}>Código</th>
                   <th>Descripción</th>
-                  <th style={{textAlign:'right'}}>Stock Físico (kg)</th>
                   <th style={{textAlign:'right'}}>Consumo/Mes (kg)</th>
-                  <th style={{textAlign:'center', width:140}}>Duración estimada</th>
-                  <th style={{textAlign:'center', width:120}}>Se agota</th>
+                  <th style={{textAlign:'right'}}>Stock Físico (kg)</th>
+                  <th style={{textAlign:'right'}}>Por Entregar (kg)</th>
+                  <th style={{textAlign:'right'}}>Saldo (kg)</th>
+                  <th style={{textAlign:'center', width:110}}>Quiebre Stock Actual</th>
+                  <th style={{textAlign:'right'}}>Por Llegar (kg)</th>
+                  <th style={{textAlign:'center', width:110}}>Quiebre c/ Importación</th>
+                  <th style={{textAlign:'center', width:120}}>⚠ Comprar antes de</th>
                   <th style={{textAlign:'center', width:80}}>Estado</th>
                 </tr>
               </thead>
               <tbody>
                 {items.map((r,i) => {
-                  const pct = barPct(r.meses_restantes);
-                  const bc  = barColor(r.urgencia);
+                  const saldoNeg   = (r.saldo||0) < 0;
+                  const conConsumo = r.consumo_mes_kg > 0;
+                  const LEAD       = 90;
+
+                  const diasStk        = conConsumo ? ((r.stk_fisico||0) / r.consumo_mes_kg) * 30.44 : null;
+                  const fechaSaldo     = diasStk !== null ? new Date() : null;
+                  if (fechaSaldo) fechaSaldo.setDate(fechaSaldo.getDate() + Math.floor(diasStk));
+                  const fSaldoStr      = fechaSaldo ? fechaSaldo.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
+                  const diasSaldo      = diasStk !== null ? Math.floor(diasStk) : null;
+                  const saldoAgotado   = diasSaldo !== null && diasSaldo <= 0;
+                  const saldoCritico   = diasSaldo !== null && diasSaldo > 0 && diasSaldo <= 30;
+                  const bgSaldo        = !conConsumo ? '#F3F4F6' : saldoAgotado ? '#FEE2E2' : saldoCritico ? '#FEF3C7' : '#F3F4F6';
+                  const txSaldo        = !conConsumo ? '#9CA3AF' : saldoAgotado ? '#B91C1C' : saldoCritico ? '#92400E' : '#374151';
+                  const labelSaldo     = !conConsumo ? '—' : saldoAgotado ? ('🚨 Agotado') : fSaldoStr;
+
+                  const consumoDiario    = conConsumo ? r.consumo_mes_kg / 30.44 : 0;
+                  const stockAlLlegar    = Math.max(0, (r.saldo||0) - consumoDiario * diasLlegada);
+                  const stockConImport   = stockAlLlegar + (r.por_llegar||0);
+                  const diasDesdeHoy     = conConsumo && stockConImport > 0
+                    ? diasLlegada + Math.round((stockConImport / r.consumo_mes_kg) * 30.44)
+                    : diasSaldo;
+                  const fechaTotal       = diasDesdeHoy !== null ? new Date() : null;
+                  if (fechaTotal) fechaTotal.setDate(fechaTotal.getDate() + diasDesdeHoy);
+                  const fTotalStr        = fechaTotal ? fechaTotal.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
+                  const totalAgotado     = diasDesdeHoy !== null && diasDesdeHoy <= 0;
+                  const totalCritico     = diasDesdeHoy !== null && diasDesdeHoy > 0 && diasDesdeHoy <= 90;
+                  const bgTotal          = !conConsumo ? '#F3F4F6' : totalAgotado ? '#FEE2E2' : totalCritico ? '#FEF3C7' : '#DCFCE7';
+                  const txTotal          = !conConsumo ? '#9CA3AF' : totalAgotado ? '#B91C1C' : totalCritico ? '#92400E' : '#15803D';
+                  const labelTotal       = !conConsumo ? '—' : totalAgotado ? '🚨 Agotado' : fTotalStr;
+                  const tooltipImport    = conConsumo && (r.por_llegar||0) > 0
+                    ? 'Saldo al llegar: ' + Math.round(stockAlLlegar).toLocaleString('es-CL') + ' kg + ' + (r.por_llegar||0).toLocaleString('es-CL') + ' kg importación = ' + Math.round(stockConImport).toLocaleString('es-CL') + ' kg'
+                    : '';
+
+                  const diasCompra       = diasDesdeHoy !== null ? diasDesdeHoy - LEAD : null;
+                  const fechaCompra      = diasCompra !== null ? new Date() : null;
+                  if (fechaCompra) fechaCompra.setDate(fechaCompra.getDate() + diasCompra);
+                  const fCompraStr       = fechaCompra ? fechaCompra.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
+                  const compraUrgente    = diasCompra !== null && diasCompra <= 0;
+                  const compraPronto     = diasCompra !== null && diasCompra > 0 && diasCompra <= 30;
+                  const bgCompra         = !conConsumo ? '#F3F4F6' : compraUrgente ? '#FEE2E2' : compraPronto ? '#FEF3C7' : '#DCFCE7';
+                  const txCompra         = !conConsumo ? '#9CA3AF' : compraUrgente ? '#B91C1C' : compraPronto ? '#92400E' : '#15803D';
+                  const labelCompra      = !conConsumo ? '—' : compraUrgente ? ('🚨 AHORA (hace '+Math.abs(diasCompra)+'d)') : compraPronto ? ('⚡ '+fCompraStr) : fCompraStr;
+
                   return (
-                    <tr key={i} style={{background: r.urgencia==='critico' ? '#FFF5F5' : r.urgencia==='alerta' ? '#FFFBEB' : r.urgencia==='sin_consumo' ? '#F9FAFB' : 'transparent'}}>
+                    <tr key={i} style={{background: r.urgencia==='critico'?'#FFF5F5':r.urgencia==='alerta'?'#FFFBEB':r.urgencia==='sin_consumo'?'#F9FAFB':'transparent'}}>
                       <td style={{paddingLeft:22, fontFamily:'monospace', fontSize:10, color:'var(--text-3)'}}>{r.codigo}</td>
-                      <td style={{maxWidth:220, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', fontSize:11.5}} title={r.descripcion}>{r.descripcion}</td>
-                      <td style={{textAlign:'right', fontFamily:'monospace', fontWeight:600}}>{(r.stk_fisico||0).toLocaleString('es-CL',{maximumFractionDigits:1})}</td>
-                      <td style={{textAlign:'right', fontFamily:'monospace', color: r.consumo_mes_kg>0?'var(--text-2)':'var(--text-3)'}}>
-                        {r.consumo_mes_kg > 0 ? (r.consumo_mes_kg).toLocaleString('es-CL',{maximumFractionDigits:1}) : '—'}
+                      <td style={{maxWidth:190, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', fontSize:11.5}} title={r.descripcion}>{r.descripcion}</td>
+                      <td style={{textAlign:'right', fontFamily:'monospace', fontWeight:700, color:'var(--text-2)'}}>
+                        {conConsumo ? r.consumo_mes_kg.toLocaleString('es-CL',{maximumFractionDigits:1}) : '—'}
                       </td>
-                      <td style={{paddingRight:12}}>
-                        <div style={{display:'flex', alignItems:'center', gap:8}}>
-                          <div style={{flex:1, height:6, background:'#E5E7EB', borderRadius:3, overflow:'hidden'}}>
-                            <div style={{width:pct+'%', height:'100%', background:bc, borderRadius:3, transition:'width 0.5s'}}/>
-                          </div>
-                          <span style={{fontSize:11, fontWeight:700, color:bc, whiteSpace:'nowrap', minWidth:60, textAlign:'right'}}>
-                            {fmtMeses(r.meses_restantes ?? null)}
-                          </span>
-                        </div>
+                      <td style={{textAlign:'right', fontFamily:'monospace'}}>{(r.stk_fisico||0).toLocaleString('es-CL',{maximumFractionDigits:1})}</td>
+                      <td style={{textAlign:'right', fontFamily:'monospace', color:(r.por_entregar||0)>0?'var(--coral)':'var(--text-3)'}}>
+                        {(r.por_entregar||0)>0 ? r.por_entregar.toLocaleString('es-CL',{maximumFractionDigits:1}) : '—'}
                       </td>
-                      <td style={{textAlign:'center', fontFamily:'monospace', fontSize:11, fontWeight:700, color:urgColor(r.urgencia)}}>
-                        {r.fecha_agotamiento || '—'}
+                      <td style={{textAlign:'right', fontFamily:'monospace', fontWeight:600, color:saldoNeg?'var(--coral)':'var(--purp)', background:saldoNeg?'#FEE2E2':'transparent'}}>
+                        {(r.saldo||0).toLocaleString('es-CL',{maximumFractionDigits:1})}
                       </td>
                       <td style={{textAlign:'center'}}>
-                        <span style={{display:'inline-block', padding:'2px 8px', borderRadius:10, fontSize:9, fontWeight:700,
-                          background:urgBg(r.urgencia||'ok'), color:urgColor(r.urgencia||'ok')}}>
-                          {urgTxt(r.urgencia)}
+                        <span style={{display:'inline-block', padding:'2px 8px', borderRadius:6, fontSize:10, fontWeight:700, background:bgSaldo, color:txSaldo, whiteSpace:'nowrap'}}>
+                          {labelSaldo}
+                        </span>
+                      </td>
+                      <td style={{textAlign:'right', fontFamily:'monospace', color:(r.por_llegar||0)>0?'#2563EB':'var(--text-3)', fontWeight:(r.por_llegar||0)>0?600:400}}>
+                        {(r.por_llegar||0)>0 ? r.por_llegar.toLocaleString('es-CL',{maximumFractionDigits:1}) : '—'}
+                      </td>
+                      <td style={{textAlign:'center'}} title={tooltipImport}>
+                        <span style={{display:'inline-block', padding:'2px 8px', borderRadius:6, fontSize:10, fontWeight:700, background:bgTotal, color:txTotal, whiteSpace:'nowrap'}}>
+                          {labelTotal}
+                        </span>
+                        {tooltipImport && <div style={{fontSize:9, color:'var(--text-3)', marginTop:2, maxWidth:130, whiteSpace:'normal', lineHeight:1.3}}>{tooltipImport}</div>}
+                      </td>
+                      <td style={{textAlign:'center'}}>
+                        <span style={{display:'inline-block', padding:'3px 10px', borderRadius:8, fontSize:10, fontWeight:700, background:bgCompra, color:txCompra, whiteSpace:'nowrap'}}>
+                          {labelCompra}
+                        </span>
+                      </td>
+                      <td style={{textAlign:'center'}}>
+                        <span style={{display:'inline-block', padding:'2px 8px', borderRadius:10, fontSize:9, fontWeight:700, background:urgBg(r.urgencia||'ok'), color:urgColor(r.urgencia||'ok')}}>
+                          {urgTxt(r.urgencia||'ok')}
                         </span>
                       </td>
                     </tr>
@@ -683,11 +792,104 @@ function App() {
             </table>
           </div>
         </div>
+
+        {(() => {
+          const frecuencia     = frecuenciaAcero;
+          const setFrecuencia  = setFrecuenciaAcero;
+          const frecOpciones = [
+            {dias:30,  label:'Mensual (30d)'},
+            {dias:60,  label:'60 días'},
+            {dias:90,  label:'90 días'},
+            {dias:120, label:'120 días'},
+          ];
+          const mesesCompra      = frecuencia / 30.44;
+          const itemsConConsumo  = items.filter(r => r.consumo_mes_kg > 0);
+          const totalCompraKg    = itemsConConsumo.reduce((acc,r) => acc + r.consumo_mes_kg * mesesCompra, 0);
+          const fechaProxima     = (() => { const d=new Date(); d.setDate(d.getDate()+frecuencia); return d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}); })();
+
+          return (
+            <div className="card" style={{marginBottom:30}}>
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16, flexWrap:'wrap', gap:12}}>
+                <div>
+                  <b style={{fontSize:13}}>Estimación de Importación</b>
+                  <div style={{fontSize:11, color:'var(--text-3)', marginTop:2}}>Cantidad a comprar según frecuencia · basado en consumo mensual promedio</div>
+                </div>
+                <div style={{display:'flex', gap:8}}>
+                  {frecOpciones.map(op => (
+                    <button key={op.dias} onClick={() => setFrecuencia(op.dias)}
+                      style={{padding:'6px 14px', borderRadius:8, border:'1px solid var(--border)',
+                        background:frecuencia===op.dias?'var(--text)':'var(--surface)',
+                        color:frecuencia===op.dias?'#fff':'var(--text-2)',
+                        fontWeight:frecuencia===op.dias?700:400,
+                        fontSize:12, cursor:'pointer'}}>
+                      {op.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:14, marginBottom:16}}>
+                <div style={{background:'var(--surface-2)', borderRadius:10, padding:'14px 18px'}}>
+                  <div style={{fontSize:10, color:'var(--text-3)', fontWeight:600, textTransform:'uppercase', marginBottom:4}}>Período de Compra</div>
+                  <div style={{fontSize:26, fontWeight:700}}>{frecuencia}<span style={{fontSize:13, color:'var(--text-3)', marginLeft:4}}>días</span></div>
+                  <div style={{fontSize:11, color:'var(--text-3)', marginTop:3}}>{mesesCompra.toFixed(1)} meses de stock</div>
+                </div>
+                <div style={{background:'var(--surface-2)', borderRadius:10, padding:'14px 18px'}}>
+                  <div style={{fontSize:10, color:'var(--text-3)', fontWeight:600, textTransform:'uppercase', marginBottom:4}}>Total a Importar</div>
+                  <div style={{fontSize:26, fontWeight:700, color:'var(--acero)'}}>{Math.round(totalCompraKg).toLocaleString('es-CL')}<span style={{fontSize:13, color:'var(--text-3)', marginLeft:4}}>kg</span></div>
+                  <div style={{fontSize:11, color:'var(--text-3)', marginTop:3}}>{itemsConConsumo.length} referencias con consumo registrado</div>
+                </div>
+                <div style={{background:'var(--surface-2)', borderRadius:10, padding:'14px 18px'}}>
+                  <div style={{fontSize:10, color:'var(--text-3)', fontWeight:600, textTransform:'uppercase', marginBottom:4}}>Próxima Importación</div>
+                  <div style={{fontSize:26, fontWeight:700, color:'var(--purp)'}}>{fechaProxima}</div>
+                  <div style={{fontSize:11, color:'var(--text-3)', marginTop:3}}>en {frecuencia} días más</div>
+                </div>
+              </div>
+
+              <div style={{maxHeight:360, overflowY:'auto'}}>
+                <table>
+                  <thead>
+                    <tr>
+                      <th style={{paddingLeft:12, width:120}}>Código</th>
+                      <th>Descripción</th>
+                      <th style={{textAlign:'right'}}>Consumo/Mes (kg)</th>
+                      <th style={{textAlign:'right'}}>Saldo Actual (kg)</th>
+                      <th style={{textAlign:'right', color:'var(--acero)'}}>A Comprar (kg)</th>
+                      <th style={{textAlign:'center'}}>Durará con compra</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {itemsConConsumo.map((r,i) => {
+                      const aComprar     = Math.round(r.consumo_mes_kg * mesesCompra);
+                      const stockFinal   = (r.saldo||0) + aComprar;
+                      const mesesFinales = r.consumo_mes_kg>0 ? stockFinal/r.consumo_mes_kg : 0;
+                      return (
+                        <tr key={i}>
+                          <td style={{paddingLeft:12, fontFamily:'monospace', fontSize:10, color:'var(--text-3)'}}>{r.codigo}</td>
+                          <td style={{maxWidth:210, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', fontSize:11}} title={r.descripcion}>{r.descripcion}</td>
+                          <td style={{textAlign:'right', fontFamily:'monospace', color:'var(--text-2)'}}>{r.consumo_mes_kg.toLocaleString('es-CL',{maximumFractionDigits:1})}</td>
+                          <td style={{textAlign:'right', fontFamily:'monospace', color:(r.saldo||0)<0?'var(--coral)':'var(--text-2)', fontWeight:(r.saldo||0)<0?700:400}}>
+                            {(r.saldo||0).toLocaleString('es-CL',{maximumFractionDigits:1})}
+                          </td>
+                          <td style={{textAlign:'right', fontFamily:'monospace', fontWeight:700, color:'var(--acero)'}}>
+                            {aComprar.toLocaleString('es-CL')}
+                          </td>
+                          <td style={{textAlign:'center', fontSize:11, fontWeight:600, color: mesesFinales>=3?'var(--purp)':mesesFinales>=1?'#D97706':'var(--coral)'}}>
+                            {mesesFinales.toFixed(1)} meses
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        })()}
       </>
     );
   };
 
-  /* ════════════ RENDER ════════════ */
   const ayerV   = m2Ayer.total||0;
   const ayerCol = ayerV<700?'#EF4444':ayerV<1000?'#F59E0B':'#22C55E';
   const diffMeta= ayerV-1000;
@@ -695,7 +897,6 @@ function App() {
   return (
     <main className="main">
 
-      {/* Header */}
       <div className="page-header">
         <div>
           <div className="page-title">Dashboard Producción · Tiempo Real</div>
@@ -707,14 +908,64 @@ function App() {
       {sysError&&<div className="sys-error"><span>⚠️ {sysError}</span><span style={{cursor:'pointer'}} onClick={()=>setSysError(null)}>✖</span></div>}
       {planError&&<div className="sys-error"><span>⚠️ {planError}</span><span style={{cursor:'pointer'}} onClick={()=>setPlanError(null)}>✖</span></div>}
 
-      {/* ══ VELOCÍMETRO — tope del dashboard ══ */}
+      <div className="section-title">Catálogo · Valor de Stock</div>
+      <div className="kpi-grid grid-3">
+        <div className="kpi" style={{borderLeft:'4px solid #16906A'}}>
+          <div>
+            <div className="kpi-label">Valor Total en Stock</div>
+            <div className="kpi-value" style={{color:'#16906A'}}>
+              <span style={{fontSize:22,marginRight:6,color:'var(--text-3)'}}>$</span>
+              {fmtM(catalogo.totalValor)}<span className="kpi-unit" style={{color:'#16906A'}}>M$</span>
+            </div>
+          </div>
+        </div>
+        <div className="kpi">
+          <div>
+            <div className="kpi-label">Unidades en Stock</div>
+            <div className="kpi-value">{fmt(catalogo.totalUnidades)}<span className="kpi-unit">UN</span></div>
+          </div>
+        </div>
+        <div className="kpi">
+          <div>
+            <div className="kpi-label">SKUs Catalogados</div>
+            <div className="kpi-value">{fmt(catalogo.totalItems)}<span className="kpi-unit">SKU</span></div>
+          </div>
+        </div>
+      </div>
+      <div className="card" style={{maxHeight:480, overflowY:'auto'}}>
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Familia</th>
+              <th style={{textAlign:'right'}}>Precio Unit.</th>
+              <th style={{textAlign:'right'}}>Stock</th>
+              <th style={{textAlign:'right'}}>Valor Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(catalogo.items||[]).map((it,i)=>(
+              <tr key={i}>
+                <td>
+                  <div style={{fontWeight:600}}>{it.producto}</div>
+                  {it.codigo && <div className="bodega-tag">{it.codigo}</div>}
+                </td>
+                <td style={{color:'var(--text-2)'}}>{it.familia||'—'}</td>
+                <td style={{textAlign:'right'}} className="mono">${fmt(it.precio)}</td>
+                <td style={{textAlign:'right'}} className="mono">{fmt(it.stock)}</td>
+                <td style={{textAlign:'right',fontWeight:700}} className="mono">${fmt(it.total)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       <div className="section-title">Producción Día Anterior</div>
       <div style={{display:'grid',gridTemplateColumns:'280px 1fr',gap:20,marginBottom:30,alignItems:'stretch'}}>
 
         <Velocimetro valor={ayerV} fecha={m2Ayer.fecha} />
 
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gridTemplateRows:'1fr 1fr',gap:16}}>
-          {/* Diferencia vs meta */}
           <div className="kpi" style={{borderLeft:`4px solid ${ayerCol}`}}>
             <div className="kpi-label">Diferencia vs Meta (1.000 m²)</div>
             <div className="kpi-value" style={{color:ayerCol,fontSize:30}}>
@@ -726,7 +977,6 @@ function App() {
               <span style={{color:ayerCol}}>{ayerV>=1000?'Sobre meta ✓':ayerV>=700?'Zona media ◑':'Bajo meta ⚠'}</span>
             </div>
           </div>
-          {/* Total día */}
           <div className="kpi">
             <div className="kpi-label">Total Producido Ayer</div>
             <div className="kpi-value" style={{color:ayerCol,fontSize:30}}>
@@ -735,13 +985,11 @@ function App() {
             </div>
             <div className="kpi-sub"><b>Fecha:</b><span style={{color:'var(--text-2)',fontWeight:400}}>{m2Ayer.fecha||'—'}</span></div>
           </div>
-          {/* Zona roja */}
           <div className="kpi" style={{borderLeft:'4px solid #EF4444'}}>
             <div className="kpi-label">🔴 Zona Roja · Crítico</div>
             <div className="kpi-value" style={{color:'#EF4444',fontSize:22}}>0 – 700<span className="kpi-unit">m²</span></div>
             <div className="kpi-sub"><b>Acción requerida:</b><span style={{color:'#EF4444'}}>Revisión inmediata</span></div>
           </div>
-          {/* Zona amarilla/verde */}
           <div className="kpi" style={{borderLeft:'4px solid #22C55E'}}>
             <div className="kpi-label">🟡 700–1.000 · 🟢 &gt;1.000 m²</div>
             <div className="kpi-value" style={{color:'#22C55E',fontSize:22}}>Meta<span className="kpi-unit">1.000 m²</span></div>
@@ -750,11 +998,9 @@ function App() {
         </div>
       </div>
 
-      {/* ══ PSA: Planchas Sin Aislación ══ */}
       <div className="section-title">Producción PSA · PC4 y Bandejera</div>
       <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16, marginBottom:30}}>
 
-        {/* Día anterior total */}
         <div className="kpi" style={{borderLeft:'4px solid #8B5CF6'}}>
           <div className="kpi-label">PSA Total Día Anterior</div>
           <div className="kpi-value" style={{color:'#8B5CF6', fontSize:30}}>
@@ -767,7 +1013,6 @@ function App() {
           </div>
         </div>
 
-        {/* Día anterior desglose */}
         <div className="kpi">
           <div className="kpi-label">Desglose Día Anterior</div>
           <div style={{display:'flex', flexDirection:'column', gap:10, marginTop:6}}>
@@ -793,7 +1038,6 @@ function App() {
           </div>
         </div>
 
-        {/* Acumulado mes */}
         <div className="kpi" style={{borderLeft:'4px solid #10b981'}}>
           <div className="kpi-label">PSA Acumulado Mes</div>
           <div className="kpi-value" style={{color:'#10b981', fontSize:30}}>
@@ -814,9 +1058,8 @@ function App() {
 
       </div>
 
-      {/* Facturación */}
       <div className="section-title">Estado de Facturación Comercial</div>
-      <div className="kpi-grid grid-2">
+      <div className="kpi-grid grid-3">
         <div className="kpi" style={{borderLeft:'4px solid #10b981'}}>
           <div>
             <div className="kpi-label">Facturado Neto (Mes Actual)</div>
@@ -835,9 +1078,26 @@ function App() {
             </div>
           </div>
         </div>
+        <div className="kpi" style={{borderLeft:'4px solid #6366F1'}}>
+          <div>
+            <div className="kpi-label">Presupuesto del Mes</div>
+            <div className="kpi-value" style={{color:'#6366F1'}}>
+              <span style={{fontSize:22,marginRight:6,color:'var(--text-3)'}}>$</span>
+              {fmtM(facturacion.presupuestoMes)}<span className="kpi-unit" style={{color:'#6366F1'}}>M$</span>
+            </div>
+          </div>
+          <div className="kpi-sub">
+            <b>Cumplimiento</b>
+            {(() => {
+              const p = facturacion.cumplimientoPct || 0;
+              const bg = p >= 100 ? '#DCFCE7' : p >= 80 ? '#FEF3C7' : '#FEE2E2';
+              const tx = p >= 100 ? '#15803D' : p >= 80 ? '#92400E' : '#B91C1C';
+              return <span className="badge" style={{background:bg, color:tx}}>{p.toFixed(1)}%</span>;
+            })()}
+          </div>
+        </div>
       </div>
 
-      {/* KPIs PA */}
       <div className="section-title">Indicadores Generales (Planchas Con Aislación)</div>
       <div className="kpi-grid grid-4">
         <div className="kpi">
@@ -852,7 +1112,6 @@ function App() {
         <div className="kpi"><div className="kpi-label">Notas de Venta Pendientes</div><div className="kpi-value">{cantNvs}<span className="kpi-unit">NV</span></div></div>
       </div>
 
-      {/* KPIs PSA */}
       <div className="section-title">Indicadores Planchas Sin Aislación (PSA)</div>
       <div className="kpi-grid grid-3">
         <div className="kpi">
@@ -869,7 +1128,6 @@ function App() {
         </div>
       </div>
 
-      {/* Avance prensas */}
       <div className="section-title">Avance por Prensa</div>
       <div className="prensa-grid">
         {metrics.map((m,i)=>(
@@ -883,7 +1141,6 @@ function App() {
         ))}
       </div>
 
-      {/* Rendimiento por hora */}
       {rend.rows&&rend.rows.length>0&&(
         <>
           <div className="section-title">
@@ -956,3 +1213,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
+

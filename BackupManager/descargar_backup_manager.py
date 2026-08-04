@@ -28,8 +28,11 @@ from webdriver_manager.chrome import ChromeDriverManager
 # ─────────────────────────────────────────────
 MANAGER_URL     = "https://prodkernel.manager.cl"
 EMPRESA_CD      = "prodkernel"
-USUARIO         = "respaldos_poliuretano"
-CONTRASENA      = "puCvufRrcjXemsU5jLY4V9uz"
+# En tu notebook, si no seteas estas 2 variables de entorno, sigue usando
+# los valores de siempre (no hay que cambiar nada local). En GitHub
+# Actions, se sobreescriben con los Secrets MANAGER_USER / MANAGER_PASSWORD.
+USUARIO         = os.environ.get("MANAGER_USER", "respaldos_poliuretano")
+CONTRASENA      = os.environ.get("MANAGER_PASSWORD", "puCvufRrcjXemsU5jLY4V9uz")
 CARPETA_DESTINO = r"C:\Backups\Manager"
 # ─────────────────────────────────────────────
 

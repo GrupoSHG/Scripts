@@ -1,0 +1,79 @@
+name: Pipeline Manager -> Supabase
+
+on:
+  schedule:
+    # Corre de lunes a viernes a las 13:00 UTC (~09:00/10:00 hora Chile,
+    # según horario de verano). Ajusta la hora si necesitas otro horario.
+    - cron: '0 13 * * 1-5'
+  workflow_dispatch: {}  # además, botón "Run workflow" para correrlo manual
+
+jobs:
+  pipeline:
+    runs-on: windows-latest
+    timeout-minutes: 45  # margen sobre los ~11 min que ya toma, por si CI va más lento
+
+    steps:
+      - name: Checkout del repo
+        uses: actions/checkout@v4
+
+      - name: Instalar SQL Server (motor)
+        uses: potatoqualitee/mssqlsuite@v1.7
+        with:
+          install: sqlengine
+          sa-password: ${{ secrets.SQL_SA_PASSWORD }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Setup Chrome (para Selenium)
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Escribir credenciales de Google desde el Secret
+        shell: pwsh
+        env:
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
+        run: |
+          $env:GOOGLE_CREDENTIALS_JSON | Out-File -FilePath "credenciales_google.json" -Encoding utf8 -NoNewline
+
+      - name: Correr el pipeline completo
+        env:
+          # Conexión a SQL Server en modo CI (ver patch en restaurar_y_extraer.py)
+          SQL_SERVER: localhost
+          SQL_USE_SQL_AUTH: 'true'
+          SQL_SA_PASSWORD: ${{ secrets.SQL_SA_PASSWORD }}
+
+          # Credenciales de Manager (ver patch en descargar_backup_manager.py)
+          MANAGER_USER: ${{ secrets.MANAGER_USER }}
+          MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
+
+          # Supabase
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+
+          # Google Drive/Sheets — apunta al archivo que se acaba de escribir
+          # arriba desde el Secret (ver patch en subir_a_drive.py)
+          GOOGLE_CREDENTIALS_FILE: credenciales_google.json
+          PIPELINE_VENTAS_LOG: pipeline_ventas.log
+        run: python 00_pipeline_completo.py
+
+      - name: Limpiar credenciales del runner
+        if: always()
+        shell: pwsh
+        run: |
+          if (Test-Path "credenciales_google.json") { Remove-Item "credenciales_google.json" -Force }
+
+      - name: Subir el log como artefacto (para revisar si algo falla)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-log
+          path: pipeline_main.log
+          retention-days: 14

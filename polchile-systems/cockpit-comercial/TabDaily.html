@@ -1,0 +1,578 @@
+<script type="text/babel">
+/* global React */
+const D2 = window.PCH;
+
+// ============================================================
+// TAB 2: OPERATIVA DIARIA
+// ============================================================
+function DailyTab() {
+  const f7 = D2.flow7d || { cotizaciones:{total:0,n:0}, nv:{total:0,n:0}, facturacion:{total:0,n:0} };
+  const fecha = new Date();
+  const mesesLabels = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const mesActualNombre = mesesLabels[fecha.getMonth()];
+  const anioActual = fecha.getFullYear();
+  const diasSemana = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const mesesCortos = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const textoHoy = `${diasSemana[fecha.getDay()]} ${fecha.getDate()} ${mesesCortos[fecha.getMonth()]}`;
+
+  return (
+    <>
+      <window.KpiStrip />
+
+      <div className="section-title" style={{textTransform:'capitalize'}}>
+        Día a día {mesActualNombre.toLowerCase()} · Run-rate y proyección de cierre
+      </div>
+      <div style={{display:'grid', gridTemplateColumns:'2fr 1fr', gap:10}}>
+        <div className="card">
+          <div className="card-head">
+            <div>
+              <div className="card-title" style={{textTransform:'capitalize'}}>
+                Facturación y NV diarias {mesActualNombre.toLowerCase()} {anioActual}
+              </div>
+              <div className="card-sub">Facturación (azul) vs NV emitidas (verde) · M$ CLP</div>
+            </div>
+            <div className="seg"><button className="on">Diario</button><button>Acum.</button></div>
+          </div>
+          <DailyChart />
+        </div>
+        <div className="card">
+          <div className="card-head">
+            <div className="card-title" style={{textTransform:'capitalize'}}>Hoy · {textoHoy}</div>
+          </div>
+          <HoyCard />
+        </div>
+      </div>
+
+      <div className="section-title">Cumplimiento semanal · WoW</div>
+      <div style={{display:'grid', gridTemplateColumns:'1.6fr 1fr 1fr', gap:10}}>
+        <div className="card">
+          <div className="card-head"><div className="card-title">Semanas del mes</div></div>
+          <Semanas />
+        </div>
+        <div className="card">
+          <div className="card-head"><div className="card-title">Heatmap día x día YTD</div><div className="card-sub">Intensidad = facturación</div></div>
+          <Heatmap />
+        </div>
+        <div className="card">
+          <div className="card-head"><div className="card-title">Cierres pendientes hoy</div></div>
+          <CierresHoy />
+        </div>
+      </div>
+
+      <div className="section-title">Cotizaciones, NV y Facturación · Últimos 7 días</div>
+      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10}}>
+        <div className="card"><FlowCard label="Cotizaciones emitidas" total={(f7.cotizaciones.total/1000000).toFixed(1)+" M$"} n={f7.cotizaciones.n} delta={0} color="#0ea5e9"/></div>
+        <div className="card"><FlowCard label="NV generadas"         total={(f7.nv.total/1000000).toFixed(1)+" M$"}          n={f7.nv.n}          delta={0} color="#f59e0b"/></div>
+        <div className="card"><FlowCard label="Facturación emitida"  total={(f7.facturacion.total/1000000).toFixed(1)+" M$"} n={f7.facturacion.n}  delta={0} color="#22c55e"/></div>
+      </div>
+
+      {/* ── PIPELINE CRM (movido desde Resumen Ejecutivo) ── */}
+      <div className="section-title">Pipeline CRM y Conversión</div>
+      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:20}}>
+        <div className="card">
+          <div className="card-head">
+            <div>
+              <div className="card-title">Etapas del pipeline</div>
+              <div className="card-sub">{D2.PIPELINE_CRM.reduce((a,e)=>a+e.n,0)} oportunidades · {window.fmtM(D2.PIPELINE_CRM.reduce((a,e)=>a+e.monto,0))} M$ bruto</div>
+            </div>
+          </div>
+          <PipelineFunnelDaily />
+        </div>
+        <div style={{display:'flex', flexDirection:'column', gap:10}}>
+          <TasasDeConversionDaily />
+          <MixPorPilarDaily />
+        </div>
+      </div>
+
+      <div className="section-title">Movimientos del día · Tiempo real desde Manager + GHL</div>
+      <div style={{display:'grid', gridTemplateColumns:'2fr 1fr', gap:10}}>
+        <div className="card tight"><MovTable /></div>
+        <div className="card">
+          <div className="card-head"><div className="card-title">Cotizaciones sin movimiento</div></div>
+          <Cotizaciones />
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ============================================================
+// PIPELINE FUNNEL (versión para Daily)
+// ============================================================
+function PipelineFunnelDaily() {
+  const max = Math.max(...D2.PIPELINE_CRM.map(e=>e.monto), 1);
+  return (
+    <div>
+      {D2.PIPELINE_CRM.map((e,i) => (
+        <div key={i} className="funnel-row">
+          <div>
+            <div className="fw-6 text-1 fs-12">{e.etapa}</div>
+            <div className="text-3 fs-10">{e.n} oportunidades</div>
+          </div>
+          <div className="funnel-bar">
+            <div className={'stage-'+e.colorIdx} style={{width:(e.monto/max*100)+'%'}}>{window.fmtM(e.monto)} M$</div>
+          </div>
+          <div className="text-right mono fw-6 fs-12">{e.prob}%</div>
+          <div className="text-3 fs-10 text-right">prob.</div>
+          <div className="text-right mono fw-6 fs-12">{window.fmtM(e.monto*e.prob/100)} M$</div>
+        </div>
+      ))}
+      <div className="flex between mt-2 fs-11" style={{paddingTop:8, borderTop:'1px solid var(--border)'}}>
+        <span className="text-3 uppercase">Total ponderado pipeline</span>
+        <span className="mono fw-7 text-1">{window.fmtM(D2.FORECAST_CRM_PONDERADO)} M$</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// TASAS DE CONVERSIÓN (versión para Daily)
+// ============================================================
+function TasasDeConversionDaily() {
+  const funnel = [
+    { label:'Lead → Contactado',        val:81, color:'#8b5cf6' },
+    { label:'Contactado → Calificado',  val:76, color:'#3b82f6' },
+    { label:'Calificado → Cotizado',    val:83, color:'#06b6d4' },
+    { label:'Cotizado → Negociación',   val:58, color:'#10b981' },
+    { label:'Negociación → NV',         val:64, color:'#22c55e' },
+    { label:'NV → Facturado',           val:96, color:'#84cc16' }
+  ];
+  return (
+    <div className="card">
+      <div className="card-head"><div className="card-title uppercase">Tasas de Conversión</div></div>
+      {funnel.map((f,i) => (
+        <div key={i} className="mb-2">
+          <div className="flex between fs-11 text-2 mb-1"><span>{f.label}</span><span className="fw-6">{f.val}%</span></div>
+          <div style={{height:4, background:'#1f2734', borderRadius:2}}>
+            <div style={{width:f.val+'%', height:'100%', background:f.color, borderRadius:2}}></div>
+          </div>
+        </div>
+      ))}
+      <div className="mt-3 pt-2" style={{borderTop:'1px solid var(--border-soft)', fontSize:11}}>
+        <div className="flex between mb-1"><span className="text-3 uppercase">Win Rate Global</span><span className="fw-6">34%</span></div>
+        <div className="flex between mb-1"><span className="text-3 uppercase">Ciclo Promedio</span><span className="fw-6">28 días</span></div>
+        <div className="flex between mb-1"><span className="text-3 uppercase">Ticket Promedio</span><span className="fw-6">1,8 M$</span></div>
+        <div className="flex between"><span className="text-3 uppercase">Ticket Mediana</span><span className="fw-6">2,4 M$</span></div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// MIX POR PILAR (versión para Daily)
+// ============================================================
+function MixPorPilarDaily() {
+  return (
+    <div className="card">
+      <div className="flex between mb-3">
+        <div className="card-title uppercase">Mix por Pilar</div>
+        <div className="text-3 fs-10">Real vs Presupuesto</div>
+      </div>
+      <div className="flex center-y gap-3 mt-2">
+        <div style={{width:100,height:100,borderRadius:'50%',
+          background:'conic-gradient(#3b82f6 0% 93.7%, #0ea5e9 93.7% 98.4%, #f59e0b 98.4% 100%)',
+          display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+          <div style={{width:72,height:72,borderRadius:'50%',background:'var(--bg-card)'}}></div>
+        </div>
+        <div style={{flex:1,fontSize:11}}>
+          <div className="mb-2">
+            <div className="flex between center-y"><span className="fw-6"><span style={{color:'#3b82f6'}}>●</span> Proyectos</span><span className="fw-6">93.7%</span></div>
+            <div className="flex between text-3"><span>Presup: 90%</span><span className="t-up">+3.7 pp</span></div>
+          </div>
+          <div className="mb-2">
+            <div className="flex between center-y"><span className="fw-6"><span style={{color:'#0ea5e9'}}>●</span> Ecommerce</span><span className="fw-6">4.7%</span></div>
+            <div className="flex between text-3"><span>Presup: 5%</span><span className="t-down">-0.3 pp</span></div>
+          </div>
+          <div>
+            <div className="flex between center-y"><span className="fw-6"><span style={{color:'#f59e0b'}}>●</span> Distribución</span><span className="fw-6">1.6%</span></div>
+            <div className="flex between text-3"><span>Presup: 5%</span><span className="t-down">-3.4 pp</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// DAILY CHART — Facturación + NV unificadas (barras lado a lado)
+// ============================================================
+function DailyChart() {
+  if (!D2.graficoDiario || D2.graficoDiario.length === 0) {
+    return <div className="text-center text-3 mt-4" style={{padding:20}}>Sincronizando datos diarios desde Manager...</div>;
+  }
+  const days   = D2.graficoDiario;
+  const daysNV = D2.graficoDiarioNV || days.map(d => ({ d: d.d, nv: 0 }));
+  const presupDiario = (D2.KPI_MES && D2.KPI_MES.presupuesto) ? (D2.KPI_MES.presupuesto / days.length) : 1;
+  const max = Math.max(
+    ...days.map(d  => (d  && d.fact) ? d.fact : 0),
+    ...daysNV.map(d => (d  && d.nv)  ? d.nv   : 0),
+    presupDiario * 1.2
+  ) || 30;
+  const diaHoy = new Date().getDate();
+  // Cada día ocupa 35px: barra fact 15px + gap 2px + barra nv 15px = 32px + 3px margen
+  return (
+    <div>
+      <svg viewBox="0 0 1200 220" style={{width:'100%', height:220, overflow:'visible'}}>
+        {/* Grillas */}
+        {[0,0.25,0.5,0.75,1].map(g => (
+          <g key={g}>
+            <line x1={30} x2={1200} y1={20+(170*(1-g))} y2={20+(170*(1-g))} stroke="#1f2734" strokeDasharray="2,3"/>
+            <text x={2} y={24+(170*(1-g))} fontSize="9" fill="#6c7689">{(max*g).toFixed(0)}</text>
+          </g>
+        ))}
+        {/* Línea presupuesto diario */}
+        <line x1={40} x2={1200}
+          y1={20+170-(presupDiario/max*170)} y2={20+170-(presupDiario/max*170)}
+          stroke="#f59e0b" strokeWidth={1.5} strokeDasharray="4,3"/>
+        <text x={1150} y={20+170-(presupDiario/max*170)-4} fontSize="9" fill="#f59e0b">Presup. {presupDiario.toFixed(1)}</text>
+
+        {days.map((d,i) => {
+          const x      = 48 + i * 35;
+          const fact   = (d && d.fact)        ? d.fact        : 0;
+          const nv     = (daysNV[i] && daysNV[i].nv) ? daysNV[i].nv : 0;
+          const diaNum = (d && d.d)            ? d.d           : (i+1);
+          const hF     = fact / max * 170;
+          const hN     = nv   / max * 170;
+          return (
+            <g key={i}>
+              {/* Barra Facturación — azul */}
+              <rect x={x}    y={20+170-hF} width={15} height={hF||1}
+                fill={fact===0?'#1a2235':'#3b82f6'} rx={2}/>
+              {fact>0 && <text x={x+7} y={20+170-hF-3} fontSize="8" fill="#93c5fd" textAnchor="middle">{fact.toFixed(0)}</text>}
+              {/* Barra NV — verde */}
+              <rect x={x+17} y={20+170-hN} width={15} height={hN||1}
+                fill={nv===0?'#1a2235':'#22c55e'} rx={2}/>
+              {nv>0 && <text x={x+24} y={20+170-hN-3} fontSize="8" fill="#86efac" textAnchor="middle">{nv.toFixed(0)}</text>}
+              {/* Número día */}
+              <text x={x+16} y={212} fontSize="9" fill="#6c7689" textAnchor="middle">{diaNum}</text>
+            </g>
+          );
+        })}
+
+        {/* Línea HOY */}
+        <line x1={48+(diaHoy-1)*35+16} x2={48+(diaHoy-1)*35+16} y1={18} y2={192}
+          stroke="#f59e0b" strokeDasharray="3,3" opacity="0.5"/>
+        <text x={48+(diaHoy-1)*35+18} y={26} fontSize="10" fill="#f59e0b">HOY</text>
+      </svg>
+
+      {/* Leyenda */}
+      <div className="flex gap-4 fs-11 mt-1" style={{justifyContent:'center'}}>
+        <span><span style={{display:'inline-block',width:10,height:10,background:'#3b82f6',borderRadius:2,marginRight:4}}></span>Facturación FAV</span>
+        <span><span style={{display:'inline-block',width:10,height:10,background:'#22c55e',borderRadius:2,marginRight:4}}></span>NV Emitidas</span>
+        <span style={{borderLeft:'2px dashed #f59e0b',paddingLeft:8,color:'#f59e0b'}}>— Presup. diario</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// NV CHART — Notas de Venta diarias (gráfico separado)
+// ============================================================
+function NVChart() {
+  const daysNV = D2.graficoDiarioNV || [];
+  if (!daysNV.length) {
+    return <div className="text-center text-3 mt-4" style={{padding:20}}>Sincronizando NV diarias desde Manager...</div>;
+  }
+  const max    = Math.max(...daysNV.map(d => d.nv || 0), 1);
+  const diaHoy = new Date().getDate();
+  return (
+    <svg viewBox="0 0 1200 220" style={{width:'100%', height:220, overflow:'visible'}}>
+      {[0,0.25,0.5,0.75,1].map(g => (
+        <g key={g}>
+          <line x1={30} x2={1200} y1={20+(170*(1-g))} y2={20+(170*(1-g))} stroke="#1f2734" strokeDasharray="2,3"/>
+          <text x={2} y={24+(170*(1-g))} fontSize="9" fill="#6c7689">{(max*g).toFixed(0)}</text>
+        </g>
+      ))}
+      {daysNV.map((d,i) => {
+        const x      = 50 + i * 35;
+        const nv     = d.nv || 0;
+        const diaNum = d.d  || (i+1);
+        const h      = nv / max * 170;
+        return (
+          <g key={i}>
+            <rect x={x} y={20+170-h} width={22} height={h||1}
+              fill={nv===0?'#1f2734':'#22c55e'} rx={2}
+              stroke={nv===0?'#2a3244':'none'}/>
+            {nv>0 && <text x={x+11} y={20+170-h-4} fontSize="9" fill="#e6ebf2" textAnchor="middle">{nv.toFixed(1)}</text>}
+            <text x={x+11} y={210} fontSize="10" fill="#aab3c2" textAnchor="middle">{diaNum}</text>
+          </g>
+        );
+      })}
+      <line x1={50+(diaHoy-1)*35+22} x2={50+(diaHoy-1)*35+22} y1={20} y2={190}
+        stroke="#f59e0b" strokeDasharray="3,3" opacity="0.6"/>
+      <text x={50+(diaHoy-1)*35+24} y={26} fontSize="10" fill="#f59e0b">HOY</text>
+    </svg>
+  );
+}
+
+// ============================================================
+// HOY CARD
+// ============================================================
+function HoyCard() {
+  const k = D2.KPI_MES || {};
+  // Facturado hoy: tomar del gráfico diario el día actual
+  const diaIdx = new Date().getDate() - 1;
+  const grafHoy = D2.graficoDiario && D2.graficoDiario[diaIdx];
+  const facturadoHoy = (grafHoy && grafHoy.fact) ? grafHoy.fact : (k.facturadoHoy || 0);
+  const nvHoy = D2.graficoDiarioNV && D2.graficoDiarioNV[diaIdx] ? (D2.graficoDiarioNV[diaIdx].nv || 0) : 0;
+  const presupuesto  = k.presupuesto  || 0;
+  const facturadoMes = k.facturado    || 0;
+  const diaHoy = new Date().getDate();
+  const diasHabilesMes = 21;
+  const diasHabilesPasados = Math.floor(diaHoy*(diasHabilesMes/30));
+  const diasRestantes = Math.max(1, diasHabilesMes-diasHabilesPasados);
+  const faltante    = Math.max(0, presupuesto-facturadoMes);
+  const runRateReq  = faltante/diasRestantes;
+  const runRateAct  = facturadoMes/Math.max(1, diasHabilesPasados);
+  return (
+    <div>
+      <div className="text-3 fs-10 uppercase">Facturado hoy</div>
+      <div className="mono fw-7" style={{fontSize:30, color:'var(--accent)'}}>
+        {window.fmtM(facturadoHoy)}<span className="text-3 fs-12" style={{marginLeft:4}}>M$</span>
+      </div>
+      <div className="flex center-y gap-2 mt-1">
+        <span className="text-3 fs-11">Run-rate actual: {window.fmtM(runRateAct)} M$/día</span>
+      </div>
+      <div className="mt-3" style={{paddingTop:10, borderTop:'1px solid var(--border-soft)'}}>
+        <div className="text-3 fs-10 uppercase mb-2">Resumen del día</div>
+        <table className="tbl" style={{fontSize:11}}>
+          <tbody>
+            <tr><td>Facturas Manager</td><td className="num mono">—</td><td className="num mono strong" style={{color:'#22c55e'}}>{window.fmtM(facturadoHoy)} M$</td></tr>
+            <tr><td>NV emitidas hoy</td><td className="num mono">—</td><td className="num mono strong" style={{color:'#22c55e'}}>{window.fmtM(nvHoy)} M$</td></tr>
+            <tr><td>Cotizaciones</td><td className="num mono">—</td><td className="num mono strong">Monitor GHL</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div className="mt-3" style={{paddingTop:10, borderTop:'1px solid var(--border-soft)'}}>
+        <div className="text-3 fs-10 uppercase mb-2">Faltante para cumplir mes</div>
+        <div className="flex between center-y">
+          <div><div className="mono fw-7 fs-16 t-warn">{window.fmtM(faltante)}</div><div className="text-3 fs-10">M$ faltantes</div></div>
+          <div><div className="mono fw-7 fs-16">{diasRestantes}</div><div className="text-3 fs-10">días hábiles</div></div>
+          <div><div className="mono fw-7 fs-16 t-warn">{window.fmtM(runRateReq)}</div><div className="text-3 fs-10">M$/día req.</div></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// SEMANAS
+// ============================================================
+function Semanas() {
+  let dataSemanasOriginal = D2.SEMANAS;
+  const mesesCortos = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const mesActual = mesesCortos[new Date().getMonth()];
+  if (!dataSemanasOriginal || dataSemanasOriginal.length===0 || typeof dataSemanasOriginal[0].vendido==='undefined') {
+    const ppto = (D2.KPI_MES&&D2.KPI_MES.presupuesto)?D2.KPI_MES.presupuesto/5:100;
+    dataSemanasOriginal = [
+      {sem:"S1",presup:ppto,vendido:0,isFuture:false},{sem:"S2",presup:ppto,vendido:0,isFuture:true},
+      {sem:"S3",presup:ppto,vendido:0,isFuture:true},{sem:"S4",presup:ppto,vendido:0,isFuture:true},
+      {sem:"S5",presup:ppto,vendido:0,isFuture:true}
+    ];
+  }
+  const dataSemanas = dataSemanasOriginal.map((s,idx) => {
+    let lbl = `S${idx+1} ${mesActual}`;
+    if (s.isFuture) lbl += " (proy)";
+    return { ...s, semLimpia:lbl, vendido:s.vendido||0 };
+  });
+  const max = Math.max(...dataSemanas.map(s=>Math.max(s.vendido,s.presup,s.proy||0)))||1;
+  return (
+    <div>
+      {dataSemanas.map((s,i) => {
+        const cumpl = !s.isFuture?(s.vendido/s.presup*100):null;
+        let badgeClass = "gray";
+        if (cumpl!==null) { badgeClass = cumpl>=100?'green':cumpl>=85?'amber':cumpl===0?'gray':'red'; }
+        return (
+          <div key={i} className="mb-2" style={{paddingBottom:8, borderBottom:'1px solid var(--border-soft)'}}>
+            <div className="flex between center-y mb-1">
+              <span className="fw-6 fs-12">{s.semLimpia}</span>
+              {cumpl!==null?<span className={`badge ${badgeClass}`}>{cumpl.toFixed(0)}%</span>:<span className="badge gray">Proyectada</span>}
+            </div>
+            <div style={{position:'relative',height:22}}>
+              <div style={{position:'absolute',left:0,top:0,height:'100%',width:Math.min(100,(s.presup/max*100))+'%',background:'#1f2734',borderRadius:3}}></div>
+              {s.vendido>0&&<div style={{position:'absolute',left:0,top:0,height:'100%',width:Math.min(100,(s.vendido/max*100))+'%',background:'#5b8cff',borderRadius:3}}></div>}
+              {s.isFuture&&s.proy>0&&<div style={{position:'absolute',left:0,top:0,height:'100%',width:Math.min(100,(s.proy/max*100))+'%',background:'repeating-linear-gradient(45deg,#475569 0 4px,#1f2734 4px 8px)',borderRadius:3}}></div>}
+            </div>
+            <div className="flex between fs-10 text-3 mt-1">
+              <span>Presup: {s.presup.toFixed(1)} M$</span>
+              <span>{!s.isFuture?`Real: ${s.vendido.toFixed(1)} M$`:`Proy: ${(s.proy||0).toFixed(1)} M$`}</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ============================================================
+// HEATMAP
+// ============================================================
+function Heatmap() {
+  const weeks = 16;
+  const mesesCortos = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const currentMonthIdx = new Date().getMonth();
+  const labelsMeses = [];
+  for (let i=3;i>=0;i--) { let m=currentMonthIdx-i; if(m<0)m+=12; labelsMeses.push(mesesCortos[m]); }
+  return (
+    <div>
+      <div style={{display:'grid',gridTemplateColumns:'24px repeat('+weeks+', 1fr)',gap:2}}>
+        <div></div>
+        {Array.from({length:weeks}).map((_,w)=>(
+          <div key={w} style={{fontSize:8,color:'var(--text-3)',textAlign:'center'}}>{w%4===0?'S'+(w+1):''}</div>
+        ))}
+        {['L','M','M','J','V'].map((d,row)=>(
+          <React.Fragment key={row}>
+            <div style={{fontSize:9,color:'var(--text-3)'}}>{d}</div>
+            {Array.from({length:weeks}).map((_,w)=>{
+              const idx=w*5+row;
+              if(idx>75) return <div key={w}></div>;
+              const intensity=Math.random();
+              const bg=intensity>0.7?'#22c55e':intensity>0.5?'#10b981':intensity>0.3?'#5b8cff':intensity>0.15?'#3b4a64':'#1f2734';
+              return <div key={w} className="heat-cell" style={{background:bg}}></div>;
+            })}
+          </React.Fragment>
+        ))}
+      </div>
+      <div className="flex between fs-10 text-3 mt-2">{labelsMeses.map((lbl,i)=><span key={i}>{lbl}</span>)}</div>
+      <div className="flex gap-2 fs-10 mt-2 center-y">
+        <span className="text-3">Menos</span>
+        {['#1f2734','#3b4a64','#5b8cff','#10b981','#22c55e'].map(c=><div key={c} style={{width:14,height:14,background:c,borderRadius:2}}></div>)}
+        <span className="text-3">Más</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// STAGE SCORE helper
+// ============================================================
+const getStageScore = (stage) => {
+  const s=(stage||'').toLowerCase();
+  if(s.includes('ganad'))return 100; if(s.includes('compromiso'))return 80;
+  if(s.includes('negociacion'))return 60; if(s.includes('seguimiento'))return 40;
+  if(s.includes('cotizacion')||s.includes('cot emitida'))return 20; if(s.includes('lead'))return 10;
+  return 0;
+};
+
+// ============================================================
+// CIERRES HOY
+// ============================================================
+function CierresHoy() {
+  let items = (D2.diarias&&D2.diarias.cierresPendientes)?[...D2.diarias.cierresPendientes]:[];
+  items = items.sort((a,b)=>{const d=getStageScore(b.etapa)-getStageScore(a.etapa);return d!==0?d:(b.monto||0)-(a.monto||0);});
+  const total = items.reduce((s,it)=>s+(it.monto||0),0);
+  if(!items.length) return <div className="text-center text-3 mt-3 fs-11">No hay cierres pendientes detectados hoy.</div>;
+  return (
+    <div>
+      <div style={{maxHeight:'220px',overflowY:'auto',paddingRight:'8px'}}>
+        {items.map((it,i)=>(
+          <div key={i} className="mb-2" style={{paddingBottom:8,borderBottom:'1px solid var(--border-soft)'}}>
+            <div className="flex between center-y">
+              <span className="fs-12 fw-6">{it.negocio}</span>
+              <span className="mono fw-7">{it.monto.toFixed(1)} M$</span>
+            </div>
+            <div className="flex between fs-10 text-3 mt-1">
+              <span>{it.etapa} · {it.vendedor}</span>
+              <span className={it.dias>=15?'t-down':it.dias>=10?'t-warn':'text-3'}>{it.dias} días</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="text-center fs-11 mt-2 pt-2" style={{borderTop:'1px solid var(--border-soft)'}}>
+        <span className="text-2 fw-6">Total: {total.toFixed(1)} M$</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// FLOW CARD
+// ============================================================
+function FlowCard({ label, total, n, delta, color }) {
+  const trend=[4,7,6,9,8,10,12];
+  return (
+    <div>
+      <div className="card-head"><div className="card-title">{label}</div><window.Delta v={delta}/></div>
+      <div className="flex between center-y">
+        <div><div className="mono fw-7" style={{fontSize:22}}>{total}</div><div className="text-3 fs-10">{n} operaciones</div></div>
+        <div style={{width:120}}><window.Sparkline data={trend} color={color} height={36}/></div>
+      </div>
+      <div className="flex between mt-2 fs-10 text-3">
+        <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Lun</span><span>HOY</span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// MOV TABLE
+// ============================================================
+function MovTable() {
+  let rawMovs = (D2.diarias&&D2.diarias.movimientosHoy)?D2.diarias.movimientosHoy:[];
+  rawMovs = rawMovs.sort((a,b)=>getStageScore(b.etapa)-getStageScore(a.etapa));
+  if(!rawMovs.length) return <div className="text-center text-3 mt-4" style={{padding:'20px 0'}}>Aún no hay movimientos registrados hoy en el CRM.</div>;
+  const tipoColor={COT:'blue',NV:'amber',FACT:'green',ETAPA:'gray',WIN:'green'};
+  return (
+    <div style={{maxHeight:'350px',overflowY:'auto',paddingRight:'5px'}}>
+      <table className="tbl">
+        <thead style={{position:'sticky',top:0,backgroundColor:'var(--bg-card)',zIndex:1}}>
+          <tr><th>Fecha</th><th>Tipo</th><th>Cliente</th><th>Vendedor</th><th className="num">Monto</th><th>Origen</th><th>Detalle</th></tr>
+        </thead>
+        <tbody>
+          {rawMovs.map((m,i)=>{
+            let tipoStr='ETAPA',claseTipo=tipoColor.ETAPA;
+            const et=(m.etapa||'').toLowerCase();
+            if(et.includes('cot')){tipoStr='COT';claseTipo=tipoColor.COT;}
+            else if(et.includes('nv')||et.includes('nota de venta')){tipoStr='NV';claseTipo=tipoColor.NV;}
+            else if(et.includes('ganad')){tipoStr='WIN';claseTipo=tipoColor.WIN;}
+            return (
+              <tr key={i}>
+                <td className="mono text-3">Hoy</td>
+                <td><span className={'badge '+claseTipo}>{tipoStr}</span></td>
+                <td className="strong">{m.negocio}</td>
+                <td className="text-2">{m.vendedor}</td>
+                <td className="num mono strong">{m.monto.toFixed(1)} M$</td>
+                <td><span className="text-3 fs-10 mono">{m.origen}</span></td>
+                <td className="text-3 fs-11">{m.etapa}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ============================================================
+// COTIZACIONES SIN MOVIMIENTO
+// ============================================================
+function Cotizaciones() {
+  let cots = (D2.diarias&&D2.diarias.sinMovimiento)?D2.diarias.sinMovimiento:[];
+  cots = cots.sort((a,b)=>{const d=getStageScore(b.etapa)-getStageScore(a.etapa);return d!==0?d:b.dias-a.dias;});
+  const total = cots.reduce((s,c)=>s+(c.monto||0),0);
+  if(!cots.length) return <div className="text-center text-3 mt-3 fs-11">¡Excelente! No hay cotizaciones estancadas.</div>;
+  return (
+    <div>
+      <div style={{maxHeight:'350px',overflowY:'auto',paddingRight:'8px'}}>
+        {cots.map((c,i)=>(
+          <div key={i} className="mb-2" style={{paddingBottom:8,borderBottom:'1px solid var(--border-soft)'}}>
+            <div className="flex between">
+              <span className="fs-12 fw-6">{c.negocio}</span>
+              <span className="badge red">{c.dias}d</span>
+            </div>
+            <div className="flex between mt-1 fs-11">
+              <span className="text-3">[{c.etapa||'Sin etapa'}] Asignado a {c.vendedor}</span>
+              <span className="mono fw-6">{c.monto.toFixed(1)} M$</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="text-center fs-11 mt-2 pt-2" style={{borderTop:'1px solid var(--border-soft)'}}>
+        <span className="text-2 fw-6">Total Estancado: {total.toFixed(1)} M$</span>
+      </div>
+    </div>
+  );
+}
+
+window.DailyTab = DailyTab;
+</script>

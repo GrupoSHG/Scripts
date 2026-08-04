@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard NV — Polchile</title>
+<script>
+  // AJUSTAR: URL /exec del deployment de Apps Script de calendario
+  window.__SCRIPT_URL__ = 'https://script.google.com/macros/s/AKfycbzqtyzqc9YdCWMZMJd8FRGonBkyAve3Er4WB9MEJxRncEsYuyVSudu_yLzdUWfz2HiR_A/exec';
+</script>
+<script src="google-script-shim.js"></script>
+<style>
+  :root {
+    --azul: #1F4E78; --azul2: #2E75B6; --azul-claro: #BDD7EE;
+    --verde: #70AD47; --naranja: #ED7D31; --rojo: #C00000;
+    --amarillo: #FFC000; --gris: #F2F2F2; --gris-oscuro: #595959;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #f5f7fa; color: #1a1a1a; padding: 16px; min-height: 100vh;
+  }
+  header {
+    background: var(--azul); color: white; padding: 18px 24px;
+    border-radius: 10px; margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+  }
+  header h1 { font-size: 20px; font-weight: 700; }
+  .actualizado { font-size: 12px; opacity: 0.9; margin-top: 2px; }
+  .btn-refresh {
+    background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);
+    color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer;
+    font-size: 13px; font-weight: 600;
+  }
+  .btn-refresh:hover { background: rgba(255,255,255,0.3); }
+
+  .resumen-scroll { overflow-x: auto; margin-bottom: 16px; padding-bottom: 8px; }
+  .resumen-scroll::-webkit-scrollbar { height: 8px; }
+  .resumen-scroll::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 4px; }
+  .resumen-scroll::-webkit-scrollbar-thumb { background: var(--azul-claro); border-radius: 4px; }
+  .resumen-scroll::-webkit-scrollbar-thumb:hover { background: var(--azul2); }
+  .resumen { display: flex; gap: 12px; flex-wrap: nowrap; min-width: min-content; }
+  .resumen-card {
+    background: white; border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    border-left: 4px solid var(--azul);
+    overflow: hidden; flex: 0 0 auto; min-width: 200px;
+  }
+  .resumen-card.split { min-width: 230px; }
+  .resumen-card.verde { border-left-color: var(--verde); }
+  .resumen-card.amarillo { border-left-color: var(--amarillo); }
+  .resumen-card.rojo { border-left-color: var(--rojo); }
+  .resumen-card.naranja { border-left-color: var(--naranja); }
+  .resumen-card.facturado-neto {
+    border-left-width: 5px;
+    background: linear-gradient(to bottom, #fff, #f0f9f0);
+    min-width: 260px;
+  }
+  .card-titulo {
+    font-size: 11px; text-transform: uppercase; color: #666;
+    font-weight: 700; letter-spacing: 0.3px;
+    padding: 10px 14px 6px; border-bottom: 1px solid #f0f0f0;
+    white-space: nowrap;
+  }
+  .card-split { display: grid; grid-template-columns: 1fr 1fr; }
+  .card-half { padding: 10px 14px; }
+  .card-half + .card-half { border-left: 1px dashed #e5e5e5; }
+  .card-tag {
+    font-size: 9.5px; color: #999; text-transform: uppercase;
+    font-weight: 600; letter-spacing: 0.5px;
+  }
+  .card-monto {
+    font-size: 15px; font-weight: 700; margin-top: 2px;
+    color: var(--azul); font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .resumen-card.verde .card-monto { color: var(--verde); }
+  .resumen-card.rojo .card-monto { color: var(--rojo); }
+  .resumen-card.amarillo .card-monto { color: #C68500; }
+  .resumen-card.naranja .card-monto { color: var(--naranja); }
+  .card-single { padding: 12px 14px; }
+  .card-single .card-monto { font-size: 22px; }
+  .fav-ncv {
+    display: flex; justify-content: space-between;
+    font-size: 10px; margin-top: 6px; color: #777;
+  }
+  .fav-ncv b { color: #333; font-weight: 600; }
+
+  .seccion-titulo {
+    font-size: 14px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--azul); margin: 8px 0 12px;
+    padding-bottom: 6px; border-bottom: 2px solid var(--azul-claro);
+  }
+  .semanal-grid {
+    background: white; border-radius: 10px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 16px;
+  }
+  .semanal-grid table { width: 100%; border-collapse: collapse; min-width: 0; }
+  .semanal-grid thead { background: var(--azul); color: white; }
+  .semanal-grid th {
+    padding: 10px; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.3px; font-weight: 600; text-align: center;
+  }
+  .semanal-grid td {
+    padding: 10px; font-size: 13px; text-align: center;
+    border-bottom: 1px solid #eee; font-variant-numeric: tabular-nums;
+  }
+  .semanal-grid td.semana-label {
+    font-weight: 700; color: var(--azul);
+    background: #fafbfc; text-align: left;
+  }
+  .semanal-grid tr.total-row td {
+    background: #D9E1F2; font-weight: 700; color: var(--azul);
+    border-top: 2px solid var(--azul);
+  }
+  .monto-amarillo { color: #C68500; }
+  .monto-rojo { color: var(--rojo); }
+  .monto-naranja { color: var(--naranja); }
+
+  .filtros {
+    background: white; padding: 14px 18px; border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-bottom: 16px;
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  }
+  .filtros input, .filtros select {
+    padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px;
+    font-size: 13px; font-family: inherit;
+  }
+  .filtros input { min-width: 260px; }
+  .filtros label { font-size: 12px; color: #555; font-weight: 600; }
+  .contador { margin-left: auto; font-size: 13px; color: #666; }
+
+  .tabla-wrap {
+    background: white; border-radius: 10px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow-x: auto;
+  }
+  table { width: 100%; border-collapse: collapse; min-width: 1500px; }
+  thead {
+    background: var(--azul); color: white;
+    position: sticky; top: 0; z-index: 10;
+  }
+  th {
+    padding: 12px 10px; text-align: center; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.3px; font-weight: 600;
+    cursor: pointer; user-select: none; white-space: nowrap;
+  }
+  th.izq { text-align: left; }
+  th:hover { background: var(--azul2); }
+  td {
+    padding: 10px; font-size: 12.5px; border-bottom: 1px solid #eee;
+    vertical-align: middle; text-align: center;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+  tbody tr:hover { background: #FFF8DC; }
+  td.izq { text-align: left; }
+  td.nv { font-weight: 700; color: var(--azul); text-align: center; }
+  td.cliente {
+    text-align: left; max-width: 240px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  td.q-cell {
+    text-align: left; max-width: 320px;
+    white-space: normal; padding: 8px 10px;
+  }
+  .q-total {
+    font-weight: 700; font-size: 13.5px;
+    color: var(--azul); text-align: center;
+    margin-bottom: 4px; font-variant-numeric: tabular-nums;
+  }
+  .q-detalle {
+    font-size: 11px; color: #666;
+    line-height: 1.5; padding-top: 4px;
+    border-top: 1px dashed #e0e0e0;
+  }
+  .q-detalle strong { color: var(--azul); font-weight: 600; }
+  .q-detalle.q-externa {
+    color: #C68500;
+    background: #fff8e1;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border-top: 1px dashed #ffd54f;
+    text-align: center;
+    font-style: italic;
+    font-weight: 600;
+  }
+
+  .pill { padding: 3px 9px; border-radius: 12px; font-size: 10.5px; font-weight: 600; white-space: nowrap; }
+  .pill-rojo { background: #fde2e2; color: var(--rojo); }
+  .pill-naranja { background: #ffe9d6; color: var(--naranja); }
+  .pill-verde { background: #d9efce; color: var(--verde); }
+  .pill-gris { background: #e5e5e5; color: #555; }
+
+  .fecha-cell {
+    display: inline-flex; align-items: center; gap: 6px;
+    flex-wrap: wrap; justify-content: center;
+  }
+  .diff-dias {
+    font-size: 10.5px; font-weight: 600;
+    padding: 2px 7px; border-radius: 10px;
+  }
+  .diff-dias.pos { background: #ffe9d6; color: var(--naranja); }
+  .diff-dias.neg { background: #d9efce; color: var(--verde); }
+  .diff-dias.cero { background: #e5e5e5; color: #888; }
+
+  .avance-wrap { min-width: 140px; margin: 0 auto; }
+  .avance-bar {
+    position: relative; height: 22px; background: #f0f0f0;
+    border-radius: 11px; overflow: hidden;
+  }
+  .avance-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: linear-gradient(90deg, var(--verde), #8BC34A);
+    transition: width 0.3s;
+  }
+  .avance-fill.atrasada { background: linear-gradient(90deg, var(--rojo), #E57373); }
+  .avance-fill.warn { background: linear-gradient(90deg, var(--naranja), #FFB74D); }
+  .avance-texto {
+    position: absolute; left: 0; right: 0; top: 0; bottom: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #222;
+    text-shadow: 0 0 3px rgba(255,255,255,0.8);
+  }
+  .avance-sub { font-size: 10px; color: #777; margin-top: 3px; text-align: center; }
+
+  .loader { text-align: center; padding: 60px 20px; color: var(--azul); }
+  .spinner {
+    border: 4px solid #f3f3f3; border-top: 4px solid var(--azul);
+    border-radius: 50%; width: 38px; height: 38px;
+    animation: spin 1s linear infinite; margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error { background: #fde2e2; color: var(--rojo); padding: 16px; border-radius: 8px; text-align: center; }
+</style>
+</head>
+<body>
+<style>
+#polchile-nav{display:flex;align-items:center;background:#000;padding:0 20px;height:40px;border-bottom:1px solid #232932;font-family:'JetBrains Mono',monospace;gap:4px;position:sticky;top:0;z-index:9999;}
+#polchile-nav .nav-logo{font-size:10px;font-weight:700;letter-spacing:2px;color:#d4ff5a;margin-right:12px;}
+#polchile-nav a{padding:4px 12px;font-size:10px;font-weight:700;letter-spacing:1px;text-decoration:none;border-radius:4px;border:1px solid transparent;color:#8a94a3;transition:all 0.15s;}
+#polchile-nav a:hover{color:#d4ff5a;border-color:#d4ff5a;}
+#polchile-nav a.active{color:#d4ff5a;border-color:#d4ff5a;background:rgba(212,255,90,0.08);}
+#polchile-nav .nav-time{margin-left:auto;font-size:10px;color:#8a94a3;letter-spacing:1px;}
+</style>
+<div id="polchile-nav">
+  <span class="nav-logo">&#x2B21; POLCHILE</span>
+  <a href="https://cockpit-comericial-web.netlify.app/" id="nav-comercial" class="">COMERCIAL</a>
+  <a href="https://polchile-produccion.netlify.app/" id="nav-produccion" class="">PRODUCCION</a>
+  <a href="https://dashboard-finanzasweb.netlify.app/" id="nav-finanzas" class="">FINANZAS</a>
+  <a href="https://calendario-despachos.netlify.app/" id="nav-calendario" class="active">CALENDARIO</a>
+  <span class="nav-time" id="nav-clock"></span>
+</div>
+<script>
+(function(){var clk=document.getElementById('nav-clock');function tick(){var d=new Date(),h=d.getHours().toString().padStart(2,'0'),m=d.getMinutes().toString().padStart(2,'0'),s=d.getSeconds().toString().padStart(2,'0');if(clk)clk.textContent=h+':'+m+':'+s;}tick();setInterval(tick,1000);})();
+</script>
+<header>
+  <div>
+    <h1>📋 Notas de Venta — Listado Completo</h1>
+    <div class="actualizado" id="actualizado">Cargando...</div>
+  </div>
+  <button class="btn-refresh" onclick="cargar()">🔄 Actualizar</button>
+</header>
+
+<div id="contenido">
+  <div class="loader"><div class="spinner"></div>Cargando datos...</div>
+</div>
+
+<script>
+const IVA = 0.19;
+const sinIva = c => c / (1 + IVA);
+const TXT_EXTERNA = 'Compra externa / Faltan medidas';
+
+const fmt = n => new Intl.NumberFormat('es-CL').format(Math.round(n||0));
+const fmtQty = n => new Intl.NumberFormat('es-CL', {maximumFractionDigits: 2}).format(n||0);
+const fmtMoney = n => '$' + fmt(n);
+
+let DATOS_ORIG = [];
+let DATOS_FILT = [];
+let ORDEN = { col: 'fechaFinal', dir: 'asc' };
+
+function cargar() {
+  document.getElementById('contenido').innerHTML =
+    '<div class="loader"><div class="spinner"></div>Cargando datos...</div>';
+  google.script.run
+    .withSuccessHandler(render)
+    .withFailureHandler(err => {
+      document.getElementById('contenido').innerHTML =
+        '<div class="error">Error: ' + err.message + '</div>';
+    })
+    .getDashboardData();
+}
+
+function parseDate(str) {
+  if (!str) return null;
+  const m = String(str).match(/^(\d{2})-(\d{2})-(\d{4})/);
+  if (m) return new Date(+m[3], +m[2]-1, +m[1]);
+  const d = new Date(str);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function render(resp) {
+  if (resp.error) {
+    document.getElementById('contenido').innerHTML = '<div class="error">'+resp.error+'</div>';
+    return;
+  }
+  document.getElementById('actualizado').textContent =
+    'Actualizado: ' + resp.fecha + ' — ' + resp.datos.length + ' NV';
+  
+  DATOS_ORIG = resp.datos;
+  DATOS_FILT = [...DATOS_ORIG];
+  
+  const facturadoNeto = resp.facturadoNetoMes || { totalFav: 0, totalNcv: 0, neto: 0 };
+
+  const k = {
+    total: DATOS_ORIG.length,
+    atrasadas: DATOS_ORIG.filter(d => d.estaAtrasada).length,
+    sumTotalNv: 0, sumTotalNeto: 0,
+    sumFacturado: 0, sumPorFacturar: 0,
+    sumPagado: 0, sumPendCobro: 0,
+    sumEntregado: 0, sumPorEntregar: 0
+  };
+  DATOS_ORIG.forEach(d => {
+    k.sumTotalNv     += d.totalNv;
+    k.sumTotalNeto   += d.totalNeto;
+    k.sumFacturado   += d.facturado;
+    k.sumPorFacturar += d.porFacturar;
+    k.sumPagado      += d.pagado;
+    k.sumPendCobro   += d.pendCobro;
+    k.sumEntregado   += d.entregadoPesos;
+    k.sumPorEntregar += d.porEntregarPesos;
+  });
+
+  let html = '';
+  
+  html += '<div class="resumen-scroll"><div class="resumen">';
+  
+  html += cardFacturadoNeto(facturadoNeto);
+  
+  html += cardSingle('NV totales', k.total, '');
+  html += cardSingle('NV atrasadas', k.atrasadas, 'rojo');
+  html += cardSplit('Total facturable', '', 'Con IVA', fmtMoney(k.sumTotalNv), 'Sin IVA', fmtMoney(k.sumTotalNeto));
+  html += cardSplit('Facturado (planilla)', 'verde', 'Con IVA', fmtMoney(k.sumFacturado), 'Sin IVA', fmtMoney(sinIva(k.sumFacturado)));
+  html += cardSplit('Por facturar', 'amarillo', 'Con IVA', fmtMoney(k.sumPorFacturar), 'Sin IVA', fmtMoney(sinIva(k.sumPorFacturar)));
+  html += cardSplit('Pagado', 'verde', 'Con IVA', fmtMoney(k.sumPagado), 'Sin IVA', fmtMoney(sinIva(k.sumPagado)));
+  html += cardSplit('Pendiente cobro', 'rojo', 'Con IVA', fmtMoney(k.sumPendCobro), 'Sin IVA', fmtMoney(sinIva(k.sumPendCobro)));
+  html += cardSplit('Entregado $', 'verde', 'Sin IVA', fmtMoney(k.sumEntregado), 'Con IVA', fmtMoney(k.sumEntregado * (1+IVA)));
+  html += cardSplit('Por entregar $', 'naranja', 'Sin IVA', fmtMoney(k.sumPorEntregar), 'Con IVA', fmtMoney(k.sumPorEntregar * (1+IVA)));
+  html += '</div></div>';
+
+  html += '<div class="seccion-titulo">📅 Resumen Semanal del Mes en Curso</div>';
+  html += construirSemanal(DATOS_ORIG);
+
+  html += '<div class="filtros">';
+  html += '<label>🔍 Buscar:</label>';
+  html += '<input type="text" id="busqueda" placeholder="NV, cliente..." oninput="filtrar()">';
+  html += '<label>Estado:</label>';
+  html += '<select id="filtroEstado" onchange="filtrar()">';
+  html += '<option value="">Todos</option>';
+  html += '<option value="atrasada">Solo atrasadas</option>';
+  html += '<option value="aldia">Solo al día</option>';
+  html += '<option value="reprog">Solo reprogramadas</option>';
+  html += '<option value="externa">Compra externa</option>';
+  html += '</select>';
+  html += '<span class="contador" id="contador"></span>';
+  html += '</div>';
+
+  html += '<div class="tabla-wrap"><table id="tablaNV"><thead><tr>';
+  const cols = [
+    ['nv', 'NV', 'centro'],
+    ['fechaFinal', 'Fecha Entrega', 'centro'],
+    ['cliente', 'Cliente', 'izq'],
+    ['qSolicitado', 'Q Solicitado', 'izq'],
+    ['avance', 'Avance Despacho', 'centro'],
+    ['totalNv', 'Total NV', 'centro'],
+    ['totalNeto', 'Total Neto', 'centro'],
+    ['facturado', 'Facturado', 'centro'],
+    ['porFacturar', 'Por Facturar', 'centro'],
+    ['pagado', 'Pagado', 'centro'],
+    ['pendCobro', 'Pend. Cobro', 'centro'],
+    ['entregadoPesos', 'Entregado $', 'centro'],
+    ['porEntregarPesos', 'Por Entregar $', 'centro']
+  ];
+  cols.forEach(([key, label, align]) => {
+    html += '<th class="'+align+'" onclick="ordenar(\''+key+'\')">'+label+'</th>';
+  });
+  html += '</tr></thead><tbody id="tbody"></tbody></table></div>';
+
+  document.getElementById('contenido').innerHTML = html;
+  pintarFilas();
+}
+
+function cardSingle(titulo, valor, color) {
+  return '<div class="resumen-card '+(color||'')+'">'
+       + '<div class="card-titulo">'+titulo+'</div>'
+       + '<div class="card-single"><div class="card-monto">'+valor+'</div></div>'
+       + '</div>';
+}
+
+function cardSplit(titulo, color, tagA, valA, tagB, valB) {
+  return '<div class="resumen-card split '+(color||'')+'">'
+       + '<div class="card-titulo">'+titulo+'</div>'
+       + '<div class="card-split">'
+       +   '<div class="card-half"><div class="card-tag">'+tagA+'</div><div class="card-monto">'+valA+'</div></div>'
+       +   '<div class="card-half"><div class="card-tag">'+tagB+'</div><div class="card-monto">'+valB+'</div></div>'
+       + '</div></div>';
+}
+
+function cardFacturadoNeto(f) {
+  const fav  = fmtMoney(f.totalFav || 0);
+  const ncv  = fmtMoney(f.totalNcv || 0);
+  const neto = fmtMoney(f.neto || 0);
+  
+  return '<div class="resumen-card facturado-neto verde">'
+       + '<div class="card-titulo">💰 Facturado Neto · Mes Actual</div>'
+       + '<div style="padding:10px 14px">'
+       +   '<div class="card-monto" style="font-size:22px">'+neto+'</div>'
+       +   '<div class="fav-ncv">'
+       +     '<span>FAV: <b>'+fav+'</b></span>'
+       +     '<span>NCV: <b>'+ncv+'</b></span>'
+       +   '</div>'
+       + '</div>'
+       + '</div>';
+}
+
+function construirSemanal(datos) {
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const anio = hoy.getFullYear();
+  const mes = hoy.getMonth();
+  const primerDiaMes = new Date(anio, mes, 1);
+  const ultimoDiaMes = new Date(anio, mes+1, 0);
+  const nombreMes = primerDiaMes.toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
+  
+  const semanas = [];
+  let cursor = new Date(primerDiaMes);
+  const diaSem = cursor.getDay();
+  const offset = diaSem === 0 ? 6 : diaSem - 1;
+  cursor.setDate(cursor.getDate() - offset);
+  
+  let nSem = 1;
+  while (cursor <= ultimoDiaMes) {
+    const ini = new Date(cursor);
+    const fin = new Date(cursor); fin.setDate(fin.getDate() + 6);
+    if (fin >= primerDiaMes) {
+      semanas.push({
+        nombre: 'Sem ' + nSem,
+        rango: formatRango(ini, fin),
+        ini: new Date(ini), fin: new Date(fin),
+        porFacturar: 0, pendCobro: 0, porEntregar: 0
+      });
+      nSem++;
+    }
+    cursor.setDate(cursor.getDate() + 7);
+  }
+  
+  let totales = { porFacturar: 0, pendCobro: 0, porEntregar: 0 };
+  let fueraDeMes = { porFacturar: 0, pendCobro: 0, porEntregar: 0 };
+  
+  datos.forEach(d => {
+    const f = parseDate(d.fechaFinal);
+    if (!f) return;
+    totales.porFacturar += d.porFacturar;
+    totales.pendCobro   += d.pendCobro;
+    totales.porEntregar += d.porEntregarPesos;
+    const sem = semanas.find(s => f >= s.ini && f <= s.fin);
+    if (sem) {
+      sem.porFacturar += d.porFacturar;
+      sem.pendCobro   += d.pendCobro;
+      sem.porEntregar += d.porEntregarPesos;
+    } else {
+      fueraDeMes.porFacturar += d.porFacturar;
+      fueraDeMes.pendCobro   += d.pendCobro;
+      fueraDeMes.porEntregar += d.porEntregarPesos;
+    }
+  });
+  
+  let html = '<div class="semanal-grid"><table><thead><tr>';
+  html += '<th style="text-align:left">Semana ('+nombreMes+')</th>';
+  html += '<th>Por Facturar</th>';
+  html += '<th>Pendiente Cobro</th>';
+  html += '<th>Por Entregar $</th>';
+  html += '</tr></thead><tbody>';
+  
+  semanas.forEach(s => {
+    html += '<tr>';
+    html += '<td class="semana-label">'+s.nombre+' <span style="color:#999;font-weight:400;font-size:11px">('+s.rango+')</span></td>';
+    html += '<td class="monto-amarillo">'+fmtMoney(s.porFacturar)+'</td>';
+    html += '<td class="monto-rojo">'+fmtMoney(s.pendCobro)+'</td>';
+    html += '<td class="monto-naranja">'+fmtMoney(s.porEntregar)+'</td>';
+    html += '</tr>';
+  });
+  
+  if (fueraDeMes.porFacturar > 0 || fueraDeMes.pendCobro > 0 || fueraDeMes.porEntregar > 0) {
+    html += '<tr>';
+    html += '<td class="semana-label" style="color:#999">Fuera del mes</td>';
+    html += '<td class="monto-amarillo">'+fmtMoney(fueraDeMes.porFacturar)+'</td>';
+    html += '<td class="monto-rojo">'+fmtMoney(fueraDeMes.pendCobro)+'</td>';
+    html += '<td class="monto-naranja">'+fmtMoney(fueraDeMes.porEntregar)+'</td>';
+    html += '</tr>';
+  }
+  
+  html += '<tr class="total-row">';
+  html += '<td style="text-align:left">TOTAL</td>';
+  html += '<td>'+fmtMoney(totales.porFacturar)+'</td>';
+  html += '<td>'+fmtMoney(totales.pendCobro)+'</td>';
+  html += '<td>'+fmtMoney(totales.porEntregar)+'</td>';
+  html += '</tr>';
+  html += '</tbody></table></div>';
+  return html;
+}
+
+function formatRango(ini, fin) {
+  const f = d => String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0');
+  return f(ini) + ' al ' + f(fin);
+}
+
+function pintarFilas() {
+  DATOS_FILT.sort((a, b) => {
+    let va = a[ORDEN.col], vb = b[ORDEN.col];
+    if (typeof va === 'string') {
+      va = va.toLowerCase(); vb = (vb||'').toLowerCase();
+      return ORDEN.dir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+    }
+    va = Number(va)||0; vb = Number(vb)||0;
+    return ORDEN.dir === 'asc' ? va-vb : vb-va;
+  });
+
+  let html = '';
+  DATOS_FILT.forEach(d => {
+    let fechaPill = '';
+    if (d.estaAtrasada) {
+      const cls = d.diasAtrasoReal > 30 ? 'pill-rojo' : d.diasAtrasoReal > 7 ? 'pill-naranja' : 'pill-verde';
+      fechaPill = ' <span class="pill '+cls+'">'+d.diasAtrasoReal+'d</span>';
+    }
+    
+    let diffPill = '';
+    if (d.diffDias !== null && d.diffDias !== undefined) {
+      if (d.diffDias > 0) {
+        diffPill = '<span class="diff-dias pos" title="Días desplazada vs fecha original">+'+d.diffDias+'d</span>';
+      } else if (d.diffDias < 0) {
+        diffPill = '<span class="diff-dias neg" title="Adelantada vs fecha original">'+d.diffDias+'d</span>';
+      } else {
+        diffPill = '<span class="diff-dias cero" title="Sin cambio">0d</span>';
+      }
+    }
+    
+    let modifPill = '';
+    if (d.tieneModif) {
+      modifPill = ' <span class="pill pill-gris" title="NV reprogramada">🔄</span>';
+    }
+
+    const pct = d.pctAvance;
+    let fillClass = '';
+    if (d.estaAtrasada && pct < 1) fillClass = 'atrasada';
+    else if (pct < 0.5) fillClass = 'warn';
+    const pctShow = (pct*100).toFixed(0) + '%';
+    
+    const avanceHTML = 
+      '<div class="avance-wrap">' +
+        '<div class="avance-bar">' +
+          '<div class="avance-fill '+fillClass+'" style="width:'+(pct*100)+'%"></div>' +
+          '<div class="avance-texto">'+pctShow+'</div>' +
+        '</div>' +
+        '<div class="avance-sub">'+fmtQty(d.qDespachado)+' / '+fmtQty(d.qSolicitado)+'</div>' +
+      '</div>';
+    
+    const opTxt = d.opPorClase || '';
+    const esCompraExterna = opTxt === TXT_EXTERNA;
+    const totalQ = '<div class="q-total">'+fmtQty(d.qSolicitado)+'</div>';
+    let detalle = '';
+    if (esCompraExterna) {
+      detalle = '<div class="q-detalle q-externa">⚠️ '+opTxt+'</div>';
+    } else if (opTxt) {
+      detalle = '<div class="q-detalle">'+formatearOpClase(opTxt)+'</div>';
+    }
+    const qCelda = '<td class="q-cell" title="'+opTxt+'">'+totalQ+detalle+'</td>';
+
+    html += '<tr>';
+    html += '<td class="nv">'+d.nv+'</td>';
+    html += '<td><div class="fecha-cell">'+(d.fechaFinal||'')+fechaPill+diffPill+modifPill+'</div></td>';
+    html += '<td class="cliente" title="'+d.cliente+'">'+d.cliente+'</td>';
+    html += qCelda;
+    html += '<td>'+avanceHTML+'</td>';
+    html += '<td>'+fmtMoney(d.totalNv)+'</td>';
+    html += '<td>'+fmtMoney(d.totalNeto)+'</td>';
+    html += '<td style="color:#70AD47">'+fmtMoney(d.facturado)+'</td>';
+    html += '<td style="color:#C68500">'+fmtMoney(d.porFacturar)+'</td>';
+    html += '<td style="color:#70AD47">'+fmtMoney(d.pagado)+'</td>';
+    html += '<td style="color:#C00000">'+fmtMoney(d.pendCobro)+'</td>';
+    html += '<td style="color:#70AD47">'+fmtMoney(d.entregadoPesos)+'</td>';
+    html += '<td style="color:#C68500">'+fmtMoney(d.porEntregarPesos)+'</td>';
+    html += '</tr>';
+  });
+  document.getElementById('tbody').innerHTML = html;
+  document.getElementById('contador').textContent = DATOS_FILT.length + ' de ' + DATOS_ORIG.length + ' NV';
+}
+
+function formatearOpClase(txt) {
+  return txt.split(' | ').map(parte => {
+    const idx = parte.indexOf(':');
+    if (idx > 0) {
+      return '<strong>'+parte.substring(0, idx)+':</strong>'+parte.substring(idx+1);
+    }
+    return parte;
+  }).join(' | ');
+}
+
+function ordenar(col) {
+  if (col === 'avance') col = 'pctAvance';
+  if (ORDEN.col === col) ORDEN.dir = ORDEN.dir === 'asc' ? 'desc' : 'asc';
+  else { ORDEN.col = col; ORDEN.dir = 'asc'; }
+  pintarFilas();
+}
+
+function filtrar() {
+  const q = (document.getElementById('busqueda').value || '').toLowerCase().trim();
+  const e = document.getElementById('filtroEstado').value;
+  DATOS_FILT = DATOS_ORIG.filter(d => {
+    if (q && !(String(d.nv).toLowerCase().includes(q) || d.cliente.toLowerCase().includes(q))) return false;
+    if (e === 'atrasada' && !d.estaAtrasada) return false;
+    if (e === 'aldia' && d.estaAtrasada) return false;
+    if (e === 'reprog' && !d.tieneModif) return false;
+    if (e === 'externa' && d.opPorClase !== TXT_EXTERNA) return false;
+    return true;
+  });
+  pintarFilas();
+}
+
+cargar();
+</script>
+</body>
+</html>

@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intranet Polchile</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --azul-oscuro: #101d37;
+    --azul-medio: #1a2b52;
+    --azul-acento: #2f5bd7;
+    --naranja: #e8833a;
+    --verde: #2fa86b;
+    --amarillo: #d9a017;
+    --gris-fondo: #eef1f6;
+    --gris-borde: #dde2ec;
+    --texto-suave: #5b6478;
+    --blanco: #ffffff;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--gris-fondo);
+    margin: 0;
+    color: #1c2333;
+  }
+
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, var(--azul-oscuro) 0%, var(--azul-medio) 100%);
+  }
+
+  #login-box {
+    width: 340px;
+    background: var(--blanco);
+    border-radius: 10px;
+    padding: 32px 28px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.35);
+  }
+
+  #login-box .marca {
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--azul-acento);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  #login-box h1 {
+    font-size: 20px;
+    margin: 0 0 22px 0;
+    color: var(--azul-oscuro);
+  }
+
+  #login-box label {
+    display: block;
+    font-size: 12px;
+    color: var(--texto-suave);
+    margin-bottom: 4px;
+    margin-top: 14px;
+  }
+
+  #login-box input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--gris-borde);
+    border-radius: 6px;
+    font-size: 14px;
+  }
+
+  #login-box input:focus {
+    outline: 2px solid var(--azul-acento);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+
+  #login-box button {
+    width: 100%;
+    margin-top: 22px;
+    padding: 11px;
+    background: var(--azul-acento);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  #login-box button:hover { background: #2549b3; }
+
+  #login-error {
+    color: #c0362c;
+    font-size: 13px;
+    margin-top: 12px;
+    min-height: 16px;
+  }
+
+  #app { display: none; }
+
+  header.topbar {
+    background: var(--azul-oscuro);
+    color: white;
+    padding: 18px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  header.topbar .marca {
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #8ba3e8;
+    font-weight: 700;
+  }
+
+  header.topbar h1 {
+    font-size: 19px;
+    margin: 2px 0 0 0;
+    font-weight: 600;
+  }
+
+  header.topbar .usuario {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+  }
+
+  header.topbar button#logout {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.25);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  header.topbar button#logout:hover { background: rgba(255,255,255,.2); }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 32px 60px;
+  }
+
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 26px;
+  }
+
+  .kpi {
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+
+  .kpi .etiqueta {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--texto-suave);
+    font-weight: 600;
+  }
+
+  .kpi .valor {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--azul-oscuro);
+    margin-top: 6px;
+  }
+
+  .panel {
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .panel-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--gris-borde);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .panel-header h2 {
+    font-size: 15px;
+    margin: 0;
+    color: var(--azul-oscuro);
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+
+  th {
+    text-align: left;
+    padding: 10px 20px;
+    background: #f6f8fc;
+    color: var(--texto-suave);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    border-bottom: 1px solid var(--gris-borde);
+  }
+
+  td {
+    padding: 12px 20px;
+    border-bottom: 1px solid #eef1f6;
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafbfd; }
+
+  .barra-wrap { display: flex; align-items: center; gap: 8px; }
+  .barra-bg {
+    background: #e4e8f2;
+    border-radius: 6px;
+    height: 8px;
+    width: 100px;
+    overflow: hidden;
+  }
+  .barra-fill { height: 100%; border-radius: 6px; }
+  .barra-fill.bajo { background: #d9534f; }
+  .barra-fill.medio { background: var(--amarillo); }
+  .barra-fill.alto { background: var(--verde); }
+  .pct-txt { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 12.5px; min-width: 34px; }
+
+  .estado-chip {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .estado-chip.proceso { background: #fdf1de; color: #a06a12; }
+  .estado-chip.sin-iniciar { background: #f4e2e0; color: #a13a30; }
+
+  .vacio {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--texto-suave);
+  }
+
+  @media (max-width: 700px) {
+    .kpis { grid-template-columns: 1fr !important; }
+    main { padding: 20px 14px 40px; }
+    header.topbar { padding: 14px 18px; }
+    th:nth-child(3), td:nth-child(3) { display: none; }
+  }
+
+  .tabs-bodega {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 14px 20px 0 20px;
+  }
+  .tab-bodega {
+    padding: 6px 14px;
+    background: #f6f8fc;
+    border: 1px solid var(--gris-borde);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--texto-suave);
+  }
+  .tab-bodega.active {
+    background: var(--azul-oscuro);
+    color: white;
+    border-color: var(--azul-oscuro);
+  }
+  .buscador-stock {
+    margin: 14px 20px 0 20px;
+    padding: 9px 14px;
+    border: 1px solid var(--gris-borde);
+    border-radius: 6px;
+    font-size: 13.5px;
+    width: calc(100% - 40px);
+  }
+  .buscador-stock:focus {
+    outline: 2px solid var(--azul-acento);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+  .stock-bajo { color: #c0362c; font-weight: 700; }
+
+  .tab-nav {
+    display: flex;
+    gap: 4px;
+    border-bottom: 2px solid var(--gris-borde);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .tab-nav-item {
+    padding: 10px 18px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--texto-suave);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color .15s, border-color .15s;
+  }
+  .tab-nav-item:hover { color: var(--azul-oscuro); }
+  .tab-nav-item.active {
+    color: var(--azul-acento);
+    border-bottom-color: var(--azul-acento);
+  }
+  @media (max-width: 700px) {
+    .tab-nav { border-bottom: none; }
+    .tab-nav-item { border: 1px solid var(--gris-borde); border-radius: 20px; margin-bottom: 6px; }
+    .tab-nav-item.active { background: var(--azul-acento); color: white; border-color: var(--azul-acento); }
+  }
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div id="login-box">
+    <div class="marca">Polchile</div>
+    <h1>Intranet Polchile</h1>
+    <label for="email">Correo</label>
+    <input id="email" type="email" placeholder="nombre@polchile.cl" autocomplete="username">
+    <label for="password">Contraseña</label>
+    <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+    <button id="btn-login" type="button">Ingresar</button>
+    <div id="login-error"></div>
+  </div>
+</div>
+
+<div id="app">
+  <header class="topbar">
+    <div>
+      <div class="marca">Polchile</div>
+      <h1>Intranet Polchile</h1>
+    </div>
+    <div class="usuario">
+      <span id="nombre-usuario"></span>
+      <button id="logout">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="kpis" style="grid-template-columns: repeat(5, 1fr);">
+      <div class="kpi">
+        <div class="etiqueta">NVs pendientes</div>
+        <div class="valor" id="kpi-total">—</div>
+      </div>
+      <div class="kpi">
+        <div class="etiqueta">Avance promedio</div>
+        <div class="valor" id="kpi-avance">—</div>
+      </div>
+      <div class="kpi">
+        <div class="etiqueta">Monto pendiente</div>
+        <div class="valor" id="kpi-monto">—</div>
+      </div>
+      <div class="kpi">
+        <div class="etiqueta">Facturación del período</div>
+        <div class="valor" id="kpi-facturacion">—</div>
+        <div style="font-size:11px; color:var(--texto-suave); margin-top:2px;" id="kpi-facturacion-rango"></div>
+      </div>
+      <div class="kpi">
+        <div class="etiqueta">Facturación acumulada (año)</div>
+        <div class="valor" id="kpi-facturacion-anual">—</div>
+        <div style="font-size:11px; color:var(--texto-suave); margin-top:2px;" id="kpi-facturacion-anual-txt"></div>
+      </div>
+    </div>
+
+    <div class="tab-nav" id="tab-nav">
+      <div class="tab-nav-item active" data-seccion="tab-nvs">Notas de Venta</div>
+      <div class="tab-nav-item" data-seccion="tab-stock">Stock</div>
+      <div class="tab-nav-item" data-seccion="tab-fact-periodo">Facturación del Período</div>
+      <div class="tab-nav-item" data-seccion="tab-fact-anual">Facturación del Año</div>
+    </div>
+
+    <div class="tab-contenido" id="tab-nvs">
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Detalle por nota de venta</h2>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>NV</th>
+              <th>Vendedor</th>
+              <th>Monto</th>
+              <th>Cant. pendiente</th>
+              <th>Avance</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-body"></tbody>
+        </table>
+        <div id="tabla-vacio" class="vacio" style="display:none;">No hay notas de venta pendientes en este momento.</div>
+      </div>
+    </div>
+
+    <div class="tab-contenido" id="tab-stock" style="display:none;">
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Stock de Productos</h2>
+        </div>
+        <div class="tabs-bodega" id="tabs-bodega"></div>
+        <input class="buscador-stock" id="buscador-stock" type="text" placeholder="Buscar por código o nombre...">
+        <table style="margin-top:14px;">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Bodega</th>
+              <th>Unidad</th>
+              <th>Stock físico</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-stock-body"></tbody>
+        </table>
+        <div id="stock-vacio" class="vacio" style="display:none;">Sin resultados.</div>
+      </div>
+    </div>
+
+    <div class="tab-contenido" id="tab-fact-periodo" style="display:none;">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 id="titulo-facturacion-periodo">Facturación por Vendedor — Período Vigente</h2>
+          <span id="rango-periodo-txt" style="font-size:12px; color:var(--texto-suave);"></span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Vendedor</th>
+              <th>Total facturado</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-facturacion-body"></tbody>
+        </table>
+        <div id="facturacion-vacio" class="vacio" style="display:none;">Sin datos de facturación para el período vigente.</div>
+      </div>
+    </div>
+
+    <div class="tab-contenido" id="tab-fact-anual" style="display:none;">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 id="titulo-facturacion-anual">Facturación por Vendedor — Año en Curso</h2>
+          <span id="anio-actual-txt" style="font-size:12px; color:var(--texto-suave);"></span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Vendedor</th>
+              <th>N° períodos facturados</th>
+              <th>Total facturado (año)</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-facturacion-anual-body"></tbody>
+        </table>
+        <div id="facturacion-anual-vacio" class="vacio" style="display:none;">Sin datos de facturación para el año en curso.</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  const SUPABASE_URL = "https://hauricnpsamnwyhondse.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_JdCZQMZNHyLixuDDmtTdlA_rj_8rsgG";
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const $ = (id) => document.getElementById(id);
+
+  function formatoCLP(n) {
+    return "$" + Number(n || 0).toLocaleString("es-CL", { maximumFractionDigits: 0 });
+  }
+
+  function claseAvance(pct) {
+    if (pct < 34) return "bajo";
+    if (pct < 75) return "medio";
+    return "alto";
+  }
+
+  async function login() {
+    $("login-error").textContent = "";
+    const email = $("email").value.trim();
+    const password = $("password").value;
+    if (!email || !password) {
+      $("login-error").textContent = "Ingresa tu correo y contraseña.";
+      return;
+    }
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      $("login-error").textContent = "No pudimos iniciar sesión. Revisa tus datos.";
+      return;
+    }
+    await mostrarApp();
+  }
+
+  async function logout() {
+    await sb.auth.signOut();
+    location.reload();
+  }
+
+  async function cargarDatos() {
+    const { data: { user } } = await sb.auth.getUser();
+    $("nombre-usuario").textContent = user?.email ?? "";
+
+    const { data: nvs, error } = await sb
+      .from("notas_venta_pendientes")
+      .select("*, vendedores(nombre)")
+      .order("porcentaje_avance", { ascending: true });
+
+    const tbody = $("tabla-body");
+    const vacio = $("tabla-vacio");
+
+    if (error) {
+      tbody.innerHTML = "";
+      vacio.style.display = "block";
+      vacio.textContent = "No se pudo cargar la información. Intenta recargar la página.";
+      return;
+    }
+
+    if (!nvs || nvs.length === 0) {
+      tbody.innerHTML = "";
+      vacio.style.display = "block";
+      vacio.textContent = "No hay notas de venta pendientes en este momento.";
+      $("kpi-total").textContent = "0";
+      $("kpi-avance").textContent = "—";
+      $("kpi-monto").textContent = formatoCLP(0);
+      return;
+    }
+
+    vacio.style.display = "none";
+
+    $("kpi-total").textContent = nvs.length;
+    const avancePromedio = nvs.reduce((s, n) => s + Number(n.porcentaje_avance || 0), 0) / nvs.length;
+    $("kpi-avance").textContent = avancePromedio.toFixed(1) + "%";
+    const montoTotal = nvs.reduce((s, n) => s + Number(n.monto_nv || 0), 0);
+    $("kpi-monto").textContent = formatoCLP(montoTotal);
+
+    tbody.innerHTML = nvs.map((n) => {
+      const pct = Number(n.porcentaje_avance || 0);
+      const clase = claseAvance(pct);
+      const estadoClase = n.estado === "En proceso" ? "proceso" : "sin-iniciar";
+      return `
+        <tr>
+          <td>${n.nota_venta}</td>
+          <td>${n.vendedores?.nombre ?? n.codvend}</td>
+          <td>${formatoCLP(n.monto_nv)}</td>
+          <td>${n.cantidad_pendiente}</td>
+          <td>
+            <div class="barra-wrap">
+              <div class="barra-bg"><div class="barra-fill ${clase}" style="width:${pct}%"></div></div>
+              <span class="pct-txt">${pct}%</span>
+            </div>
+          </td>
+          <td><span class="estado-chip ${estadoClase}">${n.estado}</span></td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+
+  let stockCompleto = [];
+  let bodegaActiva = "Todas";
+  let rolActual = "vendedor";
+
+  async function obtenerRol() {
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) return "vendedor";
+    const { data, error } = await sb
+      .from("perfiles")
+      .select("rol")
+      .eq("user_id", user.id)
+      .single();
+    return error || !data ? "vendedor" : (data.rol || "vendedor");
+  }
+
+  async function cargarStock() {
+    const { data, error } = await sb
+      .from("productos_stock")
+      .select("codigo, nombre, bodega_nombre, unidmed, stk_fisico")
+      .order("nombre", { ascending: true });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+    stockCompleto = data || [];
+    construirTabsBodega();
+    renderStock();
+  }
+
+  function construirTabsBodega() {
+    const bodegas = [...new Set(stockCompleto.map(p => p.bodega_nombre || "Sin bodega"))].sort();
+    const cont = $("tabs-bodega");
+    cont.innerHTML = ["Todas", ...bodegas].map(b => `
+      <div class="tab-bodega ${b === bodegaActiva ? "active" : ""}" data-bodega="${b}">${b}</div>
+    `).join("");
+    cont.querySelectorAll(".tab-bodega").forEach(tab => {
+      tab.addEventListener("click", () => {
+        bodegaActiva = tab.dataset.bodega;
+        construirTabsBodega();
+        renderStock();
+      });
+    });
+  }
+
+  function renderStock() {
+    const term = $("buscador-stock").value.toLowerCase();
+    let filas = stockCompleto;
+
+    if (bodegaActiva !== "Todas") {
+      filas = filas.filter(p => (p.bodega_nombre || "Sin bodega") === bodegaActiva);
+    }
+    if (term) {
+      filas = filas.filter(p =>
+        (p.codigo || "").toLowerCase().includes(term) ||
+        (p.nombre || "").toLowerCase().includes(term)
+      );
+    }
+
+    const tbody = $("tabla-stock-body");
+    const vacio = $("stock-vacio");
+
+    if (!filas.length) {
+      tbody.innerHTML = "";
+      vacio.style.display = "block";
+      return;
+    }
+    vacio.style.display = "none";
+
+    tbody.innerHTML = filas.map(p => {
+      const stk = Number(p.stk_fisico || 0);
+      const claseStk = stk <= 0 ? "stock-bajo" : "";
+      return `
+        <tr>
+          <td>${p.codigo ?? ""}</td>
+          <td>${p.nombre ?? ""}</td>
+          <td>${p.bodega_nombre ?? "Sin bodega"}</td>
+          <td>${p.unidmed ?? ""}</td>
+          <td class="${claseStk}">${stk.toLocaleString("es-CL")}</td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  $("buscador-stock").addEventListener("input", renderStock);
+
+
+  function formatoFechaCorta(iso) {
+    if (!iso) return "";
+    const [y, m, d] = iso.split("-");
+    return `${d}/${m}/${y}`;
+  }
+
+  async function cargarFacturacion() {
+    if (rolActual !== "admin") {
+      $("titulo-facturacion-periodo").textContent = "Mi Facturación — Período Vigente";
+      $("titulo-facturacion-anual").textContent = "Mi Facturación — Año en Curso";
+    }
+
+    const { data, error } = await sb
+      .from("facturacion_periodo")
+      .select("*, vendedores(nombre)")
+      .order("periodo_inicio", { ascending: false });
+
+    const kpiEl = $("kpi-facturacion");
+    const kpiRango = $("kpi-facturacion-rango");
+    const tbody = $("tabla-facturacion-body");
+    const vacio = $("facturacion-vacio");
+    const rangoTxt = $("rango-periodo-txt");
+
+    if (error || !data || data.length === 0) {
+      kpiEl.textContent = formatoCLP(0);
+      kpiRango.textContent = "";
+      tbody.innerHTML = "";
+      vacio.style.display = "block";
+      rangoTxt.textContent = "";
+      return;
+    }
+
+    // El período vigente es el periodo_inicio más reciente presente en los datos
+    const periodoVigente = data[0].periodo_inicio;
+    const filasPeriodo = data.filter(f => f.periodo_inicio === periodoVigente);
+
+    const totalPeriodo = filasPeriodo.reduce((s, f) => s + Number(f.total_facturado || 0), 0);
+    kpiEl.textContent = formatoCLP(totalPeriodo);
+
+    const rango = `${formatoFechaCorta(filasPeriodo[0].periodo_inicio)} – ${formatoFechaCorta(filasPeriodo[0].periodo_fin)}`;
+    kpiRango.textContent = rango;
+    rangoTxt.textContent = rango;
+
+    vacio.style.display = "none";
+    tbody.innerHTML = filasPeriodo
+      .sort((a, b) => Number(b.total_facturado || 0) - Number(a.total_facturado || 0))
+      .map(f => `
+        <tr>
+          <td>${f.vendedores?.nombre ?? f.codvend}</td>
+          <td style="font-weight:600;">${formatoCLP(f.total_facturado)}</td>
+        </tr>
+      `).join("");
+
+    // ── Acumulado del año en curso (todos los períodos cuyo periodo_inicio cae en este año) ──
+    const anioActual = new Date().getFullYear();
+    const filasAnio = data.filter(f => new Date(f.periodo_inicio + "T00:00:00").getFullYear() === anioActual);
+
+    const totalAnio = filasAnio.reduce((s, f) => s + Number(f.total_facturado || 0), 0);
+    $("kpi-facturacion-anual").textContent = formatoCLP(totalAnio);
+    $("kpi-facturacion-anual-txt").textContent = `Año ${anioActual}`;
+    $("anio-actual-txt").textContent = `Año ${anioActual}`;
+
+    const tbodyAnual = $("tabla-facturacion-anual-body");
+    const vacioAnual = $("facturacion-anual-vacio");
+
+    if (!filasAnio.length) {
+      tbodyAnual.innerHTML = "";
+      vacioAnual.style.display = "block";
+      return;
+    }
+    vacioAnual.style.display = "none";
+
+    const porVendedorAnio = {};
+    filasAnio.forEach(f => {
+      const key = f.codvend;
+      if (!porVendedorAnio[key]) {
+        porVendedorAnio[key] = { nombre: f.vendedores?.nombre ?? f.codvend, total: 0, periodos: 0 };
+      }
+      porVendedorAnio[key].total += Number(f.total_facturado || 0);
+      porVendedorAnio[key].periodos += 1;
+    });
+
+    tbodyAnual.innerHTML = Object.values(porVendedorAnio)
+      .sort((a, b) => b.total - a.total)
+      .map(v => `
+        <tr>
+          <td>${v.nombre}</td>
+          <td>${v.periodos}</td>
+          <td style="font-weight:600;">${formatoCLP(v.total)}</td>
+        </tr>
+      `).join("");
+  }
+
+  async function mostrarApp() {
+    $("login-screen").style.display = "none";
+    $("app").style.display = "block";
+    rolActual = await obtenerRol();
+    await cargarDatos();
+    await cargarStock();
+    await cargarFacturacion();
+  }
+
+  function activarPestana(idSeccion) {
+    document.querySelectorAll(".tab-contenido").forEach(el => {
+      el.style.display = el.id === idSeccion ? "block" : "none";
+    });
+    document.querySelectorAll(".tab-nav-item").forEach(el => {
+      el.classList.toggle("active", el.dataset.seccion === idSeccion);
+    });
+  }
+
+  document.querySelectorAll(".tab-nav-item").forEach(tab => {
+    tab.addEventListener("click", () => activarPestana(tab.dataset.seccion));
+  });
+
+  $("btn-login").addEventListener("click", login);
+  $("password").addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
+  $("logout").addEventListener("click", logout);
+
+  (async () => {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) await mostrarApp();
+  })();
+  
+</script>
+</body>
+</html>

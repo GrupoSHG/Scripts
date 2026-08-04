@@ -23,7 +23,22 @@ from openpyxl.utils import get_column_letter
 # ─────────────────────────────────────────────
 #  CONFIGURACIÓN
 # ─────────────────────────────────────────────
-SQL_SERVER     = r"localhost\SQLEXPRESS"
+SQL_SERVER     = os.environ.get("SQL_SERVER", r"localhost\SQLEXPRESS")
+# En tu notebook, sigue usando autenticación de Windows (Trusted_Connection)
+# igual que siempre — no hace falta tocar nada localmente. En GitHub Actions,
+# la instancia de SQL Server se instala sin nombre y con autenticación SQL
+# (usuario 'sa' + password), así que ahí se setean estas 2 variables de
+# entorno para activar ese modo.
+SQL_USE_SQL_AUTH = os.environ.get("SQL_USE_SQL_AUTH", "false").lower() == "true"
+SQL_SA_PASSWORD  = os.environ.get("SQL_SA_PASSWORD", "")
+
+def _sql_conn_str(database):
+    if SQL_USE_SQL_AUTH:
+        return (f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={SQL_SERVER};"
+                f"DATABASE={database};UID=sa;PWD={SQL_SA_PASSWORD};")
+    return (f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={SQL_SERVER};"
+            f"DATABASE={database};Trusted_Connection=yes;")
+
 NOMBRE_BD      = "T779354202C"
 CARPETA_BAK    = r"C:\Backups\Manager"
 CARPETA_SALIDA = r"C:\Reportes\VentasFull"
@@ -42,8 +57,20 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
+# Caracteres de control ilegales para el formato XML interno de .xlsx
+# (excluye tab \x09, salto de línea \x0A y retorno de carro \x0D, que sí
+# están permitidos). Suelen venir de columnas TEXT viejas de SQL Server.
+_RE_CARACTERES_ILEGALES = re.compile('[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]')
+
+def limpiar_caracteres_ilegales(valor):
+    """Quita caracteres de control que openpyxl/Excel rechazan."""
+    if not isinstance(valor, str):
+        return valor
+    return _RE_CARACTERES_ILEGALES.sub('', valor)
+
+
 def conectar_master() -> pyodbc.Connection:
-    conn_str = f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={SQL_SERVER};DATABASE=master;Trusted_Connection=yes;"
+    conn_str = _sql_conn_str("master")
     return pyodbc.connect(conn_str, autocommit=True)
 
 def obtener_bak_reciente() -> Path:
@@ -126,7 +153,7 @@ def restaurar_bd(bak_path: Path):
 def extraer_reportes() -> Dict[str, pd.DataFrame]:
     """ Lee todos los .sql de la carpeta, los limpia y los ejecuta """
     log.info(f"Conectando a '{NOMBRE_BD}' para extraer reportes...")
-    conn_str = f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={SQL_SERVER};DATABASE={NOMBRE_BD};Trusted_Connection=yes;"
+    conn_str = _sql_conn_str(NOMBRE_BD)
     conn = pyodbc.connect(conn_str)
     
     reportes_df = {}
@@ -190,6 +217,13 @@ def exportar_excel(diccionario_dfs: Dict[str, pd.DataFrame]) -> Path:
                 
             # Excel limita los nombres de pestaña a 31 caracteres
             nombre_pestana = nombre_reporte[:31]
+
+            # 🔹 Limpiar caracteres de control ilegales para el XML interno
+            # de .xlsx (residuo típico de columnas TEXT viejas de SQL Server,
+            # invisibles a simple vista pero que openpyxl rechaza)
+            for col in df.select_dtypes(include='object').columns:
+                df[col] = df[col].apply(limpiar_caracteres_ilegales)
+
             df.to_excel(writer, sheet_name=nombre_pestana, index=False)
             ws = writer.sheets[nombre_pestana]
 

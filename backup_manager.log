@@ -212,3 +212,21 @@
 2026-06-30 07:55:26,298  INFO  Get LATEST chromedriver version for google-chrome
 2026-06-30 07:55:26,644  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\149.0.7827.155\chromedriver-win32/chromedriver.exe] found in cache
 2026-06-30 07:55:28,740  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-07-27 08:09:04,571  INFO  =======================================================
+2026-07-27 08:09:04,573  INFO    Iniciando descarga automática de backup Manager
+2026-07-27 08:09:04,573  INFO  =======================================================
+2026-07-27 08:09:04,577  INFO  ====== WebDriver manager ======
+2026-07-27 08:09:08,125  INFO  Get LATEST chromedriver version for google-chrome
+2026-07-27 08:09:09,223  INFO  Get LATEST chromedriver version for google-chrome
+2026-07-27 08:09:10,240  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\150.0.7871.124\chromedriver-win32/chromedriver.exe] found in cache
+2026-07-27 08:09:14,569  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-07-27 08:09:17,034  INFO  Inputs visibles: 3
+2026-07-27 08:09:18,427  INFO  Login enviado...
+2026-07-27 08:09:22,456  INFO  ✅ Login exitoso. session_id: c1fd82e9...
+2026-07-27 08:09:22,456  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=c1fd82e9669d0130a1f1757e4adcc958&cd=prodkernel
+2026-07-27 08:09:22,708  INFO  Recarga 1/10...
+2026-07-27 08:09:26,907  INFO    filas .bak encontradas: 1
+2026-07-27 08:09:26,908  INFO  ✅ Tabla cargada en recarga 1.
+2026-07-27 08:09:27,009  INFO    Ignorando: 2026-7-27-T779354202A.bak
+2026-07-27 08:09:27,010  ERROR  ❌ Error: No se encontró ningún backup T779354202A.
+2026-07-27 08:09:27,162  INFO  Captura guardada: error_screenshot.png

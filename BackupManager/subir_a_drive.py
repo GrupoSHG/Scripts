@@ -11,6 +11,7 @@ Usa cuenta de servicio — nunca expira.
 Requiere: pip install google-auth google-api-python-client gspread pandas openpyxl
 """
 
+import os
 import logging
 from pathlib import Path
 
@@ -23,7 +24,7 @@ from googleapiclient.http import MediaFileUpload
 # ─────────────────────────────────────────────
 #  CONFIG
 # ─────────────────────────────────────────────
-CREDENTIALS_FILE = r"C:\Users\atorr\Polchile\Credencialesbot.json"
+CREDENTIALS_FILE = os.environ.get("GOOGLE_CREDENTIALS_FILE", r"C:\Users\atorr\Polchile\Credencialesbot.json")
 
 # Carpeta Drive donde se sube el Excel completo de respaldo
 DRIVE_FOLDER_ID  = "1AQgW1Mrr4MbBNi7yXA8kPNpjZBoo9Ntq"
@@ -32,6 +33,7 @@ NOMBRE_EN_DRIVE  = "Reportes_Completos_Actualizado.xlsx"
 # IDs de los Google Sheets
 ID_BASE_PRODUCCION = "10PvCCTw31gOhvSgcbIy15V3lBNdQZwX7Naa0R-yPO0k"
 ID_PRESUPUESTOS    = "1sIoLlGRhmgPAny9rAatUBpw7ojTidjVuJppLMCzi8W8"
+ID_FINANZAS = "17u9LzXhRkLMVQ-EK1M1KP-uQH6clVTVON_VqK1nmT58"
 
 # Mapeo: nombre del reporte (igual al nombre del .sql sin extensión) → hoja en Base Produccion
 MAPEO_BASE_PRODUCCION = {
@@ -54,7 +56,8 @@ MAPEO_ADICIONAL = {
     "Ventas_Full": (ID_PRESUPUESTOS, "Ventas Full Manager"),
     "Notas_de_venta": (ID_PRESUPUESTOS, "Notas de Venta"),
     "Cotizaciones":(ID_PRESUPUESTOS, "Cotizaciones"),
-    "calendario":(ID_PRESUPUESTOS,"Calendario")
+    "calendario":(ID_PRESUPUESTOS,"Calendario"),
+
 }
 
 # Reportes que solo van al Excel de Drive (no a Sheets)
@@ -66,11 +69,13 @@ SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
 ]
 
+LOG_FILE = os.environ.get("PIPELINE_VENTAS_LOG", r"C:\Users\atorr\Documents\pipeline_ventas.log")
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  %(levelname)s  %(message)s",
     handlers=[
-        logging.FileHandler(r"C:\Users\atorr\Documents\pipeline_ventas.log", encoding="utf-8"),
+        logging.FileHandler(LOG_FILE, encoding="utf-8"),
         logging.StreamHandler()
     ]
 )

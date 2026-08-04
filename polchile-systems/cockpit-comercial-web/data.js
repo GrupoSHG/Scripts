@@ -1,0 +1,303 @@
+// ============================================================
+// POLCHILE - DATOS DEL DASHBOARD COMERCIAL
+// ============================================================
+
+const HOY          = new Date();
+const DIA_DEL_MES  = HOY.getDate();
+const MES_ACTUAL   = HOY.getMonth();
+const ANIO         = HOY.getFullYear();
+
+const MESES       = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const MESES_LARGO = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+const ESTACIONALIDAD    = [7.10,7.80,8.10,6.80,8.30,9.30,8.50,8.70,8.50,7.70,9.90,9.30];
+const PRESUPUESTO_ANUAL = { base:5400, optimista:6480, pesimista:4320 };
+const presupMensual     = (esc='base') => ESTACIONALIDAD.map(p => PRESUPUESTO_ANUAL[esc] * p / 100);
+
+const REAL_2026 = {
+  cotizado:  [1240,1180,1295,680,0,0,0,0,0,0,0,0],
+  nv:        [ 368, 428, 375,152,0,0,0,0,0,0,0,0],
+  facturado: [ 354, 411, 362,148,0,0,0,0,0,0,0,0],
+};
+const REAL_2025_FACTURADO = [336,254,323,343,313,274,365,244,329,178,295,280];
+
+const PIPELINE_CRM = [
+  { etapa:'Lead Nuevo',         monto:285, n:47, prob:5,   colorIdx:0 },
+  { etapa:'Contactado',         monto:412, n:38, prob:15,  colorIdx:1 },
+  { etapa:'Calificado',         monto:386, n:29, prob:30,  colorIdx:2 },
+  { etapa:'Cotización Enviada', monto:524, n:24, prob:50,  colorIdx:3 },
+  { etapa:'Negociación',        monto:318, n:14, prob:70,  colorIdx:4 },
+  { etapa:'NV en Proceso',      monto:196, n: 9, prob:90,  colorIdx:5 },
+  { etapa:'Ganado (Mes)',       monto:152, n:12, prob:100, colorIdx:6 },
+];
+let FORECAST_CRM_PONDERADO = PIPELINE_CRM.reduce((a,e) => a + e.monto * e.prob/100, 0);
+
+const VENDEDORES = [
+  { id:'cb',  nombre:'Cristóbal Bretón',   cargo:'Jefe de Ventas',               metaMensual:0,    sueldoFijo:2.07, comision:0.35, bonoExtra:0.35, avatar:'CB', activo:true,  color:'#6366f1', real:{cotizado:0,nv:0,facturado:0},    rol:'jefatura'  },
+  { id:'mj',  nombre:'Melysa Jiménez',     cargo:'Ejecutiva Ventas',              metaMensual:81,   sueldoFijo:1.11, comision:0.75,                 avatar:'MJ', activo:true,  color:'#0ea5e9', real:{cotizado:198,nv:64,facturado:61}, rol:'ejecutivo' },
+  { id:'op',  nombre:'Óscar Paredes',      cargo:'Ejecutivo Ventas',              metaMensual:81,   sueldoFijo:1.30, comision:0.75,                 avatar:'OP', activo:true,  color:'#10b981', real:{cotizado:215,nv:58,facturado:56}, rol:'ejecutivo' },
+  { id:'lb',  nombre:'Linda Bayle',        cargo:'Ejecutiva Ventas',              metaMensual:81,   sueldoFijo:1.11, comision:0.75,                 avatar:'LB', activo:true,  color:'#ec4899', real:{cotizado:0,nv:0,facturado:0},    rol:'ejecutivo' },
+  { id:'oa',  nombre:'Orlando Armas',      cargo:'Ejecutivo Ventas',              metaMensual:81,   sueldoFijo:1.30, comision:0.75,                 avatar:'OA', activo:true,  color:'#f97316', real:{cotizado:0,nv:0,facturado:0},    rol:'ejecutivo' },
+  { id:'hp',  nombre:'Hernán Paulsen',     cargo:'Ejecutivo Ventas',              metaMensual:81,   sueldoFijo:1.30, comision:0.75,                 avatar:'HP', activo:true,  color:'#a855f7', real:{cotizado:0,nv:0,facturado:0},    rol:'ejecutivo' },
+  { id:'v1',  nombre:'Vacante Ejecutivo 1',cargo:'Ejecutivo Ventas',              metaMensual:81,   vacante:true, rol:'ejecutivo', activo:false },
+  { id:'v2',  nombre:'Vacante Ejecutivo 2',cargo:'Ejecutivo Ventas',              metaMensual:81,   vacante:true, rol:'ejecutivo', activo:false },
+  { id:'v3',  nombre:'Vacante Ejecutivo 3',cargo:'Ejecutivo Ventas',              metaMensual:81,   vacante:true, rol:'ejecutivo', activo:false },
+  { id:'kam', nombre:'Vacante KAM',        cargo:'KAM Distrib. y Constructoras',  metaMensual:22.5, vacante:true, rol:'kam',       activo:false },
+  { id:'ec',  nombre:'Vacante Ecommerce',  cargo:'Encargado Ecommerce',           metaMensual:22.5, vacante:true, rol:'ecommerce', activo:false },
+];
+
+const MIX_PILAR = [
+  { pilar:'Proyectos',    presup:90, real:87.4, color:'#6366f1' },
+  { pilar:'Ecommerce',    presup:5,  real:6.2,  color:'#0ea5e9' },
+  { pilar:'Distribución', presup:5,  real:6.4,  color:'#f59e0b' },
+];
+
+let MIX_FAMILIA = [
+  { fam:'Paneles POL',         p_pct:45.0, r_pct:47.2, d_pp: 2.2, m_real:44.9, m_pre:43.5, m_d: 1.4 },
+  { fam:'Paneles PUR',         p_pct:10.0, r_pct: 8.7, d_pp:-1.3, m_real:45.4, m_pre:43.5, m_d: 1.9 },
+  { fam:'Planchas Industrial', p_pct:22.0, r_pct:19.4, d_pp:-2.6, m_real:36.0, m_pre:43.5, m_d:-7.5 },
+  { fam:'Planchas Arquitect.', p_pct: 8.0, r_pct: 6.8, d_pp:-1.2, m_real:51.0, m_pre:43.5, m_d: 7.5 },
+  { fam:'Hojalatería',         p_pct: 3.9, r_pct: 4.1, d_pp: 0.2, m_real:30.0, m_pre:43.5, m_d:-13.5},
+  { fam:'Accesorios',          p_pct: 3.6, r_pct: 4.2, d_pp: 0.6, m_real:40.0, m_pre:43.5, m_d:-3.5 },
+  { fam:'Despachos/Servicios', p_pct: 5.0, r_pct: 6.1, d_pp: 1.1, m_real:45.0, m_pre:43.5, m_d: 1.5 },
+  { fam:'Comercializados',     p_pct: 2.5, r_pct: 3.6, d_pp: 1.1, m_real:18.0, m_pre:43.5, m_d:-25.5},
+];
+
+let TOP_CLIENTES = [
+  { rank:1,  n:'Constructora Andes Ltda.',  val:198.4, pct:14.8, type:'REC'   },
+  { rank:2,  n:'Inmobiliaria Pacífico',      val:142.7, pct:10.7, type:'REC'   },
+  { rank:3,  n:'Frigoríficos del Sur S.A.', val: 98.3, pct: 7.4, type:'REC'   },
+  { rank:4,  n:'Distribuidora Maule',        val: 76.1, pct: 5.7, type:'REC'   },
+  { rank:5,  n:'Constructora Vallejos',      val: 64.8, pct: 4.9, type:'NUEVO' },
+  { rank:6,  n:'Agroindustrial Los Lagos',   val: 52.4, pct: 3.9, type:'REC'   },
+  { rank:7,  n:'Ferretería El Sol Ltda.',    val: 44.9, pct: 3.4, type:'REC'   },
+  { rank:8,  n:'Cámaras Frigo Patagonia',    val: 38.2, pct: 2.9, type:'NUEVO' },
+  { rank:9,  n:'Inversiones Plaza Norte',    val: 31.6, pct: 2.4, type:'REC'   },
+  { rank:10, n:'Constructora Pucón',         val: 28.9, pct: 2.2, type:'NUEVO' },
+];
+
+const MARKETING = {
+  google_ads_inv:1.53, google_ads_ingresos:14.8,
+  meta_inv:0.21,       meta_ingresos:1.9,
+  fee_agencia:2.20,    total_inv_ytd:18.4, total_ingresos_atribuidos:184.6,
+};
+
+const ALERTAS = [
+  { tipo:'critica', icon:'!', texto:'Run-rate actual proyecta no cumplir el mes', accion:'Revisar cierres pendientes' },
+];
+
+const KPI_MES = {
+  presupuesto:         presupMensual('base')[MES_ACTUAL],
+  facturado:           148,
+  nv:                  152,
+  cotizado:            680,
+  // Forecast dividido en dos:
+  forecast_fact:       0,   // Forecast Facturación: Facturado MTD + NV abiertas×70% + Cotizaciones×24%
+  forecast_nv:         0,   // Forecast NV:          NV MTD + Cotizaciones×35%
+  forecast_mes:        389, // legacy (se sobreescribe con forecast_fact)
+  cumplimiento:        89,
+  run_rate_diario:     9.25,
+  run_rate_requerido:  11.5,
+  ticket_promedio:     4.2,
+  ticket_mediana:      2.8,
+  win_rate:            34,
+  ciclo_dias:          28,
+  conv_cot_nv:         24,
+  conv_nv_factura:     96,
+  clientes_nuevos:     8,
+  clientes_recurrentes:28,
+  dso:                 47,
+  backlog_nv:          0,
+  nvYTD:               0,
+  margen_real:         41.2,
+  margen_presup:       43.5,
+};
+
+const DIARIO_ABRIL = [];
+const SEMANAS      = [];
+const COSTOS_MES   = {
+  remuneraciones_fijo:17.13, comisiones:4.53, bono_cb:0.35,
+  ahorro_gerente:4.94, marketing:5.08, representacion:0.15,
+  suscripciones:0.06, total:27.30,
+};
+
+window.PCH = {
+  HOY, DIA_DEL_MES, MES_ACTUAL, ANIO, MESES, MESES_LARGO,
+  ESTACIONALIDAD, PRESUPUESTO_ANUAL, presupMensual,
+  REAL_2026, REAL_2025_FACTURADO,
+  PIPELINE_CRM, FORECAST_CRM_PONDERADO,
+  VENDEDORES, MIX_PILAR, MIX_FAMILIA, TOP_CLIENTES,
+  MARKETING, ALERTAS, KPI_MES, DIARIO_ABRIL, SEMANAS, COSTOS_MES,
+};
+
+// ============================================================
+// CARGA LIVE DESDE APPS SCRIPT (vía shim google.script.run → fetch)
+// ============================================================
+window.__loadLiveData = function() {
+  console.log("⏳ Solicitando datos al servidor...");
+
+  google.script.run
+    .withSuccessHandler(function(payload) {
+      console.log("✅ PAQUETE RECIBIDO:", payload);
+      if (!payload || payload.error) {
+        console.error("Error en payload:", payload && payload.error);
+        return;
+      }
+
+      // ── 1. YTD + gráfico mensual ────────────────────────────
+      if (payload.manager) {
+        window.PCH.REAL_YTD    = payload.manager.facturacion / 1000000;
+        window.PCH.MARGEN_REAL = payload.manager.margen      / 1000000;
+        if (payload.manager.facturacionMensual) {
+          window.PCH.REAL_2026.facturado = payload.manager.facturacionMensual.map(function(m) {
+            return m / 1000000;
+          });
+        }
+      }
+
+      // ── 2. Pipeline CRM ─────────────────────────────────────
+      if (payload.pipeline && payload.pipeline.length > 0) {
+        window.PCH.PIPELINE_CRM = payload.pipeline.map(function(e, i) {
+          e.colorIdx = i % 7;
+          return e;
+        });
+        window.PCH.FORECAST_CRM_PONDERADO = payload.pipeline.reduce(function(t, e) {
+          return t + (e.ponderado || 0);
+        }, 0);
+      }
+
+      // ── 3. Varios ───────────────────────────────────────────
+      if (payload.diarias)        window.PCH.diarias        = payload.diarias;
+      if (payload.flow7d)         window.PCH.flow7d         = payload.flow7d;
+      if (payload.graficoDiario)  window.PCH.graficoDiario  = payload.graficoDiario;
+      if (payload.graficoDiarioNV)window.PCH.graficoDiarioNV= payload.graficoDiarioNV;
+      if (payload.SEMANAS)        window.PCH.SEMANAS        = payload.SEMANAS;
+
+      // ── 4. KPIs ─────────────────────────────────────────────
+      if (payload.kpis) {
+        if (!window.PCH.KPI_MES) window.PCH.KPI_MES = {};
+
+        window.PCH.KPI_MES.presupuesto = payload.kpis.presupuestoMes;
+
+        if (payload.kpis.presupuestoArray) {
+          window.PCH.presupMensual = function() { return payload.kpis.presupuestoArray; };
+          var sumYTD = 0;
+          for (var i = 0; i <= window.PCH.MES_ACTUAL; i++) {
+            sumYTD += payload.kpis.presupuestoArray[i];
+          }
+          window.PCH.YTD_PRESUPUESTO = sumYTD;
+        }
+
+        // Valores en pesos → M$
+        var facturadoM = (payload.kpis.facturadoMTD  || 0) / 1000000;
+        var cotizadoM  = (payload.kpis.cotizadoMTD   || 0) / 1000000;
+        var nvM        = (payload.kpis.nvEmitidasMTD || 0) / 1000000;
+        var nvYTD      = (payload.kpis.nvEmitidasYTD || 0) / 1000000;
+        var backlogM   = (payload.kpis.nvPendientesYTD || 0) / 1000000;
+
+        window.PCH.KPI_MES.facturado  = facturadoM;
+        window.PCH.KPI_MES.cotizado   = cotizadoM;
+        window.PCH.KPI_MES.nv         = nvM;
+        window.PCH.KPI_MES.nvYTD      = nvYTD;
+        window.PCH.KPI_MES.backlog_nv = backlogM;
+        window.PCH.BACKLOG_NV         = backlogM;
+        window.PCH.KPI_MES.mesActual  = payload.kpis.mesActual;
+        window.PCH.KPI_MES.fechaHoy   = payload.kpis.fechaHoy;
+
+        // ── FACTOR DE TIEMPO RESTANTE ──────────────────────
+        // 1.0 al inicio del mes → ~0 al final del mes
+        var getFactorTiempoRestante = function(fecha) {
+          fecha = fecha || new Date();
+          var diaActual      = fecha.getDate();
+          var diasEnMes      = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0).getDate();
+          var diasRestantes  = diasEnMes - diaActual + 1; // +1 para incluir el día actual
+          return diasRestantes / diasEnMes;
+        };
+
+        var factorTiempo = getFactorTiempoRestante();
+
+        // ── FORECAST FACTURACIÓN ───────────────────────────
+        // Facturado MTD + NV pendientes×70% (ajustado por tiempo) + Cotizado×9.1% (ajustado por tiempo)
+        var probNVaFact  = 0.70  * factorTiempo;
+        var probCotFact  = 0.091 * factorTiempo;
+
+        var forecastFact = facturadoM + (nvM * probNVaFact) + (cotizadoM * probCotFact);
+        window.PCH.KPI_MES.forecast_fact = forecastFact;
+        window.PCH.KPI_MES.forecast_mes  = forecastFact; // legacy
+
+        // ── FORECAST NV ─────────────────────────────────────
+        // NV emitidas MTD + Cotizaciones MTD × 18.2% (ajustado por tiempo)
+        var probCotNV  = 0.182 * factorTiempo;
+        var forecastNV = nvM + (cotizadoM * probCotNV);
+        window.PCH.KPI_MES.forecast_nv = forecastNV;
+
+        window.PCH.KPI_MES.cumplimiento = Math.round(
+          (forecastFact / (window.PCH.KPI_MES.presupuesto || 1)) * 100
+        );
+      }
+
+      // ── 5. Top Clientes, Mix Familias ───────────────────────
+      if (payload.topClientes && payload.topClientes.length > 0)
+        window.PCH.TOP_CLIENTES = payload.topClientes;
+      if (payload.mixFamilias && payload.mixFamilias.length > 0)
+        window.PCH.MIX_FAMILIA = payload.mixFamilias;
+      if (payload.familiasMontoYTD && payload.familiasMontoYTD.length > 0)
+        window.PCH.FAMILIAS_MONTO_YTD = payload.familiasMontoYTD;
+
+      // ── 6. Actualizar VENDEDORES con datos reales ───────────
+      if (payload.equipo) {
+        window.PCH.VENDEDORES = window.PCH.VENDEDORES.map(function(v) {
+          var eq = payload.equipo[v.id];
+          if (eq) {
+            var updated = JSON.parse(JSON.stringify(v));
+            updated.real = {
+              cotizado:  Math.round((eq.cotizado  || 0) * 10) / 10,
+              nv:        Math.round((eq.nv        || 0) * 10) / 10,
+              facturado: Math.round((eq.facturado || 0) * 10) / 10,
+            };
+            return updated;
+          }
+          return v;
+        });
+      }
+
+      // ── 7. Re-render React ──────────────────────────────────
+      if (window.__rerender) window.__rerender();
+
+      // ── 8. Actualización directa DOM ───────────────────────
+      var toM = function(pesos) {
+        return (pesos / 1000000).toLocaleString('es-CL',{minimumFractionDigits:1,maximumFractionDigits:1}) + ' M$';
+      };
+      var ids = {
+        'kpi-facturado-mtd':   payload.kpis && payload.kpis.facturadoMTD,
+        'kpi-cotizado-mtd':    payload.kpis && payload.kpis.cotizadoMTD,
+        'kpi-nv-emitidas-mtd': payload.kpis && payload.kpis.nvEmitidasMTD,
+        'kpi-backlog-nv':      payload.kpis && payload.kpis.nvPendientesYTD,
+      };
+      Object.keys(ids).forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el && ids[id] != null) el.innerText = toM(ids[id]);
+      });
+
+      var diasSemana = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+      var totalDias  = new Date(window.PCH.ANIO, window.PCH.MES_ACTUAL + 1, 0).getDate();
+      var avance     = Math.round((window.PCH.DIA_DEL_MES / totalDias) * 100);
+      var set = function(id, txt) { var el = document.getElementById(id); if (el) el.innerText = txt; };
+      set('kpi-strip-hoy',    diasSemana[window.PCH.HOY.getDay()] + ' ' + window.PCH.DIA_DEL_MES + ' ' + window.PCH.MESES[window.PCH.MES_ACTUAL] + ' ' + window.PCH.ANIO);
+      set('kpi-strip-avance', avance + '%');
+      if (window.PCH.YTD_PRESUPUESTO)
+        set('kpi-strip-presup-ytd', '$' + window.PCH.YTD_PRESUPUESTO.toLocaleString('es-CL',{minimumFractionDigits:1,maximumFractionDigits:1}) + ' M$');
+      if (window.PCH.REAL_YTD) {
+        set('kpi-strip-fact-ytd', '$' + window.PCH.REAL_YTD.toLocaleString('es-CL',{minimumFractionDigits:1,maximumFractionDigits:1}) + ' M$');
+        if (window.PCH.YTD_PRESUPUESTO) {
+          var cumpl = ((window.PCH.REAL_YTD / window.PCH.YTD_PRESUPUESTO) * 100).toFixed(1);
+          var elC   = document.getElementById('kpi-strip-cumpl-ytd');
+          if (elC) { elC.innerText = cumpl + '%'; elC.className = 'badge ' + (cumpl >= 100 ? 'green' : cumpl >= 85 ? 'amber' : 'red'); }
+        }
+      }
+    })
+    .withFailureHandler(function(err) {
+      console.error("❌ Error en servidor:", err);
+    })
+    .buildDashboardPayload();
+};

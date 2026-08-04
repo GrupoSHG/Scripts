@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <base target="_top"/>
+  <title>Polchile · Dashboard Comercial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <?!= include('Styles'); ?>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <?!= include('Data'); ?>
+
+  <script>
+    window.__SCRIPT_URL__ = '<?= scriptUrl ?>';
+  </script>
+
+  <?!= include('TabExec'); ?>
+  <?!= include('TabDaily'); ?>
+  <?!= include('TabTeam'); ?>
+  <?!= include('TabGlosario'); ?>
+  <?!= include('TabResumen'); ?>
+  <?!= include('TabChipax'); ?>
+
+<script type="text/babel">
+  const { useState, useEffect } = React;
+
+  function App() {
+    // Resumen es el tab inicial
+    const [tab,      setTab]      = useState('resumen');
+    const [scenario, setScenario] = useState('base');
+    const [,         force]       = useState(0);
+
+    useEffect(() => {
+      const refreshData = () => {
+        if (window.__loadLiveData) {
+          console.log("Sincronizando datos con el Sheet...");
+          window.__loadLiveData();
+        }
+      };
+
+      window.__rerender = () => force(x => x + 1);
+      refreshData();
+      const interval = setInterval(refreshData, 300000);
+      return () => clearInterval(interval);
+    }, []);
+
+    // Exponer setTab globalmente para que TabResumen pueda navegar
+    window.__setTab = setTab;
+
+    const extraTabs = [
+      { id: 'resumen', label: '🏢 Grupo Empresas' },
+      { id: 'chipax',  label: '💰 M5 · Finanzas'  },
+    ];
+
+    return (
+      <>
+        {window.Topbar && (
+          <window.Topbar
+            tab={tab}
+            setTab={setTab}
+            scenario={scenario}
+            setScenario={setScenario}
+            extraTabs={extraTabs}
+          />
+        )}
+        <div className="page">
+          {window.Ribbon && <window.Ribbon/>}
+
+          {tab === 'resumen' && window.ResumenTab  && <window.ResumenTab/>}
+          {tab === 'exec'    && window.ExecTab     && <window.ExecTab/>}
+          {tab === 'daily'   && window.DailyTab    && <window.DailyTab/>}
+          {tab === 'team'    && window.TeamTab     && <window.TeamTab/>}
+          {tab === 'chipax'  && window.ChipaxTab   && <window.ChipaxTab/>}
+          {tab === 'glosario'&& window.GlosarioTab && <window.GlosarioTab/>}
+        </div>
+      </>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

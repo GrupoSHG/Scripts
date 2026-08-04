@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Itinerario de Prensas · Polchile</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+<script>
+  // ⚠️ AJUSTAR: URL /exec del deployment de Apps Script de dashboard-produccion
+  window.__SCRIPT_URL__ = 'https://script.google.com/macros/s/AKfycbxA_Iy0Zr4YOl6LFsN1oEq74Cb-0MVM0pS4Gs-3-X5GLtikCY1fKK4Y77ecjeU6pwd6/exec';
+</script>
+<script src="google-script-shim.js"></script>
+<style>
+  :root {
+    --bg: #F4F3EF; --surface: #FFFFFF; --surface-2: #EEECEA;
+    --text: #18181A; --text-2: #5C5B58; --text-3: #9A9894;
+    --border: rgba(0,0,0,0.07); --border-2: rgba(0,0,0,0.13);
+    --polp: #6B62D4; --purp: #16906A; --coral: #C94F28;
+    --warn-bg: #FDF0E3; --r: 10px; --rl: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Helvetica Neue", Helvetica, sans-serif; background: var(--bg); color: var(--text); font-size: 13px; line-height: 1.5; }
+  .main { padding: 28px 32px 60px; max-width: 1500px; margin: 0 auto; }
+  .flex { display: flex; } .between { justify-content: space-between; } .center-y { align-items: center; }
+  .mono { font-family: monospace; }
+  .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; border-bottom: 1px solid var(--border-2); padding-bottom: 16px; }
+  .page-title { font-size: 20px; font-weight: 500; color: var(--text); }
+  .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-3); display: flex; align-items: center; gap: 12px; width: 100%; margin: 28px 0 14px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border-2); display: block; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); padding: 20px 22px; margin-bottom: 14px; }
+  .prensa-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; margin-bottom: 22px; }
+  .prensa-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; }
+  .prensa-bar { height: 4px; background: var(--surface-2); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+  .prensa-bar-fill { height: 100%; }
+
+  .tweaks-btn { border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 12px; }
+  .sys-error { background: var(--coral); color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; display: flex; justify-content: space-between; }
+
+  /* Rendimiento */
+  .rend-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 18px; }
+  .rend-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 14px; }
+  .rend-name { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+  .rend-rate { display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; gap: 6px; }
+  .rend-real { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+  .rend-unit { font-size: 10px; color: var(--text-3); margin-left: 3px; }
+  .rend-target { font-size: 10.5px; color: var(--text-3); white-space: nowrap; }
+  .rend-target b { color: var(--text-2); font-weight: 600; }
+  .rend-diff { font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 6px; margin-top: 6px; display: inline-block; }
+  .rend-diff.up { background: #DCFCE7; color: #15803D; }
+  .rend-diff.dn { background: #FEE2E2; color: #B91C1C; }
+  .rend-bar { height: 6px; background: var(--surface-2); border-radius: 3px; margin-top: 8px; overflow: hidden; position: relative; }
+  .rend-bar-fill { height: 100%; border-radius: 3px; }
+  .rend-bar-target { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--text); border-radius: 1px; }
+  .rend-acum { font-size: 9.5px; color: var(--text-3); margin-top: 4px; display: flex; justify-content: space-between; }
+
+  /* Plan de distribución */
+  .plan-prensa-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 16px; }
+  .plan-prensa-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; text-align: center; }
+  .plan-prensa-card.is-crit { border-color: var(--coral); background: var(--warn-bg); }
+  .plan-prensa-name { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+  .plan-prensa-days { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; margin-top: 8px; }
+  .plan-prensa-days.is-crit { color: var(--coral); }
+  .plan-prensa-sub { font-size: 10.5px; color: var(--text-3); margin-top: 4px; line-height: 1.5; }
+  .plan-prensa-tag { display: inline-block; font-size: 9.5px; font-weight: 600; padding: 2px 8px; border-radius: 8px; margin: 8px 0 4px; }
+  .plan-tag-purp { background: #DFF3EC; color: #074F3A; }
+  .plan-tag-polp { background: #EEEDFC; color: #3A318E; }
+  .plan-tag-nopur { background: #FDF0E3; color: #7A480A; }
+  .plan-bar { height: 4px; background: var(--surface-2); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+  .plan-bar-fill { height: 100%; border-radius: 2px; }
+  .gantt-wrap { overflow-x: auto; margin-top: 8px; }
+  .gantt-row { display: flex; align-items: center; margin-bottom: 6px; }
+  .gantt-row-label { width: 64px; flex-shrink: 0; font-size: 11px; font-weight: 600; color: var(--text-2); text-align: right; padding-right: 10px; }
+  .gantt-track { flex: 1; height: 30px; background: var(--surface-2); border-radius: 6px; position: relative; min-width: 700px; }
+  .gantt-bar { position: absolute; top: 3px; height: 24px; border-radius: 4px; display: flex; align-items: center; padding: 0 6px; font-size: 9.5px; font-weight: 500; color: #fff; overflow: hidden; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+  .gantt-bar.cycle { background: repeating-linear-gradient(45deg, rgba(22,144,106,0.3) 0, rgba(22,144,106,0.3) 4px, transparent 4px, transparent 8px); border: 1px dashed rgba(22,144,106,0.6); color: var(--purp); font-size: 8.5px; box-shadow: none; }
+  .gantt-divider { position: absolute; top: -3px; bottom: -3px; width: 1px; background: rgba(0,0,0,0.12); }
+  .gantt-day { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; text-align: center; padding: 0 4px; }
+  .plan-alert { background: #DFF3EC; border-left: 3px solid var(--purp); padding: 12px 18px; border-radius: 10px; margin-bottom: 14px; font-size: 11.5px; color: #074F3A; line-height: 1.6; }
+  .plan-balance-kpi { font-size: 11px; padding: 4px 10px; border-radius: 8px; font-weight: 600; }
+  .plan-balance-good { background: #DFF3EC; color: #074F3A; }
+  .plan-balance-warn { background: #FDF0E3; color: #7A480A; }
+
+  /* Estilos específicos para la tabla de Detalle de Asignación */
+  table { width: 100%; border-collapse: collapse; text-align: left; }
+  th { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-3); padding: 10px 12px; border-bottom: 1px solid var(--border-2); letter-spacing: 0.03em; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0,0,0,0.01); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState, useEffect} = React;
+
+function App() {
+  const [metrics, setMetrics] = useState([]);
+  const [rend, setRend] = useState({ rows: [], hoursElapsed: 0, shiftStart: '', now: '' });
+  const [plan, setPlan] = useState({ ops: [], groups: [], presses: [], config: null, dayLabels: [] });
+  const [planError, setPlanError] = useState(null);
+
+  const fetchData = () => {
+    if (typeof google !== 'undefined') {
+      google.script.run.withSuccessHandler(setMetrics).getPrensasMetrics();
+      google.script.run.withSuccessHandler(res => {
+        if (res && !res.error) setRend(res);
+      }).getRendimientoPrensas();
+      google.script.run.withSuccessHandler(res => {
+        if (res && res.error) setPlanError("Plan: " + res.error);
+        else if (res) { setPlan(res); setPlanError(null); }
+      }).getPlanPrensas();
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // ─── Plan ─────────────────────────────────────────────────────────────────
+  const renderPlanPrensas = () => {
+    if (!plan.presses || plan.presses.length === 0) return null;
+    const presses = plan.presses;
+    const groups = plan.groups;
+    const ops = plan.ops;
+    const cfg = plan.config;
+    const dayLabels = plan.dayLabels || [];
+    const critP = [...presses].sort((a,b) => b.days - a.days)[0];
+    const minD = Math.min(...presses.map(p => p.days));
+    const maxD = Math.max(...presses.map(p => p.days));
+    const balance = maxD > 0 ? (1 - (maxD-minD)/maxD)*100 : 100;
+    const purpOps = ops.filter(o => o.q === 'PurP');
+    const purpMl = purpOps.reduce((a,o) => a+o.ml, 0);
+    const purpCycles = Math.ceil(purpMl / cfg.purpUtilM);
+    const purpExtraH = (purpCycles * cfg.purpCycleMin) / 60;
+
+    const POLP_TONES = ['#3F4ED1','#5A66E2','#7480ED','#8E98F1','#AAB1F4','#9FA8F2'];
+    const PURP_TONES = ['#0E6E50','#16906A','#2AA582','#3CB594'];
+    const maxH = Math.max(...presses.map(p => p.totalH), 1);
+    const totalDays = Math.ceil(maxH / cfg.jornadaH);
+
+    return (
+      <>
+        <div className="section-title">
+          Plan de Distribución de Prensas
+          <span className={`plan-balance-kpi ${balance>=90 ? 'plan-balance-good' : 'plan-balance-warn'}`}>
+            Balance {balance.toFixed(0)}% · Horizonte {critP.days.toFixed(2)} días
+          </span>
+        </div>
+
+        <div className="plan-alert">
+          <b>Algoritmo aplicado:</b> distribución <b>híbrida</b>.
+          OPs grandes (&gt;{cfg.splitThresholdM2} m²) se <b>reparten</b> entre prensas elegibles para no sobrecargar una sola.
+          OPs chicas son <b>atómicas</b> (LPT: la más grande primero a la prensa con menos carga).
+          PurP solo en P1/P3/P4/P5 ({purpOps.length} OPs · {Math.round(purpMl)} ML · {purpCycles} ciclos × {cfg.purpCycleMin} min = +{purpExtraH.toFixed(1)} h curado).
+          ISO doble carga ×2 {cfg.isoDoubleLoad ? '(ACTIVADO)' : '(desactivado)'}.
+          Calendario: jornada {cfg.jornadaH} h, días hábiles {cfg.workDays.map(d => ['DOM','LUN','MAR','MIE','JUE','VIE','SAB'][d]).join('/')}.
+        </div>
+
+        <div className="plan-prensa-grid">
+          {presses.map(r => {
+            const isCrit = r.p === critP.p;
+            const pct = critP.days > 0 ? (r.days/critP.days)*100 : 0;
+            return (
+              <div key={r.p} className={`plan-prensa-card${isCrit ? ' is-crit' : ''}`}>
+                <div className="plan-prensa-name">{r.p}</div>
+                <div className={`plan-prensa-days${isCrit ? ' is-crit' : ''}`}>{r.days.toFixed(2)}</div>
+                <div className="plan-prensa-sub">días · {r.totalH.toFixed(1)} h</div>
+                <span className={`plan-prensa-tag ${r.canPurp ? 'plan-tag-purp' : 'plan-tag-polp'}`}>
+                  {r.canPurp ? 'PolP + PurP' : 'Solo PolP'}
+                </span>
+                <div className="plan-prensa-sub">
+                  <b style={{color:'var(--text-2)'}}>{Math.round(r.m2 || 0).toLocaleString('es-CL')} M²</b><br/>
+                  {Math.round(r.ml).toLocaleString('es-CL')} ML · {r.ops} OPs
+                </div>
+                <div className="plan-bar">
+                  <div className="plan-bar-fill" style={{width: pct+'%', background: r.canPurp ? 'var(--purp)' : 'var(--polp)'}}></div>
+                </div>
+                {!r.canPurp && <div style={{marginTop:6}}><span className="plan-prensa-tag plan-tag-nopur">Sin PurP</span></div>}
+                {r.extraH > 0 && r.canPurp && (
+                  <div style={{fontSize:10, color:'var(--purp)', marginTop:4, fontWeight:600}}>+{r.extraH.toFixed(1)} h ciclos</div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="card">
+          <div style={{display:'flex', justifyContent:'space-between', marginBottom:14, alignItems:'baseline'}}>
+            <b style={{fontSize:13}}>Itinerario por prensa · jornada {cfg.jornadaH} h</b>
+            <span style={{fontSize:10.5, color:'var(--text-3)'}}>PurP: {cfg.purpUtilM} m útiles/ciclo · {cfg.purpCycleMin} min curado</span>
+          </div>
+          <div className="gantt-wrap">
+            <div style={{display:'flex', marginLeft:74, marginBottom:6, minWidth:700}}>
+              {Array.from({length: totalDays}).map((_, d) => (
+                <div key={d} className="gantt-day" style={{
+                  flex: `0 0 ${(cfg.jornadaH/maxH*100).toFixed(2)}%`,
+                  borderLeft: d>0 ? '1px dashed rgba(0,0,0,0.1)' : 'none',
+                }}>
+                  {dayLabels[d] ? dayLabels[d].label : 'DÍA '+(d+1)}
+                </div>
+              ))}
+            </div>
+
+            {presses.map(r => {
+              let cursor = 0, pIdx = 0, uIdx = 0;
+              return (
+                <div key={r.p} className="gantt-row">
+                  <div className="gantt-row-label">
+                    <span className={`plan-prensa-tag ${r.canPurp ? 'plan-tag-purp' : 'plan-tag-polp'}`} style={{fontSize:10, padding:'1px 6px', margin:0}}>{r.p}</span>
+                  </div>
+                  <div className="gantt-track" style={{minWidth:700}}>
+                    {Array.from({length: totalDays-1}).map((_, d) => (
+                      <div key={d} className="gantt-divider" style={{left: `${((d+1)*cfg.jornadaH/maxH*100).toFixed(2)}%`}} />
+                    ))}
+                    {r.groups.flatMap((g, gi) =>
+                      g.items.map((it, ii) => {
+                        const dur = it.dur !== undefined ? it.dur : ((g.baseH || 0) * (g.totalMl > 0 ? it.ml/g.totalMl : 0));
+                        const color = g.q==='PurP' ? PURP_TONES[uIdx++ % PURP_TONES.length] : POLP_TONES[pIdx++ % POLP_TONES.length];
+                        const left = (cursor/maxH*100).toFixed(3);
+                        const width = (dur/maxH*100).toFixed(3);
+                        const label = it.nv==='STK' ? `STK ${it.op}` : `NV ${it.nv}`;
+                        cursor += dur;
+                        const out = (
+                          <div key={`${gi}-${ii}`} className="gantt-bar"
+                            style={{left:left+'%', width:width+'%', background:color}}
+                            title={`${label}${it.isSplit ? ' (parte de ' + Math.round(it.origM2) + ' m²)' : ''}\n${it.tipo} e${it.esp}\n${Math.round(it.ml)} ML · ${dur.toFixed(2)} h${g.doubleLoad?' · DOBLE CARGA ×2':''}${it.cycles?` · ${it.cycles} ciclos`:''}`}>
+                            {dur/maxH > 0.025 && (label + (g.doubleLoad ? ' ×2' : '') + (it.isSplit ? ' ✂' : ''))}
+                          </div>
+                        );
+                        const itemExtraH = it.extraH || 0;
+                        if (g.q === 'PurP' && itemExtraH > 0) {
+                          const cl = (cursor/maxH*100).toFixed(3);
+                          const cw = (itemExtraH/maxH*100).toFixed(3);
+                          cursor += itemExtraH;
+                          return [out, (
+                            <div key={`${gi}-${ii}-c`} className="gantt-bar cycle"
+                              style={{left:cl+'%', width:cw+'%'}}
+                              title={`Curado/purga · ${itemExtraH.toFixed(2)} h`}>
+                              {itemExtraH/maxH > 0.025 && 'curado'}
+                            </div>
+                          )];
+                        }
+                        return out;
+                      })
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* CÓDIGO AGREGADO: Detalle de asignación */}
+        <div className="card" style={{padding:0, overflow:'hidden', marginBottom:30}}>
+          <div style={{padding:'14px 22px', borderBottom:'1px solid var(--border)', background:'var(--surface-2)'}}>
+            <b style={{fontSize:13}}>Detalle de asignación · {ops.length} OPs PA</b>
+          </div>
+          <div style={{maxHeight:350, overflowY:'auto'}}>
+            <table>
+              <thead>
+                <tr>
+                  <th style={{paddingLeft:22}}>OP</th><th>NV</th><th>Q</th>
+                  <th>Tipo · esp · pieles</th><th>Cliente</th>
+                  <th style={{textAlign:'right'}}>M² total</th>
+                  <th style={{textAlign:'right'}}>Fabric.</th>
+                  <th style={{textAlign:'right'}}>Pendiente</th>
+                  <th>Asignación</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ops.map((o, i) => {
+                  const g = groups.find(gg => gg.key === o.group);
+                  const pctDone = o.qOp > 0 ? (o.qTerm/o.qOp*100) : 0;
+                  const tagCls = o.q === 'PurP' ? 'plan-tag-purp' : 'plan-tag-polp';
+                  return (
+                    <tr key={i}>
+                      <td style={{paddingLeft:22}} className="mono">{o.op}</td>
+                      <td className="mono">{o.nv === 'STK' ? <span style={{color:'var(--text-3)', fontSize:9.5}}>STOCK</span> : o.nv}</td>
+                      <td><span className={`plan-prensa-tag ${tagCls}`} style={{margin:0}}>{o.q}</span></td>
+                      <td style={{fontSize:10.5}}>{o.tipo} · {o.pieles}</td>
+                      <td style={{maxWidth:140, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', color:'var(--text-3)'}}>{o.cliente}</td>
+                      <td style={{textAlign:'right'}} className="mono">{Math.round(o.qOp)}</td>
+                      <td style={{textAlign:'right', color: pctDone>0 ? 'var(--purp)' : 'var(--text-3)'}} className="mono">
+                        {o.qTerm>0 ? `${Math.round(o.qTerm)} (${pctDone.toFixed(0)}%)` : '—'}
+                      </td>
+                      <td style={{textAlign:'right', color:'var(--coral)', background:'var(--warn-bg)', fontWeight:700}} className="mono">{Math.round(o.m2)}</td>
+                      <td style={{fontSize:10.5}}>
+                        <b>{o.assignedTo && o.assignedTo.length > 0 ? o.assignedTo.join('+') : '—'}</b>
+                        {o.assignedTo && o.assignedTo.length > 1 && <span style={{fontSize:9, color:'var(--text-3)', marginLeft:4}}>✂ split</span>}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  return (
+    <main className="main">
+      <div className="page-header">
+        <div>
+          <div className="page-title">Itinerario de Prensas · Tiempo Real</div>
+          <div style={{fontSize:'12px', color:'var(--text-3)', marginTop:'4px'}}>Sincronizado: {new Date().toLocaleTimeString()}</div>
+        </div>
+        <button className="tweaks-btn" onClick={fetchData}>↻ Actualizar</button>
+      </div>
+
+      {planError && (
+        <div className="sys-error">
+          <span>⚠️ {planError}</span>
+          <span style={{cursor:'pointer'}} onClick={() => setPlanError(null)}>✖</span>
+        </div>
+      )}
+
+      <div className="prensa-grid">
+        {metrics.map((m, i) => (
+          <div key={i} className="prensa-card" style={{borderTop: `4px solid ${m.cumple ? 'var(--purp)' : 'var(--coral)'}`}}>
+            <div className="flex between center-y">
+              <b>{m.name}</b>
+              <span className="mono fw-7" style={{fontSize:'16px', color: m.cumple ? 'var(--purp)' : 'var(--coral)'}}>{(Number(m.valor) || 0).toLocaleString('es-CL')} m²</span>
+            </div>
+            <div className="prensa-bar"><div className="prensa-bar-fill" style={{width: '70%', background: m.cumple ? 'var(--purp)' : 'var(--coral)'}}></div></div>
+          </div>
+        ))}
+      </div>
+
+      {rend.rows && rend.rows.length > 0 && (
+        <>
+          <div className="section-title">
+            Rendimiento por Hora · Meta vs Real
+            <span className="plan-balance-kpi plan-balance-good">
+              Turno {rend.shiftStart} → {rend.now} · {rend.hoursElapsed.toFixed(1)} h transcurridas
+            </span>
+          </div>
+          <div className="rend-grid">
+            {rend.rows.map((r, i) => {
+              const pct = Math.min(150, r.pct);
+              const targetPos = r.target_per_h > 0 && r.real_per_h > 0
+                ? Math.min(100, (r.target_per_h / Math.max(r.real_per_h, r.target_per_h)) * 100)
+                : 100;
+              const color = r.cumple ? 'var(--purp)' : (r.pct >= 70 ? '#F59E0B' : 'var(--coral)');
+              return (
+                <div key={i} className="rend-card" style={{borderTop:`4px solid ${color}`}}>
+                  <div className="rend-name">{r.name}</div>
+                  <div className="rend-rate">
+                    <div>
+                      <span className="rend-real mono" style={{color: color}}>{r.real_per_h.toFixed(1)}</span>
+                      <span className="rend-unit">m²/h real</span>
+                    </div>
+                  </div>
+                  <div className="rend-target"><b>Meta:</b> {r.target_per_h.toFixed(1)} m²/h</div>
+                  {r.real_per_h > 0 && (
+                    <span className={`rend-diff ${r.diff_per_h >= 0 ? 'up' : 'dn'}`}>
+                      {r.diff_per_h >= 0 ? '▲' : '▼'} {Math.abs(r.diff_per_h).toFixed(1)} m²/h ({r.pct.toFixed(0)}%)
+                    </span>
+                  )}
+                  <div className="rend-bar">
+                    <div className="rend-bar-fill" style={{
+                      width: Math.min(100, pct * (r.real_per_h / Math.max(r.real_per_h, r.target_per_h, 0.1))) + '%',
+                      background: color,
+                    }}></div>
+                    <div className="rend-bar-target" style={{left: targetPos + '%'}} title="Meta horaria"></div>
+                  </div>
+                  <div className="rend-acum">
+                    <span>Real: <b className="mono" style={{color:'var(--text-2)'}}>{Math.round(r.real_m2).toLocaleString('es-CL')} m²</b></span>
+                    <span>Esperado: <b className="mono" style={{color:'var(--text-3)'}}>{Math.round(r.target_total).toLocaleString('es-CL')} m²</b></span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {renderPlanPrensas()}
+
+      <footer style={{textAlign:'center', marginTop:'40px', color:'var(--text-3)', fontSize:'11px'}}>Polchile · Itinerario de Prensas · v1.0</footer>
+      
+    </main>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

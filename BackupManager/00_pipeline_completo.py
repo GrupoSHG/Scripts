@@ -5,6 +5,10 @@ Orquestador principal. Ejecuta en orden:
     1. Descargar .bak desde Manager
     2. Restaurar en SQL Server y extraer Ventas Full a Excel
     3. Subir Excel a Google Drive
+    4. Sincronizar NVs aprobadas a Supabase (app OC Polchile)
+    5. Carga masiva de todas las tablas a Supabase
+    6. Sincronizar NVs pendientes por vendedor (dashboard vendedores)
+    7. Sincronizar facturación por período (21-20) por vendedor
 
 Uso: python 00_pipeline_completo.py
 """
@@ -29,7 +33,7 @@ log = logging.getLogger(__name__)
 def paso(numero: int, nombre: str):
     log.info("")
     log.info("━" * 55)
-    log.info(f"  PASO {numero}/3 — {nombre}")
+    log.info(f"  PASO {numero}/7 — {nombre}")
     log.info("━" * 55)
 
 
@@ -55,12 +59,35 @@ def main():
         from subir_a_drive import main as subir
         subir()
 
+        # ── PASO 4: Sincronizar NVs a Supabase (OC Polchile) ───
+        paso(4, "Sincronizar NVs a Supabase (OC Polchile)")
+        from sync_supabase import main as sync_nv
+        sync_nv()
+
+        # ── PASO 5: Carga masiva de todas las tablas a Supabase ─
+        paso(5, "Carga masiva a Supabase (todas las tablas)")
+        from bulk_sync_supabase import main as bulk_sync
+        bulk_sync()
+
+        # ── PASO 6: Sincronizar NVs pendientes por vendedor ────
+        paso(6, "Sincronizar NVs pendientes por vendedor")
+        from sync_nv_pendientes import main as sync_pendientes
+        sync_pendientes()
+
+        # ── PASO 7: Sincronizar facturación por período (21-20) ─
+        paso(7, "Sincronizar facturación por período (21-20)")
+        from sync_facturacion_periodo import main as sync_facturacion
+        sync_facturacion()
+
         # ── Resumen ────────────────────────────────────────────
         duracion = (datetime.now() - inicio).seconds
         log.info("")
         log.info("╔" + "═" * 53 + "╗")
         log.info(f"║  ✅ PIPELINE COMPLETADO en {duracion}s".ljust(54) + "║")
         log.info(f"║  📊 Excel en Drive: VentasFull_Actualizado.xlsx".ljust(54) + "║")
+        log.info(f"║  🔄 NVs sincronizadas en Supabase (OC Polchile)".ljust(54) + "║")
+        log.info(f"║  🔄 NVs pendientes sincronizadas por vendedor".ljust(54) + "║")
+        log.info(f"║  🔄 Facturación por período sincronizada".ljust(54) + "║")
         log.info("╚" + "═" * 53 + "╝")
 
     except Exception as e:

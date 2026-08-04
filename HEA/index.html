@@ -804,13 +804,51 @@ textarea.cotizar-input{resize:vertical;min-height:72px}
           <input class="cotizar-input" id="cot_telefono" type="text" placeholder="+56 9 1234 5678">
         </div>
 
-        <!-- TOTAL DE LA OT -->
+        <!-- ══ COTIZACIÓN CON BÚSQUEDA DE PRODUCTOS ══ -->
         <div class="cotizar-field">
-          <label>Total de la OT ($)</label>
-          <input class="cotizar-input" id="cot_precio" type="number" min="0" step="1000"
-            placeholder="0" value="0"
-            style="font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--green-dark)">
+          <label>Items de la cotización</label>
+
+          <!-- Buscador -->
+          <div style="position:relative;margin-bottom:8px" id="cot-search-wrap">
+            <input id="cot-search" type="text" class="cotizar-input"
+              placeholder="🔍 Buscar producto (plancha, tubo, gorro…)"
+              autocomplete="off" oninput="cotBuscar(this.value)" onfocus="cotBuscar(this.value)"
+              style="padding-left:12px">
+            <div id="cot-dropdown"
+              style="display:none;position:absolute;z-index:999;width:100%;background:var(--surface);border:1px solid var(--lime);border-radius:0 0 10px 10px;max-height:240px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.5)">
+            </div>
+          </div>
+
+          <!-- Carrito de items -->
+          <div id="cot-cart-wrap" style="display:none;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px">
+            <table style="width:100%;border-collapse:collapse;font-size:11px">
+              <thead>
+                <tr style="background:var(--forest)">
+                  <th style="padding:6px 8px;text-align:left;color:#8aba96;font-size:8px;text-transform:uppercase;border-bottom:2px solid var(--lime)">Producto</th>
+                  <th style="padding:6px 6px;color:#8aba96;font-size:8px;text-transform:uppercase;border-bottom:2px solid var(--lime);text-align:center">Cant</th>
+                  <th style="padding:6px 8px;color:#8aba96;font-size:8px;text-transform:uppercase;border-bottom:2px solid var(--lime);text-align:right">Subtotal</th>
+                  <th style="padding:6px 4px;border-bottom:2px solid var(--lime)"></th>
+                </tr>
+              </thead>
+              <tbody id="cot-cart-body"></tbody>
+              <tfoot>
+                <tr style="background:var(--forest);border-top:2px solid var(--lime)">
+                  <td colspan="2" style="padding:7px 8px;color:#8aba96;font-size:9px;text-transform:uppercase;font-weight:700;letter-spacing:.05em">TOTAL</td>
+                  <td style="padding:7px 8px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:800;color:#8cd940;font-size:14px" id="cot-cart-total">$0</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Total editable (override) -->
+          <div style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:6px 10px">
+            <span style="font-size:9px;color:var(--text3);text-transform:uppercase;font-weight:700;letter-spacing:.05em;white-space:nowrap">Total OT $</span>
+            <input id="cot_precio" type="number" min="0" step="1000" placeholder="0" value="0"
+              style="flex:1;background:transparent;border:none;outline:none;font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--green-dark);text-align:right">
+          </div>
         </div>
+
         <div class="cotizar-field">
           <label>Fecha de entrega</label>
           <input class="cotizar-input" id="cot_fecha_entrega" type="date">
@@ -951,7 +989,73 @@ textarea.cotizar-input{resize:vertical;min-height:72px}
 <div id="tab-caja" class="tab-panel">
   <div style="padding:1rem 1.5rem;max-width:1200px;margin:0 auto">
 
-    <!-- Filtro mes/año -->
+    <!-- ══ SALDO DE CAJA + REGISTRAR DEPÓSITO ══ -->
+    <div style="display:grid;grid-template-columns:260px 1fr;gap:1.5rem;margin-bottom:2rem;align-items:start">
+
+      <!-- Tarjeta saldo -->
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem">💵 Saldo de Caja</div>
+        <div style="background:var(--surface2);border:2px solid var(--green-mid);border-radius:14px;padding:1.25rem;text-align:center">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;font-weight:700;letter-spacing:.05em">Efectivo OTs</div>
+          <div style="font-size:18px;font-weight:700;color:#2d8653;font-family:'JetBrains Mono',monospace;margin:.2rem 0" id="saldo-ef-ots">—</div>
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;font-weight:700;letter-spacing:.05em;margin-top:.5rem">− Depositado</div>
+          <div style="font-size:18px;font-weight:700;color:var(--amber);font-family:'JetBrains Mono',monospace;margin:.2rem 0" id="saldo-depositado-total">—</div>
+          <div style="border-top:1px solid var(--border);margin:.75rem 0 .5rem"></div>
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;font-weight:700;letter-spacing:.05em">Saldo disponible</div>
+          <div style="font-size:30px;font-weight:800;font-family:'JetBrains Mono',monospace;margin:.25rem 0" id="saldo-caja-neto">—</div>
+        </div>
+      </div>
+
+      <!-- Formulario depósito -->
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem">🏦 Registrar depósito en banco</div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+            <div>
+              <label style="font-size:9px;color:var(--text3);text-transform:uppercase;font-weight:700;letter-spacing:.05em;display:block;margin-bottom:4px">Fecha del depósito</label>
+              <input type="date" id="dep-fecha" style="width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text);outline:none;font-family:'Outfit',sans-serif;box-sizing:border-box">
+            </div>
+            <div>
+              <label style="font-size:9px;color:var(--text3);text-transform:uppercase;font-weight:700;letter-spacing:.05em;display:block;margin-bottom:4px">Monto ($)</label>
+              <input type="number" id="dep-monto" min="0" step="1000" placeholder="0" style="width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text);outline:none;font-family:'JetBrains Mono',monospace;box-sizing:border-box">
+            </div>
+          </div>
+          <div style="margin-bottom:.75rem">
+            <label style="font-size:9px;color:var(--text3);text-transform:uppercase;font-weight:700;letter-spacing:.05em;display:block;margin-bottom:4px">Banco / Descripción</label>
+            <input type="text" id="dep-desc" placeholder="Ej: Depósito Banco Estado, Cuenta corriente…" style="width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text);outline:none;font-family:'Outfit',sans-serif;box-sizing:border-box">
+          </div>
+          <div style="margin-bottom:.9rem">
+            <label style="font-size:9px;color:var(--text3);text-transform:uppercase;font-weight:700;letter-spacing:.05em;display:block;margin-bottom:4px">Responsable</label>
+            <input type="text" id="dep-resp" placeholder="Nombre de quien deposita" style="width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text);outline:none;font-family:'Outfit',sans-serif;box-sizing:border-box">
+          </div>
+          <button onclick="registrarDeposito()" style="width:100%;background:var(--green-dark);color:#fff;border:none;border-radius:9px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:opacity .15s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">✅ Registrar depósito</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historial depósitos -->
+    <div style="margin-bottom:2rem">
+      <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem">📋 Historial de depósitos</div>
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:auto;max-height:260px">
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead>
+            <tr style="background:var(--forest)">
+              <th style="padding:7px 10px;text-align:left;color:#8aba96;font-size:8px;text-transform:uppercase;border-bottom:2px solid var(--lime)">Fecha</th>
+              <th style="padding:7px 10px;text-align:left;color:#8aba96;font-size:8px;text-transform:uppercase;border-bottom:2px solid var(--lime)">Banco / Descripción</th>
+              <th style="padding:7px 10px;text-align:left;color:#8aba96;font-size:8px;text-transform:uppercase;border-bottom:2px solid var(--lime)">Responsable</th>
+              <th style="padding:7px 10px;text-align:right;color:#8aba96;font-size:8px;text-transform:uppercase;border-bottom:2px solid var(--lime);font-family:'JetBrains Mono',monospace">Monto</th>
+              <th style="padding:7px 6px;border-bottom:2px solid var(--lime)"></th>
+            </tr>
+          </thead>
+          <tbody id="depositosBody">
+            <tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text3);font-size:11px">Cargando…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin-bottom:1.5rem">
+    <!-- Filtro mes/año (ingresos OT) -->
     <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap">
       <select id="cajaMes" onchange="renderCaja()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;font-family:'Outfit',sans-serif;color:var(--text);outline:none">
         <option value="">Todos los meses</option>
@@ -2861,8 +2965,7 @@ window.convertirAOT = async function(){
   const fechaEnt  = feInput ? (()=>{ const p=feInput.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })() : '';
 
   if(!cliente){ showToast('⚠ Ingresa el nombre del cliente'); return; }
-
-  const maxOT = data.length ? Math.max(...data.map(r=>Number(r.ot)||0)) : 0;
+  if(!rut){ showToast('⚠ Ingresa el RUT del cliente'); return; }
   const newOT = maxOT + 1;
   const d = new Date();
   const fecha = String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
@@ -3188,24 +3291,29 @@ async function generarPDFInterno(row, guardarDrive){
     const pdfBlob  = doc.output('blob');
     const pdfUrl   = URL.createObjectURL(pdfBlob);
     const dlLink   = document.createElement('a');
-    dlLink.href=pdfUrl; dlLink.download=fileName; dlLink.click();
+    dlLink.href     = pdfUrl;
+    dlLink.download = fileName;
+    dlLink.style.display = 'none';
+    document.body.appendChild(dlLink);
+    dlLink.click();
+    document.body.removeChild(dlLink);
     setTimeout(()=>URL.revokeObjectURL(pdfUrl), 5000);
-    statusEl.className='drive-status ok'; statusEl.textContent='✓ PDF generado';
+    if(statusEl) statusEl.className='drive-status ok', statusEl.textContent='✓ PDF generado';
 
     if(guardarDrive){
-      statusEl.textContent='Subiendo a Google Drive…';
+      if(statusEl) statusEl.textContent='Subiendo a Google Drive…';
       try{
         await subirADrive(pdfBlob, fileName);
-        statusEl.className='drive-status ok'; statusEl.textContent='✓ PDF guardado en Google Drive';
+        if(statusEl){ statusEl.className='drive-status ok'; statusEl.textContent='✓ PDF guardado en Google Drive'; }
         showToast('✅ PDF guardado: '+fileName);
       }catch(driveErr){
-        statusEl.className='drive-status err'; statusEl.textContent='PDF listo · Drive: '+driveErr.message;
+        if(statusEl){ statusEl.className='drive-status err'; statusEl.textContent='PDF listo · Drive: '+driveErr.message; }
         showToast('PDF generado (Drive: '+driveErr.message+')');
       }
     }
 
   }catch(pdfErr){
-    statusEl.className='drive-status err'; statusEl.textContent='Error PDF: '+pdfErr.message;
+    if(statusEl){ statusEl.className='drive-status err'; statusEl.textContent='Error PDF: '+pdfErr.message; }
     showToast('Error generando PDF'); console.error(pdfErr);
   }
 }
@@ -3496,6 +3604,7 @@ window.convertirAOT = async function(){
   const fechaEnt  = feInput ? (()=>{ const p=feInput.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })() : '';
 
   if(!cliente){ showToast('⚠ Ingresa el nombre del cliente'); return; }
+  if(!rut){ showToast('⚠ Ingresa el RUT del cliente'); return; }
 
   window.saveCurrentPage();
   const croquisArray = canvasPages.filter(p => p && p.length > 100);
@@ -3611,7 +3720,322 @@ window.nextCanvasPage = function(){
   loadPage(currentCanvasPage);
 };
 
+// ══════════════════════════════════════════════════════════════
+// MÓDULO DEPÓSITOS DE CAJA
+// ══════════════════════════════════════════════════════════════
+let depositosData = [];
+
+async function loadDepositos(){
+  if(!db) return;
+  try{
+    const snap = await db.collection('depositos').orderBy('fechaISO','asc').get();
+    depositosData = snap.docs.map(d=>({_id:d.id,...d.data()}));
+    renderDepositos();
+    updateSaldoCaja();
+  }catch(e){ console.error('Error cargando depósitos:',e); }
+}
+
+function renderDepositos(){
+  const tbody = document.getElementById('depositosBody');
+  if(!tbody) return;
+  const fmt = v => '$'+Math.round(Number(v)||0).toLocaleString('es-CL');
+  if(!depositosData.length){
+    tbody.innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text3);font-size:11px">Sin depósitos registrados</td></tr>';
+    return;
+  }
+  tbody.innerHTML = depositosData.map((d,i)=>`
+    <tr style="background:${i%2===0?'var(--surface2)':'transparent'};border-bottom:1px solid var(--border)">
+      <td style="padding:7px 10px;color:var(--text2);white-space:nowrap">${d.fecha||'—'}</td>
+      <td style="padding:7px 10px;color:var(--text)">${d.descripcion||'—'}</td>
+      <td style="padding:7px 10px;color:var(--text3)">${d.responsable||'—'}</td>
+      <td style="padding:7px 10px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--amber)">${fmt(d.monto)}</td>
+      <td style="padding:7px 6px;text-align:center">
+        <button onclick="eliminarDeposito('${d._id}')" title="Eliminar"
+          style="background:none;border:none;cursor:pointer;color:#c0392b;font-size:16px;line-height:1;padding:0 4px">×</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function updateSaldoCaja(){
+  const fmt = v => '$'+Math.round(Number(v)||0).toLocaleString('es-CL');
+  // Total efectivo de OTs (todas, sin filtro de mes)
+  const efOTs = (data||[]).filter(r=>(r.tipo_pago||'').toLowerCase().includes('efectivo'))
+                           .reduce((s,r)=>s+(Number(r.venta)||0), 0);
+  const totalDep = depositosData.reduce((s,d)=>s+(Number(d.monto)||0), 0);
+  const saldo    = efOTs - totalDep;
+
+  const elEf  = document.getElementById('saldo-ef-ots');
+  const elDep = document.getElementById('saldo-depositado-total');
+  const elNet = document.getElementById('saldo-caja-neto');
+  if(elEf)  elEf.textContent  = fmt(efOTs);
+  if(elDep) elDep.textContent = fmt(totalDep);
+  if(elNet){
+    elNet.textContent  = fmt(saldo);
+    elNet.style.color  = saldo >= 0 ? '#2d8653' : '#c0392b';
+  }
+}
+
+window.registrarDeposito = async function(){
+  const fecha = document.getElementById('dep-fecha').value;
+  const monto = parseFloat(document.getElementById('dep-monto').value)||0;
+  const desc  = document.getElementById('dep-desc').value.trim();
+  const resp  = document.getElementById('dep-resp').value.trim();
+  if(!fecha){ showToast('⚠ Ingresa la fecha del depósito'); return; }
+  if(!monto){ showToast('⚠ Ingresa el monto a depositar'); return; }
+  try{
+    const now  = new Date();
+    const freg = String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+now.getFullYear();
+    const [y,m,dd] = fecha.split('-');
+    await db.collection('depositos').add({
+      fecha: dd+'/'+m+'/'+y,
+      fechaISO: fecha,          // yyyy-mm-dd para ordenar correctamente
+      monto,
+      descripcion: desc,
+      responsable: resp,
+      fechaRegistro: freg
+    });
+    showToast('✅ Depósito registrado — Caja rebajada en '+('$'+Math.round(monto).toLocaleString('es-CL')));
+    ['dep-fecha','dep-desc','dep-resp'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+    const dm = document.getElementById('dep-monto'); if(dm) dm.value='';
+    await loadDepositos();
+  }catch(e){ showToast('Error: '+e.message); console.error(e); }
+};
+
+window.eliminarDeposito = async function(id){
+  if(!confirm('¿Eliminar este depósito? El monto se reincorporará al saldo de caja.')) return;
+  try{
+    await db.collection('depositos').doc(id).delete();
+    showToast('Depósito eliminado');
+    await loadDepositos();
+  }catch(e){ showToast('Error: '+e.message); }
+};
+
+// Cargar depósitos cuando se abre la pestaña Caja
+const _origSwitchCaja = window.switchTab;
+window.switchTab = function(name, evt){
+  _origSwitchCaja(name, evt);
+  if(name==='caja') loadDepositos();
+};
+
+// ══════════════════════════════════════════════════════════════
+// CATÁLOGO DE PRECIOS 2026 + CARRITO DE COTIZACIÓN
+// ══════════════════════════════════════════════════════════════
+
+const _PREC = {
+  plancha: {
+    'Zinc Alum': {
+      esp:  ['0.4','0.5','0.6','0.8'],
+      des:  ['Sin plegado','1219mm','610mm','406mm','304mm','243mm','203mm','174mm','152mm','135mm','122mm'],
+      tab:  {
+        '0.4':[6970,8040,4570,3470,2970,2770,2570,2370,2170,1970,1770],
+        '0.5':[8970,10040,5570,4270,3470,2970,2770,2570,2370,2170,1970],
+        '0.6':[9970,11040,6070,4670,4070,3370,3070,2870,2670,2370,2170],
+        '0.8':[12970,14440,7970,5870,4770,4070,3670,3370,3170,2970,2770]
+      }
+    },
+    'Prepintada': {
+      esp:  ['0.4','0.5','0.6'],
+      des:  ['Sin plegado','1219mm','610mm','406mm','304mm','243mm','203mm','174mm','152mm','135mm','122mm'],
+      tab:  {
+        '0.4':[8970,10040,5570,4270,3470,2970,2770,2570,2370,2170,1970],
+        '0.5':[10970,12040,6570,4870,4070,3370,3070,2770,2570,2370,2270],
+        '0.6':[12970,14040,7670,5570,4570,4070,3570,3070,2870,2670,2470]
+      }
+    }
+  },
+  tubo: {
+    esp: ['0.4','0.5','0.8'],
+    dia: ['4"','4½"','5"','5½"','6"','6½"','7"','7½"','8"','8½"','9"','9½"','10"','10½"','11"','11½"','12"','12½"','13"','14"','16"','18"','20"','22"','24"'],
+    tab: {
+      '0.4':[5970,6470,6970,7470,7970,8470,8970,9470,9970,10470,10970,11470,11970,12470,12970,13970,15970,17970,18970,19970,21970,23970,25970,27970,29970],
+      '0.5':[7470,7970,8470,8970,9470,9970,10470,10970,11470,11970,12470,12970,13970,15970,17970,19970,20970,22470,23970,24970,26970,28970,30970,31970,33970],
+      '0.8':[9470,9970,10470,10970,11470,11970,12470,12970,13970,15970,17970,19970,20970,22470,26970,28970,30970,31970,34970,36970,39970,41970,43970,47970,49970]
+    }
+  },
+  codo45: {
+    esp: ['0.4','0.5'],
+    dia: ['4"','4½"','5"','5½"','6"','6½"','7"','7½"','8"','8½"','9"','9½"','10"','10½"','11"','11½"','12"','12½"','13"'],
+    tab: {
+      '0.4':[7470,7970,8470,8970,9470,9970,10470,10970,11470,11970,12470,12970,13970,15970,16970,17970,18970,20970,21970],
+      '0.5':[8470,8970,9470,9970,10470,10970,11470,11970,12470,12970,13970,15970,16970,17970,18970,20970,21970,22970,23970]
+    }
+  },
+  codo90: {
+    esp: ['0.4','0.5'],
+    dia: ['4"','4½"','5"','5½"','6"','6½"','7"','7½"','8"','8½"','9"','9½"','10"','10½"','11"','11½"','12"','12½"','13"'],
+    tab: {
+      '0.4':[8470,8970,9470,9970,10470,10970,11470,11970,12470,12970,13970,14970,15970,17970,18970,20970,22970,24970,26970],
+      '0.5':[9470,9970,10470,10970,11470,11970,12470,12970,13970,15970,16970,17970,18970,20970,22970,24970,26970,28970,30970]
+    }
+  },
+  ducto: {
+    'ZA 0.4':14970,'ZA 0.5':16470,'ZA 0.6':21970,
+    'PP 0.4':16970,'PP 0.5':21970,'PP 0.6':23970,
+    'Galv 0.8':31970
+  },
+  gorro: {
+    'Chino': {
+      dia:['4"','4½"','5"','5½"','6"','6½"','7"','7½"','8"','8½"','9"','9½"','10"','10½"','11"','11½"','12"','12½"','13"','13½"','14"','14½"','15"','15½"','16"','16½"','17"','17½"','18"','18½"','19"','19½"','20"'],
+      pre:[4150,4500,4850,5200,5550,5900,6250,6600,7450,8300,9150,10000,11050,12100,13150,14200,15250,16300,17550,18800,20050,21300,22550,23800,25050,26300,27550,28800,30050,31300,32550,33800,35050]
+    },
+    'Austral': {
+      dia:['4"','4½"','5"','5½"','6"','6½"','7"','7½"','8"','9"','10"','11"','12"','13"','14"','15"','16"','18"','19"','20"'],
+      pre:[6300,6800,7300,7800,8300,8800,10300,11300,12300,14300,16300,18300,20300,23300,25300,27300,29300,33300,35300,40300]
+    },
+    'Eólico': {
+      dia:['6"','8"','10"','12"','14"','16"','18"','20"','24"'],
+      pre:[35700,49700,55700,61700,65700,71700,76700,84700,101700]
+    }
+  },
+  panel: {
+    'CG-54/46/25':    { mat:['Zincalum','Prepintado'], tab:{'Zincalum':{'0.4':4399,'0.5':5491,'0.6':6242},'Prepintado':{'0.4':5528,'0.5':6941,'0.6':7906}} },
+    'CG-2 Emballetado':{ mat:['Zincalum','Prepintado'], tab:{'Zincalum':{'0.4':2860,'0.5':3569,'0.6':4057},'Prepintado':{'0.4':3593,'0.5':4511,'0.6':5140}} },
+    'Plancha Lisa':   { mat:['Zincalum','Prepintado','Galvanizado'], tab:{'Zincalum':{'0.4':4620,'0.5':5766,'0.6':6553},'Prepintado':{'0.4':5804,'0.5':7289,'0.6':8301},'Galvanizado':{'0.4':4760,'0.5':5898,'0.8':8582}} },
+    'CGT-60':         { mat:['Zincalum','Prepintado'], tab:{'Zincalum':{'0.5':6039,'0.6':6866},'Prepintado':{'0.5':7635,'0.6':8697}} }
+  }
+};
+
+// Construir catálogo plano
+const COT_CATALOGO = (()=>{
+  const list = [];
+  const add = (n, p, u) => list.push({nombre:n, precio:p, unidad:u, busqueda:n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')});
+
+  // Planchas
+  Object.keys(_PREC.plancha).forEach(mat=>{
+    const d = _PREC.plancha[mat];
+    d.esp.forEach(esp=>{
+      d.des.forEach((des,i)=>{
+        add(`Plancha ${mat} ${esp}mm · ${des}`, d.tab[esp][i], 'ml');
+      });
+    });
+  });
+  // Tubos
+  _PREC.tubo.esp.forEach(esp=>{
+    _PREC.tubo.dia.forEach((dia,i)=>{
+      add(`Tubo Zinc Alum ${esp}mm · ${dia}`, _PREC.tubo.tab[esp][i], 'un');
+    });
+  });
+  // Codos 45°
+  _PREC.codo45.esp.forEach(esp=>{
+    _PREC.codo45.dia.forEach((dia,i)=>{
+      add(`Codo 45° Zinc Alum ${esp}mm · ${dia}`, _PREC.codo45.tab[esp][i], 'un');
+    });
+  });
+  // Codos 90°
+  _PREC.codo90.esp.forEach(esp=>{
+    _PREC.codo90.dia.forEach((dia,i)=>{
+      add(`Codo 90° Zinc Alum ${esp}mm · ${dia}`, _PREC.codo90.tab[esp][i], 'un');
+    });
+  });
+  // Ductos
+  Object.keys(_PREC.ducto).forEach(k=>{
+    add(`Ducto ${k}mm`, _PREC.ducto[k], 'm2');
+  });
+  // Gorros
+  Object.keys(_PREC.gorro).forEach(tipo=>{
+    const g = _PREC.gorro[tipo];
+    g.dia.forEach((dia,i)=> add(`Gorro ${tipo} · ${dia}`, g.pre[i], 'un'));
+  });
+  // Paneles
+  Object.keys(_PREC.panel).forEach(tipo=>{
+    const p = _PREC.panel[tipo];
+    p.mat.forEach(mat=>{
+      Object.keys(p.tab[mat]||{}).forEach(esp=>{
+        add(`Panel ${tipo} ${mat} ${esp}mm`, p.tab[mat][esp], 'ml');
+      });
+    });
+  });
+  return list;
+})();
+
+// ── Estado del carrito ──
+let cotCart = [];
+
+function cotBuscar(q){
+  const dd = document.getElementById('cot-dropdown');
+  const v  = q.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if(!v){ dd.style.display='none'; return; }
+  const terms = v.split(/\s+/);
+  const res = COT_CATALOGO.filter(p=>terms.every(t=>p.busqueda.includes(t))).slice(0,35);
+  if(!res.length){ dd.style.display='none'; return; }
+  const fmt = n=>'$'+Math.round(n).toLocaleString('es-CL');
+  dd.innerHTML = res.map((p,i)=>`
+    <div onclick="cotSeleccionar(${i},${JSON.stringify(res).replace(/"/g,'&quot;')})"
+      data-idx="${i}" style="padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px"
+      onmouseover="this.style.background='var(--forest)'" onmouseout="this.style.background=''">
+      <span style="font-size:11px;color:var(--text);flex:1">${p.nombre}</span>
+      <span style="font-size:11px;font-weight:700;color:#8cd940;font-family:'JetBrains Mono',monospace;white-space:nowrap">${fmt(p.precio)}<span style="font-size:9px;color:#8aba96;margin-left:3px">/${p.unidad}</span></span>
+    </div>
+  `).join('');
+  // Guardar en closure para el onclick
+  dd._res = res;
+  dd.style.display = 'block';
+}
+
+function cotSeleccionar(idx, resJSON){
+  const dd = document.getElementById('cot-dropdown');
+  const res = dd._res || [];
+  const item = res[idx];
+  if(!item) return;
+  cotCart.push({uid: Date.now()+Math.random(), nombre:item.nombre, precio:item.precio, unidad:item.unidad, cant:1});
+  document.getElementById('cot-search').value = '';
+  dd.style.display = 'none';
+  cotRenderCart();
+}
+
+function cotQuitarItem(uid){
+  cotCart = cotCart.filter(i=>i.uid!==uid);
+  cotRenderCart();
+}
+
+function cotCantChange(uid, val){
+  const item = cotCart.find(i=>i.uid===uid);
+  if(item){ item.cant = parseFloat(val)||1; cotRenderCart(); }
+}
+
+function cotRenderCart(){
+  const wrap = document.getElementById('cot-cart-wrap');
+  const body = document.getElementById('cot-cart-body');
+  if(!cotCart.length){ wrap.style.display='none'; document.getElementById('cot_precio').value=0; return; }
+  wrap.style.display = 'block';
+  const fmt = n=>'$'+Math.round(n).toLocaleString('es-CL');
+  body.innerHTML = cotCart.map((it,i)=>`
+    <tr style="background:${i%2===0?'var(--surface2)':'transparent'};border-bottom:1px solid var(--border)">
+      <td style="padding:6px 8px;font-size:10px;color:var(--text);line-height:1.3">${it.nombre}<br><span style="font-size:9px;color:var(--text3)">${fmt(it.precio)}/${it.unidad}</span></td>
+      <td style="padding:4px 5px;text-align:center">
+        <input type="number" value="${it.cant}" min="0.01" step="1"
+          onchange="cotCantChange(${it.uid},this.value)" oninput="cotCantChange(${it.uid},this.value)"
+          style="width:56px;background:var(--surface);border:1px solid var(--border2);border-radius:5px;padding:3px 5px;font-size:11px;color:var(--text);text-align:center;font-family:'JetBrains Mono',monospace;outline:none">
+      </td>
+      <td style="padding:6px 8px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--amber);font-size:11px;white-space:nowrap">${fmt(Math.round(it.precio*it.cant))}</td>
+      <td style="padding:4px 5px;text-align:center">
+        <button onclick="cotQuitarItem(${it.uid})" style="background:none;border:none;cursor:pointer;color:#c0392b;font-size:17px;line-height:1;padding:0 3px">×</button>
+      </td>
+    </tr>
+  `).join('');
+  const total = Math.round(cotCart.reduce((s,i)=>s+i.precio*i.cant,0));
+  document.getElementById('cot-cart-total').textContent = fmt(total);
+  document.getElementById('cot_precio').value = total;
+}
+
+// Cerrar dropdown al hacer click fuera
+document.addEventListener('click', e=>{
+  const wrap = document.getElementById('cot-search-wrap');
+  if(wrap && !wrap.contains(e.target)) document.getElementById('cot-dropdown').style.display='none';
+});
+
+// Resetear carrito al limpiar
+const _origLimpiarCot = window.limpiarCotizacion;
+window.limpiarCotizacion = function(){
+  cotCart = [];
+  cotRenderCart();
+  document.getElementById('cot-search').value = '';
+  if(_origLimpiarCot) _origLimpiarCot();
+};
+
 })(); // end IIFE
+
 
 </script>
 <div style="height:44px"></div>

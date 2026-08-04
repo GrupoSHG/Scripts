@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --panel: #12151a;
+      --border: #232932;
+      --accent: #d4ff5a;
+      --text: #e8ecf1;
+      --muted: #8a94a3;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body, html {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    #menu-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .header {
+      background: #000;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 10px;
+      color: var(--accent);
+    }
+
+    .netlify-identity-menu {
+      font-family: 'JetBrains Mono', monospace !important;
+      color: var(--text);
+    }
+
+    .dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .grid {
+      display: none;
+      flex: 1;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 2px;
+      background: var(--border);
+      padding: 2px;
+    }
+
+    .dashboard-card {
+      background: var(--panel);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+      gap: 16px;
+      padding: 40px;
+    }
+
+    .dashboard-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+
+    .dashboard-card:hover {
+      background: #1a1f28;
+    }
+
+    .dashboard-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .card-icon {
+      font-size: 48px;
+      line-height: 1;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .card-desc {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    .card-arrow {
+      position: absolute;
+      bottom: 20px;
+      right: 24px;
+      font-size: 18px;
+      color: var(--accent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .dashboard-card:hover .card-arrow {
+      opacity: 1;
+    }
+
+    .footer {
+      background: #000;
+      padding: 12px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-time {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .footer-hint {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+    
+    #mensaje-login {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+<div id="menu-screen">
+
+  <div class="header">
+    <div class="header-title">⬡ COMMAND CENTER · POLCHILE</div>
+    <div class="status">
+      <div data-netlify-identity-menu class="netlify-identity-menu"></div>
+      <div class="dot"></div>
+      <span id="clock">--:--:--</span>
+    </div>
+  </div>
+
+  <div id="mensaje-login">
+    Autenticación requerida para acceder a los módulos.
+  </div>
+
+  <div class="grid" id="grid-modulos">
+    <div class="dashboard-card" onclick="ir('COMERCIAL')">
+      <div class="card-icon">📊</div>
+      <div class="card-title">Comercial</div>
+      <div class="card-desc">Ventas · Cockpit · Vendedores</div>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <div class="dashboard-card" onclick="ir('PRODUCCION')">
+      <div class="card-icon">🏭</div>
+      <div class="card-title">Producción</div>
+      <div class="card-desc">WIP · Prensas · Acero · PSA</div>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <div class="dashboard-card" onclick="ir('FINANZAS')">
+      <div class="card-icon">💰</div>
+      <div class="card-title">Finanzas</div>
+      <div class="card-desc">Facturación · Cobranza · Flujo</div>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <div class="dashboard-card" onclick="ir('CALENDARIO')">
+      <div class="card-icon">📅</div>
+      <div class="card-title">Calendario</div>
+      <div class="card-desc">Agenda · Entregas · Planificación</div>
+      <div class="card-arrow">→</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-time" id="date-str">—</div>
+    <div class="footer-hint" id="footer-texto">SISTEMA BLOQUEADO</div>
+  </div>
+
+</div>
+
+<script>
+  // URLs actualizadas — apuntan a los 4 dashboards en Netlify (ya no a Apps Script)
+  var URLS = {
+    COMERCIAL:  'https://cockpit-comericial-web.netlify.app/',
+    PRODUCCION: 'https://polchile-produccion.netlify.app/',
+    FINANZAS:   'https://dashboard-finanzasweb.netlify.app/',
+    CALENDARIO: 'https://calendario-despachos.netlify.app/',
+  };
+
+  function ir(modulo) {
+    // Abre el módulo en una pestaña nueva
+    window.open(URLS[modulo], '_blank');
+  }
+
+  // Inicializar estado del dashboard
+  netlifyIdentity.on('init', user => {
+    if (user) { unlockSystem(); }
+  });
+
+  netlifyIdentity.on('login', user => {
+    unlockSystem();
+    netlifyIdentity.close(); // Cierra el modal
+  });
+
+  netlifyIdentity.on('logout', () => {
+    lockSystem();
+  });
+
+  function unlockSystem() {
+    document.getElementById('grid-modulos').style.display = 'grid';
+    document.getElementById('mensaje-login').style.display = 'none';
+    document.getElementById('footer-texto').innerText = "SELECCIONA UN MÓDULO PARA CONTINUAR";
+  }
+
+  function lockSystem() {
+    document.getElementById('grid-modulos').style.display = 'none';
+    document.getElementById('mensaje-login').style.display = 'flex';
+    document.getElementById('footer-texto').innerText = "SISTEMA BLOQUEADO";
+  }
+
+  // Reparar redirecciones de invitaciones (Recomendado por Netlify)
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => { document.location.href = "/"; });
+      }
+    });
+  }
+
+  // Reloj
+  function actualizarReloj() {
+    var ahora = new Date();
+    var h = ahora.getHours().toString().padStart(2,'0');
+    var m = ahora.getMinutes().toString().padStart(2,'0');
+    var s = ahora.getSeconds().toString().padStart(2,'0');
+    document.getElementById('clock').textContent = h + ':' + m + ':' + s;
+
+    var dias   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    var meses  = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    var str    = dias[ahora.getDay()] + ' ' + ahora.getDate() + ' de ' + meses[ahora.getMonth()] + ' ' + ahora.getFullYear();
+    document.getElementById('date-str').textContent = str;
+  }
+
+  actualizarReloj();
+  setInterval(actualizarReloj, 1000);
+</script>
+
+</body>
+</html>

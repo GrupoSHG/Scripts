@@ -11,6 +11,7 @@ SELECT DISTINCT
     CAST(o.CANTOK AS DECIMAL(18,6))            AS CANTIDAD_TERMINADA,
     CAST(o.CANTPP - o.CANTOK AS DECIMAL(18,6)) AS CANTIDAD_PENDIENTE,
     o.NOMBRE                                   AS NOMBRE_OP,
+    CAST(o.NOTAOBS AS VARCHAR(MAX))             AS OBSERVACIONES,
     a.CODIGO                                   AS CODIGO_PRODUCTO,
     a.NOMBRE                                   AS NOMBRE_PRODUCTO,
     a.CLASE1, a.CLASE2, a.CLASE3, a.CLASE4,
@@ -31,4 +32,4 @@ WHERE
     o.FECHACREA >= CONVERT(datetime, '20180101', 112)
 AND o.FECHACREA <= CONVERT(datetime, '20301231', 112)
 
-ORDER BY NOTA_VTA, NUM_OP, BODEGA_NOMBRE_NV;       -- ← usar los ALIAS del SELECT
+ORDER BY NOTA_VTA, NUM_OP, BODEGA_NOMBRE_NV;       -- ← usar los ALIAS del SELECT      -- ← usar los ALIAS del SELECT-- ← usar los ALIAS del SELECT
