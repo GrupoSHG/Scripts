@@ -62,8 +62,8 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
 
-          # Google Drive/Sheets — apunta al archivo que se acaba de escribir
-          # arriba desde el Secret (ver patch en subir_a_drive.py)
+          # Logs (ver patches en 00_pipeline_completo.py y subir_a_drive.py)
+          PIPELINE_MAIN_LOG: pipeline_main.log
           GOOGLE_CREDENTIALS_FILE: credenciales_google.json
           PIPELINE_VENTAS_LOG: pipeline_ventas.log
         run: python 00_pipeline_completo.py

@@ -20,6 +20,16 @@ export async function fetchPersonas() {
   return data;
 }
 
+export async function agregarPersona({ nombre, cargo, tarifaDiaria }) {
+  const { data, error } = await supabase
+    .from("personas")
+    .insert({ nombre, cargo, tarifa_diaria: tarifaDiaria, activo: true })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
 export async function fetchIniciativas(centroCostoId) {
   const { data, error } = await supabase
     .from("iniciativas")

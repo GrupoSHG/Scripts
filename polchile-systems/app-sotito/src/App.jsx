@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Camera, Users, Receipt, TrendingUp, Check, X, Upload, ChevronRight } from "lucide-react";
+import { Camera, Users, Receipt, TrendingUp, Check, X, Upload, ChevronRight, UserPlus } from "lucide-react";
 import {
   fetchCentros,
   fetchPersonas,
+  agregarPersona,
   fetchIniciativas,
   fetchAsistenciaDelDia,
   marcarAsistencia,
@@ -105,6 +106,16 @@ export default function App() {
     } catch (e2) {
       setError(e2.message);
       setOcrEstado(null);
+    }
+  };
+
+  const agregarTrabajador = async (nombre, cargo, tarifaDiaria) => {
+    try {
+      await agregarPersona({ nombre, cargo, tarifaDiaria });
+      const ps = await fetchPersonas();
+      setPersonas(ps);
+    } catch (e) {
+      setError(e.message);
     }
   };
 
@@ -211,6 +222,9 @@ export default function App() {
               <div className="px-4 py-2.5 bg-[#F6F4EE] border-t-2 border-[#1C1E1B] flex justify-between text-sm font-mono font-semibold">
                 <span>Gasto en sueldos hoy</span>
                 <span>{clp(sueldoDia)}</span>
+              </div>
+              <div className="p-3 border-t-2 border-[#1C1E1B]">
+                <FormNuevoTrabajador onAgregar={agregarTrabajador} />
               </div>
             </section>
 
@@ -334,6 +348,68 @@ export default function App() {
         )}
       </main>
     </div>
+  );
+}
+
+function FormNuevoTrabajador({ onAgregar }) {
+  const [abierto, setAbierto] = useState(false);
+  const [nombre, setNombre] = useState("");
+  const [cargo, setCargo] = useState("");
+  const [tarifa, setTarifa] = useState("");
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (!nombre || !tarifa) return;
+    onAgregar(nombre, cargo, Number(tarifa));
+    setNombre("");
+    setCargo("");
+    setTarifa("");
+    setAbierto(false);
+  };
+
+  if (!abierto) {
+    return (
+      <button
+        onClick={() => setAbierto(true)}
+        className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-[#1C1E1B]/40 py-2.5 text-xs font-semibold uppercase tracking-wide text-[#1C1E1B]/60 hover:border-[#C9A227] hover:text-[#1C1E1B] transition-colors"
+      >
+        <UserPlus size={14} /> Agregar trabajador
+      </button>
+    );
+  }
+
+  return (
+    <form onSubmit={submit} className="flex flex-col gap-2">
+      <input
+        placeholder="Nombre"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+        className="border-2 border-[#1C1E1B] px-2 py-1.5 text-sm"
+      />
+      <div className="flex gap-2">
+        <input
+          placeholder="Cargo"
+          value={cargo}
+          onChange={(e) => setCargo(e.target.value)}
+          className="flex-1 border-2 border-[#1C1E1B] px-2 py-1.5 text-sm"
+        />
+        <input
+          type="number"
+          placeholder="Tarifa/día"
+          value={tarifa}
+          onChange={(e) => setTarifa(e.target.value)}
+          className="w-28 border-2 border-[#1C1E1B] px-2 py-1.5 text-sm font-mono"
+        />
+      </div>
+      <div className="flex gap-2">
+        <button type="submit" className="flex-1 bg-[#1C1E1B] text-white py-2 text-sm font-semibold uppercase tracking-wide">
+          Guardar
+        </button>
+        <button type="button" onClick={() => setAbierto(false)} className="px-4 border-2 border-[#1C1E1B]">
+          <X size={16} />
+        </button>
+      </div>
+    </form>
   );
 }
 

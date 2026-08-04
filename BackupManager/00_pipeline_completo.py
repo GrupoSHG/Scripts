@@ -13,17 +13,23 @@ Orquestador principal. Ejecuta en orden:
 Uso: python 00_pipeline_completo.py
 """
 
+import os
 import logging
 import sys
 import traceback
 from datetime import datetime
 from pathlib import Path
 
+# En tu notebook, sigue escribiendo en la ruta de siempre si no seteas la
+# variable de entorno. En GitHub Actions, el workflow la apunta a un
+# archivo relativo (dentro de BackupManager/, que ya es el working-directory).
+PIPELINE_MAIN_LOG = os.environ.get("PIPELINE_MAIN_LOG", r"C:\Scripts\BackupManager\pipeline_main.log")
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  %(levelname)s  %(message)s",
     handlers=[
-        logging.FileHandler(r"C:\Scripts\BackupManager\pipeline_main.log", encoding="utf-8"),
+        logging.FileHandler(PIPELINE_MAIN_LOG, encoding="utf-8"),
         logging.StreamHandler()
     ]
 )
