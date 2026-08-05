@@ -37,7 +37,7 @@ SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")  # Service Role key, NUNCA
 
 NOMBRE_PESTANA = "NV_Proveedores"  # debe calzar con el nombre del .sql en ConsultasSQL/ (sin extensión)
 
-LOG_PATH = r"C:\Scripts\BackupManager\pipeline_main.log"  # mismo log que el orquestador principal
+LOG_PATH = os.environ.get("PIPELINE_MAIN_LOG", r"C:\Scripts\BackupManager\pipeline_main.log")  # mismo log que el orquestador principal
 # ─────────────────────────────────────────────
 
 log = logging.getLogger(__name__)

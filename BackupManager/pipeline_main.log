@@ -43479,3 +43479,1399 @@ openpyxl.utils.exceptions.IllegalCharacterError: Según Nota de Venta N°13337 
 2026-08-04 10:53:00,060  INFO  ║  🔄 NVs pendientes sincronizadas por vendedor        ║
 2026-08-04 10:53:00,060  INFO  ║  🔄 Facturación por período sincronizada             ║
 2026-08-04 10:53:00,060  INFO  ╚═════════════════════════════════════════════════════╝
+2026-08-05 07:42:28,906  INFO  ╔═════════════════════════════════════════════════════╗
+2026-08-05 07:42:28,909  INFO  ║   PIPELINE VENTAS FULL — Inicio: 2026-08-05 07:42   ║
+2026-08-05 07:42:28,910  INFO  ╚═════════════════════════════════════════════════════╝
+2026-08-05 07:42:28,911  INFO  
+2026-08-05 07:42:28,911  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:42:28,911  INFO    PASO 1/7 — Descargar backup desde Manager
+2026-08-05 07:42:28,912  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:42:30,030  INFO  =======================================================
+2026-08-05 07:42:30,030  INFO    Iniciando descarga automática de backup Manager
+2026-08-05 07:42:30,031  INFO  =======================================================
+2026-08-05 07:42:30,034  INFO  ====== WebDriver manager ======
+2026-08-05 07:42:32,066  INFO  Get LATEST chromedriver version for google-chrome
+2026-08-05 07:42:32,625  INFO  Get LATEST chromedriver version for google-chrome
+2026-08-05 07:42:33,238  INFO  Get LATEST chromedriver version for google-chrome
+2026-08-05 07:42:34,388  INFO  WebDriver version 150.0.7871.124 selected
+2026-08-05 07:42:34,402  INFO  Modern chrome version https://storage.googleapis.com/chrome-for-testing-public/150.0.7871.124/win32/chromedriver-win32.zip
+2026-08-05 07:42:34,403  INFO  About to download new driver from https://storage.googleapis.com/chrome-for-testing-public/150.0.7871.124/win32/chromedriver-win32.zip
+2026-08-05 07:42:34,945  INFO  Driver downloading response is 200
+2026-08-05 07:42:36,891  INFO  Get LATEST chromedriver version for google-chrome
+2026-08-05 07:42:37,647  INFO  Driver has been saved in cache [C:\Users\atorr\.wdm\drivers\chromedriver\win64\150.0.7871.124]
+2026-08-05 07:42:40,670  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-08-05 07:42:43,394  INFO  Inputs visibles: 3
+2026-08-05 07:42:43,846  INFO  Login enviado...
+2026-08-05 07:42:47,862  INFO  ✅ Login exitoso. session_id: fce2e283...
+2026-08-05 07:42:47,863  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=fce2e283a3293eb94fb57843365740d7&cd=prodkernel
+2026-08-05 07:42:48,448  INFO  Recarga 1/10...
+2026-08-05 07:42:52,614  INFO    filas .bak encontradas: 3
+2026-08-05 07:42:52,615  INFO  ✅ Tabla cargada en recarga 1.
+2026-08-05 07:42:52,671  INFO    Ignorando: 2026-8-5-T779354202A.bak
+2026-08-05 07:42:52,739  INFO    Ignorando: 2026-8-5-T779354202B.bak
+2026-08-05 07:42:52,812  INFO  Backup seleccionado: 2026-8-5-T779354202C.bak (2026-08-05 10:05:40+00:00)
+2026-08-05 07:42:52,823  INFO  HTML fila completa: <td class="bucket">mng-respaldos-poliuretano</td><td class="Key">2026-8-5-T779354202C.bak</td><td class="LastModified">2026-08-05 10:05:40+00:00</td><td class="Size">0.2 GB</td><td class="presigned_url" style="display: none;">https://mng-respaldos-poliuretano.s3.amazonaws.com/2026-8-5-T779354202C.bak?AWSAccessKeyId=AKIAZPIFFWJDVFW267ZG&amp;Signature=T7ClpG17j9gaGhcXtAK5EuhFpf8%3D&amp;Expires=1785930468</td><td><i onclick="downloadbackup($(this).parent().parent())" class="fas fa-download"></i></t
+2026-08-05 07:42:55,108  INFO  Descargando 2026-8-5-T779354202C.bak desde S3...
+2026-08-05 07:43:03,985  INFO    10 MB / 198 MB (5%)
+2026-08-05 07:43:15,012  INFO    21 MB / 198 MB (11%)
+2026-08-05 07:43:25,562  INFO    31 MB / 198 MB (16%)
+2026-08-05 07:43:38,655  INFO    42 MB / 198 MB (21%)
+2026-08-05 07:43:55,834  INFO    52 MB / 198 MB (26%)
+2026-08-05 07:44:12,473  INFO    63 MB / 198 MB (32%)
+2026-08-05 07:44:26,544  INFO    73 MB / 198 MB (37%)
+2026-08-05 07:44:40,774  INFO    84 MB / 198 MB (42%)
+2026-08-05 07:44:53,569  INFO    94 MB / 198 MB (48%)
+2026-08-05 07:45:00,573  INFO    105 MB / 198 MB (53%)
+2026-08-05 07:45:09,945  INFO    115 MB / 198 MB (58%)
+2026-08-05 07:45:32,744  INFO    126 MB / 198 MB (63%)
+2026-08-05 07:45:43,459  INFO    136 MB / 198 MB (69%)
+2026-08-05 07:46:03,256  INFO    147 MB / 198 MB (74%)
+2026-08-05 07:46:27,732  INFO    157 MB / 198 MB (79%)
+2026-08-05 07:46:47,514  INFO    168 MB / 198 MB (85%)
+2026-08-05 07:47:02,095  INFO    178 MB / 198 MB (90%)
+2026-08-05 07:47:14,233  INFO    189 MB / 198 MB (95%)
+2026-08-05 07:47:22,220  INFO  ✅ Descarga completa: 2026-8-5-T779354202C.bak (198.2 MB)
+2026-08-05 07:47:22,226  INFO  Backup guardado en: C:\Backups\Manager\2026-8-5-T779354202C_2026-08-05.bak
+2026-08-05 07:47:22,227  INFO  ✅ Éxito — backup guardado en: C:\Backups\Manager\2026-8-5-T779354202C_2026-08-05.bak
+2026-08-05 07:47:26,310  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=59329): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/34312ade40706b96804aa085192c7b65
+2026-08-05 07:47:30,379  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=59329): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/34312ade40706b96804aa085192c7b65
+2026-08-05 07:47:34,453  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=59329): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/34312ade40706b96804aa085192c7b65
+2026-08-05 07:47:38,533  INFO  
+2026-08-05 07:47:38,533  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:47:38,534  INFO    PASO 2/7 — Restaurar BD y extraer Ventas Full
+2026-08-05 07:47:38,534  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:47:43,547  INFO  ============================================================
+2026-08-05 07:47:43,548  INFO    PASO 1 — Restaurar BD y extraer Múltiples Reportes
+2026-08-05 07:47:43,548  INFO  ============================================================
+2026-08-05 07:47:43,563  INFO  Usando .bak de ultimo_bak.txt: 2026-8-5-T779354202C_2026-08-05.bak
+2026-08-05 07:47:43,563  INFO  Usando backup: 2026-8-5-T779354202C_2026-08-05.bak
+2026-08-05 07:47:43,563  INFO  Restaurando 2026-8-5-T779354202C_2026-08-05.bak como 'T779354202C'...
+2026-08-05 07:47:43,564  INFO  Copiando .bak a C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQL\DATA\2026-8-5-T779354202C_2026-08-05.bak...
+2026-08-05 07:47:44,926  INFO  Ejecutando RESTORE DATABASE...
+2026-08-05 07:48:35,177  INFO  ✅ BD 'T779354202C' restaurada correctamente.
+2026-08-05 07:48:35,178  INFO  Conectando a 'T779354202C' para extraer reportes...
+2026-08-05 07:48:35,264  INFO  Ejecutando: Aceros...
+2026-08-05 07:48:35,704  INFO    └─ 56 filas extraídas.
+2026-08-05 07:48:35,704  INFO  Ejecutando: base_completo...
+2026-08-05 07:48:37,431  INFO    └─ 10,328 filas extraídas.
+2026-08-05 07:48:37,431  INFO  Ejecutando: calendario...
+2026-08-05 07:48:37,690  INFO    └─ 82 filas extraídas.
+2026-08-05 07:48:37,691  INFO  Ejecutando: Consumos_acero...
+2026-08-05 07:48:37,786  INFO    └─ 132 filas extraídas.
+2026-08-05 07:48:37,786  INFO  Ejecutando: Consumos_pol...
+2026-08-05 07:48:37,879  INFO    └─ 29 filas extraídas.
+2026-08-05 07:48:37,879  INFO  Ejecutando: Cotizaciones...
+2026-08-05 07:48:37,970  INFO    └─ 4,467 filas extraídas.
+2026-08-05 07:48:37,970  INFO  Ejecutando: CxC...
+2026-08-05 07:48:38,038  INFO    └─ 44 filas extraídas.
+2026-08-05 07:48:38,039  INFO  Ejecutando: Guias...
+2026-08-05 07:48:38,385  INFO    └─ 11,021 filas extraídas.
+2026-08-05 07:48:38,385  INFO  Ejecutando: Inventario_aceros...
+2026-08-05 07:48:38,442  INFO    └─ 165 filas extraídas.
+2026-08-05 07:48:38,442  INFO  Ejecutando: Notas_de_venta...
+2026-08-05 07:48:38,485  INFO    └─ 990 filas extraídas.
+2026-08-05 07:48:38,485  INFO  Ejecutando: NV_Proveedores...
+2026-08-05 07:48:38,499  INFO    └─ 409 filas extraídas.
+2026-08-05 07:48:38,500  INFO  Ejecutando: NV_Supabase...
+2026-08-05 07:48:38,543  INFO    └─ 1,803 filas extraídas.
+2026-08-05 07:48:38,544  INFO  Ejecutando: Ordenes_de_Compra...
+2026-08-05 07:48:38,668  INFO    └─ 197 filas extraídas.
+2026-08-05 07:48:38,668  INFO  Ejecutando: Ordenes_de_produccion...
+2026-08-05 07:48:39,020  INFO    └─ 3,636 filas extraídas.
+2026-08-05 07:48:39,021  INFO  Ejecutando: Pendiente_a_facturar...
+2026-08-05 07:48:39,064  ERROR    └─ Error ejecutando Pendiente_a_facturar: ('42000', '[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ORDER BY items must appear in the select list if SELECT DISTINCT is specified. (145) (SQLExecDirectW)')
+2026-08-05 07:48:39,064  INFO  Ejecutando: Productos_Stock...
+2026-08-05 07:48:39,099  INFO    └─ 143 filas extraídas.
+2026-08-05 07:48:39,099  INFO  Ejecutando: Stock_vendido...
+2026-08-05 07:48:39,203  INFO    └─ 204 filas extraídas.
+2026-08-05 07:48:39,206  INFO  Ejecutando: Vales_de_Salida...
+2026-08-05 07:48:39,229  ERROR    └─ Error ejecutando Vales_de_Salida: ('42000', '[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ORDER BY items must appear in the select list if SELECT DISTINCT is specified. (145) (SQLExecDirectW)')
+2026-08-05 07:48:39,229  INFO  Ejecutando: Ventas_Full...
+2026-08-05 07:48:39,701  INFO    └─ 2,605 filas extraídas.
+2026-08-05 07:48:39,702  INFO  Ejecutando: WIP...
+2026-08-05 07:48:39,775  INFO    └─ 31 filas extraídas.
+2026-08-05 07:48:39,778  INFO  Exportando a Excel multipestaña: C:\Reportes\VentasFull\Reportes_Completos_2026-08-05.xlsx
+2026-08-05 07:49:57,283  WARNING    └─ Stock_vendido: columnas duplicadas renombradas
+2026-08-05 07:50:22,401  INFO  ✅ Excel generado: C:\Reportes\VentasFull\Reportes_Completos_2026-08-05.xlsx (4.1 MB)
+2026-08-05 07:50:22,402  INFO  ✅ Proceso Completado → C:\Reportes\VentasFull\Reportes_Completos_2026-08-05.xlsx
+2026-08-05 07:50:22,411  INFO  
+2026-08-05 07:50:22,411  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:50:22,411  INFO    PASO 3/7 — Subir Excel a Google Drive
+2026-08-05 07:50:22,411  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:50:27,145  INFO  =======================================================
+2026-08-05 07:50:27,146  INFO    PASO 2 — Subir a Drive y actualizar Google Sheets
+2026-08-05 07:50:27,146  INFO  =======================================================
+2026-08-05 07:50:27,160  INFO  Procesando: Reportes_Completos_2026-08-05.xlsx (4.1 MB)
+2026-08-05 07:50:27,227  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-08-05 07:50:27,259  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-08-05 07:50:28,555  INFO  Creando Excel nuevo en Drive...
+2026-08-05 07:50:32,149  INFO  ✅ Excel subido a Drive: Reportes_Completos_Actualizado.xlsx
+2026-08-05 07:50:32,150  INFO  Leyendo Excel para actualizar Google Sheets...
+2026-08-05 07:50:32,205  INFO  Pestañas encontradas en Excel: ['Aceros', 'base_completo', 'calendario', 'Consumos_acero', 'Consumos_pol', 'Cotizaciones', 'CxC', 'Guias', 'Inventario_aceros', 'Notas_de_venta', 'NV_Proveedores', 'NV_Supabase', 'Ordenes_de_Compra', 'Ordenes_de_produccion', 'Productos_Stock', 'Stock_vendido', 'Ventas_Full', 'WIP']
+2026-08-05 07:50:33,671  INFO  Actualizando Base Produccion → 'Orden de Produccion' (3,636 filas)...
+2026-08-05 07:50:35,481  INFO    Limpiando hoja 'Orden de Produccion'...
+2026-08-05 07:50:36,626  INFO    Escribiendo 3,636 filas en 'Orden de Produccion'...
+2026-08-05 07:50:43,417  INFO    ✅ Hoja 'Orden de Produccion' actualizada.
+2026-08-05 07:50:43,507  INFO  Actualizando Base Produccion → 'Por Facturar' (82 filas)...
+2026-08-05 07:50:44,569  INFO    Limpiando hoja 'Por Facturar'...
+2026-08-05 07:50:45,018  INFO    Escribiendo 82 filas en 'Por Facturar'...
+2026-08-05 07:50:45,853  INFO    ✅ Hoja 'Por Facturar' actualizada.
+2026-08-05 07:50:45,973  INFO  Actualizando Base Produccion → 'Control Inventario' (165 filas)...
+2026-08-05 07:50:46,875  INFO    Limpiando hoja 'Control Inventario'...
+2026-08-05 07:50:47,469  INFO    Escribiendo 165 filas en 'Control Inventario'...
+2026-08-05 07:50:47,944  INFO    ✅ Hoja 'Control Inventario' actualizada.
+2026-08-05 07:50:48,244  INFO  Actualizando Base Produccion → 'Notas de Venta' (990 filas)...
+2026-08-05 07:50:49,173  INFO    Limpiando hoja 'Notas de Venta'...
+2026-08-05 07:50:49,803  INFO    Escribiendo 990 filas en 'Notas de Venta'...
+2026-08-05 07:50:50,617  INFO    ✅ Hoja 'Notas de Venta' actualizada.
+2026-08-05 07:50:50,664  INFO  Actualizando Base Produccion → 'Vales de Salida' (56 filas)...
+2026-08-05 07:50:51,544  INFO    Limpiando hoja 'Vales de Salida'...
+2026-08-05 07:50:51,980  INFO    Escribiendo 56 filas en 'Vales de Salida'...
+2026-08-05 07:50:52,411  INFO    ✅ Hoja 'Vales de Salida' actualizada.
+2026-08-05 07:50:52,595  INFO  Actualizando Base Produccion → 'Stock' (143 filas)...
+2026-08-05 07:50:53,287  INFO    Limpiando hoja 'Stock'...
+2026-08-05 07:50:54,230  INFO    Escribiendo 143 filas en 'Stock'...
+2026-08-05 07:50:54,544  INFO    ✅ Hoja 'Stock' actualizada.
+2026-08-05 07:50:54,580  INFO  Actualizando Base Produccion → 'Consumos POL' (29 filas)...
+2026-08-05 07:50:55,226  INFO    Limpiando hoja 'Consumos POL'...
+2026-08-05 07:50:55,517  INFO    Escribiendo 29 filas en 'Consumos POL'...
+2026-08-05 07:50:55,800  INFO    ✅ Hoja 'Consumos POL' actualizada.
+2026-08-05 07:50:57,292  INFO  Actualizando Base Produccion → 'Ventas_Full' (2,605 filas)...
+2026-08-05 07:50:57,925  INFO    Limpiando hoja 'Ventas_Full'...
+2026-08-05 07:50:58,592  INFO    Escribiendo 2,605 filas en 'Ventas_Full'...
+2026-08-05 07:51:01,226  INFO    ✅ Hoja 'Ventas_Full' actualizada.
+2026-08-05 07:51:01,267  INFO  Actualizando Base Produccion → 'WIP' (31 filas)...
+2026-08-05 07:51:01,964  INFO    Limpiando hoja 'WIP'...
+2026-08-05 07:51:02,252  INFO    Escribiendo 31 filas en 'WIP'...
+2026-08-05 07:51:02,535  INFO    ✅ Hoja 'WIP' actualizada.
+2026-08-05 07:51:02,657  INFO  Actualizando Base Produccion → 'Stock Vendido' (204 filas)...
+2026-08-05 07:51:03,482  INFO    Limpiando hoja 'Stock Vendido'...
+2026-08-05 07:51:03,777  INFO    Escribiendo 204 filas en 'Stock Vendido'...
+2026-08-05 07:51:04,095  INFO    ✅ Hoja 'Stock Vendido' actualizada.
+2026-08-05 07:51:04,880  INFO  Actualizando Base Produccion → 'Consumos Acero' (132 filas)...
+2026-08-05 07:51:05,983  INFO    Limpiando hoja 'Consumos Acero'...
+2026-08-05 07:51:06,307  INFO    Escribiendo 132 filas en 'Consumos Acero'...
+2026-08-05 07:51:06,666  INFO    ✅ Hoja 'Consumos Acero' actualizada.
+2026-08-05 07:51:08,651  INFO  Actualizando Base Produccion → 'Guias' (11,021 filas)...
+2026-08-05 07:51:17,956  INFO    Limpiando hoja 'Guias'...
+2026-08-05 07:51:20,103  INFO    Escribiendo 11,021 filas en 'Guias'...
+2026-08-05 07:51:24,907  INFO    ✅ Hoja 'Guias' actualizada.
+2026-08-05 07:51:26,472  INFO  Actualizando Presupuestos → 'Ventas Full Manager' (2,605 filas)...
+2026-08-05 07:51:27,443  INFO    Limpiando hoja 'Ventas Full Manager'...
+2026-08-05 07:51:28,137  INFO    Escribiendo 2,605 filas en 'Ventas Full Manager'...
+2026-08-05 07:51:32,905  INFO    ✅ Hoja 'Ventas Full Manager' actualizada.
+2026-08-05 07:51:33,172  INFO  Actualizando Presupuestos → 'Notas de Venta' (990 filas)...
+2026-08-05 07:51:33,883  INFO    Limpiando hoja 'Notas de Venta'...
+2026-08-05 07:51:34,208  INFO    Escribiendo 990 filas en 'Notas de Venta'...
+2026-08-05 07:51:34,954  INFO    ✅ Hoja 'Notas de Venta' actualizada.
+2026-08-05 07:51:35,607  INFO  Actualizando Presupuestos → 'Cotizaciones' (4,467 filas)...
+2026-08-05 07:51:36,280  INFO    Limpiando hoja 'Cotizaciones'...
+2026-08-05 07:51:36,780  INFO    Escribiendo 4,467 filas en 'Cotizaciones'...
+2026-08-05 07:51:38,037  INFO    ✅ Hoja 'Cotizaciones' actualizada.
+2026-08-05 07:51:38,103  INFO  Actualizando Presupuestos → 'Calendario' (82 filas)...
+2026-08-05 07:51:38,889  INFO    Limpiando hoja 'Calendario'...
+2026-08-05 07:51:39,160  INFO    Escribiendo 82 filas en 'Calendario'...
+2026-08-05 07:51:39,647  INFO    ✅ Hoja 'Calendario' actualizada.
+2026-08-05 07:51:39,648  INFO  
+2026-08-05 07:51:39,648  INFO  ✅ Todo actualizado:
+2026-08-05 07:51:39,648  INFO     📁 Drive: Reportes_Completos_Actualizado.xlsx
+2026-08-05 07:51:39,649  INFO     📊 Base Produccion: ['Orden de Produccion', 'Por Facturar', 'Control Inventario', 'Notas de Venta', 'Vales de Salida', 'Stock', 'Consumos POL', 'Ventas_Full', 'WIP', 'Stock Vendido', 'Consumos Acero', 'Guias']
+2026-08-05 07:51:39,649  INFO     📊 Presupuestos: Ventas Full Manager
+2026-08-05 07:51:39,651  INFO  
+2026-08-05 07:51:39,651  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:51:39,651  INFO    PASO 4/7 — Sincronizar NVs a Supabase (OC Polchile)
+2026-08-05 07:51:39,652  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:51:40,766  INFO    PASO 5 — Sincronizar proveedores a Supabase (OC Polchile)
+2026-08-05 07:51:40,908  INFO  Leídas 409 filas de la pestaña 'NV_Proveedores'
+2026-08-05 07:51:40,940  INFO  Proveedores a sincronizar: 409
+2026-08-05 07:51:44,028  INFO  HTTP Request: GET https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?select=rut "HTTP/2 200 OK"
+2026-08-05 07:51:44,274  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76557711-K "HTTP/2 200 OK"
+2026-08-05 07:51:44,545  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96756430-3 "HTTP/2 200 OK"
+2026-08-05 07:51:44,807  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76639288-1 "HTTP/2 200 OK"
+2026-08-05 07:51:45,102  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76452392-K "HTTP/2 200 OK"
+2026-08-05 07:51:45,288  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76309385-9 "HTTP/2 200 OK"
+2026-08-05 07:51:45,472  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76282059-5 "HTTP/2 200 OK"
+2026-08-05 07:51:45,655  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76234653-2 "HTTP/2 200 OK"
+2026-08-05 07:51:45,838  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96540700-6 "HTTP/2 200 OK"
+2026-08-05 07:51:46,020  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77467642-2 "HTTP/2 200 OK"
+2026-08-05 07:51:46,277  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77648985-9 "HTTP/2 200 OK"
+2026-08-05 07:51:46,461  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.9581564-2 "HTTP/2 200 OK"
+2026-08-05 07:51:46,645  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77958770-3 "HTTP/2 200 OK"
+2026-08-05 07:51:46,823  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77839161-9 "HTTP/2 200 OK"
+2026-08-05 07:51:47,001  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.12885828-8 "HTTP/2 200 OK"
+2026-08-05 07:51:47,186  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77726515-6 "HTTP/2 200 OK"
+2026-08-05 07:51:47,369  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76077067-1 "HTTP/2 200 OK"
+2026-08-05 07:51:47,549  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78885550-8 "HTTP/2 200 OK"
+2026-08-05 07:51:47,728  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76700184-3 "HTTP/2 200 OK"
+2026-08-05 07:51:47,920  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77754569-8 "HTTP/2 200 OK"
+2026-08-05 07:51:48,101  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76375855-9 "HTTP/2 200 OK"
+2026-08-05 07:51:48,282  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84652600-5 "HTTP/2 200 OK"
+2026-08-05 07:51:48,461  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.87910700-8 "HTTP/2 200 OK"
+2026-08-05 07:51:48,644  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76283577-0 "HTTP/2 200 OK"
+2026-08-05 07:51:48,823  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77662300-8 "HTTP/2 200 OK"
+2026-08-05 07:51:49,005  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76115125-8 "HTTP/2 200 OK"
+2026-08-05 07:51:49,187  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78239560-2 "HTTP/2 200 OK"
+2026-08-05 07:51:49,375  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76015031-2 "HTTP/2 200 OK"
+2026-08-05 07:51:49,556  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77415073-0 "HTTP/2 200 OK"
+2026-08-05 07:51:50,078  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77985710-7 "HTTP/2 200 OK"
+2026-08-05 07:51:50,260  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77842710-9 "HTTP/2 200 OK"
+2026-08-05 07:51:50,444  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.97080000-K "HTTP/2 200 OK"
+2026-08-05 07:51:50,637  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77554322-1 "HTTP/2 200 OK"
+2026-08-05 07:51:50,824  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.12852439-8 "HTTP/2 200 OK"
+2026-08-05 07:51:51,004  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78028928-7 "HTTP/2 200 OK"
+2026-08-05 07:51:51,177  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.11664449-5 "HTTP/2 200 OK"
+2026-08-05 07:51:51,358  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77109212-8 "HTTP/2 200 OK"
+2026-08-05 07:51:51,529  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76350815-3 "HTTP/2 200 OK"
+2026-08-05 07:51:51,707  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.86778100-5 "HTTP/2 200 OK"
+2026-08-05 07:51:51,876  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.4814737-2 "HTTP/2 200 OK"
+2026-08-05 07:51:52,087  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76166816-1 "HTTP/2 200 OK"
+2026-08-05 07:51:52,262  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78705590-7 "HTTP/2 200 OK"
+2026-08-05 07:51:52,438  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77215590-5 "HTTP/2 200 OK"
+2026-08-05 07:51:52,607  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77881901-5 "HTTP/2 200 OK"
+2026-08-05 07:51:52,786  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77732164-1 "HTTP/2 200 OK"
+2026-08-05 07:51:53,122  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76443950-3 "HTTP/2 200 OK"
+2026-08-05 07:51:53,304  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78105311-2 "HTTP/2 200 OK"
+2026-08-05 07:51:53,479  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79507240-3 "HTTP/2 200 OK"
+2026-08-05 07:51:53,696  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78096493-6 "HTTP/2 200 OK"
+2026-08-05 07:51:53,882  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76763625-3 "HTTP/2 200 OK"
+2026-08-05 07:51:54,061  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78936330-7 "HTTP/2 200 OK"
+2026-08-05 07:51:54,258  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77432437-2 "HTTP/2 200 OK"
+2026-08-05 07:51:54,440  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77806648-3 "HTTP/2 200 OK"
+2026-08-05 07:51:54,631  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77617830-6 "HTTP/2 200 OK"
+2026-08-05 07:51:54,814  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.51054270-3 "HTTP/2 200 OK"
+2026-08-05 07:51:54,999  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76745244-6 "HTTP/2 200 OK"
+2026-08-05 07:51:55,177  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.60910000-1 "HTTP/2 200 OK"
+2026-08-05 07:51:55,358  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.88279700-7 "HTTP/2 200 OK"
+2026-08-05 07:51:55,595  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76157302-0 "HTTP/2 200 OK"
+2026-08-05 07:51:55,772  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.16123403-6 "HTTP/2 200 OK"
+2026-08-05 07:51:55,954  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.11664754-0 "HTTP/2 200 OK"
+2026-08-05 07:51:56,134  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76067852-K "HTTP/2 200 OK"
+2026-08-05 07:51:56,315  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76506422-8 "HTTP/2 200 OK"
+2026-08-05 07:51:56,494  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96501500-0 "HTTP/2 200 OK"
+2026-08-05 07:51:56,670  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76725870-4 "HTTP/2 200 OK"
+2026-08-05 07:51:56,854  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77388955-4 "HTTP/2 200 OK"
+2026-08-05 07:51:57,034  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76905308-5 "HTTP/2 200 OK"
+2026-08-05 07:51:57,214  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76696733-7 "HTTP/2 200 OK"
+2026-08-05 07:51:57,393  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76520280-9 "HTTP/2 200 OK"
+2026-08-05 07:51:57,576  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76229272-6 "HTTP/2 200 OK"
+2026-08-05 07:51:57,785  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76215357-2 "HTTP/2 200 OK"
+2026-08-05 07:51:57,992  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76610508-4 "HTTP/2 200 OK"
+2026-08-05 07:51:58,183  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76695431-6 "HTTP/2 200 OK"
+2026-08-05 07:51:58,369  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77343433-6 "HTTP/2 200 OK"
+2026-08-05 07:51:58,548  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76417730-4 "HTTP/2 200 OK"
+2026-08-05 07:51:58,728  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77558105-0 "HTTP/2 200 OK"
+2026-08-05 07:51:58,906  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78636280-6 "HTTP/2 200 OK"
+2026-08-05 07:51:59,085  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96959690-3 "HTTP/2 200 OK"
+2026-08-05 07:51:59,265  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77112420-8 "HTTP/2 200 OK"
+2026-08-05 07:51:59,445  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76226059-K "HTTP/2 200 OK"
+2026-08-05 07:51:59,627  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77629170-6 "HTTP/2 200 OK"
+2026-08-05 07:51:59,804  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78334850-0 "HTTP/2 200 OK"
+2026-08-05 07:51:59,989  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77884906-2 "HTTP/2 200 OK"
+2026-08-05 07:52:00,168  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79880870-2 "HTTP/2 200 OK"
+2026-08-05 07:52:00,346  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77398220-1 "HTTP/2 200 OK"
+2026-08-05 07:52:00,529  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79952820-7 "HTTP/2 200 OK"
+2026-08-05 07:52:00,711  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.13490064-4 "HTTP/2 200 OK"
+2026-08-05 07:52:00,892  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76589959-1 "HTTP/2 200 OK"
+2026-08-05 07:52:01,093  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78324130-7 "HTTP/2 200 OK"
+2026-08-05 07:52:01,275  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76942418-0 "HTTP/2 200 OK"
+2026-08-05 07:52:01,451  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.99575240-9 "HTTP/2 200 OK"
+2026-08-05 07:52:01,632  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84910400-4 "HTTP/2 200 OK"
+2026-08-05 07:52:01,810  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76124863-4 "HTTP/2 200 OK"
+2026-08-05 07:52:01,988  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79991430-1 "HTTP/2 200 OK"
+2026-08-05 07:52:02,173  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76753968-1 "HTTP/2 200 OK"
+2026-08-05 07:52:02,353  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77650574-9 "HTTP/2 200 OK"
+2026-08-05 07:52:02,538  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77379059-0 "HTTP/2 200 OK"
+2026-08-05 07:52:02,724  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.83030600-5 "HTTP/2 200 OK"
+2026-08-05 07:52:02,911  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77050455-4 "HTTP/2 200 OK"
+2026-08-05 07:52:03,092  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76368672-8 "HTTP/2 200 OK"
+2026-08-05 07:52:03,270  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76789745-6 "HTTP/2 200 OK"
+2026-08-05 07:52:03,457  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76746384-7 "HTTP/2 200 OK"
+2026-08-05 07:52:03,643  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76339549-9 "HTTP/2 200 OK"
+2026-08-05 07:52:03,820  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.13942927-3 "HTTP/2 200 OK"
+2026-08-05 07:52:03,998  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77591550-1 "HTTP/2 200 OK"
+2026-08-05 07:52:04,184  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.89189200-4 "HTTP/2 200 OK"
+2026-08-05 07:52:04,362  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77942307-7 "HTTP/2 200 OK"
+2026-08-05 07:52:04,548  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96803690-4 "HTTP/2 200 OK"
+2026-08-05 07:52:04,732  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76830246-4 "HTTP/2 200 OK"
+2026-08-05 07:52:04,913  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79881570-9 "HTTP/2 200 OK"
+2026-08-05 07:52:05,093  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77927647-3 "HTTP/2 200 OK"
+2026-08-05 07:52:05,272  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84238600-4 "HTTP/2 200 OK"
+2026-08-05 07:52:05,471  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78370100-6 "HTTP/2 200 OK"
+2026-08-05 07:52:05,648  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81201000-K "HTTP/2 200 OK"
+2026-08-05 07:52:05,826  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.89565500-7 "HTTP/2 200 OK"
+2026-08-05 07:52:06,013  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76112082-4 "HTTP/2 200 OK"
+2026-08-05 07:52:06,202  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76484237-5 "HTTP/2 200 OK"
+2026-08-05 07:52:06,380  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.83336400-6 "HTTP/2 200 OK"
+2026-08-05 07:52:06,557  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76905452-9 "HTTP/2 200 OK"
+2026-08-05 07:52:06,735  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81290800-6 "HTTP/2 200 OK"
+2026-08-05 07:52:06,916  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84063800-6 "HTTP/2 200 OK"
+2026-08-05 07:52:07,094  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.50605770-1 "HTTP/2 200 OK"
+2026-08-05 07:52:07,276  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76167134-0 "HTTP/2 200 OK"
+2026-08-05 07:52:07,454  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79623100-9 "HTTP/2 200 OK"
+2026-08-05 07:52:07,635  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.88544900-K "HTTP/2 200 OK"
+2026-08-05 07:52:07,819  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78023550-0 "HTTP/2 200 OK"
+2026-08-05 07:52:07,996  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77274620-2 "HTTP/2 200 OK"
+2026-08-05 07:52:08,175  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.88666000-6 "HTTP/2 200 OK"
+2026-08-05 07:52:08,352  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78924030-2 "HTTP/2 200 OK"
+2026-08-05 07:52:08,537  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76775137-0 "HTTP/2 200 OK"
+2026-08-05 07:52:08,723  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.10702950-8 "HTTP/2 200 OK"
+2026-08-05 07:52:08,918  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77337752-9 "HTTP/2 200 OK"
+2026-08-05 07:52:09,102  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.7845154-8 "HTTP/2 200 OK"
+2026-08-05 07:52:09,284  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76449868-2 "HTTP/2 200 OK"
+2026-08-05 07:52:09,469  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96921060-6 "HTTP/2 200 OK"
+2026-08-05 07:52:09,648  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79929410-9 "HTTP/2 200 OK"
+2026-08-05 07:52:09,822  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84280800-6 "HTTP/2 200 OK"
+2026-08-05 07:52:09,824  ERROR  Error sincronizando proveedor RUT 77725766-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:10,003  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77654401-9 "HTTP/2 200 OK"
+2026-08-05 07:52:10,176  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76161135-6 "HTTP/2 200 OK"
+2026-08-05 07:52:10,353  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76135061-7 "HTTP/2 200 OK"
+2026-08-05 07:52:10,522  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76568660-1 "HTTP/2 200 OK"
+2026-08-05 07:52:10,700  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.92307000-1 "HTTP/2 200 OK"
+2026-08-05 07:52:10,868  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76937643-7 "HTTP/2 200 OK"
+2026-08-05 07:52:11,045  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76712896-7 "HTTP/2 200 OK"
+2026-08-05 07:52:11,217  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.91139000-0 "HTTP/2 200 OK"
+2026-08-05 07:52:11,394  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.94625000-7 "HTTP/2 200 OK"
+2026-08-05 07:52:11,567  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76993859-1 "HTTP/2 200 OK"
+2026-08-05 07:52:11,759  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76585755-4 "HTTP/2 200 OK"
+2026-08-05 07:52:11,936  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76280983-4 "HTTP/2 200 OK"
+2026-08-05 07:52:12,113  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76206192-9 "HTTP/2 200 OK"
+2026-08-05 07:52:12,283  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77722758-0 "HTTP/2 200 OK"
+2026-08-05 07:52:12,461  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77007638-2 "HTTP/2 200 OK"
+2026-08-05 07:52:12,630  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.85120600-0 "HTTP/2 200 OK"
+2026-08-05 07:52:12,807  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76211240-K "HTTP/2 200 OK"
+2026-08-05 07:52:12,979  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78627210-6 "HTTP/2 200 OK"
+2026-08-05 07:52:13,156  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.93772000-9 "HTTP/2 200 OK"
+2026-08-05 07:52:13,340  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96833680-0 "HTTP/2 200 OK"
+2026-08-05 07:52:13,524  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76335833-K "HTTP/2 200 OK"
+2026-08-05 07:52:13,756  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77032805-5 "HTTP/2 200 OK"
+2026-08-05 07:52:13,935  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76899943-0 "HTTP/2 200 OK"
+2026-08-05 07:52:14,103  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76538689-6 "HTTP/2 200 OK"
+2026-08-05 07:52:14,354  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77065929-9 "HTTP/2 200 OK"
+2026-08-05 07:52:14,534  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76084114-5 "HTTP/2 200 OK"
+2026-08-05 07:52:14,785  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.5248764-1 "HTTP/2 200 OK"
+2026-08-05 07:52:14,965  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77338790-7 "HTTP/2 200 OK"
+2026-08-05 07:52:15,377  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77418902-5 "HTTP/2 200 OK"
+2026-08-05 07:52:15,555  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76052927-3 "HTTP/2 200 OK"
+2026-08-05 07:52:15,731  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96875230-8 "HTTP/2 200 OK"
+2026-08-05 07:52:15,969  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77630439-5 "HTTP/2 200 OK"
+2026-08-05 07:52:16,146  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77041695-7 "HTTP/2 200 OK"
+2026-08-05 07:52:16,324  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96542490-3 "HTTP/2 200 OK"
+2026-08-05 07:52:16,500  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76145589-3 "HTTP/2 200 OK"
+2026-08-05 07:52:16,743  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76353589-4 "HTTP/2 200 OK"
+2026-08-05 07:52:16,982  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76134941-4 "HTTP/2 200 OK"
+2026-08-05 07:52:17,158  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76320181-3 "HTTP/2 200 OK"
+2026-08-05 07:52:17,335  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78953470-5 "HTTP/2 200 OK"
+2026-08-05 07:52:17,512  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.10036033-0 "HTTP/2 200 OK"
+2026-08-05 07:52:17,690  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77279740-0 "HTTP/2 200 OK"
+2026-08-05 07:52:17,882  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77985700-K "HTTP/2 200 OK"
+2026-08-05 07:52:18,063  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77439953-4 "HTTP/2 200 OK"
+2026-08-05 07:52:18,243  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96576200-0 "HTTP/2 200 OK"
+2026-08-05 07:52:18,420  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76916147-3 "HTTP/2 200 OK"
+2026-08-05 07:52:18,602  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76235440-3 "HTTP/2 200 OK"
+2026-08-05 07:52:18,779  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76338734-8 "HTTP/2 200 OK"
+2026-08-05 07:52:18,961  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77534804-6 "HTTP/2 200 OK"
+2026-08-05 07:52:19,167  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77896250-0 "HTTP/2 200 OK"
+2026-08-05 07:52:19,344  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79869510-K "HTTP/2 200 OK"
+2026-08-05 07:52:19,522  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76566210-9 "HTTP/2 200 OK"
+2026-08-05 07:52:19,699  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96711590-8 "HTTP/2 200 OK"
+2026-08-05 07:52:19,892  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96689310-9 "HTTP/2 200 OK"
+2026-08-05 07:52:20,071  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76747198-K "HTTP/2 200 OK"
+2026-08-05 07:52:20,247  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77215640-5 "HTTP/2 200 OK"
+2026-08-05 07:52:20,436  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.88888888-8 "HTTP/2 200 OK"
+2026-08-05 07:52:20,612  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76743492-8 "HTTP/2 200 OK"
+2026-08-05 07:52:20,791  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96800570-7 "HTTP/2 200 OK"
+2026-08-05 07:52:20,961  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76762740-8 "HTTP/2 200 OK"
+2026-08-05 07:52:21,142  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76177231-7 "HTTP/2 200 OK"
+2026-08-05 07:52:21,309  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96792430-K "HTTP/2 200 OK"
+2026-08-05 07:52:21,491  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.80409800-3 "HTTP/2 200 OK"
+2026-08-05 07:52:21,662  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76617000-5 "HTTP/2 200 OK"
+2026-08-05 07:52:21,845  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76132595-7 "HTTP/2 200 OK"
+2026-08-05 07:52:22,016  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.5392426-3 "HTTP/2 200 OK"
+2026-08-05 07:52:22,219  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77513405-4 "HTTP/2 200 OK"
+2026-08-05 07:52:22,393  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76231354-5 "HTTP/2 200 OK"
+2026-08-05 07:52:22,576  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77011723-2 "HTTP/2 200 OK"
+2026-08-05 07:52:22,747  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.21361494-0 "HTTP/2 200 OK"
+2026-08-05 07:52:22,927  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77005627-6 "HTTP/2 200 OK"
+2026-08-05 07:52:23,096  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77811365-1 "HTTP/2 200 OK"
+2026-08-05 07:52:23,098  ERROR  Error sincronizando proveedor RUT 80478200-1: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,099  ERROR  Error sincronizando proveedor RUT 76376061-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,101  ERROR  Error sincronizando proveedor RUT 97023000-9: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,102  ERROR  Error sincronizando proveedor RUT 80992000-3: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,105  ERROR  Error sincronizando proveedor RUT 8112942-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,107  ERROR  Error sincronizando proveedor RUT 96992030-1: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,110  ERROR  Error sincronizando proveedor RUT 77220478-7: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,113  ERROR  Error sincronizando proveedor RUT 90635000-9: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,115  ERROR  Error sincronizando proveedor RUT 91806000-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,292  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78103880-6 "HTTP/2 200 OK"
+2026-08-05 07:52:23,295  ERROR  Error sincronizando proveedor RUT 99147000-K: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,296  ERROR  Error sincronizando proveedor RUT 86966100-7: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,298  ERROR  Error sincronizando proveedor RUT 76496130-7: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,300  ERROR  Error sincronizando proveedor RUT 88473200-K: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,302  ERROR  Error sincronizando proveedor RUT 78743100-3: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,303  ERROR  Error sincronizando proveedor RUT 85512100-K: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,304  ERROR  Error sincronizando proveedor RUT 96806980-2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,306  ERROR  Error sincronizando proveedor RUT 77862774-4: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,308  ERROR  Error sincronizando proveedor RUT 96945440-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,310  ERROR  Error sincronizando proveedor RUT 76310935-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,479  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.10684857-2 "HTTP/2 200 OK"
+2026-08-05 07:52:23,482  ERROR  Error sincronizando proveedor RUT 13499923-3: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,483  ERROR  Error sincronizando proveedor RUT 97036000-K: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,485  ERROR  Error sincronizando proveedor RUT 97006000-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,486  ERROR  Error sincronizando proveedor RUT 77046871-K: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,666  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76732961-K "HTTP/2 200 OK"
+2026-08-05 07:52:23,668  ERROR  Error sincronizando proveedor RUT 76010151-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,842  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77506151-0 "HTTP/2 200 OK"
+2026-08-05 07:52:23,845  ERROR  Error sincronizando proveedor RUT 77951652-0: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:23,846  ERROR  Error sincronizando proveedor RUT 77588591-2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:24,022  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76374806-5 "HTTP/2 200 OK"
+2026-08-05 07:52:24,196  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77834378-9 "HTTP/2 200 OK"
+2026-08-05 07:52:24,378  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.99510380-K "HTTP/2 200 OK"
+2026-08-05 07:52:24,544  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77599772-9 "HTTP/2 200 OK"
+2026-08-05 07:52:24,715  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77505871-4 "HTTP/2 200 OK"
+2026-08-05 07:52:24,894  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77415903-7 "HTTP/2 200 OK"
+2026-08-05 07:52:25,073  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77091770-0 "HTTP/2 200 OK"
+2026-08-05 07:52:25,249  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76847924-0 "HTTP/2 200 OK"
+2026-08-05 07:52:25,435  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77978428-2 "HTTP/2 200 OK"
+2026-08-05 07:52:25,615  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77614989-6 "HTTP/2 200 OK"
+2026-08-05 07:52:25,801  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76691442-K "HTTP/2 200 OK"
+2026-08-05 07:52:25,804  ERROR  Error sincronizando proveedor RUT 77637377-K: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:25,986  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76259040-9 "HTTP/2 200 OK"
+2026-08-05 07:52:26,164  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.86053400-2 "HTTP/2 200 OK"
+2026-08-05 07:52:26,166  ERROR  Error sincronizando proveedor RUT 77637766-K: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:26,346  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76543283-9 "HTTP/2 200 OK"
+2026-08-05 07:52:26,348  ERROR  Error sincronizando proveedor RUT 76502532-K: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:26,350  ERROR  Error sincronizando proveedor RUT 99594030-2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:26,351  ERROR  Error sincronizando proveedor RUT 76876439-5: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:26,354  ERROR  Error sincronizando proveedor RUT 77464739-2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:26,542  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76902659-2 "HTTP/2 200 OK"
+2026-08-05 07:52:26,721  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.99500750-9 "HTTP/2 200 OK"
+2026-08-05 07:52:26,723  ERROR  Error sincronizando proveedor RUT 77729613-2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:26,940  INFO  HTTP Request: POST https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores "HTTP/2 201 Created"
+2026-08-05 07:52:27,118  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.89689900-7 "HTTP/2 200 OK"
+2026-08-05 07:52:27,296  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76.734.413-9 "HTTP/2 200 OK"
+2026-08-05 07:52:27,299  ERROR  Error sincronizando proveedor RUT 76552590-K: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:27,300  ERROR  Error sincronizando proveedor RUT 76324634-5: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:27,301  ERROR  Error sincronizando proveedor RUT 76488629-1: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:27,303  ERROR  Error sincronizando proveedor RUT 55555555-5: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:27,504  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77030024-K "HTTP/2 200 OK"
+2026-08-05 07:52:27,507  ERROR  Error sincronizando proveedor RUT 81105000-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:27,692  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.12263538-4 "HTTP/2 200 OK"
+2026-08-05 07:52:27,872  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77401763-1 "HTTP/2 200 OK"
+2026-08-05 07:52:28,079  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.12180115-9 "HTTP/2 200 OK"
+2026-08-05 07:52:28,258  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76239105-8 "HTTP/2 200 OK"
+2026-08-05 07:52:28,435  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77374838-1 "HTTP/2 200 OK"
+2026-08-05 07:52:28,438  ERROR  Error sincronizando proveedor RUT 96844600-2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:28,617  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76779540-8 "HTTP/2 200 OK"
+2026-08-05 07:52:28,798  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76741245-2 "HTTP/2 200 OK"
+2026-08-05 07:52:28,974  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96938510-4 "HTTP/2 200 OK"
+2026-08-05 07:52:29,151  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.86522600-4 "HTTP/2 200 OK"
+2026-08-05 07:52:29,336  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96798550-3 "HTTP/2 200 OK"
+2026-08-05 07:52:29,552  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76101472-2 "HTTP/2 200 OK"
+2026-08-05 07:52:29,732  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76505756-6 "HTTP/2 200 OK"
+2026-08-05 07:52:29,910  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76693755-1 "HTTP/2 200 OK"
+2026-08-05 07:52:30,091  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.9015060-K "HTTP/2 200 OK"
+2026-08-05 07:52:30,268  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76829884-K "HTTP/2 200 OK"
+2026-08-05 07:52:30,445  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81440500-1 "HTTP/2 200 OK"
+2026-08-05 07:52:30,626  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76672110-9 "HTTP/2 200 OK"
+2026-08-05 07:52:30,803  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76874174-3 "HTTP/2 200 OK"
+2026-08-05 07:52:30,805  ERROR  Error sincronizando proveedor RUT 76029105-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:30,987  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.13380502-8 "HTTP/2 200 OK"
+2026-08-05 07:52:30,989  ERROR  Error sincronizando proveedor RUT 76753740-9: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:31,166  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78984330-9 "HTTP/2 200 OK"
+2026-08-05 07:52:31,168  ERROR  Error sincronizando proveedor RUT 85831600-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:31,345  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78950850-K "HTTP/2 200 OK"
+2026-08-05 07:52:31,522  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76757030-9.2 "HTTP/2 200 OK"
+2026-08-05 07:52:31,524  ERROR  Error sincronizando proveedor RUT 79817450-9: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:31,704  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76148249-1 "HTTP/2 200 OK"
+2026-08-05 07:52:31,892  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.69500900-3 "HTTP/2 200 OK"
+2026-08-05 07:52:32,072  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96568740-8 "HTTP/2 200 OK"
+2026-08-05 07:52:32,073  ERROR  Error sincronizando proveedor RUT 79936340-2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:32,075  ERROR  Error sincronizando proveedor RUT 8523244-4: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:32,251  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81537600-5 "HTTP/2 200 OK"
+2026-08-05 07:52:32,255  ERROR  Error sincronizando proveedor RUT 82525800-0: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:32,256  ERROR  Error sincronizando proveedor RUT 84726100-5: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:32,257  ERROR  Error sincronizando proveedor RUT 76688528-4: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:32,435  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96972250-K "HTTP/2 200 OK"
+2026-08-05 07:52:32,614  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76321554-7 "HTTP/2 200 OK"
+2026-08-05 07:52:32,616  ERROR  Error sincronizando proveedor RUT 76196067-9: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:32,617  ERROR  Error sincronizando proveedor RUT 77935420-2.2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:32,618  ERROR  Error sincronizando proveedor RUT 6973685-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:32,796  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76173410-5 "HTTP/2 200 OK"
+2026-08-05 07:52:32,799  ERROR  Error sincronizando proveedor RUT 89396900-4: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:32,976  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.93075000-K "HTTP/2 200 OK"
+2026-08-05 07:52:33,155  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.0-0 "HTTP/2 200 OK"
+2026-08-05 07:52:33,158  ERROR  Error sincronizando proveedor RUT 79559670-4: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,160  ERROR  Error sincronizando proveedor RUT 76141853-K: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,161  ERROR  Error sincronizando proveedor RUT 76328813-7: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,163  ERROR  Error sincronizando proveedor RUT 15480941-4: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,166  ERROR  Error sincronizando proveedor RUT 12224515-2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,168  ERROR  Error sincronizando proveedor RUT 12636565-9: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,347  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96554050-4 "HTTP/2 200 OK"
+2026-08-05 07:52:33,349  ERROR  Error sincronizando proveedor RUT 76128426-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,351  ERROR  Error sincronizando proveedor RUT 99507430-3: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,352  ERROR  Error sincronizando proveedor RUT 14417758-4: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,353  ERROR  Error sincronizando proveedor RUT 76196717-7: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,355  ERROR  Error sincronizando proveedor RUT 76028634-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,357  ERROR  Error sincronizando proveedor RUT 9307037-2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,536  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96556940-5 "HTTP/2 200 OK"
+2026-08-05 07:52:33,539  ERROR  Error sincronizando proveedor RUT 10462842-7: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,720  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.14011280-1 "HTTP/2 200 OK"
+2026-08-05 07:52:33,723  ERROR  Error sincronizando proveedor RUT 77123410-0: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,724  ERROR  Error sincronizando proveedor RUT 9638458-0: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,726  ERROR  Error sincronizando proveedor RUT 10698382-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,727  ERROR  Error sincronizando proveedor RUT 76330861-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,729  ERROR  Error sincronizando proveedor RUT 76383130-2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,731  ERROR  Error sincronizando proveedor RUT 99516040-4: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,733  ERROR  Error sincronizando proveedor RUT 15308716-4: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,734  ERROR  Error sincronizando proveedor RUT 96959480-3: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,736  ERROR  Error sincronizando proveedor RUT 76030576-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,738  ERROR  Error sincronizando proveedor RUT 77183990-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,739  ERROR  Error sincronizando proveedor RUT 77396020-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,741  ERROR  Error sincronizando proveedor RUT 77965030-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,743  ERROR  Error sincronizando proveedor RUT 78471290-7: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:33,930  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76462500-5 "HTTP/2 200 OK"
+2026-08-05 07:52:33,933  ERROR  Error sincronizando proveedor RUT 76012833-3: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,110  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76097578-8 "HTTP/2 200 OK"
+2026-08-05 07:52:34,113  ERROR  Error sincronizando proveedor RUT 76298373-7: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,115  ERROR  Error sincronizando proveedor RUT 79898290-7: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,298  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.6718124-7 "HTTP/2 200 OK"
+2026-08-05 07:52:34,301  ERROR  Error sincronizando proveedor RUT 89420300-5: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,302  ERROR  Error sincronizando proveedor RUT 78874090-5: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,303  ERROR  Error sincronizando proveedor RUT 13056425-9: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,304  ERROR  Error sincronizando proveedor RUT 80326500-3: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,480  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81566200-8 "HTTP/2 200 OK"
+2026-08-05 07:52:34,482  ERROR  Error sincronizando proveedor RUT 7987677-1: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,483  ERROR  Error sincronizando proveedor RUT 9157766-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,484  ERROR  Error sincronizando proveedor RUT 15897694-3: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,485  ERROR  Error sincronizando proveedor RUT 12472227-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,487  ERROR  Error sincronizando proveedor RUT 12283285-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,489  ERROR  Error sincronizando proveedor RUT 4665722-5: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,493  ERROR  Error sincronizando proveedor RUT 6054755-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,495  ERROR  Error sincronizando proveedor RUT 10168775-9: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,497  ERROR  Error sincronizando proveedor RUT 11847677-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,500  ERROR  Error sincronizando proveedor RUT 96501450-0: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,501  ERROR  Error sincronizando proveedor RUT 77726170-3: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,503  ERROR  Error sincronizando proveedor RUT 79802160-5: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,507  ERROR  Error sincronizando proveedor RUT 9233481-3: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,512  ERROR  Error sincronizando proveedor RUT 76075707-1: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,514  ERROR  Error sincronizando proveedor RUT 77037960-1: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,515  ERROR  Error sincronizando proveedor RUT 76373470-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,517  ERROR  Error sincronizando proveedor RUT 15843941-7: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,696  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.99540490-7 "HTTP/2 200 OK"
+2026-08-05 07:52:34,698  ERROR  Error sincronizando proveedor RUT 99549250-4: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,700  ERROR  Error sincronizando proveedor RUT 48025052-4: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,701  ERROR  Error sincronizando proveedor RUT 76710240-2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,703  ERROR  Error sincronizando proveedor RUT 79864570-6: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,705  ERROR  Error sincronizando proveedor RUT 4315714-0: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,888  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76141696-0 "HTTP/2 200 OK"
+2026-08-05 07:52:34,890  ERROR  Error sincronizando proveedor RUT 76250792-7: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,892  ERROR  Error sincronizando proveedor RUT 92642000-3: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,893  ERROR  Error sincronizando proveedor RUT 76180102-3: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,895  ERROR  Error sincronizando proveedor RUT 12866051-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:34,896  ERROR  Error sincronizando proveedor RUT 96919050-8: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:35,075  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76062979-0 "HTTP/2 200 OK"
+2026-08-05 07:52:35,253  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.13942555-3 "HTTP/2 200 OK"
+2026-08-05 07:52:35,429  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77127570-2 "HTTP/2 200 OK"
+2026-08-05 07:52:35,611  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76103948-2 "HTTP/2 200 OK"
+2026-08-05 07:52:35,788  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76784539-1 "HTTP/2 200 OK"
+2026-08-05 07:52:35,966  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.92654000-9 "HTTP/2 200 OK"
+2026-08-05 07:52:36,182  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76260317-9 "HTTP/2 200 OK"
+2026-08-05 07:52:36,361  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76757030-9 "HTTP/2 200 OK"
+2026-08-05 07:52:36,537  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96806110-0 "HTTP/2 200 OK"
+2026-08-05 07:52:36,540  ERROR  Error sincronizando proveedor RUT 76177079-9: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:36,719  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77321150-7 "HTTP/2 200 OK"
+2026-08-05 07:52:36,916  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76879310-7 "HTTP/2 200 OK"
+2026-08-05 07:52:37,117  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76721910-5 "HTTP/2 200 OK"
+2026-08-05 07:52:37,126  ERROR  Error sincronizando proveedor RUT 76254850-K: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:37,127  ERROR  Error sincronizando proveedor RUT 10957117-2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:37,129  ERROR  Error sincronizando proveedor RUT 99520000-7: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:37,130  ERROR  Error sincronizando proveedor RUT 78780990-1: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:37,132  ERROR  Error sincronizando proveedor RUT 9570774-2: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:37,133  ERROR  Error sincronizando proveedor RUT 76594720-0: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:37,316  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.80043600-1 "HTTP/2 200 OK"
+2026-08-05 07:52:37,318  ERROR  Error sincronizando proveedor RUT 96514950-3: Out of range float values are not JSON compliant: nan
+2026-08-05 07:52:37,494  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76175377-0 "HTTP/2 200 OK"
+2026-08-05 07:52:37,675  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76160522-4 "HTTP/2 200 OK"
+2026-08-05 07:52:37,860  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78119958-3 "HTTP/2 200 OK"
+2026-08-05 07:52:38,038  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76278246-4 "HTTP/2 200 OK"
+2026-08-05 07:52:38,039  INFO  Sync proveedores completa. Nuevos: 1 | Actualizados: 287 | Errores: 121
+2026-08-05 07:52:38,040  INFO  ✅ Sync proveedores → Supabase completado.
+2026-08-05 07:52:38,040  INFO  
+2026-08-05 07:52:38,041  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:52:38,041  INFO    PASO 5/7 — Carga masiva a Supabase (todas las tablas)
+2026-08-05 07:52:38,041  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:52:38,316  INFO  ============================================================
+2026-08-05 07:52:38,317  INFO    CARGA MASIVA — Todas las consultas SQL → Supabase
+2026-08-05 07:52:38,317  INFO  ============================================================
+2026-08-05 07:52:38,318  INFO  Usando Excel: Reportes_Completos_2026-08-05.xlsx
+2026-08-05 07:52:39,476  INFO  Procesando 'Aceros' → tabla 'aceros'...
+2026-08-05 07:52:41,361  INFO    └─ aceros: 56 filas cargadas
+2026-08-05 07:52:41,362  INFO  Procesando 'base_completo' → tabla 'base_completo'...
+2026-08-05 07:52:50,003  INFO    └─ base_completo: 10,328 filas cargadas
+2026-08-05 07:52:50,008  INFO  Procesando 'calendario' → tabla 'calendario'...
+2026-08-05 07:52:51,745  INFO    └─ calendario: 82 filas cargadas
+2026-08-05 07:52:51,746  INFO  Procesando 'Consumos_acero' → tabla 'consumos_acero'...
+2026-08-05 07:52:53,420  INFO    └─ consumos_acero: 132 filas cargadas
+2026-08-05 07:52:53,420  INFO  Procesando 'Consumos_pol' → tabla 'consumos_pol'...
+2026-08-05 07:52:55,078  INFO    └─ consumos_pol: 29 filas cargadas
+2026-08-05 07:52:55,078  INFO  Procesando 'Cotizaciones' → tabla 'cotizaciones'...
+2026-08-05 07:52:57,524  INFO    └─ cotizaciones: 4,467 filas cargadas
+2026-08-05 07:52:57,525  INFO  Procesando 'CxC' → tabla 'cxc'...
+2026-08-05 07:52:59,272  INFO    └─ cxc: 44 filas cargadas
+2026-08-05 07:52:59,273  INFO  Procesando 'Guias' → tabla 'guias'...
+2026-08-05 07:53:03,315  INFO    └─ guias: 11,021 filas cargadas
+2026-08-05 07:53:03,317  INFO  Procesando 'Inventario_aceros' → tabla 'inventario_aceros'...
+2026-08-05 07:53:05,261  INFO    └─ inventario_aceros: 165 filas cargadas
+2026-08-05 07:53:05,262  INFO  Procesando 'Notas_de_venta' → tabla 'notas_de_venta'...
+2026-08-05 07:53:07,273  INFO    └─ notas_de_venta: 990 filas cargadas
+2026-08-05 07:53:07,274  INFO  Saltando 'NV_Proveedores' (manejo especial aparte)
+2026-08-05 07:53:07,274  INFO  Saltando 'NV_Supabase' (manejo especial aparte)
+2026-08-05 07:53:07,274  INFO  Procesando 'Ordenes_de_Compra' → tabla 'ordenes_de_compra'...
+2026-08-05 07:53:09,201  INFO    └─ ordenes_de_compra: 197 filas cargadas
+2026-08-05 07:53:09,201  INFO  Procesando 'Ordenes_de_produccion' → tabla 'ordenes_de_produccion'...
+2026-08-05 07:53:12,784  INFO    └─ ordenes_de_produccion: 3,636 filas cargadas
+2026-08-05 07:53:12,787  INFO  Procesando 'Productos_Stock' → tabla 'productos_stock'...
+2026-08-05 07:53:14,442  INFO    └─ productos_stock: 143 filas cargadas
+2026-08-05 07:53:14,443  INFO  Procesando 'Stock_vendido' → tabla 'stock_vendido'...
+2026-08-05 07:53:16,062  INFO    └─ stock_vendido: 204 filas cargadas
+2026-08-05 07:53:16,062  INFO  Procesando 'Ventas_Full' → tabla 'ventas_full'...
+2026-08-05 07:53:19,618  INFO    └─ ventas_full: 2,605 filas cargadas
+2026-08-05 07:53:19,620  INFO  Procesando 'WIP' → tabla 'wip'...
+2026-08-05 07:53:21,248  INFO    └─ wip: 31 filas cargadas
+2026-08-05 07:53:21,271  INFO  
+2026-08-05 07:53:21,273  INFO  ✅ Tablas cargadas correctamente: 16
+2026-08-05 07:53:21,274  INFO     • aceros: 56 filas
+2026-08-05 07:53:21,274  INFO     • base_completo: 10,328 filas
+2026-08-05 07:53:21,275  INFO     • calendario: 82 filas
+2026-08-05 07:53:21,275  INFO     • consumos_acero: 132 filas
+2026-08-05 07:53:21,276  INFO     • consumos_pol: 29 filas
+2026-08-05 07:53:21,277  INFO     • cotizaciones: 4,467 filas
+2026-08-05 07:53:21,277  INFO     • cxc: 44 filas
+2026-08-05 07:53:21,277  INFO     • guias: 11,021 filas
+2026-08-05 07:53:21,278  INFO     • inventario_aceros: 165 filas
+2026-08-05 07:53:21,279  INFO     • notas_de_venta: 990 filas
+2026-08-05 07:53:21,279  INFO     • ordenes_de_compra: 197 filas
+2026-08-05 07:53:21,280  INFO     • ordenes_de_produccion: 3,636 filas
+2026-08-05 07:53:21,280  INFO     • productos_stock: 143 filas
+2026-08-05 07:53:21,280  INFO     • stock_vendido: 204 filas
+2026-08-05 07:53:21,281  INFO     • ventas_full: 2,605 filas
+2026-08-05 07:53:21,281  INFO     • wip: 31 filas
+2026-08-05 07:53:21,281  INFO  ✅ Carga masiva a Supabase completada.
+2026-08-05 07:53:21,281  INFO  
+2026-08-05 07:53:21,282  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:53:21,282  INFO    PASO 6/7 — Sincronizar NVs pendientes por vendedor
+2026-08-05 07:53:21,282  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:53:21,286  INFO  Conectando a 'T779354202C' para extraer NVs pendientes...
+2026-08-05 07:53:23,269  INFO  HTTP Request: POST https://hauricnpsamnwyhondse.supabase.co/rest/v1/notas_venta_pendientes?on_conflict=nota_venta&columns=%22codvend%22%2C%22estado%22%2C%22porcentaje_avance%22%2C%22cantidad_terminada%22%2C%22cantidad_total_op%22%2C%22monto_nv%22%2C%22nota_venta%22%2C%22cantidad_pendiente%22 "HTTP/2 201 Created"
+2026-08-05 07:53:23,481  INFO  HTTP Request: DELETE https://hauricnpsamnwyhondse.supabase.co/rest/v1/notas_venta_pendientes?nota_venta=not.in.%280%2C12333%2C13711%2C13753%2C13905%2C14020%2C14037%2C14048%2C14075%2C13437%2C13889%2C13937%2C13966%2C13982%2C13992%2C14008%2C14021%2C14022%2C14043%2C14093%2C12386%2C13503%2C13804%2C13824%2C13867%2C13915%2C13926%2C13927%2C13970%2C13971%2C13978%2C14000%2C14041%2C14061%2C14068%2C14073%2C14074%2C14081%2C14094%2C14095%2C14096%2C13261%2C13433%2C13605%2C13686%2C13869%2C13876%2C13945%2C13954%2C13995%2C14044%2C14076%2C14079%2C14083%2C14084%2C14085%29 "HTTP/2 200 OK"
+2026-08-05 07:53:23,482  INFO  ✅ Sincronizadas 56 NVs pendientes en Supabase.
+2026-08-05 07:53:23,483  INFO  
+2026-08-05 07:53:23,483  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:53:23,484  INFO    PASO 7/7 — Sincronizar facturación por período (21-20)
+2026-08-05 07:53:23,484  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 07:53:23,506  INFO  Conectando a 'T779354202C' para calcular facturación del período vigente...
+2026-08-05 07:53:24,678  INFO  HTTP Request: POST https://hauricnpsamnwyhondse.supabase.co/rest/v1/facturacion_periodo?on_conflict=codvend%2Cperiodo_inicio&columns=%22codvend%22%2C%22total_facturado%22%2C%22periodo_fin%22%2C%22periodo_inicio%22 "HTTP/2 200 OK"
+2026-08-05 07:53:24,687  INFO  ✅ Facturación del período actualizada para 5 vendedores.
+2026-08-05 07:53:24,688  INFO  
+2026-08-05 07:53:24,688  INFO  ╔═════════════════════════════════════════════════════╗
+2026-08-05 07:53:24,709  INFO  ║  ✅ PIPELINE COMPLETADO en 655s                      ║
+2026-08-05 07:53:24,709  INFO  ║  📊 Excel en Drive: VentasFull_Actualizado.xlsx      ║
+2026-08-05 07:53:24,710  INFO  ║  🔄 NVs sincronizadas en Supabase (OC Polchile)      ║
+2026-08-05 07:53:24,710  INFO  ║  🔄 NVs pendientes sincronizadas por vendedor        ║
+2026-08-05 07:53:24,710  INFO  ║  🔄 Facturación por período sincronizada             ║
+2026-08-05 07:53:24,710  INFO  ╚═════════════════════════════════════════════════════╝
+2026-08-05 08:46:28,731  INFO  ╔═════════════════════════════════════════════════════╗
+2026-08-05 08:46:28,733  INFO  ║   PIPELINE VENTAS FULL — Inicio: 2026-08-05 08:46   ║
+2026-08-05 08:46:28,733  INFO  ╚═════════════════════════════════════════════════════╝
+2026-08-05 08:46:28,734  INFO  
+2026-08-05 08:46:28,734  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:46:28,734  INFO    PASO 1/7 — Descargar backup desde Manager
+2026-08-05 08:46:28,734  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:46:30,136  INFO  =======================================================
+2026-08-05 08:46:30,136  INFO    Iniciando descarga automática de backup Manager
+2026-08-05 08:46:30,136  INFO  =======================================================
+2026-08-05 08:46:30,137  INFO  ====== WebDriver manager ======
+2026-08-05 08:46:31,700  INFO  Get LATEST chromedriver version for google-chrome
+2026-08-05 08:46:32,269  INFO  Get LATEST chromedriver version for google-chrome
+2026-08-05 08:46:32,627  INFO  Driver [C:\Users\atorr\.wdm\drivers\chromedriver\win64\150.0.7871.124\chromedriver-win32/chromedriver.exe] found in cache
+2026-08-05 08:46:36,419  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-08-05 08:46:38,850  INFO  Inputs visibles: 3
+2026-08-05 08:46:39,153  INFO  Login enviado...
+2026-08-05 08:46:43,167  INFO  ✅ Login exitoso. session_id: a72a4575...
+2026-08-05 08:46:43,167  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=a72a457585920ea49300b4bd6659ac5a&cd=prodkernel
+2026-08-05 08:46:43,327  INFO  Recarga 1/10...
+2026-08-05 08:46:47,476  INFO    filas .bak encontradas: 3
+2026-08-05 08:46:47,476  INFO  ✅ Tabla cargada en recarga 1.
+2026-08-05 08:46:47,528  INFO    Ignorando: 2026-8-5-T779354202A.bak
+2026-08-05 08:46:47,566  INFO    Ignorando: 2026-8-5-T779354202B.bak
+2026-08-05 08:46:47,629  INFO  Backup seleccionado: 2026-8-5-T779354202C.bak (2026-08-05 10:05:40+00:00)
+2026-08-05 08:46:47,643  INFO  HTML fila completa: <td class="bucket">mng-respaldos-poliuretano</td><td class="Key">2026-8-5-T779354202C.bak</td><td class="LastModified">2026-08-05 10:05:40+00:00</td><td class="Size">0.2 GB</td><td class="presigned_url" style="display: none;">https://mng-respaldos-poliuretano.s3.amazonaws.com/2026-8-5-T779354202C.bak?AWSAccessKeyId=AKIAZPIFFWJDVFW267ZG&amp;Signature=iXZHRIj8DKcaGeeAWhnFGVQF2A0%3D&amp;Expires=1785934302</td><td><i onclick="downloadbackup($(this).parent().parent())" class="fas fa-download"></i></t
+2026-08-05 08:46:49,901  INFO  Descargando 2026-8-5-T779354202C.bak desde S3...
+2026-08-05 08:47:08,298  INFO    10 MB / 198 MB (5%)
+2026-08-05 08:47:27,574  INFO    21 MB / 198 MB (11%)
+2026-08-05 08:47:46,273  INFO    31 MB / 198 MB (16%)
+2026-08-05 08:48:09,708  INFO    42 MB / 198 MB (21%)
+2026-08-05 08:48:32,060  INFO    52 MB / 198 MB (26%)
+2026-08-05 08:48:51,999  INFO    63 MB / 198 MB (32%)
+2026-08-05 08:49:13,918  INFO    73 MB / 198 MB (37%)
+2026-08-05 08:49:34,681  INFO    84 MB / 198 MB (42%)
+2026-08-05 08:49:54,750  INFO    94 MB / 198 MB (48%)
+2026-08-05 08:50:15,911  INFO    105 MB / 198 MB (53%)
+2026-08-05 08:50:39,543  INFO    115 MB / 198 MB (58%)
+2026-08-05 08:50:59,233  INFO    126 MB / 198 MB (63%)
+2026-08-05 08:51:20,103  INFO    136 MB / 198 MB (69%)
+2026-08-05 08:51:43,017  INFO    147 MB / 198 MB (74%)
+2026-08-05 08:52:06,095  INFO    157 MB / 198 MB (79%)
+2026-08-05 08:52:24,175  INFO    168 MB / 198 MB (85%)
+2026-08-05 08:53:04,912  INFO    178 MB / 198 MB (90%)
+2026-08-05 08:53:41,110  INFO    189 MB / 198 MB (95%)
+2026-08-05 08:54:13,063  INFO  ✅ Descarga completa: 2026-8-5-T779354202C.bak (198.2 MB)
+2026-08-05 08:54:13,068  INFO  Backup guardado en: C:\Backups\Manager\2026-8-5-T779354202C_2026-08-05_1785934453.bak
+2026-08-05 08:54:13,068  INFO  ✅ Éxito — backup guardado en: C:\Backups\Manager\2026-8-5-T779354202C_2026-08-05_1785934453.bak
+2026-08-05 08:54:17,133  WARNING  Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=50604): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/43a4263156317076246bd25d1a71b2d8
+2026-08-05 08:54:21,180  WARNING  Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=50604): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/43a4263156317076246bd25d1a71b2d8
+2026-08-05 08:54:25,247  WARNING  Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=50604): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/43a4263156317076246bd25d1a71b2d8
+2026-08-05 08:54:29,313  INFO  
+2026-08-05 08:54:29,313  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:54:29,313  INFO    PASO 2/7 — Restaurar BD y extraer Ventas Full
+2026-08-05 08:54:29,313  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:54:34,441  INFO  ============================================================
+2026-08-05 08:54:34,441  INFO    PASO 1 — Restaurar BD y extraer Múltiples Reportes
+2026-08-05 08:54:34,441  INFO  ============================================================
+2026-08-05 08:54:34,457  INFO  Usando .bak de ultimo_bak.txt: 2026-8-5-T779354202C_2026-08-05_1785934453.bak
+2026-08-05 08:54:34,457  INFO  Usando backup: 2026-8-5-T779354202C_2026-08-05_1785934453.bak
+2026-08-05 08:54:34,457  INFO  Restaurando 2026-8-5-T779354202C_2026-08-05_1785934453.bak como 'T779354202C'...
+2026-08-05 08:54:34,457  INFO  Copiando .bak a C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQL\DATA\2026-8-5-T779354202C_2026-08-05_1785934453.bak...
+2026-08-05 08:54:35,145  INFO  Ejecutando RESTORE DATABASE...
+2026-08-05 08:55:19,777  INFO  ✅ BD 'T779354202C' restaurada correctamente.
+2026-08-05 08:55:19,777  INFO  Conectando a 'T779354202C' para extraer reportes...
+2026-08-05 08:55:19,826  INFO  Ejecutando: Aceros...
+2026-08-05 08:55:20,102  INFO    └─ 56 filas extraídas.
+2026-08-05 08:55:20,103  INFO  Ejecutando: base_completo...
+2026-08-05 08:55:21,680  INFO    └─ 10,328 filas extraídas.
+2026-08-05 08:55:21,681  INFO  Ejecutando: calendario...
+2026-08-05 08:55:21,909  INFO    └─ 82 filas extraídas.
+2026-08-05 08:55:21,909  INFO  Ejecutando: Consumos_acero...
+2026-08-05 08:55:22,002  INFO    └─ 132 filas extraídas.
+2026-08-05 08:55:22,002  INFO  Ejecutando: Consumos_pol...
+2026-08-05 08:55:22,079  INFO    └─ 29 filas extraídas.
+2026-08-05 08:55:22,079  INFO  Ejecutando: Cotizaciones...
+2026-08-05 08:55:22,169  INFO    └─ 4,467 filas extraídas.
+2026-08-05 08:55:22,169  INFO  Ejecutando: CxC...
+2026-08-05 08:55:22,253  INFO    └─ 44 filas extraídas.
+2026-08-05 08:55:22,254  INFO  Ejecutando: Guias...
+2026-08-05 08:55:22,600  INFO    └─ 11,021 filas extraídas.
+2026-08-05 08:55:22,600  INFO  Ejecutando: Inventario_aceros...
+2026-08-05 08:55:22,638  INFO    └─ 165 filas extraídas.
+2026-08-05 08:55:22,638  INFO  Ejecutando: Notas_de_venta...
+2026-08-05 08:55:22,687  INFO    └─ 990 filas extraídas.
+2026-08-05 08:55:22,687  INFO  Ejecutando: NV_Proveedores...
+2026-08-05 08:55:22,715  INFO    └─ 409 filas extraídas.
+2026-08-05 08:55:22,715  INFO  Ejecutando: NV_Supabase...
+2026-08-05 08:55:22,767  INFO    └─ 1,803 filas extraídas.
+2026-08-05 08:55:22,767  INFO  Ejecutando: Ordenes_de_Compra...
+2026-08-05 08:55:22,900  INFO    └─ 197 filas extraídas.
+2026-08-05 08:55:22,900  INFO  Ejecutando: Ordenes_de_produccion...
+2026-08-05 08:55:23,262  INFO    └─ 3,636 filas extraídas.
+2026-08-05 08:55:23,262  INFO  Ejecutando: Pendiente_a_facturar...
+2026-08-05 08:55:23,287  ERROR    └─ Error ejecutando Pendiente_a_facturar: ('42000', '[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ORDER BY items must appear in the select list if SELECT DISTINCT is specified. (145) (SQLExecDirectW)')
+2026-08-05 08:55:23,288  INFO  Ejecutando: Productos_Stock...
+2026-08-05 08:55:23,324  INFO    └─ 143 filas extraídas.
+2026-08-05 08:55:23,325  INFO  Ejecutando: Stock_vendido...
+2026-08-05 08:55:23,408  INFO    └─ 204 filas extraídas.
+2026-08-05 08:55:23,408  INFO  Ejecutando: Vales_de_Salida...
+2026-08-05 08:55:23,431  ERROR    └─ Error ejecutando Vales_de_Salida: ('42000', '[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]ORDER BY items must appear in the select list if SELECT DISTINCT is specified. (145) (SQLExecDirectW)')
+2026-08-05 08:55:23,431  INFO  Ejecutando: Ventas_Full...
+2026-08-05 08:55:23,922  INFO    └─ 2,605 filas extraídas.
+2026-08-05 08:55:23,922  INFO  Ejecutando: WIP...
+2026-08-05 08:55:23,976  INFO    └─ 31 filas extraídas.
+2026-08-05 08:55:23,978  INFO  Exportando a Excel multipestaña: C:\Reportes\VentasFull\Reportes_Completos_2026-08-05.xlsx
+2026-08-05 08:56:26,648  WARNING    └─ Stock_vendido: columnas duplicadas renombradas
+2026-08-05 08:56:46,275  INFO  ✅ Excel generado: C:\Reportes\VentasFull\Reportes_Completos_2026-08-05.xlsx (4.1 MB)
+2026-08-05 08:56:46,277  INFO  ✅ Proceso Completado → C:\Reportes\VentasFull\Reportes_Completos_2026-08-05.xlsx
+2026-08-05 08:56:46,284  INFO  
+2026-08-05 08:56:46,284  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:56:46,284  INFO    PASO 3/7 — Subir Excel a Google Drive
+2026-08-05 08:56:46,284  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:56:51,063  INFO  =======================================================
+2026-08-05 08:56:51,063  INFO    PASO 2 — Subir a Drive y actualizar Google Sheets
+2026-08-05 08:56:51,063  INFO  =======================================================
+2026-08-05 08:56:51,078  INFO  Procesando: Reportes_Completos_2026-08-05.xlsx (4.1 MB)
+2026-08-05 08:56:51,138  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-08-05 08:56:51,167  INFO  file_cache is only supported with oauth2client<4.0.0
+2026-08-05 08:56:52,476  INFO  Creando Excel nuevo en Drive...
+2026-08-05 08:56:56,821  INFO  ✅ Excel subido a Drive: Reportes_Completos_Actualizado.xlsx
+2026-08-05 08:56:56,822  INFO  Leyendo Excel para actualizar Google Sheets...
+2026-08-05 08:56:56,846  INFO  Pestañas encontradas en Excel: ['Aceros', 'base_completo', 'calendario', 'Consumos_acero', 'Consumos_pol', 'Cotizaciones', 'CxC', 'Guias', 'Inventario_aceros', 'Notas_de_venta', 'NV_Proveedores', 'NV_Supabase', 'Ordenes_de_Compra', 'Ordenes_de_produccion', 'Productos_Stock', 'Stock_vendido', 'Ventas_Full', 'WIP']
+2026-08-05 08:56:57,730  INFO  Actualizando Base Produccion → 'Orden de Produccion' (3,636 filas)...
+2026-08-05 08:56:59,370  INFO    Limpiando hoja 'Orden de Produccion'...
+2026-08-05 08:57:00,380  INFO    Escribiendo 3,636 filas en 'Orden de Produccion'...
+2026-08-05 08:57:05,555  INFO    ✅ Hoja 'Orden de Produccion' actualizada.
+2026-08-05 08:57:05,629  INFO  Actualizando Base Produccion → 'Por Facturar' (82 filas)...
+2026-08-05 08:57:06,637  INFO    Limpiando hoja 'Por Facturar'...
+2026-08-05 08:57:07,085  INFO    Escribiendo 82 filas en 'Por Facturar'...
+2026-08-05 08:57:07,414  INFO    ✅ Hoja 'Por Facturar' actualizada.
+2026-08-05 08:57:07,571  INFO  Actualizando Base Produccion → 'Control Inventario' (165 filas)...
+2026-08-05 08:57:08,574  INFO    Limpiando hoja 'Control Inventario'...
+2026-08-05 08:57:09,017  INFO    Escribiendo 165 filas en 'Control Inventario'...
+2026-08-05 08:57:09,529  INFO    ✅ Hoja 'Control Inventario' actualizada.
+2026-08-05 08:57:09,798  INFO  Actualizando Base Produccion → 'Notas de Venta' (990 filas)...
+2026-08-05 08:57:10,613  INFO    Limpiando hoja 'Notas de Venta'...
+2026-08-05 08:57:11,089  INFO    Escribiendo 990 filas en 'Notas de Venta'...
+2026-08-05 08:57:12,463  INFO    ✅ Hoja 'Notas de Venta' actualizada.
+2026-08-05 08:57:12,503  INFO  Actualizando Base Produccion → 'Vales de Salida' (56 filas)...
+2026-08-05 08:57:13,424  INFO    Limpiando hoja 'Vales de Salida'...
+2026-08-05 08:57:13,983  INFO    Escribiendo 56 filas en 'Vales de Salida'...
+2026-08-05 08:57:14,440  INFO    ✅ Hoja 'Vales de Salida' actualizada.
+2026-08-05 08:57:14,503  INFO  Actualizando Base Produccion → 'Stock' (143 filas)...
+2026-08-05 08:57:15,227  INFO    Limpiando hoja 'Stock'...
+2026-08-05 08:57:15,560  INFO    Escribiendo 143 filas en 'Stock'...
+2026-08-05 08:57:15,942  INFO    ✅ Hoja 'Stock' actualizada.
+2026-08-05 08:57:15,978  INFO  Actualizando Base Produccion → 'Consumos POL' (29 filas)...
+2026-08-05 08:57:16,656  INFO    Limpiando hoja 'Consumos POL'...
+2026-08-05 08:57:16,977  INFO    Escribiendo 29 filas en 'Consumos POL'...
+2026-08-05 08:57:17,301  INFO    ✅ Hoja 'Consumos POL' actualizada.
+2026-08-05 08:57:19,365  INFO  Actualizando Base Produccion → 'Ventas_Full' (2,605 filas)...
+2026-08-05 08:57:20,167  INFO    Limpiando hoja 'Ventas_Full'...
+2026-08-05 08:57:21,311  INFO    Escribiendo 2,605 filas en 'Ventas_Full'...
+2026-08-05 08:57:24,476  INFO    ✅ Hoja 'Ventas_Full' actualizada.
+2026-08-05 08:57:24,533  INFO  Actualizando Base Produccion → 'WIP' (31 filas)...
+2026-08-05 08:57:25,314  INFO    Limpiando hoja 'WIP'...
+2026-08-05 08:57:25,653  INFO    Escribiendo 31 filas en 'WIP'...
+2026-08-05 08:57:26,027  INFO    ✅ Hoja 'WIP' actualizada.
+2026-08-05 08:57:26,107  INFO  Actualizando Base Produccion → 'Stock Vendido' (204 filas)...
+2026-08-05 08:57:26,773  INFO    Limpiando hoja 'Stock Vendido'...
+2026-08-05 08:57:27,140  INFO    Escribiendo 204 filas en 'Stock Vendido'...
+2026-08-05 08:57:27,511  INFO    ✅ Hoja 'Stock Vendido' actualizada.
+2026-08-05 08:57:27,625  INFO  Actualizando Base Produccion → 'Consumos Acero' (132 filas)...
+2026-08-05 08:57:28,250  INFO    Limpiando hoja 'Consumos Acero'...
+2026-08-05 08:57:28,974  INFO    Escribiendo 132 filas en 'Consumos Acero'...
+2026-08-05 08:57:29,318  INFO    ✅ Hoja 'Consumos Acero' actualizada.
+2026-08-05 08:57:32,799  INFO  Actualizando Base Produccion → 'Guias' (11,021 filas)...
+2026-08-05 08:57:33,552  INFO    Limpiando hoja 'Guias'...
+2026-08-05 08:57:34,675  INFO    Escribiendo 11,021 filas en 'Guias'...
+2026-08-05 08:57:39,254  INFO    ✅ Hoja 'Guias' actualizada.
+2026-08-05 08:57:40,964  INFO  Actualizando Presupuestos → 'Ventas Full Manager' (2,605 filas)...
+2026-08-05 08:57:41,926  INFO    Limpiando hoja 'Ventas Full Manager'...
+2026-08-05 08:57:42,712  INFO    Escribiendo 2,605 filas en 'Ventas Full Manager'...
+2026-08-05 08:57:46,543  INFO    ✅ Hoja 'Ventas Full Manager' actualizada.
+2026-08-05 08:57:46,840  INFO  Actualizando Presupuestos → 'Notas de Venta' (990 filas)...
+2026-08-05 08:57:47,474  INFO    Limpiando hoja 'Notas de Venta'...
+2026-08-05 08:57:48,000  INFO    Escribiendo 990 filas en 'Notas de Venta'...
+2026-08-05 08:57:48,829  INFO    ✅ Hoja 'Notas de Venta' actualizada.
+2026-08-05 08:57:49,610  INFO  Actualizando Presupuestos → 'Cotizaciones' (4,467 filas)...
+2026-08-05 08:57:50,350  INFO    Limpiando hoja 'Cotizaciones'...
+2026-08-05 08:57:50,882  INFO    Escribiendo 4,467 filas en 'Cotizaciones'...
+2026-08-05 08:57:51,893  INFO    ✅ Hoja 'Cotizaciones' actualizada.
+2026-08-05 08:57:51,945  INFO  Actualizando Presupuestos → 'Calendario' (82 filas)...
+2026-08-05 08:57:52,527  INFO    Limpiando hoja 'Calendario'...
+2026-08-05 08:57:52,900  INFO    Escribiendo 82 filas en 'Calendario'...
+2026-08-05 08:57:53,192  INFO    ✅ Hoja 'Calendario' actualizada.
+2026-08-05 08:57:53,192  INFO  
+2026-08-05 08:57:53,192  INFO  ✅ Todo actualizado:
+2026-08-05 08:57:53,193  INFO     📁 Drive: Reportes_Completos_Actualizado.xlsx
+2026-08-05 08:57:53,195  INFO     📊 Base Produccion: ['Orden de Produccion', 'Por Facturar', 'Control Inventario', 'Notas de Venta', 'Vales de Salida', 'Stock', 'Consumos POL', 'Ventas_Full', 'WIP', 'Stock Vendido', 'Consumos Acero', 'Guias']
+2026-08-05 08:57:53,196  INFO     📊 Presupuestos: Ventas Full Manager
+2026-08-05 08:57:53,197  INFO  
+2026-08-05 08:57:53,198  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:57:53,198  INFO    PASO 4/7 — Sincronizar NVs a Supabase (OC Polchile)
+2026-08-05 08:57:53,198  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:57:54,305  INFO    PASO 5 — Sincronizar proveedores a Supabase (OC Polchile)
+2026-08-05 08:57:54,516  INFO  Leídas 409 filas de la pestaña 'NV_Proveedores'
+2026-08-05 08:57:54,534  INFO  Proveedores a sincronizar: 409
+2026-08-05 08:57:57,595  INFO  HTTP Request: GET https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?select=rut "HTTP/2 200 OK"
+2026-08-05 08:57:57,917  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76557711-K "HTTP/2 200 OK"
+2026-08-05 08:57:58,106  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96756430-3 "HTTP/2 200 OK"
+2026-08-05 08:57:58,360  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76639288-1 "HTTP/2 200 OK"
+2026-08-05 08:57:58,679  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76452392-K "HTTP/2 200 OK"
+2026-08-05 08:57:59,028  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76309385-9 "HTTP/2 200 OK"
+2026-08-05 08:57:59,220  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76282059-5 "HTTP/2 200 OK"
+2026-08-05 08:57:59,422  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76234653-2 "HTTP/2 200 OK"
+2026-08-05 08:57:59,606  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96540700-6 "HTTP/2 200 OK"
+2026-08-05 08:57:59,839  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77467642-2 "HTTP/2 200 OK"
+2026-08-05 08:58:00,028  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77648985-9 "HTTP/2 200 OK"
+2026-08-05 08:58:00,223  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.9581564-2 "HTTP/2 200 OK"
+2026-08-05 08:58:00,425  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77958770-3 "HTTP/2 200 OK"
+2026-08-05 08:58:00,647  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77839161-9 "HTTP/2 200 OK"
+2026-08-05 08:58:00,833  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.12885828-8 "HTTP/2 200 OK"
+2026-08-05 08:58:01,234  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77726515-6 "HTTP/2 200 OK"
+2026-08-05 08:58:01,889  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76077067-1 "HTTP/2 200 OK"
+2026-08-05 08:58:02,087  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78885550-8 "HTTP/2 200 OK"
+2026-08-05 08:58:02,268  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76700184-3 "HTTP/2 200 OK"
+2026-08-05 08:58:02,470  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77754569-8 "HTTP/2 200 OK"
+2026-08-05 08:58:02,666  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76375855-9 "HTTP/2 200 OK"
+2026-08-05 08:58:02,858  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84652600-5 "HTTP/2 200 OK"
+2026-08-05 08:58:03,052  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.87910700-8 "HTTP/2 200 OK"
+2026-08-05 08:58:03,274  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76283577-0 "HTTP/2 200 OK"
+2026-08-05 08:58:03,498  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77662300-8 "HTTP/2 200 OK"
+2026-08-05 08:58:03,696  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76115125-8 "HTTP/2 200 OK"
+2026-08-05 08:58:03,873  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78239560-2 "HTTP/2 200 OK"
+2026-08-05 08:58:04,046  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76015031-2 "HTTP/2 200 OK"
+2026-08-05 08:58:04,223  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77415073-0 "HTTP/2 200 OK"
+2026-08-05 08:58:04,397  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77985710-7 "HTTP/2 200 OK"
+2026-08-05 08:58:04,595  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77842710-9 "HTTP/2 200 OK"
+2026-08-05 08:58:04,769  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.97080000-K "HTTP/2 200 OK"
+2026-08-05 08:58:04,961  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77554322-1 "HTTP/2 200 OK"
+2026-08-05 08:58:05,157  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.12852439-8 "HTTP/2 200 OK"
+2026-08-05 08:58:05,355  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78028928-7 "HTTP/2 200 OK"
+2026-08-05 08:58:05,542  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.11664449-5 "HTTP/2 200 OK"
+2026-08-05 08:58:05,722  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77109212-8 "HTTP/2 200 OK"
+2026-08-05 08:58:05,895  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76350815-3 "HTTP/2 200 OK"
+2026-08-05 08:58:06,085  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.86778100-5 "HTTP/2 200 OK"
+2026-08-05 08:58:06,263  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.4814737-2 "HTTP/2 200 OK"
+2026-08-05 08:58:06,479  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76166816-1 "HTTP/2 200 OK"
+2026-08-05 08:58:06,700  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78705590-7 "HTTP/2 200 OK"
+2026-08-05 08:58:06,938  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77215590-5 "HTTP/2 200 OK"
+2026-08-05 08:58:07,124  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77881901-5 "HTTP/2 200 OK"
+2026-08-05 08:58:07,340  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77732164-1 "HTTP/2 200 OK"
+2026-08-05 08:58:07,521  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76443950-3 "HTTP/2 200 OK"
+2026-08-05 08:58:07,753  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78105311-2 "HTTP/2 200 OK"
+2026-08-05 08:58:07,926  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79507240-3 "HTTP/2 200 OK"
+2026-08-05 08:58:08,134  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78096493-6 "HTTP/2 200 OK"
+2026-08-05 08:58:08,324  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76763625-3 "HTTP/2 200 OK"
+2026-08-05 08:58:08,524  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78936330-7 "HTTP/2 200 OK"
+2026-08-05 08:58:08,724  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77432437-2 "HTTP/2 200 OK"
+2026-08-05 08:58:09,012  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77806648-3 "HTTP/2 200 OK"
+2026-08-05 08:58:09,189  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77617830-6 "HTTP/2 200 OK"
+2026-08-05 08:58:09,374  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.51054270-3 "HTTP/2 200 OK"
+2026-08-05 08:58:09,547  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76745244-6 "HTTP/2 200 OK"
+2026-08-05 08:58:09,767  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.60910000-1 "HTTP/2 200 OK"
+2026-08-05 08:58:09,966  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.88279700-7 "HTTP/2 200 OK"
+2026-08-05 08:58:10,157  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76157302-0 "HTTP/2 200 OK"
+2026-08-05 08:58:10,343  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.16123403-6 "HTTP/2 200 OK"
+2026-08-05 08:58:10,515  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.11664754-0 "HTTP/2 200 OK"
+2026-08-05 08:58:10,690  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76067852-K "HTTP/2 200 OK"
+2026-08-05 08:58:10,873  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76506422-8 "HTTP/2 200 OK"
+2026-08-05 08:58:11,084  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96501500-0 "HTTP/2 200 OK"
+2026-08-05 08:58:11,263  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76725870-4 "HTTP/2 200 OK"
+2026-08-05 08:58:11,448  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77388955-4 "HTTP/2 200 OK"
+2026-08-05 08:58:11,624  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76905308-5 "HTTP/2 200 OK"
+2026-08-05 08:58:11,796  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76696733-7 "HTTP/2 200 OK"
+2026-08-05 08:58:11,977  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76520280-9 "HTTP/2 200 OK"
+2026-08-05 08:58:12,153  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76229272-6 "HTTP/2 200 OK"
+2026-08-05 08:58:12,325  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76215357-2 "HTTP/2 200 OK"
+2026-08-05 08:58:12,518  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76610508-4 "HTTP/2 200 OK"
+2026-08-05 08:58:12,693  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76695431-6 "HTTP/2 200 OK"
+2026-08-05 08:58:12,878  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77343433-6 "HTTP/2 200 OK"
+2026-08-05 08:58:13,078  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76417730-4 "HTTP/2 200 OK"
+2026-08-05 08:58:13,263  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77558105-0 "HTTP/2 200 OK"
+2026-08-05 08:58:13,436  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78636280-6 "HTTP/2 200 OK"
+2026-08-05 08:58:13,630  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96959690-3 "HTTP/2 200 OK"
+2026-08-05 08:58:13,824  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77112420-8 "HTTP/2 200 OK"
+2026-08-05 08:58:14,001  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76226059-K "HTTP/2 200 OK"
+2026-08-05 08:58:14,181  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77629170-6 "HTTP/2 200 OK"
+2026-08-05 08:58:14,383  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78334850-0 "HTTP/2 200 OK"
+2026-08-05 08:58:14,557  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77884906-2 "HTTP/2 200 OK"
+2026-08-05 08:58:14,733  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79880870-2 "HTTP/2 200 OK"
+2026-08-05 08:58:14,933  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77398220-1 "HTTP/2 200 OK"
+2026-08-05 08:58:15,105  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79952820-7 "HTTP/2 200 OK"
+2026-08-05 08:58:15,285  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.13490064-4 "HTTP/2 200 OK"
+2026-08-05 08:58:15,457  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76589959-1 "HTTP/2 200 OK"
+2026-08-05 08:58:15,656  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78324130-7 "HTTP/2 200 OK"
+2026-08-05 08:58:15,844  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76942418-0 "HTTP/2 200 OK"
+2026-08-05 08:58:16,033  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.99575240-9 "HTTP/2 200 OK"
+2026-08-05 08:58:16,256  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84910400-4 "HTTP/2 200 OK"
+2026-08-05 08:58:16,429  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76124863-4 "HTTP/2 200 OK"
+2026-08-05 08:58:16,625  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79991430-1 "HTTP/2 200 OK"
+2026-08-05 08:58:16,796  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76753968-1 "HTTP/2 200 OK"
+2026-08-05 08:58:17,015  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77650574-9 "HTTP/2 200 OK"
+2026-08-05 08:58:17,208  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77379059-0 "HTTP/2 200 OK"
+2026-08-05 08:58:17,435  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.83030600-5 "HTTP/2 200 OK"
+2026-08-05 08:58:17,617  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77050455-4 "HTTP/2 200 OK"
+2026-08-05 08:58:17,815  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76368672-8 "HTTP/2 200 OK"
+2026-08-05 08:58:18,071  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76789745-6 "HTTP/2 200 OK"
+2026-08-05 08:58:18,248  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76746384-7 "HTTP/2 200 OK"
+2026-08-05 08:58:18,439  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76339549-9 "HTTP/2 200 OK"
+2026-08-05 08:58:18,637  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.13942927-3 "HTTP/2 200 OK"
+2026-08-05 08:58:18,824  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77591550-1 "HTTP/2 200 OK"
+2026-08-05 08:58:19,001  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.89189200-4 "HTTP/2 200 OK"
+2026-08-05 08:58:19,182  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77942307-7 "HTTP/2 200 OK"
+2026-08-05 08:58:19,357  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96803690-4 "HTTP/2 200 OK"
+2026-08-05 08:58:19,566  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76830246-4 "HTTP/2 200 OK"
+2026-08-05 08:58:19,749  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79881570-9 "HTTP/2 200 OK"
+2026-08-05 08:58:19,943  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77927647-3 "HTTP/2 200 OK"
+2026-08-05 08:58:20,170  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84238600-4 "HTTP/2 200 OK"
+2026-08-05 08:58:20,348  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78370100-6 "HTTP/2 200 OK"
+2026-08-05 08:58:20,533  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81201000-K "HTTP/2 200 OK"
+2026-08-05 08:58:20,708  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.89565500-7 "HTTP/2 200 OK"
+2026-08-05 08:58:20,881  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76112082-4 "HTTP/2 200 OK"
+2026-08-05 08:58:21,058  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76484237-5 "HTTP/2 200 OK"
+2026-08-05 08:58:21,248  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.83336400-6 "HTTP/2 200 OK"
+2026-08-05 08:58:21,434  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76905452-9 "HTTP/2 200 OK"
+2026-08-05 08:58:21,618  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81290800-6 "HTTP/2 200 OK"
+2026-08-05 08:58:21,803  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84063800-6 "HTTP/2 200 OK"
+2026-08-05 08:58:21,999  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.50605770-1 "HTTP/2 200 OK"
+2026-08-05 08:58:22,228  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76167134-0 "HTTP/2 200 OK"
+2026-08-05 08:58:22,423  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79623100-9 "HTTP/2 200 OK"
+2026-08-05 08:58:22,615  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.88544900-K "HTTP/2 200 OK"
+2026-08-05 08:58:22,852  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78023550-0 "HTTP/2 200 OK"
+2026-08-05 08:58:23,025  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77274620-2 "HTTP/2 200 OK"
+2026-08-05 08:58:23,213  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.88666000-6 "HTTP/2 200 OK"
+2026-08-05 08:58:23,454  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78924030-2 "HTTP/2 200 OK"
+2026-08-05 08:58:23,631  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76775137-0 "HTTP/2 200 OK"
+2026-08-05 08:58:23,824  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.10702950-8 "HTTP/2 200 OK"
+2026-08-05 08:58:24,028  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77337752-9 "HTTP/2 200 OK"
+2026-08-05 08:58:24,513  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.7845154-8 "HTTP/2 200 OK"
+2026-08-05 08:58:24,693  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76449868-2 "HTTP/2 200 OK"
+2026-08-05 08:58:24,903  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96921060-6 "HTTP/2 200 OK"
+2026-08-05 08:58:25,083  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79929410-9 "HTTP/2 200 OK"
+2026-08-05 08:58:25,254  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84280800-6 "HTTP/2 200 OK"
+2026-08-05 08:58:25,258  ERROR  Error sincronizando proveedor RUT 77725766-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:25,457  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77654401-9 "HTTP/2 200 OK"
+2026-08-05 08:58:25,632  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76161135-6 "HTTP/2 200 OK"
+2026-08-05 08:58:25,820  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76135061-7 "HTTP/2 200 OK"
+2026-08-05 08:58:26,006  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76568660-1 "HTTP/2 200 OK"
+2026-08-05 08:58:26,209  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.92307000-1 "HTTP/2 200 OK"
+2026-08-05 08:58:26,396  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76937643-7 "HTTP/2 200 OK"
+2026-08-05 08:58:26,580  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76712896-7 "HTTP/2 200 OK"
+2026-08-05 08:58:26,799  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.91139000-0 "HTTP/2 200 OK"
+2026-08-05 08:58:26,980  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.94625000-7 "HTTP/2 200 OK"
+2026-08-05 08:58:27,201  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76993859-1 "HTTP/2 200 OK"
+2026-08-05 08:58:27,369  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76585755-4 "HTTP/2 200 OK"
+2026-08-05 08:58:27,547  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76280983-4 "HTTP/2 200 OK"
+2026-08-05 08:58:27,720  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76206192-9 "HTTP/2 200 OK"
+2026-08-05 08:58:27,888  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77722758-0 "HTTP/2 200 OK"
+2026-08-05 08:58:28,080  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77007638-2 "HTTP/2 200 OK"
+2026-08-05 08:58:28,268  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.85120600-0 "HTTP/2 200 OK"
+2026-08-05 08:58:28,458  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76211240-K "HTTP/2 200 OK"
+2026-08-05 08:58:28,646  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78627210-6 "HTTP/2 200 OK"
+2026-08-05 08:58:28,819  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.93772000-9 "HTTP/2 200 OK"
+2026-08-05 08:58:29,004  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96833680-0 "HTTP/2 200 OK"
+2026-08-05 08:58:29,175  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76335833-K "HTTP/2 200 OK"
+2026-08-05 08:58:29,347  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77032805-5 "HTTP/2 200 OK"
+2026-08-05 08:58:29,516  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76899943-0 "HTTP/2 200 OK"
+2026-08-05 08:58:29,704  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76538689-6 "HTTP/2 200 OK"
+2026-08-05 08:58:29,895  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77065929-9 "HTTP/2 200 OK"
+2026-08-05 08:58:30,067  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76084114-5 "HTTP/2 200 OK"
+2026-08-05 08:58:30,240  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.5248764-1 "HTTP/2 200 OK"
+2026-08-05 08:58:30,434  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77338790-7 "HTTP/2 200 OK"
+2026-08-05 08:58:30,603  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77418902-5 "HTTP/2 200 OK"
+2026-08-05 08:58:30,784  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76052927-3 "HTTP/2 200 OK"
+2026-08-05 08:58:30,959  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96875230-8 "HTTP/2 200 OK"
+2026-08-05 08:58:31,129  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77630439-5 "HTTP/2 200 OK"
+2026-08-05 08:58:31,324  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77041695-7 "HTTP/2 200 OK"
+2026-08-05 08:58:31,551  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96542490-3 "HTTP/2 200 OK"
+2026-08-05 08:58:31,743  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76145589-3 "HTTP/2 200 OK"
+2026-08-05 08:58:31,923  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76353589-4 "HTTP/2 200 OK"
+2026-08-05 08:58:32,145  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76134941-4 "HTTP/2 200 OK"
+2026-08-05 08:58:32,321  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76320181-3 "HTTP/2 200 OK"
+2026-08-05 08:58:32,493  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78953470-5 "HTTP/2 200 OK"
+2026-08-05 08:58:32,774  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.10036033-0 "HTTP/2 200 OK"
+2026-08-05 08:58:32,951  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77279740-0 "HTTP/2 200 OK"
+2026-08-05 08:58:33,143  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77985700-K "HTTP/2 200 OK"
+2026-08-05 08:58:33,349  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77439953-4 "HTTP/2 200 OK"
+2026-08-05 08:58:33,528  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96576200-0 "HTTP/2 200 OK"
+2026-08-05 08:58:33,701  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76916147-3 "HTTP/2 200 OK"
+2026-08-05 08:58:33,891  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76235440-3 "HTTP/2 200 OK"
+2026-08-05 08:58:34,057  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76338734-8 "HTTP/2 200 OK"
+2026-08-05 08:58:34,246  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77534804-6 "HTTP/2 200 OK"
+2026-08-05 08:58:34,424  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77896250-0 "HTTP/2 200 OK"
+2026-08-05 08:58:34,593  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79869510-K "HTTP/2 200 OK"
+2026-08-05 08:58:34,798  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76566210-9 "HTTP/2 200 OK"
+2026-08-05 08:58:34,981  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96711590-8 "HTTP/2 200 OK"
+2026-08-05 08:58:35,176  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96689310-9 "HTTP/2 200 OK"
+2026-08-05 08:58:35,358  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76747198-K "HTTP/2 200 OK"
+2026-08-05 08:58:35,565  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77215640-5 "HTTP/2 200 OK"
+2026-08-05 08:58:35,775  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.88888888-8 "HTTP/2 200 OK"
+2026-08-05 08:58:35,952  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76743492-8 "HTTP/2 200 OK"
+2026-08-05 08:58:36,146  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96800570-7 "HTTP/2 200 OK"
+2026-08-05 08:58:36,373  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76762740-8 "HTTP/2 200 OK"
+2026-08-05 08:58:36,548  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76177231-7 "HTTP/2 200 OK"
+2026-08-05 08:58:36,764  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96792430-K "HTTP/2 200 OK"
+2026-08-05 08:58:36,946  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.80409800-3 "HTTP/2 200 OK"
+2026-08-05 08:58:37,134  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76617000-5 "HTTP/2 200 OK"
+2026-08-05 08:58:37,307  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76132595-7 "HTTP/2 200 OK"
+2026-08-05 08:58:37,474  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.5392426-3 "HTTP/2 200 OK"
+2026-08-05 08:58:37,673  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77513405-4 "HTTP/2 200 OK"
+2026-08-05 08:58:37,852  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76231354-5 "HTTP/2 200 OK"
+2026-08-05 08:58:38,028  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77011723-2 "HTTP/2 200 OK"
+2026-08-05 08:58:38,227  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.21361494-0 "HTTP/2 200 OK"
+2026-08-05 08:58:38,412  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77005627-6 "HTTP/2 200 OK"
+2026-08-05 08:58:38,587  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77811365-1 "HTTP/2 200 OK"
+2026-08-05 08:58:38,595  ERROR  Error sincronizando proveedor RUT 80478200-1: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,597  ERROR  Error sincronizando proveedor RUT 76376061-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,598  ERROR  Error sincronizando proveedor RUT 97023000-9: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,600  ERROR  Error sincronizando proveedor RUT 80992000-3: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,602  ERROR  Error sincronizando proveedor RUT 8112942-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,603  ERROR  Error sincronizando proveedor RUT 96992030-1: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,605  ERROR  Error sincronizando proveedor RUT 77220478-7: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,607  ERROR  Error sincronizando proveedor RUT 90635000-9: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,608  ERROR  Error sincronizando proveedor RUT 91806000-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,786  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78103880-6 "HTTP/2 200 OK"
+2026-08-05 08:58:38,790  ERROR  Error sincronizando proveedor RUT 99147000-K: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,791  ERROR  Error sincronizando proveedor RUT 86966100-7: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,792  ERROR  Error sincronizando proveedor RUT 76496130-7: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,793  ERROR  Error sincronizando proveedor RUT 88473200-K: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,794  ERROR  Error sincronizando proveedor RUT 78743100-3: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,795  ERROR  Error sincronizando proveedor RUT 85512100-K: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,796  ERROR  Error sincronizando proveedor RUT 96806980-2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,797  ERROR  Error sincronizando proveedor RUT 77862774-4: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,798  ERROR  Error sincronizando proveedor RUT 96945440-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:38,798  ERROR  Error sincronizando proveedor RUT 76310935-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:39,010  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.10684857-2 "HTTP/2 200 OK"
+2026-08-05 08:58:39,012  ERROR  Error sincronizando proveedor RUT 13499923-3: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:39,013  ERROR  Error sincronizando proveedor RUT 97036000-K: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:39,014  ERROR  Error sincronizando proveedor RUT 97006000-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:39,015  ERROR  Error sincronizando proveedor RUT 77046871-K: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:39,190  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76732961-K "HTTP/2 200 OK"
+2026-08-05 08:58:39,194  ERROR  Error sincronizando proveedor RUT 76010151-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:39,386  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77506151-0 "HTTP/2 200 OK"
+2026-08-05 08:58:39,388  ERROR  Error sincronizando proveedor RUT 77951652-0: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:39,389  ERROR  Error sincronizando proveedor RUT 77588591-2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:39,564  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76374806-5 "HTTP/2 200 OK"
+2026-08-05 08:58:39,779  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77834378-9 "HTTP/2 200 OK"
+2026-08-05 08:58:39,966  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.99510380-K "HTTP/2 200 OK"
+2026-08-05 08:58:40,145  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77599772-9 "HTTP/2 200 OK"
+2026-08-05 08:58:40,317  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77505871-4 "HTTP/2 200 OK"
+2026-08-05 08:58:40,493  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77415903-7 "HTTP/2 200 OK"
+2026-08-05 08:58:40,670  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77091770-0 "HTTP/2 200 OK"
+2026-08-05 08:58:40,846  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76847924-0 "HTTP/2 200 OK"
+2026-08-05 08:58:41,071  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77978428-2 "HTTP/2 200 OK"
+2026-08-05 08:58:41,253  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77614989-6 "HTTP/2 200 OK"
+2026-08-05 08:58:41,426  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76691442-K "HTTP/2 200 OK"
+2026-08-05 08:58:41,433  ERROR  Error sincronizando proveedor RUT 77637377-K: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:41,607  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76259040-9 "HTTP/2 200 OK"
+2026-08-05 08:58:41,803  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.86053400-2 "HTTP/2 200 OK"
+2026-08-05 08:58:41,805  ERROR  Error sincronizando proveedor RUT 77637766-K: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:41,977  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76543283-9 "HTTP/2 200 OK"
+2026-08-05 08:58:41,981  ERROR  Error sincronizando proveedor RUT 76502532-K: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:41,983  ERROR  Error sincronizando proveedor RUT 99594030-2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:41,984  ERROR  Error sincronizando proveedor RUT 76876439-5: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:41,985  ERROR  Error sincronizando proveedor RUT 77464739-2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:42,163  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76902659-2 "HTTP/2 200 OK"
+2026-08-05 08:58:42,337  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.99500750-9 "HTTP/2 200 OK"
+2026-08-05 08:58:42,342  ERROR  Error sincronizando proveedor RUT 77729613-2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:42,510  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79862000-2 "HTTP/2 200 OK"
+2026-08-05 08:58:42,692  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.89689900-7 "HTTP/2 200 OK"
+2026-08-05 08:58:42,873  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76.734.413-9 "HTTP/2 200 OK"
+2026-08-05 08:58:42,875  ERROR  Error sincronizando proveedor RUT 76552590-K: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:42,875  ERROR  Error sincronizando proveedor RUT 76324634-5: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:42,876  ERROR  Error sincronizando proveedor RUT 76488629-1: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:42,877  ERROR  Error sincronizando proveedor RUT 55555555-5: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:43,093  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77030024-K "HTTP/2 200 OK"
+2026-08-05 08:58:43,095  ERROR  Error sincronizando proveedor RUT 81105000-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:43,293  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.12263538-4 "HTTP/2 200 OK"
+2026-08-05 08:58:43,477  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77401763-1 "HTTP/2 200 OK"
+2026-08-05 08:58:43,650  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.12180115-9 "HTTP/2 200 OK"
+2026-08-05 08:58:43,820  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76239105-8 "HTTP/2 200 OK"
+2026-08-05 08:58:44,015  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77374838-1 "HTTP/2 200 OK"
+2026-08-05 08:58:44,017  ERROR  Error sincronizando proveedor RUT 96844600-2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:44,186  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76779540-8 "HTTP/2 200 OK"
+2026-08-05 08:58:44,379  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76741245-2 "HTTP/2 200 OK"
+2026-08-05 08:58:44,566  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96938510-4 "HTTP/2 200 OK"
+2026-08-05 08:58:44,773  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.86522600-4 "HTTP/2 200 OK"
+2026-08-05 08:58:44,948  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96798550-3 "HTTP/2 200 OK"
+2026-08-05 08:58:45,143  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76101472-2 "HTTP/2 200 OK"
+2026-08-05 08:58:45,373  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76505756-6 "HTTP/2 200 OK"
+2026-08-05 08:58:45,544  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76693755-1 "HTTP/2 200 OK"
+2026-08-05 08:58:45,751  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.9015060-K "HTTP/2 200 OK"
+2026-08-05 08:58:45,923  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76829884-K "HTTP/2 200 OK"
+2026-08-05 08:58:46,102  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81440500-1 "HTTP/2 200 OK"
+2026-08-05 08:58:46,287  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76672110-9 "HTTP/2 200 OK"
+2026-08-05 08:58:46,472  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76874174-3 "HTTP/2 200 OK"
+2026-08-05 08:58:46,474  ERROR  Error sincronizando proveedor RUT 76029105-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:46,695  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.13380502-8 "HTTP/2 200 OK"
+2026-08-05 08:58:46,697  ERROR  Error sincronizando proveedor RUT 76753740-9: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:46,874  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78984330-9 "HTTP/2 200 OK"
+2026-08-05 08:58:46,901  ERROR  Error sincronizando proveedor RUT 85831600-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:47,074  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78950850-K "HTTP/2 200 OK"
+2026-08-05 08:58:47,250  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76757030-9.2 "HTTP/2 200 OK"
+2026-08-05 08:58:47,253  ERROR  Error sincronizando proveedor RUT 79817450-9: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:47,429  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76148249-1 "HTTP/2 200 OK"
+2026-08-05 08:58:47,642  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.69500900-3 "HTTP/2 200 OK"
+2026-08-05 08:58:47,814  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96568740-8 "HTTP/2 200 OK"
+2026-08-05 08:58:47,816  ERROR  Error sincronizando proveedor RUT 79936340-2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:47,817  ERROR  Error sincronizando proveedor RUT 8523244-4: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:48,015  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81537600-5 "HTTP/2 200 OK"
+2026-08-05 08:58:48,017  ERROR  Error sincronizando proveedor RUT 82525800-0: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:48,018  ERROR  Error sincronizando proveedor RUT 84726100-5: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:48,019  ERROR  Error sincronizando proveedor RUT 76688528-4: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:48,208  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96972250-K "HTTP/2 200 OK"
+2026-08-05 08:58:48,385  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76321554-7 "HTTP/2 200 OK"
+2026-08-05 08:58:48,387  ERROR  Error sincronizando proveedor RUT 76196067-9: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:48,388  ERROR  Error sincronizando proveedor RUT 77935420-2.2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:48,389  ERROR  Error sincronizando proveedor RUT 6973685-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:48,630  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76173410-5 "HTTP/2 200 OK"
+2026-08-05 08:58:48,632  ERROR  Error sincronizando proveedor RUT 89396900-4: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:48,802  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.93075000-K "HTTP/2 200 OK"
+2026-08-05 08:58:48,973  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.0-0 "HTTP/2 200 OK"
+2026-08-05 08:58:48,975  ERROR  Error sincronizando proveedor RUT 79559670-4: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:48,976  ERROR  Error sincronizando proveedor RUT 76141853-K: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:48,976  ERROR  Error sincronizando proveedor RUT 76328813-7: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:48,977  ERROR  Error sincronizando proveedor RUT 15480941-4: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:48,978  ERROR  Error sincronizando proveedor RUT 12224515-2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:48,979  ERROR  Error sincronizando proveedor RUT 12636565-9: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,149  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96554050-4 "HTTP/2 200 OK"
+2026-08-05 08:58:49,151  ERROR  Error sincronizando proveedor RUT 76128426-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,152  ERROR  Error sincronizando proveedor RUT 99507430-3: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,153  ERROR  Error sincronizando proveedor RUT 14417758-4: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,153  ERROR  Error sincronizando proveedor RUT 76196717-7: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,154  ERROR  Error sincronizando proveedor RUT 76028634-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,154  ERROR  Error sincronizando proveedor RUT 9307037-2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,383  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96556940-5 "HTTP/2 200 OK"
+2026-08-05 08:58:49,384  ERROR  Error sincronizando proveedor RUT 10462842-7: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,565  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.14011280-1 "HTTP/2 200 OK"
+2026-08-05 08:58:49,567  ERROR  Error sincronizando proveedor RUT 77123410-0: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,569  ERROR  Error sincronizando proveedor RUT 9638458-0: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,570  ERROR  Error sincronizando proveedor RUT 10698382-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,571  ERROR  Error sincronizando proveedor RUT 76330861-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,572  ERROR  Error sincronizando proveedor RUT 76383130-2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,573  ERROR  Error sincronizando proveedor RUT 99516040-4: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,574  ERROR  Error sincronizando proveedor RUT 15308716-4: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,575  ERROR  Error sincronizando proveedor RUT 96959480-3: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,576  ERROR  Error sincronizando proveedor RUT 76030576-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,577  ERROR  Error sincronizando proveedor RUT 77183990-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,578  ERROR  Error sincronizando proveedor RUT 77396020-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,579  ERROR  Error sincronizando proveedor RUT 77965030-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,580  ERROR  Error sincronizando proveedor RUT 78471290-7: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,778  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76462500-5 "HTTP/2 200 OK"
+2026-08-05 08:58:49,780  ERROR  Error sincronizando proveedor RUT 76012833-3: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,979  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76097578-8 "HTTP/2 200 OK"
+2026-08-05 08:58:49,981  ERROR  Error sincronizando proveedor RUT 76298373-7: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:49,982  ERROR  Error sincronizando proveedor RUT 79898290-7: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,156  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.6718124-7 "HTTP/2 200 OK"
+2026-08-05 08:58:50,174  ERROR  Error sincronizando proveedor RUT 89420300-5: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,175  ERROR  Error sincronizando proveedor RUT 78874090-5: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,176  ERROR  Error sincronizando proveedor RUT 13056425-9: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,177  ERROR  Error sincronizando proveedor RUT 80326500-3: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,348  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81566200-8 "HTTP/2 200 OK"
+2026-08-05 08:58:50,350  ERROR  Error sincronizando proveedor RUT 7987677-1: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,352  ERROR  Error sincronizando proveedor RUT 9157766-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,353  ERROR  Error sincronizando proveedor RUT 15897694-3: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,355  ERROR  Error sincronizando proveedor RUT 12472227-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,356  ERROR  Error sincronizando proveedor RUT 12283285-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,357  ERROR  Error sincronizando proveedor RUT 4665722-5: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,359  ERROR  Error sincronizando proveedor RUT 6054755-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,360  ERROR  Error sincronizando proveedor RUT 10168775-9: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,361  ERROR  Error sincronizando proveedor RUT 11847677-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,363  ERROR  Error sincronizando proveedor RUT 96501450-0: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,364  ERROR  Error sincronizando proveedor RUT 77726170-3: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,366  ERROR  Error sincronizando proveedor RUT 79802160-5: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,368  ERROR  Error sincronizando proveedor RUT 9233481-3: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,369  ERROR  Error sincronizando proveedor RUT 76075707-1: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,370  ERROR  Error sincronizando proveedor RUT 77037960-1: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,371  ERROR  Error sincronizando proveedor RUT 76373470-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,372  ERROR  Error sincronizando proveedor RUT 15843941-7: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,604  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.99540490-7 "HTTP/2 200 OK"
+2026-08-05 08:58:50,608  ERROR  Error sincronizando proveedor RUT 99549250-4: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,610  ERROR  Error sincronizando proveedor RUT 48025052-4: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,612  ERROR  Error sincronizando proveedor RUT 76710240-2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,613  ERROR  Error sincronizando proveedor RUT 79864570-6: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,615  ERROR  Error sincronizando proveedor RUT 4315714-0: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,790  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76141696-0 "HTTP/2 200 OK"
+2026-08-05 08:58:50,792  ERROR  Error sincronizando proveedor RUT 76250792-7: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,793  ERROR  Error sincronizando proveedor RUT 92642000-3: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,795  ERROR  Error sincronizando proveedor RUT 76180102-3: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,796  ERROR  Error sincronizando proveedor RUT 12866051-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:50,797  ERROR  Error sincronizando proveedor RUT 96919050-8: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:51,030  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76062979-0 "HTTP/2 200 OK"
+2026-08-05 08:58:51,222  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.13942555-3 "HTTP/2 200 OK"
+2026-08-05 08:58:51,418  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77127570-2 "HTTP/2 200 OK"
+2026-08-05 08:58:51,590  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76103948-2 "HTTP/2 200 OK"
+2026-08-05 08:58:51,762  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76784539-1 "HTTP/2 200 OK"
+2026-08-05 08:58:51,974  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.92654000-9 "HTTP/2 200 OK"
+2026-08-05 08:58:52,145  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76260317-9 "HTTP/2 200 OK"
+2026-08-05 08:58:52,334  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76757030-9 "HTTP/2 200 OK"
+2026-08-05 08:58:52,505  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96806110-0 "HTTP/2 200 OK"
+2026-08-05 08:58:52,508  ERROR  Error sincronizando proveedor RUT 76177079-9: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:52,700  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77321150-7 "HTTP/2 200 OK"
+2026-08-05 08:58:52,894  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76879310-7 "HTTP/2 200 OK"
+2026-08-05 08:58:53,115  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76721910-5 "HTTP/2 200 OK"
+2026-08-05 08:58:53,117  ERROR  Error sincronizando proveedor RUT 76254850-K: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:53,118  ERROR  Error sincronizando proveedor RUT 10957117-2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:53,119  ERROR  Error sincronizando proveedor RUT 99520000-7: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:53,119  ERROR  Error sincronizando proveedor RUT 78780990-1: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:53,120  ERROR  Error sincronizando proveedor RUT 9570774-2: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:53,121  ERROR  Error sincronizando proveedor RUT 76594720-0: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:53,298  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.80043600-1 "HTTP/2 200 OK"
+2026-08-05 08:58:53,343  ERROR  Error sincronizando proveedor RUT 96514950-3: Out of range float values are not JSON compliant: nan
+2026-08-05 08:58:53,548  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76175377-0 "HTTP/2 200 OK"
+2026-08-05 08:58:53,748  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76160522-4 "HTTP/2 200 OK"
+2026-08-05 08:58:53,924  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78119958-3 "HTTP/2 200 OK"
+2026-08-05 08:58:54,143  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76278246-4 "HTTP/2 200 OK"
+2026-08-05 08:58:54,156  INFO  Sync proveedores completa. Nuevos: 0 | Actualizados: 288 | Errores: 121
+2026-08-05 08:58:54,157  INFO  ✅ Sync proveedores → Supabase completado.
+2026-08-05 08:58:54,157  INFO  
+2026-08-05 08:58:54,157  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:58:54,157  INFO    PASO 5/7 — Carga masiva a Supabase (todas las tablas)
+2026-08-05 08:58:54,157  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:58:54,441  INFO  ============================================================
+2026-08-05 08:58:54,441  INFO    CARGA MASIVA — Todas las consultas SQL → Supabase
+2026-08-05 08:58:54,441  INFO  ============================================================
+2026-08-05 08:58:54,442  INFO  Usando Excel: Reportes_Completos_2026-08-05.xlsx
+2026-08-05 08:58:55,723  INFO  Procesando 'Aceros' → tabla 'aceros'...
+2026-08-05 08:58:57,506  INFO    └─ aceros: 56 filas cargadas
+2026-08-05 08:58:57,507  INFO  Procesando 'base_completo' → tabla 'base_completo'...
+2026-08-05 08:59:09,043  INFO    └─ base_completo: 10,328 filas cargadas
+2026-08-05 08:59:09,046  INFO  Procesando 'calendario' → tabla 'calendario'...
+2026-08-05 08:59:10,740  INFO    └─ calendario: 82 filas cargadas
+2026-08-05 08:59:10,740  INFO  Procesando 'Consumos_acero' → tabla 'consumos_acero'...
+2026-08-05 08:59:12,490  INFO    └─ consumos_acero: 132 filas cargadas
+2026-08-05 08:59:12,491  INFO  Procesando 'Consumos_pol' → tabla 'consumos_pol'...
+2026-08-05 08:59:14,181  INFO    └─ consumos_pol: 29 filas cargadas
+2026-08-05 08:59:14,181  INFO  Procesando 'Cotizaciones' → tabla 'cotizaciones'...
+2026-08-05 08:59:16,907  INFO    └─ cotizaciones: 4,467 filas cargadas
+2026-08-05 08:59:16,907  INFO  Procesando 'CxC' → tabla 'cxc'...
+2026-08-05 08:59:18,686  INFO    └─ cxc: 44 filas cargadas
+2026-08-05 08:59:18,686  INFO  Procesando 'Guias' → tabla 'guias'...
+2026-08-05 08:59:23,777  INFO    └─ guias: 11,021 filas cargadas
+2026-08-05 08:59:23,779  INFO  Procesando 'Inventario_aceros' → tabla 'inventario_aceros'...
+2026-08-05 08:59:25,562  INFO    └─ inventario_aceros: 165 filas cargadas
+2026-08-05 08:59:25,562  INFO  Procesando 'Notas_de_venta' → tabla 'notas_de_venta'...
+2026-08-05 08:59:27,701  INFO    └─ notas_de_venta: 990 filas cargadas
+2026-08-05 08:59:27,701  INFO  Saltando 'NV_Proveedores' (manejo especial aparte)
+2026-08-05 08:59:27,701  INFO  Saltando 'NV_Supabase' (manejo especial aparte)
+2026-08-05 08:59:27,701  INFO  Procesando 'Ordenes_de_Compra' → tabla 'ordenes_de_compra'...
+2026-08-05 08:59:29,780  INFO    └─ ordenes_de_compra: 197 filas cargadas
+2026-08-05 08:59:29,781  INFO  Procesando 'Ordenes_de_produccion' → tabla 'ordenes_de_produccion'...
+2026-08-05 08:59:33,912  INFO    └─ ordenes_de_produccion: 3,636 filas cargadas
+2026-08-05 08:59:33,915  INFO  Procesando 'Productos_Stock' → tabla 'productos_stock'...
+2026-08-05 08:59:35,694  INFO    └─ productos_stock: 143 filas cargadas
+2026-08-05 08:59:35,695  INFO  Procesando 'Stock_vendido' → tabla 'stock_vendido'...
+2026-08-05 08:59:37,516  INFO    └─ stock_vendido: 204 filas cargadas
+2026-08-05 08:59:37,517  INFO  Procesando 'Ventas_Full' → tabla 'ventas_full'...
+2026-08-05 08:59:41,487  INFO    └─ ventas_full: 2,605 filas cargadas
+2026-08-05 08:59:41,488  INFO  Procesando 'WIP' → tabla 'wip'...
+2026-08-05 08:59:43,167  INFO    └─ wip: 31 filas cargadas
+2026-08-05 08:59:43,170  INFO  
+2026-08-05 08:59:43,170  INFO  ✅ Tablas cargadas correctamente: 16
+2026-08-05 08:59:43,170  INFO     • aceros: 56 filas
+2026-08-05 08:59:43,170  INFO     • base_completo: 10,328 filas
+2026-08-05 08:59:43,171  INFO     • calendario: 82 filas
+2026-08-05 08:59:43,171  INFO     • consumos_acero: 132 filas
+2026-08-05 08:59:43,171  INFO     • consumos_pol: 29 filas
+2026-08-05 08:59:43,171  INFO     • cotizaciones: 4,467 filas
+2026-08-05 08:59:43,171  INFO     • cxc: 44 filas
+2026-08-05 08:59:43,171  INFO     • guias: 11,021 filas
+2026-08-05 08:59:43,171  INFO     • inventario_aceros: 165 filas
+2026-08-05 08:59:43,171  INFO     • notas_de_venta: 990 filas
+2026-08-05 08:59:43,171  INFO     • ordenes_de_compra: 197 filas
+2026-08-05 08:59:43,171  INFO     • ordenes_de_produccion: 3,636 filas
+2026-08-05 08:59:43,171  INFO     • productos_stock: 143 filas
+2026-08-05 08:59:43,171  INFO     • stock_vendido: 204 filas
+2026-08-05 08:59:43,171  INFO     • ventas_full: 2,605 filas
+2026-08-05 08:59:43,172  INFO     • wip: 31 filas
+2026-08-05 08:59:43,172  INFO  ✅ Carga masiva a Supabase completada.
+2026-08-05 08:59:43,172  INFO  
+2026-08-05 08:59:43,172  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:59:43,172  INFO    PASO 6/7 — Sincronizar NVs pendientes por vendedor
+2026-08-05 08:59:43,172  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:59:43,174  INFO  Conectando a 'T779354202C' para extraer NVs pendientes...
+2026-08-05 08:59:44,884  INFO  HTTP Request: POST https://hauricnpsamnwyhondse.supabase.co/rest/v1/notas_venta_pendientes?on_conflict=nota_venta&columns=%22cantidad_total_op%22%2C%22cantidad_pendiente%22%2C%22estado%22%2C%22cantidad_terminada%22%2C%22codvend%22%2C%22porcentaje_avance%22%2C%22monto_nv%22%2C%22nota_venta%22 "HTTP/2 200 OK"
+2026-08-05 08:59:45,360  INFO  HTTP Request: DELETE https://hauricnpsamnwyhondse.supabase.co/rest/v1/notas_venta_pendientes?nota_venta=not.in.%280%2C12333%2C13711%2C13753%2C13905%2C14020%2C14037%2C14048%2C14075%2C13437%2C13889%2C13937%2C13966%2C13982%2C13992%2C14008%2C14021%2C14022%2C14043%2C14093%2C12386%2C13503%2C13804%2C13824%2C13867%2C13915%2C13926%2C13927%2C13970%2C13971%2C13978%2C14000%2C14041%2C14061%2C14068%2C14073%2C14074%2C14081%2C14094%2C14095%2C14096%2C13261%2C13433%2C13605%2C13686%2C13869%2C13876%2C13945%2C13954%2C13995%2C14044%2C14076%2C14079%2C14083%2C14084%2C14085%29 "HTTP/2 200 OK"
+2026-08-05 08:59:45,361  INFO  ✅ Sincronizadas 56 NVs pendientes en Supabase.
+2026-08-05 08:59:45,362  INFO  
+2026-08-05 08:59:45,362  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:59:45,362  INFO    PASO 7/7 — Sincronizar facturación por período (21-20)
+2026-08-05 08:59:45,362  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-05 08:59:45,365  INFO  Conectando a 'T779354202C' para calcular facturación del período vigente...
+2026-08-05 08:59:46,665  INFO  HTTP Request: POST https://hauricnpsamnwyhondse.supabase.co/rest/v1/facturacion_periodo?on_conflict=codvend%2Cperiodo_inicio&columns=%22periodo_fin%22%2C%22total_facturado%22%2C%22periodo_inicio%22%2C%22codvend%22 "HTTP/2 200 OK"
+2026-08-05 08:59:46,669  INFO  ✅ Facturación del período actualizada para 5 vendedores.
+2026-08-05 08:59:46,669  INFO  
+2026-08-05 08:59:46,669  INFO  ╔═════════════════════════════════════════════════════╗
+2026-08-05 08:59:46,671  INFO  ║  ✅ PIPELINE COMPLETADO en 797s                      ║
+2026-08-05 08:59:46,671  INFO  ║  📊 Excel en Drive: VentasFull_Actualizado.xlsx      ║
+2026-08-05 08:59:46,672  INFO  ║  🔄 NVs sincronizadas en Supabase (OC Polchile)      ║
+2026-08-05 08:59:46,672  INFO  ║  🔄 NVs pendientes sincronizadas por vendedor        ║
+2026-08-05 08:59:46,672  INFO  ║  🔄 Facturación por período sincronizada             ║
+2026-08-05 08:59:46,672  INFO  ╚═════════════════════════════════════════════════════╝

@@ -47,11 +47,16 @@ DATA_DIR       = r"C:\Program Files\Microsoft SQL Server\MSSQL17.SQLEXPRESS\MSSQ
 AÑO_ACTUAL     = datetime.now().year
 # ─────────────────────────────────────────────
 
+# En tu notebook, sigue escribiendo en la ruta de siempre si no seteas la
+# variable de entorno. En GitHub Actions, el workflow la apunta a un
+# archivo relativo (dentro de BackupManager/, que ya es el working-directory).
+PIPELINE_VENTAS_LOG = os.environ.get("PIPELINE_VENTAS_LOG", r"C:\Users\atorr\Documents\pipeline_ventas.log")
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  %(levelname)s  %(message)s",
     handlers=[
-        logging.FileHandler(r"C:\Users\atorr\Documents\pipeline_ventas.log", encoding="utf-8"),
+        logging.FileHandler(PIPELINE_VENTAS_LOG, encoding="utf-8"),
         logging.StreamHandler()
     ]
 )
