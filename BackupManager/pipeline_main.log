@@ -44875,3 +44875,418 @@ openpyxl.utils.exceptions.IllegalCharacterError: Según Nota de Venta N°13337 
 2026-08-05 08:59:46,672  INFO  ║  🔄 NVs pendientes sincronizadas por vendedor        ║
 2026-08-05 08:59:46,672  INFO  ║  🔄 Facturación por período sincronizada             ║
 2026-08-05 08:59:46,672  INFO  ╚═════════════════════════════════════════════════════╝
+2026-08-05 12:10:26,610  INFO    PASO 5 — Sincronizar proveedores a Supabase (OC Polchile)
+2026-08-05 12:10:27,459  INFO  Leídas 409 filas de la pestaña 'NV_Proveedores'
+2026-08-05 12:10:27,470  INFO  Proveedores a sincronizar: 409
+2026-08-05 12:10:30,034  INFO  HTTP Request: GET https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?select=rut "HTTP/2 200 OK"
+2026-08-05 12:10:30,264  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76557711-K "HTTP/2 200 OK"
+2026-08-05 12:10:30,580  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96756430-3 "HTTP/2 200 OK"
+2026-08-05 12:10:30,888  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76639288-1 "HTTP/2 200 OK"
+2026-08-05 12:10:31,205  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76452392-K "HTTP/2 200 OK"
+2026-08-05 12:10:31,377  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76309385-9 "HTTP/2 200 OK"
+2026-08-05 12:10:31,580  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76282059-5 "HTTP/2 200 OK"
+2026-08-05 12:10:31,759  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76234653-2 "HTTP/2 200 OK"
+2026-08-05 12:10:31,933  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96540700-6 "HTTP/2 200 OK"
+2026-08-05 12:10:32,198  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77467642-2 "HTTP/2 200 OK"
+2026-08-05 12:10:32,398  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77648985-9 "HTTP/2 200 OK"
+2026-08-05 12:10:32,617  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.9581564-2 "HTTP/2 200 OK"
+2026-08-05 12:10:32,788  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77958770-3 "HTTP/2 200 OK"
+2026-08-05 12:10:32,994  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77839161-9 "HTTP/2 200 OK"
+2026-08-05 12:10:33,191  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.12885828-8 "HTTP/2 200 OK"
+2026-08-05 12:10:33,373  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77726515-6 "HTTP/2 200 OK"
+2026-08-05 12:10:33,564  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76077067-1 "HTTP/2 200 OK"
+2026-08-05 12:10:33,750  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78885550-8 "HTTP/2 200 OK"
+2026-08-05 12:10:33,925  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76700184-3 "HTTP/2 200 OK"
+2026-08-05 12:10:34,096  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77754569-8 "HTTP/2 200 OK"
+2026-08-05 12:10:34,262  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76375855-9 "HTTP/2 200 OK"
+2026-08-05 12:10:34,436  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84652600-5 "HTTP/2 200 OK"
+2026-08-05 12:10:34,606  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.87910700-8 "HTTP/2 200 OK"
+2026-08-05 12:10:34,795  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76283577-0 "HTTP/2 200 OK"
+2026-08-05 12:10:34,991  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77662300-8 "HTTP/2 200 OK"
+2026-08-05 12:10:35,184  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76115125-8 "HTTP/2 200 OK"
+2026-08-05 12:10:35,348  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78239560-2 "HTTP/2 200 OK"
+2026-08-05 12:10:35,522  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76015031-2 "HTTP/2 200 OK"
+2026-08-05 12:10:35,720  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77415073-0 "HTTP/2 200 OK"
+2026-08-05 12:10:35,931  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77985710-7 "HTTP/2 200 OK"
+2026-08-05 12:10:36,100  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77842710-9 "HTTP/2 200 OK"
+2026-08-05 12:10:36,275  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.97080000-K "HTTP/2 200 OK"
+2026-08-05 12:10:36,463  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77554322-1 "HTTP/2 200 OK"
+2026-08-05 12:10:36,688  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.12852439-8 "HTTP/2 200 OK"
+2026-08-05 12:10:36,877  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78028928-7 "HTTP/2 200 OK"
+2026-08-05 12:10:37,053  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.11664449-5 "HTTP/2 200 OK"
+2026-08-05 12:10:37,224  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77109212-8 "HTTP/2 200 OK"
+2026-08-05 12:10:37,391  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76350815-3 "HTTP/2 200 OK"
+2026-08-05 12:10:37,563  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.86778100-5 "HTTP/2 200 OK"
+2026-08-05 12:10:37,830  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.4814737-2 "HTTP/2 200 OK"
+2026-08-05 12:10:38,074  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76166816-1 "HTTP/2 200 OK"
+2026-08-05 12:10:38,245  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78705590-7 "HTTP/2 200 OK"
+2026-08-05 12:10:38,483  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77215590-5 "HTTP/2 200 OK"
+2026-08-05 12:10:38,651  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77881901-5 "HTTP/2 200 OK"
+2026-08-05 12:10:38,849  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77732164-1 "HTTP/2 200 OK"
+2026-08-05 12:10:39,039  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76443950-3 "HTTP/2 200 OK"
+2026-08-05 12:10:39,207  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78105311-2 "HTTP/2 200 OK"
+2026-08-05 12:10:39,373  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79507240-3 "HTTP/2 200 OK"
+2026-08-05 12:10:39,542  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78096493-6 "HTTP/2 200 OK"
+2026-08-05 12:10:39,745  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76763625-3 "HTTP/2 200 OK"
+2026-08-05 12:10:39,915  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78936330-7 "HTTP/2 200 OK"
+2026-08-05 12:10:40,126  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77432437-2 "HTTP/2 200 OK"
+2026-08-05 12:10:40,301  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77806648-3 "HTTP/2 200 OK"
+2026-08-05 12:10:40,469  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77617830-6 "HTTP/2 200 OK"
+2026-08-05 12:10:40,642  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.51054270-3 "HTTP/2 200 OK"
+2026-08-05 12:10:40,838  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76745244-6 "HTTP/2 200 OK"
+2026-08-05 12:10:41,004  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.60910000-1 "HTTP/2 200 OK"
+2026-08-05 12:10:41,193  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.88279700-7 "HTTP/2 200 OK"
+2026-08-05 12:10:41,404  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76157302-0 "HTTP/2 200 OK"
+2026-08-05 12:10:41,579  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.16123403-6 "HTTP/2 200 OK"
+2026-08-05 12:10:41,764  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.11664754-0 "HTTP/2 200 OK"
+2026-08-05 12:10:41,935  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76067852-K "HTTP/2 200 OK"
+2026-08-05 12:10:42,143  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76506422-8 "HTTP/2 200 OK"
+2026-08-05 12:10:42,318  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96501500-0 "HTTP/2 200 OK"
+2026-08-05 12:10:42,504  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76725870-4 "HTTP/2 200 OK"
+2026-08-05 12:10:42,674  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77388955-4 "HTTP/2 200 OK"
+2026-08-05 12:10:42,845  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76905308-5 "HTTP/2 200 OK"
+2026-08-05 12:10:43,040  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76696733-7 "HTTP/2 200 OK"
+2026-08-05 12:10:43,208  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76520280-9 "HTTP/2 200 OK"
+2026-08-05 12:10:43,380  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76229272-6 "HTTP/2 200 OK"
+2026-08-05 12:10:43,608  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76215357-2 "HTTP/2 200 OK"
+2026-08-05 12:10:43,780  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76610508-4 "HTTP/2 200 OK"
+2026-08-05 12:10:43,957  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76695431-6 "HTTP/2 200 OK"
+2026-08-05 12:10:44,183  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77343433-6 "HTTP/2 200 OK"
+2026-08-05 12:10:44,358  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76417730-4 "HTTP/2 200 OK"
+2026-08-05 12:10:44,547  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77558105-0 "HTTP/2 200 OK"
+2026-08-05 12:10:44,727  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78636280-6 "HTTP/2 200 OK"
+2026-08-05 12:10:44,984  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96959690-3 "HTTP/2 200 OK"
+2026-08-05 12:10:45,165  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77112420-8 "HTTP/2 200 OK"
+2026-08-05 12:10:45,350  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76226059-K "HTTP/2 200 OK"
+2026-08-05 12:10:45,523  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77629170-6 "HTTP/2 200 OK"
+2026-08-05 12:10:45,699  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78334850-0 "HTTP/2 200 OK"
+2026-08-05 12:10:45,890  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77884906-2 "HTTP/2 200 OK"
+2026-08-05 12:10:46,062  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79880870-2 "HTTP/2 200 OK"
+2026-08-05 12:10:46,231  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77398220-1 "HTTP/2 200 OK"
+2026-08-05 12:10:46,433  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79952820-7 "HTTP/2 200 OK"
+2026-08-05 12:10:46,609  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.13490064-4 "HTTP/2 200 OK"
+2026-08-05 12:10:46,808  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76589959-1 "HTTP/2 200 OK"
+2026-08-05 12:10:47,006  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78324130-7 "HTTP/2 200 OK"
+2026-08-05 12:10:47,176  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76942418-0 "HTTP/2 200 OK"
+2026-08-05 12:10:47,360  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.99575240-9 "HTTP/2 200 OK"
+2026-08-05 12:10:47,549  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84910400-4 "HTTP/2 200 OK"
+2026-08-05 12:10:47,724  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76124863-4 "HTTP/2 200 OK"
+2026-08-05 12:10:47,895  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79991430-1 "HTTP/2 200 OK"
+2026-08-05 12:10:48,076  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76753968-1 "HTTP/2 200 OK"
+2026-08-05 12:10:48,247  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77650574-9 "HTTP/2 200 OK"
+2026-08-05 12:10:48,414  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77379059-0 "HTTP/2 200 OK"
+2026-08-05 12:10:48,582  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.83030600-5 "HTTP/2 200 OK"
+2026-08-05 12:10:48,749  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77050455-4 "HTTP/2 200 OK"
+2026-08-05 12:10:48,917  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76368672-8 "HTTP/2 200 OK"
+2026-08-05 12:10:49,100  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76789745-6 "HTTP/2 200 OK"
+2026-08-05 12:10:49,274  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76746384-7 "HTTP/2 200 OK"
+2026-08-05 12:10:49,492  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76339549-9 "HTTP/2 200 OK"
+2026-08-05 12:10:49,676  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.13942927-3 "HTTP/2 200 OK"
+2026-08-05 12:10:49,853  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77591550-1 "HTTP/2 200 OK"
+2026-08-05 12:10:50,031  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.89189200-4 "HTTP/2 200 OK"
+2026-08-05 12:10:50,270  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77942307-7 "HTTP/2 200 OK"
+2026-08-05 12:10:50,458  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96803690-4 "HTTP/2 200 OK"
+2026-08-05 12:10:50,636  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76830246-4 "HTTP/2 200 OK"
+2026-08-05 12:10:50,826  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79881570-9 "HTTP/2 200 OK"
+2026-08-05 12:10:50,999  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77927647-3 "HTTP/2 200 OK"
+2026-08-05 12:10:51,184  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84238600-4 "HTTP/2 200 OK"
+2026-08-05 12:10:51,350  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78370100-6 "HTTP/2 200 OK"
+2026-08-05 12:10:51,522  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81201000-K "HTTP/2 200 OK"
+2026-08-05 12:10:51,692  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.89565500-7 "HTTP/2 200 OK"
+2026-08-05 12:10:51,872  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76112082-4 "HTTP/2 200 OK"
+2026-08-05 12:10:52,040  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76484237-5 "HTTP/2 200 OK"
+2026-08-05 12:10:52,225  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.83336400-6 "HTTP/2 200 OK"
+2026-08-05 12:10:52,444  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76905452-9 "HTTP/2 200 OK"
+2026-08-05 12:10:52,649  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81290800-6 "HTTP/2 200 OK"
+2026-08-05 12:10:52,832  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84063800-6 "HTTP/2 200 OK"
+2026-08-05 12:10:53,024  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.50605770-1 "HTTP/2 200 OK"
+2026-08-05 12:10:53,193  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76167134-0 "HTTP/2 200 OK"
+2026-08-05 12:10:53,368  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79623100-9 "HTTP/2 200 OK"
+2026-08-05 12:10:53,546  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.88544900-K "HTTP/2 200 OK"
+2026-08-05 12:10:53,715  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78023550-0 "HTTP/2 200 OK"
+2026-08-05 12:10:53,887  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77274620-2 "HTTP/2 200 OK"
+2026-08-05 12:10:54,078  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.88666000-6 "HTTP/2 200 OK"
+2026-08-05 12:10:54,264  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78924030-2 "HTTP/2 200 OK"
+2026-08-05 12:10:54,461  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76775137-0 "HTTP/2 200 OK"
+2026-08-05 12:10:54,644  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.10702950-8 "HTTP/2 200 OK"
+2026-08-05 12:10:54,828  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77337752-9 "HTTP/2 200 OK"
+2026-08-05 12:10:55,003  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.7845154-8 "HTTP/2 200 OK"
+2026-08-05 12:10:55,184  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76449868-2 "HTTP/2 200 OK"
+2026-08-05 12:10:55,369  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96921060-6 "HTTP/2 200 OK"
+2026-08-05 12:10:55,537  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79929410-9 "HTTP/2 200 OK"
+2026-08-05 12:10:55,748  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.84280800-6 "HTTP/2 200 OK"
+2026-08-05 12:10:55,750  ERROR  Error sincronizando proveedor RUT 77725766-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:10:55,933  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77654401-9 "HTTP/2 200 OK"
+2026-08-05 12:10:56,163  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76161135-6 "HTTP/2 200 OK"
+2026-08-05 12:10:56,358  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76135061-7 "HTTP/2 200 OK"
+2026-08-05 12:10:56,561  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76568660-1 "HTTP/2 200 OK"
+2026-08-05 12:10:56,734  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.92307000-1 "HTTP/2 200 OK"
+2026-08-05 12:10:56,936  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76937643-7 "HTTP/2 200 OK"
+2026-08-05 12:10:57,145  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76712896-7 "HTTP/2 200 OK"
+2026-08-05 12:10:57,342  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.91139000-0 "HTTP/2 200 OK"
+2026-08-05 12:10:57,514  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.94625000-7 "HTTP/2 200 OK"
+2026-08-05 12:10:57,684  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76993859-1 "HTTP/2 200 OK"
+2026-08-05 12:10:57,867  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76585755-4 "HTTP/2 200 OK"
+2026-08-05 12:10:58,052  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76280983-4 "HTTP/2 200 OK"
+2026-08-05 12:10:58,310  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76206192-9 "HTTP/2 200 OK"
+2026-08-05 12:10:58,501  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77722758-0 "HTTP/2 200 OK"
+2026-08-05 12:10:58,687  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77007638-2 "HTTP/2 200 OK"
+2026-08-05 12:10:58,923  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.85120600-0 "HTTP/2 200 OK"
+2026-08-05 12:10:59,094  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76211240-K "HTTP/2 200 OK"
+2026-08-05 12:10:59,266  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78627210-6 "HTTP/2 200 OK"
+2026-08-05 12:10:59,476  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.93772000-9 "HTTP/2 200 OK"
+2026-08-05 12:10:59,661  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96833680-0 "HTTP/2 200 OK"
+2026-08-05 12:10:59,832  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76335833-K "HTTP/2 200 OK"
+2026-08-05 12:11:00,008  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77032805-5 "HTTP/2 200 OK"
+2026-08-05 12:11:00,246  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76899943-0 "HTTP/2 200 OK"
+2026-08-05 12:11:00,418  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76538689-6 "HTTP/2 200 OK"
+2026-08-05 12:11:00,605  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77065929-9 "HTTP/2 200 OK"
+2026-08-05 12:11:00,849  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76084114-5 "HTTP/2 200 OK"
+2026-08-05 12:11:01,033  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.5248764-1 "HTTP/2 200 OK"
+2026-08-05 12:11:01,211  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77338790-7 "HTTP/2 200 OK"
+2026-08-05 12:11:01,401  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77418902-5 "HTTP/2 200 OK"
+2026-08-05 12:11:01,577  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76052927-3 "HTTP/2 200 OK"
+2026-08-05 12:11:01,764  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96875230-8 "HTTP/2 200 OK"
+2026-08-05 12:11:01,945  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77630439-5 "HTTP/2 200 OK"
+2026-08-05 12:11:02,118  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77041695-7 "HTTP/2 200 OK"
+2026-08-05 12:11:02,302  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96542490-3 "HTTP/2 200 OK"
+2026-08-05 12:11:02,473  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76145589-3 "HTTP/2 200 OK"
+2026-08-05 12:11:02,707  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76353589-4 "HTTP/2 200 OK"
+2026-08-05 12:11:02,876  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76134941-4 "HTTP/2 200 OK"
+2026-08-05 12:11:03,045  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76320181-3 "HTTP/2 200 OK"
+2026-08-05 12:11:03,214  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78953470-5 "HTTP/2 200 OK"
+2026-08-05 12:11:03,441  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.10036033-0 "HTTP/2 200 OK"
+2026-08-05 12:11:03,612  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77279740-0 "HTTP/2 200 OK"
+2026-08-05 12:11:03,793  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77985700-K "HTTP/2 200 OK"
+2026-08-05 12:11:03,966  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77439953-4 "HTTP/2 200 OK"
+2026-08-05 12:11:04,136  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96576200-0 "HTTP/2 200 OK"
+2026-08-05 12:11:04,304  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76916147-3 "HTTP/2 200 OK"
+2026-08-05 12:11:04,491  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76235440-3 "HTTP/2 200 OK"
+2026-08-05 12:11:04,662  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76338734-8 "HTTP/2 200 OK"
+2026-08-05 12:11:04,836  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77534804-6 "HTTP/2 200 OK"
+2026-08-05 12:11:05,023  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77896250-0 "HTTP/2 200 OK"
+2026-08-05 12:11:05,193  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79869510-K "HTTP/2 200 OK"
+2026-08-05 12:11:05,364  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76566210-9 "HTTP/2 200 OK"
+2026-08-05 12:11:05,620  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96711590-8 "HTTP/2 200 OK"
+2026-08-05 12:11:05,953  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96689310-9 "HTTP/2 200 OK"
+2026-08-05 12:11:06,149  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76747198-K "HTTP/2 200 OK"
+2026-08-05 12:11:06,323  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77215640-5 "HTTP/2 200 OK"
+2026-08-05 12:11:06,489  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.88888888-8 "HTTP/2 200 OK"
+2026-08-05 12:11:06,683  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76743492-8 "HTTP/2 200 OK"
+2026-08-05 12:11:06,890  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96800570-7 "HTTP/2 200 OK"
+2026-08-05 12:11:07,074  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76762740-8 "HTTP/2 200 OK"
+2026-08-05 12:11:07,311  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76177231-7 "HTTP/2 200 OK"
+2026-08-05 12:11:07,481  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96792430-K "HTTP/2 200 OK"
+2026-08-05 12:11:07,733  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.80409800-3 "HTTP/2 200 OK"
+2026-08-05 12:11:07,977  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76617000-5 "HTTP/2 200 OK"
+2026-08-05 12:11:08,439  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76132595-7 "HTTP/2 200 OK"
+2026-08-05 12:11:08,764  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.5392426-3 "HTTP/2 200 OK"
+2026-08-05 12:11:08,952  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77513405-4 "HTTP/2 200 OK"
+2026-08-05 12:11:09,194  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76231354-5 "HTTP/2 200 OK"
+2026-08-05 12:11:09,460  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77011723-2 "HTTP/2 200 OK"
+2026-08-05 12:11:09,629  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.21361494-0 "HTTP/2 200 OK"
+2026-08-05 12:11:09,821  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77005627-6 "HTTP/2 200 OK"
+2026-08-05 12:11:10,069  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77811365-1 "HTTP/2 200 OK"
+2026-08-05 12:11:10,072  ERROR  Error sincronizando proveedor RUT 80478200-1: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,073  ERROR  Error sincronizando proveedor RUT 76376061-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,074  ERROR  Error sincronizando proveedor RUT 97023000-9: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,076  ERROR  Error sincronizando proveedor RUT 80992000-3: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,077  ERROR  Error sincronizando proveedor RUT 8112942-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,079  ERROR  Error sincronizando proveedor RUT 96992030-1: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,080  ERROR  Error sincronizando proveedor RUT 77220478-7: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,082  ERROR  Error sincronizando proveedor RUT 90635000-9: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,084  ERROR  Error sincronizando proveedor RUT 91806000-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,311  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78103880-6 "HTTP/2 200 OK"
+2026-08-05 12:11:10,313  ERROR  Error sincronizando proveedor RUT 99147000-K: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,314  ERROR  Error sincronizando proveedor RUT 86966100-7: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,316  ERROR  Error sincronizando proveedor RUT 76496130-7: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,317  ERROR  Error sincronizando proveedor RUT 88473200-K: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,319  ERROR  Error sincronizando proveedor RUT 78743100-3: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,320  ERROR  Error sincronizando proveedor RUT 85512100-K: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,322  ERROR  Error sincronizando proveedor RUT 96806980-2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,323  ERROR  Error sincronizando proveedor RUT 77862774-4: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,325  ERROR  Error sincronizando proveedor RUT 96945440-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,327  ERROR  Error sincronizando proveedor RUT 76310935-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,574  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.10684857-2 "HTTP/2 200 OK"
+2026-08-05 12:11:10,577  ERROR  Error sincronizando proveedor RUT 13499923-3: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,579  ERROR  Error sincronizando proveedor RUT 97036000-K: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,583  ERROR  Error sincronizando proveedor RUT 97006000-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,585  ERROR  Error sincronizando proveedor RUT 77046871-K: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:10,930  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76732961-K "HTTP/2 200 OK"
+2026-08-05 12:11:10,934  ERROR  Error sincronizando proveedor RUT 76010151-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:11,125  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77506151-0 "HTTP/2 200 OK"
+2026-08-05 12:11:11,127  ERROR  Error sincronizando proveedor RUT 77951652-0: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:11,128  ERROR  Error sincronizando proveedor RUT 77588591-2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:11,301  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76374806-5 "HTTP/2 200 OK"
+2026-08-05 12:11:11,485  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77834378-9 "HTTP/2 200 OK"
+2026-08-05 12:11:11,652  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.99510380-K "HTTP/2 200 OK"
+2026-08-05 12:11:11,822  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77599772-9 "HTTP/2 200 OK"
+2026-08-05 12:11:12,020  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77505871-4 "HTTP/2 200 OK"
+2026-08-05 12:11:12,234  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77415903-7 "HTTP/2 200 OK"
+2026-08-05 12:11:12,415  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77091770-0 "HTTP/2 200 OK"
+2026-08-05 12:11:12,606  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76847924-0 "HTTP/2 200 OK"
+2026-08-05 12:11:12,845  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77978428-2 "HTTP/2 200 OK"
+2026-08-05 12:11:13,016  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77614989-6 "HTTP/2 200 OK"
+2026-08-05 12:11:13,187  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76691442-K "HTTP/2 200 OK"
+2026-08-05 12:11:13,190  ERROR  Error sincronizando proveedor RUT 77637377-K: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:13,360  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76259040-9 "HTTP/2 200 OK"
+2026-08-05 12:11:13,535  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.86053400-2 "HTTP/2 200 OK"
+2026-08-05 12:11:13,538  ERROR  Error sincronizando proveedor RUT 77637766-K: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:13,716  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76543283-9 "HTTP/2 200 OK"
+2026-08-05 12:11:13,718  ERROR  Error sincronizando proveedor RUT 76502532-K: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:13,720  ERROR  Error sincronizando proveedor RUT 99594030-2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:13,722  ERROR  Error sincronizando proveedor RUT 76876439-5: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:13,724  ERROR  Error sincronizando proveedor RUT 77464739-2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:13,898  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76902659-2 "HTTP/2 200 OK"
+2026-08-05 12:11:14,093  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.99500750-9 "HTTP/2 200 OK"
+2026-08-05 12:11:14,095  ERROR  Error sincronizando proveedor RUT 77729613-2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:14,268  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.79862000-2 "HTTP/2 200 OK"
+2026-08-05 12:11:14,488  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.89689900-7 "HTTP/2 200 OK"
+2026-08-05 12:11:14,706  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76.734.413-9 "HTTP/2 200 OK"
+2026-08-05 12:11:14,709  ERROR  Error sincronizando proveedor RUT 76552590-K: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:14,710  ERROR  Error sincronizando proveedor RUT 76324634-5: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:14,711  ERROR  Error sincronizando proveedor RUT 76488629-1: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:14,713  ERROR  Error sincronizando proveedor RUT 55555555-5: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:14,882  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77030024-K "HTTP/2 200 OK"
+2026-08-05 12:11:14,884  ERROR  Error sincronizando proveedor RUT 81105000-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:15,053  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.12263538-4 "HTTP/2 200 OK"
+2026-08-05 12:11:15,269  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77401763-1 "HTTP/2 200 OK"
+2026-08-05 12:11:15,443  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.12180115-9 "HTTP/2 200 OK"
+2026-08-05 12:11:15,685  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76239105-8 "HTTP/2 200 OK"
+2026-08-05 12:11:15,897  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77374838-1 "HTTP/2 200 OK"
+2026-08-05 12:11:15,900  ERROR  Error sincronizando proveedor RUT 96844600-2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:16,085  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76779540-8 "HTTP/2 200 OK"
+2026-08-05 12:11:16,259  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76741245-2 "HTTP/2 200 OK"
+2026-08-05 12:11:16,440  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96938510-4 "HTTP/2 200 OK"
+2026-08-05 12:11:16,650  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.86522600-4 "HTTP/2 200 OK"
+2026-08-05 12:11:16,825  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96798550-3 "HTTP/2 200 OK"
+2026-08-05 12:11:17,017  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76101472-2 "HTTP/2 200 OK"
+2026-08-05 12:11:17,217  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76505756-6 "HTTP/2 200 OK"
+2026-08-05 12:11:17,439  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76693755-1 "HTTP/2 200 OK"
+2026-08-05 12:11:17,654  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.9015060-K "HTTP/2 200 OK"
+2026-08-05 12:11:17,832  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76829884-K "HTTP/2 200 OK"
+2026-08-05 12:11:18,003  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81440500-1 "HTTP/2 200 OK"
+2026-08-05 12:11:18,180  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76672110-9 "HTTP/2 200 OK"
+2026-08-05 12:11:18,367  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76874174-3 "HTTP/2 200 OK"
+2026-08-05 12:11:18,369  ERROR  Error sincronizando proveedor RUT 76029105-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:18,539  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.13380502-8 "HTTP/2 200 OK"
+2026-08-05 12:11:18,541  ERROR  Error sincronizando proveedor RUT 76753740-9: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:18,713  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78984330-9 "HTTP/2 200 OK"
+2026-08-05 12:11:18,720  ERROR  Error sincronizando proveedor RUT 85831600-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:18,918  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78950850-K "HTTP/2 200 OK"
+2026-08-05 12:11:19,092  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76757030-9.2 "HTTP/2 200 OK"
+2026-08-05 12:11:19,094  ERROR  Error sincronizando proveedor RUT 79817450-9: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:19,294  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76148249-1 "HTTP/2 200 OK"
+2026-08-05 12:11:19,496  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.69500900-3 "HTTP/2 200 OK"
+2026-08-05 12:11:19,694  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96568740-8 "HTTP/2 200 OK"
+2026-08-05 12:11:19,697  ERROR  Error sincronizando proveedor RUT 79936340-2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:19,699  ERROR  Error sincronizando proveedor RUT 8523244-4: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:19,867  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81537600-5 "HTTP/2 200 OK"
+2026-08-05 12:11:19,869  ERROR  Error sincronizando proveedor RUT 82525800-0: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:19,871  ERROR  Error sincronizando proveedor RUT 84726100-5: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:19,872  ERROR  Error sincronizando proveedor RUT 76688528-4: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:20,106  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96972250-K "HTTP/2 200 OK"
+2026-08-05 12:11:20,276  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76321554-7 "HTTP/2 200 OK"
+2026-08-05 12:11:20,278  ERROR  Error sincronizando proveedor RUT 76196067-9: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:20,280  ERROR  Error sincronizando proveedor RUT 77935420-2.2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:20,281  ERROR  Error sincronizando proveedor RUT 6973685-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:20,496  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76173410-5 "HTTP/2 200 OK"
+2026-08-05 12:11:20,516  ERROR  Error sincronizando proveedor RUT 89396900-4: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:20,705  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.93075000-K "HTTP/2 200 OK"
+2026-08-05 12:11:20,874  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.0-0 "HTTP/2 200 OK"
+2026-08-05 12:11:20,895  ERROR  Error sincronizando proveedor RUT 79559670-4: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:20,897  ERROR  Error sincronizando proveedor RUT 76141853-K: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:20,898  ERROR  Error sincronizando proveedor RUT 76328813-7: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:20,900  ERROR  Error sincronizando proveedor RUT 15480941-4: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:20,902  ERROR  Error sincronizando proveedor RUT 12224515-2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:20,904  ERROR  Error sincronizando proveedor RUT 12636565-9: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,136  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96554050-4 "HTTP/2 200 OK"
+2026-08-05 12:11:21,139  ERROR  Error sincronizando proveedor RUT 76128426-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,141  ERROR  Error sincronizando proveedor RUT 99507430-3: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,142  ERROR  Error sincronizando proveedor RUT 14417758-4: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,144  ERROR  Error sincronizando proveedor RUT 76196717-7: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,146  ERROR  Error sincronizando proveedor RUT 76028634-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,148  ERROR  Error sincronizando proveedor RUT 9307037-2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,325  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96556940-5 "HTTP/2 200 OK"
+2026-08-05 12:11:21,328  ERROR  Error sincronizando proveedor RUT 10462842-7: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,515  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.14011280-1 "HTTP/2 200 OK"
+2026-08-05 12:11:21,517  ERROR  Error sincronizando proveedor RUT 77123410-0: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,518  ERROR  Error sincronizando proveedor RUT 9638458-0: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,520  ERROR  Error sincronizando proveedor RUT 10698382-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,521  ERROR  Error sincronizando proveedor RUT 76330861-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,523  ERROR  Error sincronizando proveedor RUT 76383130-2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,525  ERROR  Error sincronizando proveedor RUT 99516040-4: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,527  ERROR  Error sincronizando proveedor RUT 15308716-4: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,529  ERROR  Error sincronizando proveedor RUT 96959480-3: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,531  ERROR  Error sincronizando proveedor RUT 76030576-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,532  ERROR  Error sincronizando proveedor RUT 77183990-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,534  ERROR  Error sincronizando proveedor RUT 77396020-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,536  ERROR  Error sincronizando proveedor RUT 77965030-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,537  ERROR  Error sincronizando proveedor RUT 78471290-7: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,717  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76462500-5 "HTTP/2 200 OK"
+2026-08-05 12:11:21,719  ERROR  Error sincronizando proveedor RUT 76012833-3: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,890  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76097578-8 "HTTP/2 200 OK"
+2026-08-05 12:11:21,892  ERROR  Error sincronizando proveedor RUT 76298373-7: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:21,894  ERROR  Error sincronizando proveedor RUT 79898290-7: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,066  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.6718124-7 "HTTP/2 200 OK"
+2026-08-05 12:11:22,068  ERROR  Error sincronizando proveedor RUT 89420300-5: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,069  ERROR  Error sincronizando proveedor RUT 78874090-5: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,071  ERROR  Error sincronizando proveedor RUT 13056425-9: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,072  ERROR  Error sincronizando proveedor RUT 80326500-3: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,352  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.81566200-8 "HTTP/2 200 OK"
+2026-08-05 12:11:22,356  ERROR  Error sincronizando proveedor RUT 7987677-1: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,357  ERROR  Error sincronizando proveedor RUT 9157766-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,358  ERROR  Error sincronizando proveedor RUT 15897694-3: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,360  ERROR  Error sincronizando proveedor RUT 12472227-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,362  ERROR  Error sincronizando proveedor RUT 12283285-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,363  ERROR  Error sincronizando proveedor RUT 4665722-5: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,365  ERROR  Error sincronizando proveedor RUT 6054755-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,367  ERROR  Error sincronizando proveedor RUT 10168775-9: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,368  ERROR  Error sincronizando proveedor RUT 11847677-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,369  ERROR  Error sincronizando proveedor RUT 96501450-0: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,371  ERROR  Error sincronizando proveedor RUT 77726170-3: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,372  ERROR  Error sincronizando proveedor RUT 79802160-5: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,374  ERROR  Error sincronizando proveedor RUT 9233481-3: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,375  ERROR  Error sincronizando proveedor RUT 76075707-1: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,377  ERROR  Error sincronizando proveedor RUT 77037960-1: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,379  ERROR  Error sincronizando proveedor RUT 76373470-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,381  ERROR  Error sincronizando proveedor RUT 15843941-7: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,554  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.99540490-7 "HTTP/2 200 OK"
+2026-08-05 12:11:22,557  ERROR  Error sincronizando proveedor RUT 99549250-4: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,559  ERROR  Error sincronizando proveedor RUT 48025052-4: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,560  ERROR  Error sincronizando proveedor RUT 76710240-2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,562  ERROR  Error sincronizando proveedor RUT 79864570-6: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,564  ERROR  Error sincronizando proveedor RUT 4315714-0: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,753  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76141696-0 "HTTP/2 200 OK"
+2026-08-05 12:11:22,761  ERROR  Error sincronizando proveedor RUT 76250792-7: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,763  ERROR  Error sincronizando proveedor RUT 92642000-3: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,765  ERROR  Error sincronizando proveedor RUT 76180102-3: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,766  ERROR  Error sincronizando proveedor RUT 12866051-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,767  ERROR  Error sincronizando proveedor RUT 96919050-8: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:22,963  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76062979-0 "HTTP/2 200 OK"
+2026-08-05 12:11:23,160  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.13942555-3 "HTTP/2 200 OK"
+2026-08-05 12:11:23,365  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77127570-2 "HTTP/2 200 OK"
+2026-08-05 12:11:23,588  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76103948-2 "HTTP/2 200 OK"
+2026-08-05 12:11:23,793  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76784539-1 "HTTP/2 200 OK"
+2026-08-05 12:11:23,970  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.92654000-9 "HTTP/2 200 OK"
+2026-08-05 12:11:24,172  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76260317-9 "HTTP/2 200 OK"
+2026-08-05 12:11:24,344  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76757030-9 "HTTP/2 200 OK"
+2026-08-05 12:11:24,532  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.96806110-0 "HTTP/2 200 OK"
+2026-08-05 12:11:24,536  ERROR  Error sincronizando proveedor RUT 76177079-9: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:24,758  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.77321150-7 "HTTP/2 200 OK"
+2026-08-05 12:11:24,938  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76879310-7 "HTTP/2 200 OK"
+2026-08-05 12:11:25,107  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76721910-5 "HTTP/2 200 OK"
+2026-08-05 12:11:25,115  ERROR  Error sincronizando proveedor RUT 76254850-K: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:25,117  ERROR  Error sincronizando proveedor RUT 10957117-2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:25,119  ERROR  Error sincronizando proveedor RUT 99520000-7: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:25,121  ERROR  Error sincronizando proveedor RUT 78780990-1: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:25,123  ERROR  Error sincronizando proveedor RUT 9570774-2: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:25,125  ERROR  Error sincronizando proveedor RUT 76594720-0: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:25,505  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.80043600-1 "HTTP/2 200 OK"
+2026-08-05 12:11:25,507  ERROR  Error sincronizando proveedor RUT 96514950-3: Out of range float values are not JSON compliant: nan
+2026-08-05 12:11:25,682  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76175377-0 "HTTP/2 200 OK"
+2026-08-05 12:11:25,854  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76160522-4 "HTTP/2 200 OK"
+2026-08-05 12:11:26,094  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.78119958-3 "HTTP/2 200 OK"
+2026-08-05 12:11:26,294  INFO  HTTP Request: PATCH https://hauricnpsamnwyhondse.supabase.co/rest/v1/proveedores?rut=eq.76278246-4 "HTTP/2 200 OK"
+2026-08-05 12:11:26,295  INFO  Sync proveedores completa. Nuevos: 0 | Actualizados: 288 | Errores: 121
+2026-08-05 12:11:26,296  INFO  ✅ Sync proveedores → Supabase completado.
