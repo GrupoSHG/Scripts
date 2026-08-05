@@ -17,7 +17,12 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────
 #  CONFIGURACIÓN — misma que 01_restaurar_y_extraer.py
 # ─────────────────────────────────────────────
-SQL_SERVER = r"localhost\SQLEXPRESS"
+SQL_SERVER = os.environ.get("SQL_SERVER", r"localhost\SQLEXPRESS")
+# Mismo patrón que restaurar_y_extraer.py: local sigue usando autenticación
+# de Windows sin tocar nada; en GitHub Actions se activa autenticación SQL
+# (usuario 'sa' + password) vía estas 2 variables de entorno.
+SQL_USE_SQL_AUTH = os.environ.get("SQL_USE_SQL_AUTH", "false").lower() == "true"
+SQL_SA_PASSWORD  = os.environ.get("SQL_SA_PASSWORD", "")
 NOMBRE_BD  = "T779354202C"
 # ─────────────────────────────────────────────
 
@@ -66,9 +71,13 @@ GROUP BY docu_db.CODVEND
 
 
 def conectar_bd() -> pyodbc.Connection:
+    if SQL_USE_SQL_AUTH:
+        auth_clause = f"UID=sa;PWD={SQL_SA_PASSWORD};"
+    else:
+        auth_clause = "Trusted_Connection=yes;"
     conn_str = (
         f"DRIVER={{ODBC Driver 17 for SQL Server}};"
-        f"SERVER={SQL_SERVER};DATABASE={NOMBRE_BD};Trusted_Connection=yes;"
+        f"SERVER={SQL_SERVER};DATABASE={NOMBRE_BD};{auth_clause}"
     )
     return pyodbc.connect(conn_str)
 
