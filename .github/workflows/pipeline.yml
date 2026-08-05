@@ -2,9 +2,12 @@ name: Pipeline Manager -> Supabase
 
 on:
   schedule:
-    # Corre de lunes a viernes a las 13:00 UTC (~09:00/10:00 hora Chile,
-    # según horario de verano). Ajusta la hora si necesitas otro horario.
-    - cron: '0 13 * * 1-5'
+    # Chile está en horario de INVIERNO (UTC-4) de abril a septiembre.
+    # 11:00 UTC = 07:00 hora Chile en este período.
+    - cron: '0 11 * 4-9 1-5'
+    # Chile está en horario de VERANO (UTC-3) de octubre a marzo.
+    # 10:00 UTC = 07:00 hora Chile en este período.
+    - cron: '0 10 * 10-12,1-3 1-5'
   workflow_dispatch: {}  # además, botón "Run workflow" para correrlo manual
 
 jobs:
@@ -49,7 +52,8 @@ jobs:
 
       - name: Correr el pipeline completo
         env:
-          # Conexión a SQL Server en modo CI (ver patch en restaurar_y_extraer.py)
+          # Conexión a SQL Server en modo CI (ver patch en restaurar_y_extraer.py,
+          # sync_nv_pendientes.py y sync_facturacion_periodo.py)
           SQL_SERVER: localhost
           SQL_USE_SQL_AUTH: 'true'
           SQL_SA_PASSWORD: ${{ secrets.SQL_SA_PASSWORD }}
@@ -58,13 +62,16 @@ jobs:
           MANAGER_USER: ${{ secrets.MANAGER_USER }}
           MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
 
-          # Supabase
+          # Supabase (Secret key real — estos scripts hacen upsert/escritura)
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
 
-          # Logs (ver patches en 00_pipeline_completo.py y subir_a_drive.py)
-          PIPELINE_MAIN_LOG: pipeline_main.log
+          # Google Drive/Sheets — apunta al archivo que se acaba de escribir
+          # arriba desde el Secret (ver patch en subir_a_drive.py)
           GOOGLE_CREDENTIALS_FILE: credenciales_google.json
+
+          # Logs (ver patches en 00_pipeline_completo.py, subir_a_drive.py y sync_supabase.py)
+          PIPELINE_MAIN_LOG: pipeline_main.log
           PIPELINE_VENTAS_LOG: pipeline_ventas.log
         run: python 00_pipeline_completo.py
 
