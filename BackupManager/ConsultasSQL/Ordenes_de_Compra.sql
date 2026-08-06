@@ -1,5 +1,5 @@
-DECLARE @FechaInicio DATE = '2026-06-01';
-DECLARE @FechaFin    DATE = '2026-07-01';
+DECLARE @FechaInicio DATE = '2026-07-01';
+DECLARE @FechaFin    DATE = '2026-08-01';
 
 SELECT DISTINCT
     od.CENTCC                              AS ctocosto,
