@@ -15,19 +15,24 @@ from supabase import create_client
 log = logging.getLogger(__name__)
 
 # ─────────────────────────────────────────────
-#  CONFIGURACIÓN — misma que 01_restaurar_y_extraer.py
+# CONFIGURACIÓN — misma que 01_restaurar_y_extraer.py
 # ─────────────────────────────────────────────
 SQL_SERVER = os.environ.get("SQL_SERVER", r"localhost\SQLEXPRESS")
 # Mismo patrón que restaurar_y_extraer.py: local sigue usando autenticación
 # de Windows sin tocar nada; en GitHub Actions se activa autenticación SQL
 # (usuario 'sa' + password) vía estas 2 variables de entorno.
 SQL_USE_SQL_AUTH = os.environ.get("SQL_USE_SQL_AUTH", "false").lower() == "true"
-SQL_SA_PASSWORD  = os.environ.get("SQL_SA_PASSWORD", "")
-NOMBRE_BD  = "T779354202C"
+SQL_SA_PASSWORD = os.environ.get("SQL_SA_PASSWORD", "")
+NOMBRE_BD = "T779354202C"
 # ─────────────────────────────────────────────
 
-SUPABASE_URL = "https://hauricnpsamnwyhondse.supabase.co"
+# Proyecto consolidado (el mismo que usan dashboard-produccion, cockpit-comercial
+# y calendario-despachos). Antes apuntaba al proyecto viejo "Grupo SHG Dashboards"
+# (hauricnpsamnwyhondse) — corregido para que todo el pipeline escriba en un solo
+# lugar y las apps dejen de ver datos desactualizados.
+SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")
+SUPABASE_SCHEMA = "shg_dashboards"  # esquema donde viven todas las tablas del proyecto consolidado
 
 QUERY = """
 SET NOCOUNT ON;
@@ -38,18 +43,18 @@ DECLARE @Inicio DATETIME, @Fin DATETIME;
 IF DAY(@FechaRef) <= 20
 BEGIN
     SET @Inicio = DATEADD(MONTH, -1, DATEFROMPARTS(YEAR(@FechaRef), MONTH(@FechaRef), 21));
-    SET @Fin    = DATEFROMPARTS(YEAR(@FechaRef), MONTH(@FechaRef), 20);
+    SET @Fin = DATEFROMPARTS(YEAR(@FechaRef), MONTH(@FechaRef), 20);
 END
 ELSE
 BEGIN
     SET @Inicio = DATEFROMPARTS(YEAR(@FechaRef), MONTH(@FechaRef), 21);
-    SET @Fin    = DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(@FechaRef), MONTH(@FechaRef), 20));
+    SET @Fin = DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(@FechaRef), MONTH(@FechaRef), 20));
 END
 
-SELECT 
-    docu_db.CODVEND                                    AS codvend,
-    CAST(@Inicio AS DATE)                               AS periodo_inicio,
-    CAST(@Fin AS DATE)                                  AS periodo_fin,
+SELECT
+    docu_db.CODVEND AS codvend,
+    CAST(@Inicio AS DATE) AS periodo_inicio,
+    CAST(@Fin AS DATE) AS periodo_fin,
     SUM(
         -- Las Notas de Crédito de Venta (TIPODOC=4) se RESTAN de la facturación,
         -- sin depender de si el ERP ya las guarda con cantidad/precio en negativo.
@@ -57,7 +62,7 @@ SELECT
         * ABS(docde_db.cantidad) *
         (((docde_db.precunit*tasacbio - ((docde_db.precunit*tasacbio - docde_db.precunit*tasacbio*(1-docde_db.descto/100))))
         * (1-docu_db.dctopje/100)))
-    )                                                    AS total_facturado
+    ) AS total_facturado
 
 FROM docde_db
 JOIN docu_db ON docu_db.numreg = docde_db.numrecor
@@ -80,7 +85,6 @@ def conectar_bd() -> pyodbc.Connection:
         f"SERVER={SQL_SERVER};DATABASE={NOMBRE_BD};{auth_clause}"
     )
     return pyodbc.connect(conn_str)
-
 
 
 def _limpiar_para_json(filas):
@@ -121,7 +125,7 @@ def main():
 
     filas = _limpiar_para_json(filas)
 
-    supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+    supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY).schema(SUPABASE_SCHEMA)
 
     # Upsert por (codvend, periodo_inicio) — NUNCA se borra historial,
     # solo se actualiza el período actual si se corre más de una vez

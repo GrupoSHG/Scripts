@@ -18,23 +18,28 @@ from supabase import create_client
 log = logging.getLogger(__name__)
 
 # ─────────────────────────────────────────────
-#  CONFIGURACIÓN — misma que 01_restaurar_y_extraer.py
+# CONFIGURACIÓN — misma que 01_restaurar_y_extraer.py
 # ─────────────────────────────────────────────
 SQL_SERVER = os.environ.get("SQL_SERVER", r"localhost\SQLEXPRESS")
 # Mismo patrón que restaurar_y_extraer.py: local sigue usando autenticación
 # de Windows sin tocar nada; en GitHub Actions se activa autenticación SQL
 # (usuario 'sa' + password) vía estas 2 variables de entorno.
 SQL_USE_SQL_AUTH = os.environ.get("SQL_USE_SQL_AUTH", "false").lower() == "true"
-SQL_SA_PASSWORD  = os.environ.get("SQL_SA_PASSWORD", "")
-NOMBRE_BD  = "T779354202C"
+SQL_SA_PASSWORD = os.environ.get("SQL_SA_PASSWORD", "")
+NOMBRE_BD = "T779354202C"
 # ─────────────────────────────────────────────
 
-SUPABASE_URL = "https://hauricnpsamnwyhondse.supabase.co"
+# Proyecto consolidado (el mismo que usan dashboard-produccion, cockpit-comercial
+# y calendario-despachos). Antes apuntaba al proyecto viejo "Grupo SHG Dashboards"
+# (hauricnpsamnwyhondse) — corregido para que todo el pipeline escriba en un solo
+# lugar y las apps dejen de ver datos desactualizados.
+SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")
+SUPABASE_SCHEMA = "shg_dashboards"  # esquema donde viven todas las tablas del proyecto consolidado
 
 QUERY = """
 SET NOCOUNT ON;
-SELECT 
+SELECT
     nv.CODVEND AS codvend,
     o.PRP AS nota_venta,
     nv.TOTNETO AS monto_nv,
@@ -64,7 +69,6 @@ def conectar_bd() -> pyodbc.Connection:
         f"SERVER={SQL_SERVER};DATABASE={NOMBRE_BD};{auth_clause}"
     )
     return pyodbc.connect(conn_str)
-
 
 
 def _limpiar_para_json(filas):
@@ -100,7 +104,7 @@ def main():
 
     filas = _limpiar_para_json(filas)
 
-    supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+    supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY).schema(SUPABASE_SCHEMA)
 
     supabase.table("notas_venta_pendientes").upsert(
         filas, on_conflict="nota_venta"
