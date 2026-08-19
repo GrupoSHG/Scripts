@@ -10,8 +10,8 @@ Supabase, usada por la app OC Polchile.
 Comportamiento (upsert manual por RUT, NO reemplazo total):
 - Proveedor nuevo (RUT no existe en Supabase)  -> se inserta
 - Proveedor existente (mismo RUT)              -> se actualiza nombre/dirección/
-                                                   ciudad/comuna/teléfono
-                                                   (no se toca su historial de OCs)
+                                                    ciudad/comuna/teléfono
+                                                    (no se toca su historial de OCs)
 
 Requiere que la tabla `proveedores` tenga UNIQUE(rut) — ver 02_migracion_rut_unique.sql,
 ejecutar UNA VEZ en el SQL Editor de Supabase antes de correr este script.
@@ -30,10 +30,15 @@ import pandas as pd
 from supabase import create_client
 
 # ─────────────────────────────────────────────
-#  CONFIG
+# CONFIG
 # ─────────────────────────────────────────────
-SUPABASE_URL = "https://hauricnpsamnwyhondse.supabase.co"
+# Proyecto consolidado (el mismo que usan dashboard-produccion, cockpit-comercial
+# y calendario-despachos). Antes apuntaba al proyecto viejo "Grupo SHG Dashboards"
+# (hauricnpsamnwyhondse) — corregido para que todo el pipeline escriba en un solo
+# lugar y las apps dejen de ver datos desactualizados.
+SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")  # Service Role key, NUNCA la publishable
+SUPABASE_SCHEMA = "shg_dashboards"  # esquema donde viven todas las tablas del proyecto consolidado
 
 NOMBRE_PESTANA = "NV_Proveedores"  # debe calzar con el nombre del .sql en ConsultasSQL/ (sin extensión)
 
@@ -46,7 +51,7 @@ log = logging.getLogger(__name__)
 if not logging.getLogger().handlers:
     logging.basicConfig(
         level=logging.INFO,
-        format="%(asctime)s  %(levelname)s  %(message)s",
+        format="%(asctime)s %(levelname)s %(message)s",
         handlers=[
             logging.FileHandler(LOG_PATH, encoding="utf-8"),
             logging.StreamHandler()
@@ -87,7 +92,7 @@ def sincronizar_a_supabase(df: pd.DataFrame):
     if not SUPABASE_KEY:
         raise RuntimeError("Falta la variable de entorno SUPABASE_SERVICE_KEY")
 
-    sb = create_client(SUPABASE_URL, SUPABASE_KEY)
+    sb = create_client(SUPABASE_URL, SUPABASE_KEY).schema(SUPABASE_SCHEMA)
 
     existentes = sb.table("proveedores").select("rut").execute().data
     ruts_existentes = {row["rut"] for row in existentes if row["rut"]}
@@ -128,7 +133,7 @@ def sincronizar_a_supabase(df: pd.DataFrame):
 
 
 def main():
-    log.info("  PASO 5 — Sincronizar proveedores a Supabase (OC Polchile)")
+    log.info("PASO 5 — Sincronizar proveedores a Supabase (OC Polchile)")
 
     df_raw = leer_proveedores_desde_excel()
     df = normalizar_proveedores(df_raw)

@@ -4,25 +4,30 @@ bulk_sync_supabase.py
 Paso 5 del pipeline. Lee TODAS las pestañas del Excel multipestaña ya
 generado por restaurar_y_extraer.py (mismo ultimo_excel.txt que usan los
 demás pasos) y las replica en Supabase — una tabla Postgres por pestaña,
-con el esquema (columnas + tipos) autodetectado desde el propio DataFrame.
+con el esquema de columnas (tipos) autodetectado desde el propio DataFrame.
 
 Cada tabla se recrea completa en cada corrida (DROP + CREATE + COPY masivo).
 Esto es correcto porque estas tablas son un ESPEJO de Manager (de solo
 lectura para los dashboards), no datos maestros — no hace falta upsert
 incremental por clave.
 
+Todas las tablas se crean dentro del esquema Postgres SCHEMA_NAME (ver CONFIG),
+en vez de depender del search_path por defecto de la conexión — así el destino
+queda fijo en el código, sin importar cómo esté configurada la connection string.
+
 EXCEPCIÓN: la pestaña 'NV_Proveedores' se salta a propósito — esa ya tiene
 su propio script (sync_supabase.py) que hace upsert cuidadoso por RUT para
 no perder el historial de OCs de la app OC Polchile.
 
 Requiere:
-  pip install psycopg2-binary pandas openpyxl --break-system-packages
+pip install psycopg2-binary pandas openpyxl --break-system-packages
 
 Variable de entorno requerida:
-  SUPABASE_DB_URL — connection string de Postgres (NO la REST API key).
-  Se obtiene en Supabase → Project Settings → Database → Connection string
-  (URI). Ejemplo:
-  postgresql://postgres:TU_PASSWORD@db.xxxxxxxxxxxx.supabase.co:5432/postgres
+SUPABASE_DB_URL — connection string de Postgres (NO la REST API key) DEL
+PROYECTO CONSOLIDADO (ffxopvzxyeacpbtxuagu). Se obtiene en Supabase →
+ese proyecto → Project Settings → Database → Connection string (URI).
+Ejemplo:
+postgresql://postgres:TU_PASSWORD@db.ffxopvzxyeacpbtxuagu.supabase.co:5432/postgres
 """
 
 import os
@@ -36,9 +41,13 @@ import psycopg2
 from psycopg2 import sql
 
 # ─────────────────────────────────────────────
-#  CONFIG
+# CONFIG
 # ─────────────────────────────────────────────
 SUPABASE_DB_URL = os.environ.get("SUPABASE_DB_URL")
+
+# Esquema Postgres del proyecto consolidado donde viven todas las tablas
+# que leen dashboard-produccion, cockpit-comercial y calendario-despachos.
+SCHEMA_NAME = "shg_dashboards"
 
 # Pestañas que NO se replican con este script genérico (tienen su propio
 # manejo especial en otro lado).
@@ -52,7 +61,7 @@ log = logging.getLogger(__name__)
 if not logging.getLogger().handlers:
     logging.basicConfig(
         level=logging.INFO,
-        format="%(asctime)s  %(levelname)s  %(message)s",
+        format="%(asctime)s %(levelname)s %(message)s",
         handlers=[
             logging.FileHandler(LOG_PATH, encoding="utf-8"),
             logging.StreamHandler()
@@ -109,8 +118,15 @@ def preparar_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def asegurar_esquema(conn):
+    """Crea el esquema SCHEMA_NAME si todavía no existe (no-op si ya está)."""
+    with conn.cursor() as cur:
+        cur.execute(sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(SCHEMA_NAME)))
+    conn.commit()
+
+
 def crear_tabla(conn, nombre_tabla: str, df: pd.DataFrame):
-    """DROP + CREATE de la tabla, con columnas y tipos autodetectados.
+    """DROP + CREATE de la tabla dentro de SCHEMA_NAME, con columnas y tipos autodetectados.
     También habilita RLS + una política de lectura pública (SELECT), ya que
     la tabla se recrea desde cero en cada corrida y perdería cualquier
     configuración de seguridad hecha a mano en el dashboard de Supabase."""
@@ -118,21 +134,22 @@ def crear_tabla(conn, nombre_tabla: str, df: pd.DataFrame):
         sql.SQL("{} {}").format(sql.Identifier(col), sql.SQL(tipo_postgres(df[col].dtype)))
         for col in df.columns
     ]
+    tabla_id = sql.Identifier(SCHEMA_NAME, nombre_tabla)
     with conn.cursor() as cur:
-        cur.execute(sql.SQL("DROP TABLE IF EXISTS {}").format(sql.Identifier(nombre_tabla)))
+        cur.execute(sql.SQL("DROP TABLE IF EXISTS {}").format(tabla_id))
         cur.execute(
             sql.SQL("CREATE TABLE {} ({})").format(
-                sql.Identifier(nombre_tabla),
+                tabla_id,
                 sql.SQL(", ").join(columnas_def)
             )
         )
         cur.execute(
-            sql.SQL("ALTER TABLE {} ENABLE ROW LEVEL SECURITY").format(sql.Identifier(nombre_tabla))
+            sql.SQL("ALTER TABLE {} ENABLE ROW LEVEL SECURITY").format(tabla_id)
         )
         cur.execute(
             sql.SQL("CREATE POLICY {} ON {} FOR SELECT USING (true)").format(
                 sql.Identifier("lectura_publica_" + nombre_tabla),
-                sql.Identifier(nombre_tabla)
+                tabla_id
             )
         )
     conn.commit()
@@ -153,10 +170,11 @@ def cargar_datos_copy(conn, nombre_tabla: str, df: pd.DataFrame):
     df_csv.to_csv(buffer, index=False, header=False, na_rep="")
     buffer.seek(0)
 
+    tabla_id = sql.Identifier(SCHEMA_NAME, nombre_tabla)
     with conn.cursor() as cur:
         cur.copy_expert(
             sql.SQL("COPY {} FROM STDIN WITH (FORMAT csv, NULL '')").format(
-                sql.Identifier(nombre_tabla)
+                tabla_id
             ).as_string(conn),
             buffer
         )
@@ -175,13 +193,15 @@ def sincronizar_todo(ruta_excel: Path):
     resumen_error = []
 
     try:
+        asegurar_esquema(conn)
+
         for nombre_pestana in xls.sheet_names:
             if nombre_pestana in EXCLUIR_PESTANAS:
                 log.info(f"Saltando '{nombre_pestana}' (manejo especial aparte)")
                 continue
 
             nombre_tabla = slugify_tabla(nombre_pestana)
-            log.info(f"Procesando '{nombre_pestana}' → tabla '{nombre_tabla}'...")
+            log.info(f"Procesando '{nombre_pestana}' → tabla '{SCHEMA_NAME}.{nombre_tabla}'...")
 
             try:
                 df = pd.read_excel(ruta_excel, sheet_name=nombre_pestana)
@@ -199,16 +219,16 @@ def sincronizar_todo(ruta_excel: Path):
     log.info("")
     log.info(f"✅ Tablas cargadas correctamente: {len(resumen_ok)}")
     for tabla, filas in resumen_ok:
-        log.info(f"   • {tabla}: {filas:,} filas")
+        log.info(f"   • {SCHEMA_NAME}.{tabla}: {filas:,} filas")
     if resumen_error:
-        log.warning(f"⚠️  Tablas con error: {len(resumen_error)}")
+        log.warning(f"⚠️ Tablas con error: {len(resumen_error)}")
         for pestana, err in resumen_error:
             log.warning(f"   • {pestana}: {err}")
 
 
 def main():
     log.info("=" * 60)
-    log.info("  CARGA MASIVA — Todas las consultas SQL → Supabase")
+    log.info(" CARGA MASIVA — Todas las consultas SQL → Supabase")
     log.info("=" * 60)
 
     excel_txt = Path("ultimo_excel.txt")
