@@ -362,13 +362,19 @@ function getDatos() {
         itau:     parseNum(lastRow[15]),
         usd:      parseNum(lastRow[16])
       },
-      cys: { bcoChile: parseNum(lastRow[17]) },
-      comp: {
-        pol: parseNum(lastRow[18]),
-        m5:  parseNum(lastRow[19]),
-        cys: parseNum(lastRow[20])
+      // FIX: se agregó 'santander' (columna S, índice 18) y se corrieron
+      // en +1 comp.pol/comp.m5/comp.cys/obs, que hasta ahora estaban
+      // leyendo cada uno la columna del vecino de la izquierda.
+      cys: {
+        bcoChile:  parseNum(lastRow[17]),
+        santander: parseNum(lastRow[18])
       },
-      obs: lastRow[21] || 'Sin observaciones'
+      comp: {
+        pol: parseNum(lastRow[19]),
+        m5:  parseNum(lastRow[20]),
+        cys: parseNum(lastRow[21])
+      },
+      obs: lastRow[22] || 'Sin observaciones'
     };
   } catch(e) { return { error: 'Error: ' + e.message }; }
 }
@@ -434,7 +440,7 @@ function getDashboardHtml(d, c, cxc) {
   var GF = d.gf || { pol: 75000000, m5: 25000000, cys: 7500000, cons: 107500000 };
   var totPol  = d.pol.santander + d.pol.itau + d.pol.security + d.pol.bci + d.pol.bcoChile;
   var totM5   = d.m5.bci1 + d.m5.bci2 + d.m5.bcoChile + d.m5.itau;
-  var totCys  = d.cys.bcoChile;
+  var totCys  = d.cys.bcoChile + d.cys.santander;
   var totCons = totPol + totM5 + totCys;
   var usdPol  = d.pol.usdTotal || (d.pol.usdSantander + d.pol.usdItau + d.pol.usdSecurity + d.pol.usdBci);
   var totUsd  = usdPol + d.m5.usd;
@@ -608,7 +614,7 @@ body{background:#f1f5f9;color:#1e293b;font-family:Inter,-apple-system,BlinkMacSy
     [['Itaú 1201409925',fmtU(d.m5.usd)]],
     fmtU(d.m5.usd),'Total USD M5');
   html += empCard('CyS','cys',
-    [['Bco. Chile 1575036410',fmt(d.cys.bcoChile)]],
+    [['Bco. Chile 1575036410',fmt(d.cys.bcoChile)],['Santander',fmt(d.cys.santander)]],
     fmt(totCys),
     [['Sin cuentas USD','<span style="color:#cbd5e1">USD 0</span>']],
     'USD 0','Total USD CyS');

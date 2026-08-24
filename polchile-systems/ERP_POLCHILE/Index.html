@@ -474,9 +474,11 @@
 </div>
 
 <script>
-  const SUPABASE_URL = "https://hauricnpsamnwyhondse.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_JdCZQMZNHyLixuDDmtTdlA_rj_8rsgG";
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc";
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    db: { schema: "shg_dashboards" }
+  });
 
   const $ = (id) => document.getElementById(id);
 

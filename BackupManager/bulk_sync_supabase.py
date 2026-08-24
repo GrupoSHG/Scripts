@@ -51,7 +51,9 @@ SCHEMA_NAME = "shg_dashboards"
 
 # Pestañas que NO se replican con este script genérico (tienen su propio
 # manejo especial en otro lado).
-EXCLUIR_PESTANAS = {"NV_Proveedores", "NV_Supabase"}
+# 'Productos_Stock' la maneja sync_stock_productos.py — va a stock_productos.stock
+# (otro esquema, otra tabla, con upsert por fila) en vez de recrearse acá.
+EXCLUIR_PESTANAS = {"NV_Proveedores", "NV_Supabase", "Productos_Stock"}
 
 LOG_PATH = r"C:\Scripts\BackupManager\pipeline_main.log"
 # ─────────────────────────────────────────────

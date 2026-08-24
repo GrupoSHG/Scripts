@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitácora de Iniciativas — Polchile</title>
+<style>
+  :root{
+    --bg:#f4f4f1; --card:#ffffff; --border:#e2e0d8; --text:#242722;
+    --text-secondary:#5c6058; --text-muted:#8b8f86;
+    --green:#1f8a56; --amber:#b8860f; --red:#c1442e;
+    --accent1:#2f5d8a; --accent2:#2f5d8a;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--text); padding:24px;
+  }
+  .wrap{max-width:980px;margin:0 auto}
+  .hero{
+    background:#1f3d52;
+    border-radius:14px; padding:22px 26px; margin-bottom:20px; color:#fff;
+    display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:14px;
+  }
+  .hero h1{font-size:23px;font-weight:700;margin:0}
+  .hero .subtitle{font-size:13px;opacity:.9;margin-top:4px}
+  .btn{
+    background:#fff; border:none; border-radius:8px;
+    padding:9px 15px; font-size:13px; cursor:pointer; color:var(--text); font-weight:600;
+    box-shadow:0 1px 2px rgba(0,0,0,.08);
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn.primary{background:#1f2422;color:#fff}
+  .hero .btn{background:rgba(255,255,255,.92)}
+  .hero .btn.primary{background:#1f2422;color:#fff}
+
+  .tabs{display:flex;gap:4px;margin-bottom:18px;background:#ece8dc;border-radius:10px;padding:4px;width:fit-content}
+  .tab{padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-secondary);border-radius:8px}
+  .tab.active{color:#fff;background:#2f5d8a}
+  .view{display:none}
+  .view.active{display:block}
+
+  .card{
+    background:var(--card); border:1px solid var(--border); border-left:6px solid var(--item-color,#999);
+    border-radius:12px; padding:16px 18px; margin-bottom:12px;
+  }
+  .row-top{display:flex; justify-content:space-between; align-items:center; gap:12px; cursor:pointer}
+  .name{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--item-color,#999);flex-shrink:0}
+  .status-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;white-space:nowrap}
+  .pct-num{font-size:14px;font-weight:700;min-width:40px;text-align:right}
+  .track{height:8px;border-radius:5px;background:#eeece2;overflow:hidden;margin-top:9px}
+  .fill{height:100%;border-radius:5px}
+  .desc-visible{font-size:13px;color:var(--text-secondary);margin-top:9px;line-height:1.55}
+  .block-visible{font-size:12px;color:var(--amber);margin-top:7px;line-height:1.5;background:#fff6e6;padding:6px 10px;border-radius:8px}
+  .block-visible b{font-weight:700}
+  .detail{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);font-size:13px;line-height:1.6;display:none}
+  .detail.open{display:block}
+  .detail label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.03em;color:var(--text-muted);margin-top:10px;margin-bottom:3px;font-weight:700}
+  .detail label:first-child{margin-top:0}
+  .detail textarea, .detail input[type=text]{
+    width:100%; border:1px solid var(--border); border-radius:8px; padding:8px;
+    font-family:inherit; font-size:13px; resize:vertical; background:#fbfbf7;
+  }
+  .detail .row2{display:flex;gap:10px;align-items:center;margin-top:10px}
+  .detail .row2 input[type=range]{flex:1}
+  .swatches{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+  .swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent}
+  .swatch.sel{border-color:#20241f}
+  .actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
+  .actions button{font-size:12px;padding:6px 12px}
+  .del{color:var(--red);border:1px solid #f4c9c5}
+  .empty{color:var(--text-muted);font-size:13px;text-align:center;padding:24px}
+  .summary{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+  .metric{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;min-width:100px}
+  .metric .num{font-size:21px;font-weight:800}
+  .metric .lbl{font-size:11px;color:var(--text-secondary);margin-top:2px;font-weight:600}
+  .metric.c1 .num{color:#2f5d8a}
+  .metric.c2 .num{color:var(--green)}
+  .metric.c3 .num{color:#a8781f}
+  .metric.c4 .num{color:var(--red)}
+
+  .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .cal-nav .month-label{font-size:16px;font-weight:700;text-transform:capitalize}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .cal-dow{font-size:11px;color:var(--text-muted);text-align:center;padding-bottom:4px;text-transform:uppercase;font-weight:700}
+  .cal-day{
+    background:var(--card); border:1px solid var(--border); border-radius:10px;
+    min-height:86px; padding:6px; cursor:pointer; position:relative;
+  }
+  .cal-day.empty-day{background:transparent;border:none;cursor:default}
+  .cal-day:hover{border-color:#2f5d8a}
+  .cal-day .daynum{font-size:12px;color:var(--text-muted);font-weight:700}
+  .cal-day .tag{
+    font-size:10px; margin-top:3px; padding:2px 6px; border-radius:5px; font-weight:700;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block;
+  }
+  .cal-day.today{border-color:#2f5d8a;border-width:2px}
+
+  .modal-overlay{
+    display:none; position:absolute; inset:0; background:rgba(20,15,30,0.45);
+    align-items:center; justify-content:center; z-index:10;
+  }
+  .modal-overlay.open{display:flex}
+  .modal{
+    background:var(--card); border-radius:14px; padding:18px; width:320px;
+    max-height:70vh; overflow-y:auto;
+  }
+  .modal h3{margin:0 0 10px;font-size:14px}
+  .modal label{display:flex;align-items:center;gap:8px;font-size:13px;padding:7px 0;cursor:pointer}
+  .modal .actions{margin-top:12px}
+  .page-wrap{position:relative}
+</style>
+</head>
+<body>
+<div class="wrap page-wrap">
+  <div class="hero">
+    <div>
+      <h1>Bitácora de Iniciativas</h1>
+      <div class="subtitle">Polchile · haz clic en una iniciativa para editarla</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" id="exportBtn">Exportar</button>
+      <button class="btn primary" id="addBtn">+ Nueva iniciativa</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="lista">Iniciativas</div>
+    <div class="tab" data-tab="calendario">Calendario del mes</div>
+  </div>
+
+  <div class="view active" id="view-lista">
+    <div class="summary" id="summary"></div>
+    <div id="list"></div>
+  </div>
+
+  <div class="view" id="view-calendario">
+    <div class="cal-nav">
+      <button class="btn" id="prevMonth">‹ Anterior</button>
+      <div class="month-label" id="monthLabel"></div>
+      <button class="btn" id="nextMonth">Siguiente ›</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3 id="modalDate"></h3>
+      <div id="modalOptions"></div>
+      <div class="actions">
+        <button class="btn" id="modalClose">Listo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = "bitacora-polchile-v1";
+const CAL_KEY = "bitacora-polchile-calendar-v1";
+
+const PALETTE = ["#2f5d8a","#1f8a56","#c1442e","#8a2f5e","#1f7a7a","#5a3d8a","#b8860f","#a8471f","#3d6b1f","#1f3d6b"];
+
+const seed = [
+  {id:1,n:"Automatización general",v:90,status:null,color:PALETTE[0],desc:"Conjunto de procesos internos automatizados (extracción, respaldo y sincronización de datos del ERP) que reduce el trabajo manual repetitivo entre sistemas.",block:"Ninguno; en mantención continua."},
+  {id:2,n:"Backup Manager Pipeline",v:90,status:null,color:PALETTE[1],desc:"Respaldo diario y automático de la información del ERP Manager, con sincronización a Drive, Sheets y Supabase para asegurar continuidad y disponibilidad de datos.",block:"Ninguno; corre de forma automática y estable."},
+  {id:3,n:"Área Finanzas (RCV + Transferencias Santander + Sovos)",v:53,status:null,color:PALETTE[2],desc:"Centraliza la gestión financiera: revisión y carga de facturas de compra/venta al ERP, confirmación de transferencias bancarias recibidas de clientes, y conciliación de documentos tributarios electrónicos.",block:"La conciliación de documentos (Sovos/Acepta) requiere intervención manual por un reCAPTCHA en el login, lo que impide automatizarla por completo."},
+  {id:4,n:"Automatización de compras ecommerce",v:75,status:null,color:PALETTE[3],desc:"Exploración del uso de inteligencia artificial para atender y concretar ventas directamente a través de WhatsApp.",block:""},
+  {id:5,n:"Chipax API Integration",v:80,status:null,color:PALETTE[4],desc:"Integración financiera que trae la información de cuentas por cobrar de M5 Industrial al panel comercial.",block:"Ninguno reportado."},
+  {id:6,n:"HEA (Hojalatería El Abuelo)",v:75,status:null,color:PALETTE[5],desc:"Sistema de gestión de órdenes de trabajo para el taller, con roles de usuario y generación de documentos en PDF.",block:"Ninguno reportado; en mejora continua."},
+  {id:7,n:"Cockpit Comercial",v:75,status:null,color:PALETTE[6],desc:"Panel de indicadores comerciales exhibido en pantalla, con ventas, forecast y métricas por vendedor.",block:"En proceso de migración de la interfaz a nueva infraestructura (GitHub + Netlify), lo que ralentiza nuevas funcionalidades mientras se completa. Además, depende de las 4 APIs de Manager en tiempo real."},
+  {id:8,n:"Production Dashboard (Command Center)",v:70,status:null,color:PALETTE[7],desc:"Panel de seguimiento de producción que conecta la planificación con el estado real de fabricación.",block:"Pendiente completar la migración a la nueva infraestructura (mismo proceso que Cockpit Comercial). Además, depende de las 4 APIs de Manager en tiempo real."},
+  {id:9,n:"OC Management App (Grupo SHG)",v:50,status:null,color:PALETTE[8],desc:"Aplicación para gestionar órdenes de compra, con control de accesos y asociación a notas de venta.",block:"Ninguno reportado; en desarrollo activo."},
+  {id:10,n:"Dashboard Facturación Vendedores",v:40,status:null,color:PALETTE[9],desc:"Herramienta para que cada vendedor visualice su propia facturación, avance de pedidos vía OP y stock disponible.",block:"Aún no se ha desplegado en ambiente de producción. Además, depende de las 4 APIs de Manager en tiempo real."},
+  {id:11,n:"App CyS",v:30,status:null,color:PALETTE[0],desc:"Registro diario de asistencia, gastos y facturación por centro de costo (antes conocida como app GEA / app sotito).",block:"Solo probada en ambiente local; falta completar el despliegue en producción. El dashboard resumen depende de las 4 APIs de Manager en tiempo real."},
+  {id:12,n:"Delivery Dispatch App",v:30,status:null,color:PALETTE[1],desc:"Aplicación para choferes que permite gestionar itinerarios de entrega en tiempo real.",block:"El seguimiento GPS en segundo plano (con la app cerrada) quedó pendiente de resolver."},
+  {id:13,n:"4 APIs en Tiempo Real",v:10,status:null,color:PALETTE[2],desc:"Conjunto de integraciones para disponibilizar información en tiempo real: reportes, facturación, órdenes de compra (con chequeo de crédito) y notas de venta hacia el CRM.",block:"Solo está definido el endpoint de facturación; las otras tres integraciones aún no se han construido."},
+  {id:14,n:"Manager ERP SQL",v:null,status:"En curso",color:PALETTE[3],desc:"Desarrollo continuo de consultas SQL sobre el ERP que alimenta los distintos reportes y dashboards del grupo.",block:"Ninguno; es trabajo de soporte permanente, sin fecha de cierre."},
+  {id:15,n:"Facturación.cl Integración (GROUPCYS)",v:null,status:"Descartado",color:PALETTE[5],desc:"Se evaluó extraer datos de facturación y cuentas por cobrar/pagar desde el sistema de GROUPCYS para alimentar dashboards.",block:"No existía una vía de solo lectura para las cuentas por cobrar de clientes; se descartó la iniciativa."}
+];
+
+function load(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      parsed.forEach((it,i)=>{ if(!it.color) it.color = PALETTE[i % PALETTE.length]; });
+      return parsed;
+    }
+  }catch(e){}
+  return seed;
+}
+function save(data){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+function loadCal(){
+  try{
+    const raw = localStorage.getItem(CAL_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return {};
+}
+function saveCal(cal){
+  localStorage.setItem(CAL_KEY, JSON.stringify(cal));
+}
+
+let data = load();
+let calendar = loadCal();
+let openId = null;
+let viewDate = new Date();
+let modalDateKey = null;
+
+function statusColorFor(v){
+  if(v===null || v===undefined) return "#2f5d8a";
+  if(v>=75) return "var(--green)";
+  if(v>=40) return "var(--amber)";
+  return "var(--red)";
+}
+
+// ---------- Tabs ----------
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById("view-"+tab.dataset.tab).classList.add("active");
+    if(tab.dataset.tab === "calendario") renderCalendar();
+  });
+});
+
+// ---------- List view ----------
+function render(){
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  if(data.length===0){
+    list.innerHTML = '<div class="empty">No hay iniciativas todavía. Agrega la primera.</div>';
+  }
+
+  data.forEach(item=>{
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.setProperty("--item-color", item.color || "#999");
+    const isOpen = openId === item.id;
+
+    const badgeHtml = item.status
+      ? `<span class="status-badge" style="background:${item.status==='Descartado'?'#f5ddd7':'#dfe9f2'};color:${item.status==='Descartado'?'var(--red)':'#2f5d8a'}">${item.status}</span>`
+      : `<span class="pct-num" id="topcpt-${item.id}" style="color:${statusColorFor(item.v)}">${item.v}%</span>`;
+
+    const barHtml = (item.v!==null && item.v!==undefined)
+      ? `<div class="track"><div class="fill" style="width:${item.v}%;background:${statusColorFor(item.v)}"></div></div>`
+      : "";
+
+    const descHtml = item.desc ? `<div class="desc-visible">${item.desc}</div>` : "";
+    const blockHtml = item.block ? `<div class="block-visible"><b>Bloqueo:</b> ${item.block}</div>` : "";
+
+    const swatchesHtml = PALETTE.map(c=>`<div class="swatch ${c===item.color?'sel':''}" style="background:${c}" data-color="${c}"></div>`).join("");
+
+    card.innerHTML = `
+      <div class="row-top" data-id="${item.id}">
+        <div class="name"><span class="dot"></span>${item.n}</div>
+        ${badgeHtml}
+      </div>
+      ${barHtml}
+      ${descHtml}
+      ${blockHtml}
+      <div class="detail ${isOpen?'open':''}" data-detail="${item.id}">
+        <label>Nombre</label>
+        <input type="text" data-field="n" value="${item.n.replace(/"/g,'&quot;')}">
+        <label>Descripción para gerencia</label>
+        <textarea rows="2" data-field="desc">${item.desc||""}</textarea>
+        <label>Bloqueos actuales</label>
+        <textarea rows="2" data-field="block">${item.block||""}</textarea>
+        <div class="row2">
+          <label style="margin:0">% avance</label>
+          <input type="range" min="0" max="100" step="1" data-field="v" value="${item.v||0}" ${item.status?'disabled':''}>
+          <input type="number" min="0" max="100" step="1" data-field="vnum" value="${item.v!==null?item.v:0}" style="width:56px" ${item.status?'disabled':''}>
+          <span class="pct-num" data-livepct>${item.v!==null?item.v+'%':''}</span>
+        </div>
+        <label>Estado especial (opcional, ej. "En curso" o "Descartado")</label>
+        <input type="text" data-field="status" value="${item.status||""}" placeholder="Dejar vacío para usar el % de avance">
+        <label>Color de identidad</label>
+        <div class="swatches" data-swatches="${item.id}">${swatchesHtml}</div>
+        <div class="actions">
+          <button class="btn del" data-del="${item.id}">Eliminar</button>
+        </div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+
+  renderSummary();
+  attachHandlers();
+}
+
+function renderSummary(){
+  const withPct = data.filter(d=>d.v!==null && d.v!==undefined);
+  const avg = withPct.length ? Math.round(withPct.reduce((a,b)=>a+b.v,0)/withPct.length) : 0;
+  const activas = data.filter(d=>d.status!=="Descartado").length;
+  const descartadas = data.filter(d=>d.status==="Descartado").length;
+  document.getElementById("summary").innerHTML = `
+    <div class="metric c1"><div class="num">${data.length}</div><div class="lbl">Iniciativas</div></div>
+    <div class="metric c2"><div class="num">${avg}%</div><div class="lbl">Avance promedio</div></div>
+    <div class="metric c3"><div class="num">${activas}</div><div class="lbl">Activas</div></div>
+    <div class="metric c4"><div class="num">${descartadas}</div><div class="lbl">Descartadas</div></div>
+  `;
+}
+
+function attachHandlers(){
+  document.querySelectorAll(".row-top").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      const id = Number(el.dataset.id);
+      openId = openId === id ? null : id;
+      render();
+    });
+  });
+
+  document.querySelectorAll(".detail").forEach(el=>{
+    el.querySelectorAll("[data-field]").forEach(input=>{
+      input.addEventListener("input", e=>{
+        e.stopPropagation();
+        const id = Number(el.dataset.detail);
+        const item = data.find(d=>d.id===id);
+        const field = input.dataset.field;
+        if(field==="v" || field==="vnum"){
+          let val = Number(input.value);
+          if(isNaN(val)) val = 0;
+          val = Math.max(0, Math.min(100, val));
+          item.v = val;
+          const range = el.querySelector('input[data-field="v"]');
+          const num = el.querySelector('input[data-field="vnum"]');
+          if(range) range.value = val;
+          if(num) num.value = val;
+          const live = el.querySelector("[data-livepct]");
+          if(live) live.textContent = val + "%";
+          const fill = el.parentElement.querySelector(".fill");
+          if(fill){ fill.style.width = val+"%"; fill.style.background = statusColorFor(val); }
+          const topBadge = document.getElementById("topcpt-"+id);
+          if(topBadge){ topBadge.textContent = val+"%"; topBadge.style.color = statusColorFor(val); }
+        } else if(field==="status"){
+          item.status = input.value.trim() || null;
+        } else {
+          item[field] = input.value;
+        }
+        save(data);
+      });
+      input.addEventListener("click", e=>e.stopPropagation());
+      if(input.dataset.field!=="v" && input.dataset.field!=="vnum"){
+        input.addEventListener("blur", ()=>render());
+      }
+    });
+    el.querySelectorAll("[data-swatches] .swatch").forEach(sw=>{
+      sw.addEventListener("click", e=>{
+        e.stopPropagation();
+        const id = Number(el.dataset.detail);
+        const item = data.find(d=>d.id===id);
+        item.color = sw.dataset.color;
+        save(data);
+        render();
+      });
+    });
+    el.querySelector("[data-del]").addEventListener("click", e=>{
+      e.stopPropagation();
+      const id = Number(e.target.dataset.del);
+      data = data.filter(d=>d.id!==id);
+      save(data);
+      openId = null;
+      render();
+    });
+  });
+}
+
+document.getElementById("addBtn").addEventListener("click", ()=>{
+  const newId = data.length ? Math.max(...data.map(d=>d.id))+1 : 1;
+  data.push({id:newId, n:"Nueva iniciativa", v:0, status:null, color:PALETTE[newId % PALETTE.length], desc:"", block:""});
+  save(data);
+  openId = newId;
+  render();
+});
+
+document.getElementById("exportBtn").addEventListener("click", ()=>{
+  const blob = new Blob([JSON.stringify({iniciativas:data, calendario:calendar},null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "bitacora-iniciativas.json";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// ---------- Calendar view ----------
+const DOW = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
+const MONTHS = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+
+function dateKey(y,m,d){
+  return `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+}
+
+function renderCalendar(){
+  const y = viewDate.getFullYear();
+  const m = viewDate.getMonth();
+  document.getElementById("monthLabel").textContent = `${MONTHS[m]} ${y}`;
+
+  const grid = document.getElementById("calGrid");
+  grid.innerHTML = "";
+  DOW.forEach(d=>{
+    const el = document.createElement("div");
+    el.className = "cal-dow";
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  const firstDay = new Date(y,m,1);
+  let startOffset = firstDay.getDay() - 1;
+  if(startOffset < 0) startOffset = 6;
+  const daysInMonth = new Date(y,m+1,0).getDate();
+
+  const today = new Date();
+  const todayKey = dateKey(today.getFullYear(),today.getMonth(),today.getDate());
+
+  for(let i=0;i<startOffset;i++){
+    const el = document.createElement("div");
+    el.className = "cal-day empty-day";
+    grid.appendChild(el);
+  }
+
+  for(let day=1; day<=daysInMonth; day++){
+    const key = dateKey(y,m,day);
+    const el = document.createElement("div");
+    el.className = "cal-day" + (key===todayKey ? " today" : "");
+    const assigned = calendar[key] || [];
+    const tags = assigned.map(id=>{
+      const item = data.find(d=>d.id===id);
+      if(!item) return "";
+      return `<span class="tag" style="background:${item.color}22;color:${item.color}">${item.n}</span>`;
+    }).join("");
+    el.innerHTML = `<div class="daynum">${day}</div>${tags}`;
+    el.addEventListener("click", ()=>openModal(key));
+    grid.appendChild(el);
+  }
+}
+
+function openModal(key){
+  modalDateKey = key;
+  const [y,m,d] = key.split("-").map(Number);
+  document.getElementById("modalDate").textContent = `${d} de ${MONTHS[m-1]}`;
+  const opts = document.getElementById("modalOptions");
+  const assigned = calendar[key] || [];
+  opts.innerHTML = data.filter(it=>it.status!=="Descartado").map(it=>`
+    <label>
+      <input type="checkbox" data-cid="${it.id}" ${assigned.includes(it.id)?"checked":""}>
+      <span class="dot" style="background:${it.color};width:9px;height:9px;display:inline-block;border-radius:50%"></span>
+      ${it.n}
+    </label>
+  `).join("");
+  opts.querySelectorAll("input[type=checkbox]").forEach(cb=>{
+    cb.addEventListener("change", ()=>{
+      const id = Number(cb.dataset.cid);
+      let list = calendar[modalDateKey] || [];
+      if(cb.checked){
+        if(!list.includes(id)) list.push(id);
+      } else {
+        list = list.filter(x=>x!==id);
+      }
+      calendar[modalDateKey] = list;
+      saveCal(calendar);
+      renderCalendar();
+    });
+  });
+  document.getElementById("modalOverlay").classList.add("open");
+}
+
+document.getElementById("modalClose").addEventListener("click", ()=>{
+  document.getElementById("modalOverlay").classList.remove("open");
+});
+document.getElementById("modalOverlay").addEventListener("click", e=>{
+  if(e.target.id === "modalOverlay") document.getElementById("modalOverlay").classList.remove("open");
+});
+
+document.getElementById("prevMonth").addEventListener("click", ()=>{
+  viewDate.setMonth(viewDate.getMonth()-1);
+  renderCalendar();
+});
+document.getElementById("nextMonth").addEventListener("click", ()=>{
+  viewDate.setMonth(viewDate.getMonth()+1);
+  renderCalendar();
+});
+
+render();
+</script>
+</body>
+</html>

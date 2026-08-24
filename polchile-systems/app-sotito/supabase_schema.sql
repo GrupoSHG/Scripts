@@ -5,6 +5,7 @@ create table centros_costo (
   codigo text unique not null,
   nombre text not null,
   responsable text,
+  factura_a text,              -- a quién se factura este centro (persona/empresa). NULL o 'EXCLUIDA' si no aplica
   presupuesto_mensual numeric,
   activo boolean default true,
   created_at timestamptz default now()
@@ -60,14 +61,28 @@ create table gastos (
   created_at timestamptz default now()
 );
 
+-- Facturación mensual por centro de costo, calculada con la fórmula intercompany:
+-- (Mano de obra x (1 + leyes_sociales_pct) + Gastos netos) x (1 + utilidad_pct) = Neto
+-- Neto x iva_pct = IVA · Neto + IVA = Total
 create table facturacion (
   id uuid primary key default gen_random_uuid(),
   centro_costo_id uuid references centros_costo(id),
-  fecha date not null,
-  monto numeric not null,
-  tipo text check (tipo in ('estimada','real')),
-  referencia text
+  mes date not null,                          -- primer día del mes, ej. 2026-07-01
+  mano_obra numeric not null default 0,       -- suma de tarifa_diaria x jornadas del mes
+  gastos_netos numeric not null default 0,    -- suma de gastos del centro de costo en el mes (sin IVA)
+  leyes_sociales_pct numeric not null default 0.30,
+  utilidad_pct numeric not null default 0.05,
+  iva_pct numeric not null default 0.19,
+  subtotal numeric generated always as (mano_obra * (1 + leyes_sociales_pct) + gastos_netos) stored,
+  neto numeric generated always as ((mano_obra * (1 + leyes_sociales_pct) + gastos_netos) * (1 + utilidad_pct)) stored,
+  iva numeric generated always as ((mano_obra * (1 + leyes_sociales_pct) + gastos_netos) * (1 + utilidad_pct) * iva_pct) stored,
+  total numeric generated always as ((mano_obra * (1 + leyes_sociales_pct) + gastos_netos) * (1 + utilidad_pct) * (1 + iva_pct)) stored,
+  unique(centro_costo_id, mes)
 );
+
+-- Nota: la mano de obra por centro de costo y mes se calcula sumando
+-- personas.tarifa_diaria x días donde asistencia.presente = true,
+-- agrupado por centro_costo_id y mes (no se necesita tabla aparte).
 
 -- Bucket de Storage para las fotos de factura (crear desde el dashboard o CLI):
 -- supabase storage buckets create facturas --public

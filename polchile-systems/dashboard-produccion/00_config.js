@@ -99,6 +99,16 @@ function parseDateCustom(val) {
 // proyecto (dashboard-produccion), igual que ya hiciste en cockpit-comercial:
 //   SUPABASE_URL       → https://hauricnpsamnwyhondse.supabase.co
 //   SUPABASE_ANON_KEY  → tu Publishable key de Supabase
+// EJECUTAR UNA SOLA VEZ: selecciona "configurarSupabase" en el desplegable de
+// funciones (arriba, junto al botón ▶ Ejecutar) y dale a Ejecutar. Deja
+// SUPABASE_URL / SUPABASE_ANON_KEY apuntando al proyecto consolidado.
+function configurarSupabase() {
+  var props = PropertiesService.getScriptProperties();
+  props.setProperty('SUPABASE_URL', 'https://ffxopvzxyeacpbtxuagu.supabase.co');
+  props.setProperty('SUPABASE_ANON_KEY', 'sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc');
+  Logger.log('Listo: SUPABASE_URL y SUPABASE_ANON_KEY actualizados al proyecto consolidado.');
+}
+
 function getSupabaseConfig_() {
   var props = PropertiesService.getScriptProperties();
   var url = props.getProperty('SUPABASE_URL');
@@ -123,6 +133,7 @@ function supabaseSelect_(tabla, filtro) {
       headers: {
         'apikey': cfg.key,
         'Authorization': 'Bearer ' + cfg.key,
+        'Accept-Profile': 'shg_dashboards',
         'Range-Unit': 'items',
         'Range': desde + '-' + (desde + PAGE_SIZE - 1)
       },

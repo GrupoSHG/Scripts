@@ -9,6 +9,7 @@ Orquestador principal. Ejecuta en orden:
     5. Carga masiva de todas las tablas a Supabase
     6. Sincronizar NVs pendientes por vendedor (dashboard vendedores)
     7. Sincronizar facturación por período (21-20) por vendedor
+    8. Sincronizar stock de productos (app Control de Stock por Familias)
 
 Uso: python 00_pipeline_completo.py
 """
@@ -39,7 +40,7 @@ log = logging.getLogger(__name__)
 def paso(numero: int, nombre: str):
     log.info("")
     log.info("━" * 55)
-    log.info(f"  PASO {numero}/7 — {nombre}")
+    log.info(f"  PASO {numero}/8 — {nombre}")
     log.info("━" * 55)
 
 
@@ -85,6 +86,11 @@ def main():
         from sync_facturacion_periodo import main as sync_facturacion
         sync_facturacion()
 
+        # ── PASO 8: Sincronizar stock de productos ─────────────
+        paso(8, "Sincronizar stock de productos (Control de Stock por Familias)")
+        from sync_stock_productos import main as sync_stock
+        sync_stock()
+
         # ── Resumen ────────────────────────────────────────────
         duracion = (datetime.now() - inicio).seconds
         log.info("")
@@ -94,6 +100,7 @@ def main():
         log.info(f"║  🔄 NVs sincronizadas en Supabase (OC Polchile)".ljust(54) + "║")
         log.info(f"║  🔄 NVs pendientes sincronizadas por vendedor".ljust(54) + "║")
         log.info(f"║  🔄 Facturación por período sincronizada".ljust(54) + "║")
+        log.info(f"║  🔄 Stock de productos sincronizado".ljust(54) + "║")
         log.info("╚" + "═" * 53 + "╝")
 
     except Exception as e:
