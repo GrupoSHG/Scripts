@@ -4,12 +4,14 @@ descargar_backup_manager.py
 Descarga automáticamente el archivo .bak más reciente desde Manager.
 Usa Selenium para login y obtener la presigned URL, luego descarga con requests.
 
-Requiere: pip install selenium webdriver-manager requests
+Requiere: pip install selenium requests
 """
 
 import os
 import time
 import shutil
+import tempfile
+import uuid
 import logging
 import requests
 from datetime import datetime
@@ -17,11 +19,9 @@ from pathlib import Path
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
 
 # ─────────────────────────────────────────────
 #  CONFIG
@@ -58,14 +58,49 @@ def preparar_carpetas():
 
 
 def crear_driver() -> webdriver.Chrome:
+    """
+    Arma el Chrome headless para el login/descarga en Manager.
+
+    FIX (session not created / "DevToolsActivePort file doesn't exist"):
+    ese error en runners de Windows/CI casi siempre viene de dos cosas
+    a la vez:
+      1. No usar Selenium Manager (el resolutor de driver integrado desde
+         Selenium 4.6+) — webdriver-manager puede bajar una versión de
+         chromedriver que no calza exacto con el Chrome preinstalado en
+         el runner, y esa desincronía se reporta como este error confuso
+         de DevTools en vez de un error claro de versión.
+      2. Reusar la misma carpeta de perfil / puerto de depuración entre
+         corridas — en un runner efímero normalmente no pasa, pero si el
+         proceso anterior no cerró bien, Chrome no logra levantar el
+         DevToolsActivePort y la sesión nunca se crea.
+
+    Solución: dejar que Selenium Manager resuelva el driver solo (no pasar
+    `service=` con ChromeDriverManager), fijar un --remote-debugging-port
+    explícito, y usar un --user-data-dir único por corrida.
+    """
     opts = Options()
     opts.add_argument("--headless=new")
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
-    opts.add_argument("--window-size=1920,1080")
     opts.add_argument("--disable-gpu")
-    service = Service(ChromeDriverManager().install())
-    return webdriver.Chrome(service=service, options=opts)
+    opts.add_argument("--window-size=1920,1080")
+    opts.add_argument("--disable-extensions")
+    opts.add_argument("--disable-background-networking")
+    opts.add_argument("--remote-debugging-port=9222")
+
+    # Carpeta de perfil única por corrida — evita choques de lock/puerto
+    # si quedó un proceso Chrome colgado de una corrida anterior.
+    perfil_tmp = Path(tempfile.gettempdir()) / f"chrome_profile_{uuid.uuid4().hex}"
+    opts.add_argument(f"--user-data-dir={perfil_tmp}")
+
+    # No pasar `service=Service(ChromeDriverManager().install())`: dejamos
+    # que Selenium Manager (integrado desde Selenium 4.6+) detecte la
+    # versión de Chrome instalada en el runner y baje el chromedriver que
+    # calza exacto con ella. Con ChromeDriverManager a veces bajaba una
+    # versión distinta y Chrome fallaba al levantar DevTools sin dar un
+    # error claro de versión — solo el "DevToolsActivePort" genérico.
+    driver = webdriver.Chrome(options=opts)
+    return driver
 
 
 def hacer_login(driver: webdriver.Chrome, wait: WebDriverWait) -> str:
@@ -162,9 +197,7 @@ def obtener_presigned_url(filas: list) -> tuple[str, str]:
     log.info(f"HTML fila completa: {mejor_fila.get_attribute('innerHTML')[:500]}")
 
     # Busca la presigned URL — puede estar oculta o en atributo
-    # Busca la presigned URL — puede estar oculta o en atributo
     import html as html_module
-    # Busca la presigned URL — puede estar oculta o en atributo
     try:
         elem = mejor_fila.find_element(By.CSS_SELECTOR, ".presigned_url")
         raw = elem.text.strip() or elem.get_attribute("innerHTML").strip()
@@ -175,6 +208,8 @@ def obtener_presigned_url(filas: list) -> tuple[str, str]:
         raise Exception("Presigned URL vacía.")
 
     return presigned_url, mejor_nombre
+
+
 def descargar_desde_s3(presigned_url: str, nombre_archivo: str, carpeta_tmp: Path) -> Path:
     """Descarga el .bak directamente desde S3 usando la presigned URL."""
     nombre_limpio = Path(nombre_archivo).name

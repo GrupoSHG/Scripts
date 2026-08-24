@@ -49727,3 +49727,7 @@ psycopg2.OperationalError: connection to server at "db.ffxopvzxyeacpbtxuagu.supa
 connection to server at "db.ffxopvzxyeacpbtxuagu.supabase.co" (2600:1f1e:90b:a701:d232:1c31:5735:cb24), port 6543 failed: FATAL:  SASL authentication failed
 
 
+2026-08-24 15:55:37,725 INFO ============================================================
+2026-08-24 15:55:37,725 INFO  SYNC — Productos_Stock → stock_productos.stock (Supabase)
+2026-08-24 15:55:37,726 INFO ============================================================
+2026-08-24 15:55:37,742 INFO Usando Excel: Reportes_Completos_2026-08-06.xlsx
