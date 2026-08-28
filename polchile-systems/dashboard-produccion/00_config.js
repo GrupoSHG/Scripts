@@ -20,6 +20,7 @@ function doGet(e) {
         case 'getWipAcero':            result = getWipAcero();            break;
         case 'getM2PSA':               result = getM2PSA();               break;
         case 'getCatalogoStock':       result = getCatalogoStock();       break;
+        case 'getM2MensualesPA': result = getM2MensualesPA(); break;
         default: result = { error: 'Acción desconocida: ' + action };
       }
     } catch (err) {

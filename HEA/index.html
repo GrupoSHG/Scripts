@@ -638,7 +638,7 @@ textarea.cotizar-input{resize:vertical;min-height:72px}
 <div class="toolbar">
   <div class="search-wrap">
     <span class="search-ico">🔍</span>
-    <input type="search" id="searchInput" placeholder="Buscar OT, cliente, factura…">
+    <input type="search" id="searchInput" placeholder="Buscar OT, cliente, factura, monto…">
   </div>
   <select id="filterMes">
     <option value="">Todos los meses</option>
@@ -1749,7 +1749,7 @@ function applyFilters(){
   const pago=document.getElementById('filterTipoPago').value;
   const conc=document.getElementById('filterConciliado').value;
   filtered=data.filter(r=>{
-    if(q){const h=[r.ot,r.cliente,r.factura,r.boleta,r.fecha].join(' ').toLowerCase();if(!h.includes(q))return false;}
+    if(q){const h=[r.ot,r.cliente,r.factura,r.boleta,r.fecha,r.venta,r.anticipo,r.saldo].join(' ').toLowerCase();if(!h.includes(q))return false;}
     if(mes&&(!r.fecha||r.fecha.slice(3,5)!==mes))return false;
     if(sit&&r.situacion!==sit)return false;
     if(doc&&r.tipo_doc!==doc)return false;

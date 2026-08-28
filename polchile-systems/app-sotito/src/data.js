@@ -1,8 +1,8 @@
 import { supabase } from "./supabaseClient";
 
-// Todas las tablas de esta app viven en el esquema shg_dashboards del proyecto
+// Todas las tablas de esta app viven en el esquema app_cys del proyecto
 // Supabase compartido (ffxopvzxyeacpbtxuagu) — no en "public".
-const db = supabase.schema("shg_dashboards");
+const db = supabase.schema("app_cys");
 
 export async function fetchCentros() {
   const { data, error } = await db
@@ -157,7 +157,7 @@ export async function fetchFacturacion(centroCostoId) {
     .from("facturacion")
     .select("*")
     .eq("centro_costo_id", centroCostoId)
-    .order("mes", { ascending: false });
+    .order("periodo_inicio", { ascending: false });
   if (error) throw error;
   return data;
 }
@@ -168,7 +168,7 @@ export async function fetchResumenGeneral() {
   const [{ data: centros, error: e1 }, { data: fact, error: e2 }, { data: gastos, error: e3 }] = await Promise.all([
     db.from("centros_costo").select("*").eq("activo", true).order("nombre"),
     db.from("facturacion").select("*"),
-    db.from("gastos").select("centro_costo_id, monto, fecha"),
+    db.from("gastos").select("centro_costo_id, monto, fecha, categoria"),
   ]);
   if (e1) throw e1;
   if (e2) throw e2;

@@ -31,24 +31,33 @@ export default function ResumenGeneral() {
     return <p className="text-xs text-[#1F3D26]/50 font-mono px-1">Cargando resumen…</p>;
   }
 
-  const mesesDisponibles = [...new Set(facturacion.map((f) => f.mes))].sort().reverse();
+  // Agrupación mensual: cada período de facturación se agrupa por el mes en
+  // que empieza (periodo_inicio), sin importar si el rango de fechas es un
+  // mes calendario exacto o un período propio del CD.
+  const mesDe = (fechaStr) => (fechaStr ? fechaStr.slice(0, 7) : null); // "YYYY-MM"
+
+  const mesesDisponibles = [...new Set(facturacion.map((f) => mesDe(f.periodo_inicio)))]
+    .filter(Boolean)
+    .sort()
+    .reverse();
 
   const facturacionFiltrada =
-    mesFiltro === "todos" ? facturacion : facturacion.filter((f) => f.mes === mesFiltro);
+    mesFiltro === "todos" ? facturacion : facturacion.filter((f) => mesDe(f.periodo_inicio) === mesFiltro);
 
   const gastosFiltrados =
-    mesFiltro === "todos"
-      ? gastos
-      : gastos.filter((g) => g.fecha && g.fecha.slice(0, 7) === mesFiltro.slice(0, 7));
+    mesFiltro === "todos" ? gastos : gastos.filter((g) => mesDe(g.fecha) === mesFiltro);
 
   const filaPorCentro = centros.map((c) => {
     const factC = facturacionFiltrada.filter((f) => f.centro_costo_id === c.id);
-    const totalFacturado = factC.reduce((acc, f) => acc + Number(f.total || 0), 0);
+    const gastosC = gastosFiltrados.filter((g) => g.centro_costo_id === c.id);
     const totalManoObra = factC.reduce((acc, f) => acc + Number(f.mano_obra || 0), 0);
-    const totalGastos = gastosFiltrados
-      .filter((g) => g.centro_costo_id === c.id)
-      .reduce((acc, g) => acc + Number(g.monto || 0), 0);
-    return { ...c, totalFacturado, totalManoObra, totalGastos };
+    const totalGastos = gastosC.reduce((acc, g) => acc + Number(g.monto || 0), 0);
+    // Total = mano de obra + gastos (sin markup adicional)
+    const totalFacturado = totalManoObra + totalGastos;
+    const gastosMateriales = gastosC.filter((g) => g.categoria === "Materiales").reduce((a, g) => a + Number(g.monto || 0), 0);
+    const gastosPetroleo = gastosC.filter((g) => g.categoria === "Petroleo").reduce((a, g) => a + Number(g.monto || 0), 0);
+    const gastosOtros = totalGastos - gastosMateriales - gastosPetroleo;
+    return { ...c, totalFacturado, totalManoObra, totalGastos, gastosMateriales, gastosPetroleo, gastosOtros };
   });
 
   const chartData = filaPorCentro.map((c) => ({
@@ -60,6 +69,9 @@ export default function ResumenGeneral() {
 
   const granTotalFacturado = filaPorCentro.reduce((acc, c) => acc + c.totalFacturado, 0);
   const granTotalGastos = filaPorCentro.reduce((acc, c) => acc + c.totalGastos, 0);
+  const granTotalMateriales = filaPorCentro.reduce((acc, c) => acc + c.gastosMateriales, 0);
+  const granTotalPetroleo = filaPorCentro.reduce((acc, c) => acc + c.gastosPetroleo, 0);
+  const granTotalOtros = filaPorCentro.reduce((acc, c) => acc + c.gastosOtros, 0);
 
   return (
     <div className="space-y-5">
@@ -79,7 +91,7 @@ export default function ResumenGeneral() {
               <option value="todos">Todos los meses</option>
               {mesesDisponibles.map((m) => (
                 <option key={m} value={m}>
-                  {new Date(m).toLocaleDateString("es-CL", { month: "long", year: "numeric" })}
+                  {new Date(m + "-01").toLocaleDateString("es-CL", { month: "long", year: "numeric" })}
                 </option>
               ))}
             </select>
@@ -93,6 +105,26 @@ export default function ResumenGeneral() {
           <div>
             <p className="text-[10px] uppercase text-[#EAF2E9]/50">Gastos totales</p>
             <p className="text-lg font-semibold">{clp(granTotalGastos)}</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white border-2 border-[#1F3D26]">
+        <div className="px-4 py-2.5 border-b-2 border-[#1F3D26] bg-[#EFF6EE]">
+          <h2 className="text-sm font-bold uppercase tracking-wide">Gastos por categoría</h2>
+        </div>
+        <div className="grid grid-cols-3 gap-px bg-[#1F3D26]/10 font-mono text-xs">
+          <div className="bg-white p-3">
+            <p className="text-[10px] uppercase text-[#1F3D26]/50">Materiales</p>
+            <p className="text-base font-semibold">{clp(granTotalMateriales)}</p>
+          </div>
+          <div className="bg-white p-3">
+            <p className="text-[10px] uppercase text-[#1F3D26]/50">Petróleo</p>
+            <p className="text-base font-semibold">{clp(granTotalPetroleo)}</p>
+          </div>
+          <div className="bg-white p-3">
+            <p className="text-[10px] uppercase text-[#1F3D26]/50">Otros</p>
+            <p className="text-base font-semibold">{clp(granTotalOtros)}</p>
           </div>
         </div>
       </section>
@@ -127,8 +159,10 @@ export default function ResumenGeneral() {
               <th className="px-3 py-2">Nombre</th>
               <th className="px-3 py-2">Factura a</th>
               <th className="px-3 py-2 text-right">Mano de obra</th>
-              <th className="px-3 py-2 text-right">Gastos</th>
-              <th className="px-3 py-2 text-right">Facturado (total c/IVA)</th>
+              <th className="px-3 py-2 text-right">Materiales</th>
+              <th className="px-3 py-2 text-right">Petróleo</th>
+              <th className="px-3 py-2 text-right">Otros</th>
+              <th className="px-3 py-2 text-right">Facturado (total)</th>
             </tr>
           </thead>
           <tbody>
@@ -138,13 +172,15 @@ export default function ResumenGeneral() {
                 <td className="px-3 py-2">{c.nombre}</td>
                 <td className="px-3 py-2">{c.factura_a || "—"}</td>
                 <td className="px-3 py-2 text-right">{clp(c.totalManoObra)}</td>
-                <td className="px-3 py-2 text-right">{clp(c.totalGastos)}</td>
+                <td className="px-3 py-2 text-right">{clp(c.gastosMateriales)}</td>
+                <td className="px-3 py-2 text-right">{clp(c.gastosPetroleo)}</td>
+                <td className="px-3 py-2 text-right">{clp(c.gastosOtros)}</td>
                 <td className="px-3 py-2 text-right font-semibold">{clp(c.totalFacturado)}</td>
               </tr>
             ))}
             {!filaPorCentro.length && (
               <tr>
-                <td className="px-3 py-3 text-[#1F3D26]/40" colSpan={6}>Sin centros de costo cargados.</td>
+                <td className="px-3 py-3 text-[#1F3D26]/40" colSpan={8}>Sin centros de costo cargados.</td>
               </tr>
             )}
           </tbody>

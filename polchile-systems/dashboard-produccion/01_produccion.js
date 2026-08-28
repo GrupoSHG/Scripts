@@ -185,3 +185,65 @@ function getRendimientoPrensas() {
     };
   } catch(e) { return { error: "Error rendimiento: " + e.toString() }; }
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+function getM2MensualesPA() {
+  try {
+    const ss   = SpreadsheetApp.openById(ID_WIP);
+    const hoja = ss.getSheetByName("M2 Producidos");
+    if (!hoja) return { error: "No se encontró 'M2 Producidos'" };
+
+    const data       = hoja.getDataRange().getValues();
+    const hoy        = new Date();
+    const mesActual  = hoy.getMonth();       // 0-indexado (0=enero)
+    const anioActual = hoy.getFullYear();
+    const MES_INICIO = 1;                    // 1 = febrero (0-indexado), ajustable
+
+    // Acumulador por "año-mes" (para no mezclar años distintos si la hoja
+    // llegara a acumular más de un año de historial)
+    const totalesPorMes = {};
+
+    for (let i = 1; i < data.length; i++) {
+      const marca  = data[i][0];
+      const prensa = (data[i][1] || '').toString().trim().toUpperCase();
+      const m2     = parseFloat(data[i][2]) || 0;
+      if (!marca || m2 <= 0) continue;
+
+      // Solo PA — excluir PC4 y Bandejera (mismo criterio que getM2Ayer)
+      const esPSA = prensa.includes('PC4') || prensa.includes('BANDEJERA') || prensa.includes('BAND');
+      if (esPSA) continue;
+
+      const f = parseDateCustom(marca);
+      if (!f) continue;
+
+      const anio = f.getFullYear();
+      const mes  = f.getMonth(); // 0-indexado
+      if (anio !== anioActual) continue;   // solo el año en curso
+      if (mes  < MES_INICIO)   continue;   // desde febrero en adelante
+
+      const key = anio + '-' + String(mes).padStart(2, '0');
+      totalesPorMes[key] = (totalesPorMes[key] || 0) + m2;
+    }
+
+    const NOMBRES_MES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+    const serie = Object.keys(totalesPorMes)
+      .sort()
+      .map(key => {
+        const [anio, mesStr] = key.split('-');
+        const mesIdx = parseInt(mesStr, 10);
+        return { mes: NOMBRES_MES[mesIdx], anio: parseInt(anio, 10), m2: Math.round(totalesPorMes[key]) };
+      });
+
+    const keyMesActual = anioActual + '-' + String(mesActual).padStart(2, '0');
+    const totalMesActual = Math.round(totalesPorMes[keyMesActual] || 0);
+
+    return {
+      totalMesActual: totalMesActual,
+      mesActualNombre: NOMBRES_MES[mesActual],
+      serie: serie
+    };
+  } catch(e) {
+    return { error: "Error getM2MensualesPA: " + e.toString() };
+  }
+}
