@@ -24874,3 +24874,77 @@ connection to server at "db.ffxopvzxyeacpbtxuagu.supabase.co" (2600:1f1e:90b:a70
 
 
 28/08/2026  8:08:47.00 - ERROR en el pipeline 
+31/08/2026  9:19:25.93 - Iniciando pipeline 
+2026-08-31 09:19:26,195  INFO  \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
+2026-08-31 09:19:26,197  INFO  \u2551   PIPELINE VENTAS FULL — Inicio: 2026-08-31 09:19   \u2551
+2026-08-31 09:19:26,197  INFO  \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d
+2026-08-31 09:19:26,197  INFO  
+2026-08-31 09:19:26,197  INFO  \u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
+2026-08-31 09:19:26,197  INFO    PASO 1/8 — Descargar backup desde Manager
+2026-08-31 09:19:26,197  INFO  \u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
+2026-08-31 09:19:27,115  INFO  =======================================================
+2026-08-31 09:19:27,116  INFO    Iniciando descarga automática de backup Manager
+2026-08-31 09:19:27,116  INFO  =======================================================
+2026-08-31 09:19:31,015  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-08-31 09:19:34,977  INFO  Inputs visibles: 3
+2026-08-31 09:19:35,313  INFO  Login enviado...
+2026-08-31 09:19:39,328  INFO  \u2705 Login exitoso. session_id: 98a41732...
+2026-08-31 09:19:39,329  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=98a417322f2466aeaf45ef489a5124af&cd=prodkernel
+2026-08-31 09:19:39,839  INFO  Recarga 1/10...
+2026-08-31 09:19:43,935  INFO    filas .bak encontradas: 0
+2026-08-31 09:19:43,936  INFO  Recarga 2/10...
+2026-08-31 09:19:48,417  INFO    filas .bak encontradas: 0
+2026-08-31 09:19:48,417  INFO  Recarga 3/10...
+2026-08-31 09:19:52,495  INFO    filas .bak encontradas: 0
+2026-08-31 09:19:52,495  INFO  Recarga 4/10...
+2026-08-31 09:19:56,561  INFO    filas .bak encontradas: 0
+2026-08-31 09:19:56,562  INFO  Recarga 5/10...
+2026-08-31 09:20:01,056  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:01,056  INFO  Recarga 6/10...
+2026-08-31 09:20:05,133  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:05,133  INFO  Recarga 7/10...
+2026-08-31 09:20:09,213  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:09,213  INFO  Recarga 8/10...
+2026-08-31 09:20:13,708  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:13,708  INFO  Recarga 9/10...
+2026-08-31 09:20:17,782  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:17,782  INFO  Recarga 10/10...
+2026-08-31 09:20:21,850  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:21,850  INFO  Recarga 11/10...
+2026-08-31 09:20:26,342  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:26,343  INFO  Recarga 12/10...
+2026-08-31 09:20:30,414  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:30,414  INFO  Recarga 13/10...
+2026-08-31 09:20:34,488  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:34,488  INFO  Recarga 14/10...
+2026-08-31 09:20:38,990  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:38,991  INFO  Recarga 15/10...
+2026-08-31 09:20:43,062  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:43,063  INFO  Recarga 16/10...
+2026-08-31 09:20:47,143  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:47,143  INFO  Recarga 17/10...
+2026-08-31 09:20:51,628  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:51,628  INFO  Recarga 18/10...
+2026-08-31 09:20:55,702  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:55,702  INFO  Recarga 19/10...
+2026-08-31 09:20:59,768  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:59,769  INFO  Recarga 20/10...
+2026-08-31 09:21:04,259  INFO    filas .bak encontradas: 0
+2026-08-31 09:21:04,259  ERROR  \u274c Error: Tabla no cargó tras 10 recargas.
+2026-08-31 09:21:04,332  INFO  Captura guardada: error_screenshot.png
+2026-08-31 09:21:07,036  ERROR  
+2026-08-31 09:21:07,036  ERROR  \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
+2026-08-31 09:21:07,037  ERROR  \u2551  \u274c PIPELINE FALLÓ                                   \u2551
+2026-08-31 09:21:07,037  ERROR  \u2551  Error: Tabla no cargó tras 10 recargas.            \u2551
+2026-08-31 09:21:07,037  ERROR  \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d
+2026-08-31 09:21:07,045  ERROR  Traceback (most recent call last):
+  File "C:\Scripts\BackupManager\00_pipeline_completo.py", line 57, in main
+    descargar()
+    ~~~~~~~~~^^
+  File "C:\Scripts\BackupManager\descargar_backup_manager.py", line 268, in main
+    filas = navegar_a_backups(driver, wait, session_id)
+  File "C:\Scripts\BackupManager\descargar_backup_manager.py", line 156, in navegar_a_backups
+    raise TimeoutError("Tabla no cargó tras 10 recargas.")
+TimeoutError: Tabla no cargó tras 10 recargas.
+
+31/08/2026  9:21:07.17 - ERROR en el pipeline 

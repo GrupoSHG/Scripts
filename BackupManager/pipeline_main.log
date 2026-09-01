@@ -52357,3 +52357,95 @@ psycopg2.OperationalError: connection to server at "db.ffxopvzxyeacpbtxuagu.supa
 connection to server at "db.ffxopvzxyeacpbtxuagu.supabase.co" (2600:1f1e:90b:a701:d232:1c31:5735:cb24), port 6543 failed: FATAL:  SASL authentication failed
 
 
+2026-08-31 08:45:12,588 INFO ============================================================
+2026-08-31 08:45:12,590 INFO   CARGA INDIVIDUAL — ventas_full.xls
+2026-08-31 08:45:12,592 INFO ============================================================
+2026-08-31 08:48:52,392 INFO ============================================================
+2026-08-31 08:48:52,394 INFO   CARGA INDIVIDUAL — ventas_full.xls
+2026-08-31 08:48:52,394 INFO ============================================================
+2026-08-31 08:49:43,446 INFO ============================================================
+2026-08-31 08:49:43,447 INFO   CARGA INDIVIDUAL — ventas_full.xls
+2026-08-31 08:49:43,448 INFO ============================================================
+2026-08-31 08:49:44,363 INFO Cargando pestaña 'nombrevtsfl' → tabla 'ventas_full'...
+2026-08-31 08:49:46,207 INFO   └─ ventas_full: 2,954 filas cargadas
+2026-08-31 08:49:46,209 INFO   └─ ✅ ventas_full: 2,954 filas cargadas
+2026-08-31 08:49:46,226 INFO ✅ Carga completada.
+2026-08-31 09:19:26,195  INFO  ╔═════════════════════════════════════════════════════╗
+2026-08-31 09:19:26,197  INFO  ║   PIPELINE VENTAS FULL — Inicio: 2026-08-31 09:19   ║
+2026-08-31 09:19:26,197  INFO  ╚═════════════════════════════════════════════════════╝
+2026-08-31 09:19:26,197  INFO  
+2026-08-31 09:19:26,197  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-31 09:19:26,197  INFO    PASO 1/8 — Descargar backup desde Manager
+2026-08-31 09:19:26,197  INFO  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-08-31 09:19:27,115  INFO  =======================================================
+2026-08-31 09:19:27,116  INFO    Iniciando descarga automática de backup Manager
+2026-08-31 09:19:27,116  INFO  =======================================================
+2026-08-31 09:19:31,015  INFO  Abriendo login: https://prodkernel.manager.cl/index.html
+2026-08-31 09:19:34,977  INFO  Inputs visibles: 3
+2026-08-31 09:19:35,313  INFO  Login enviado...
+2026-08-31 09:19:39,328  INFO  ✅ Login exitoso. session_id: 98a41732...
+2026-08-31 09:19:39,329  INFO  Navegando a: https://prodkernel.manager.cl/managerbackups.html?session_id=98a417322f2466aeaf45ef489a5124af&cd=prodkernel
+2026-08-31 09:19:39,839  INFO  Recarga 1/10...
+2026-08-31 09:19:43,935  INFO    filas .bak encontradas: 0
+2026-08-31 09:19:43,936  INFO  Recarga 2/10...
+2026-08-31 09:19:48,417  INFO    filas .bak encontradas: 0
+2026-08-31 09:19:48,417  INFO  Recarga 3/10...
+2026-08-31 09:19:52,495  INFO    filas .bak encontradas: 0
+2026-08-31 09:19:52,495  INFO  Recarga 4/10...
+2026-08-31 09:19:56,561  INFO    filas .bak encontradas: 0
+2026-08-31 09:19:56,562  INFO  Recarga 5/10...
+2026-08-31 09:20:01,056  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:01,056  INFO  Recarga 6/10...
+2026-08-31 09:20:05,133  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:05,133  INFO  Recarga 7/10...
+2026-08-31 09:20:09,213  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:09,213  INFO  Recarga 8/10...
+2026-08-31 09:20:13,708  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:13,708  INFO  Recarga 9/10...
+2026-08-31 09:20:17,782  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:17,782  INFO  Recarga 10/10...
+2026-08-31 09:20:21,850  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:21,850  INFO  Recarga 11/10...
+2026-08-31 09:20:26,342  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:26,343  INFO  Recarga 12/10...
+2026-08-31 09:20:30,414  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:30,414  INFO  Recarga 13/10...
+2026-08-31 09:20:34,488  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:34,488  INFO  Recarga 14/10...
+2026-08-31 09:20:38,990  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:38,991  INFO  Recarga 15/10...
+2026-08-31 09:20:43,062  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:43,063  INFO  Recarga 16/10...
+2026-08-31 09:20:47,143  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:47,143  INFO  Recarga 17/10...
+2026-08-31 09:20:51,628  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:51,628  INFO  Recarga 18/10...
+2026-08-31 09:20:55,702  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:55,702  INFO  Recarga 19/10...
+2026-08-31 09:20:59,768  INFO    filas .bak encontradas: 0
+2026-08-31 09:20:59,769  INFO  Recarga 20/10...
+2026-08-31 09:21:04,259  INFO    filas .bak encontradas: 0
+2026-08-31 09:21:04,259  ERROR  ❌ Error: Tabla no cargó tras 10 recargas.
+2026-08-31 09:21:04,332  INFO  Captura guardada: error_screenshot.png
+2026-08-31 09:21:07,036  ERROR  
+2026-08-31 09:21:07,036  ERROR  ╔═════════════════════════════════════════════════════╗
+2026-08-31 09:21:07,037  ERROR  ║  ❌ PIPELINE FALLÓ                                   ║
+2026-08-31 09:21:07,037  ERROR  ║  Error: Tabla no cargó tras 10 recargas.            ║
+2026-08-31 09:21:07,037  ERROR  ╚═════════════════════════════════════════════════════╝
+2026-08-31 09:21:07,045  ERROR  Traceback (most recent call last):
+  File "C:\Scripts\BackupManager\00_pipeline_completo.py", line 57, in main
+    descargar()
+    ~~~~~~~~~^^
+  File "C:\Scripts\BackupManager\descargar_backup_manager.py", line 268, in main
+    filas = navegar_a_backups(driver, wait, session_id)
+  File "C:\Scripts\BackupManager\descargar_backup_manager.py", line 156, in navegar_a_backups
+    raise TimeoutError("Tabla no cargó tras 10 recargas.")
+TimeoutError: Tabla no cargó tras 10 recargas.
+
+2026-08-31 10:57:09,938 INFO ============================================================
+2026-08-31 10:57:09,939 INFO   CARGA INDIVIDUAL — ordenes_de_produccion.xls
+2026-08-31 10:57:09,939 INFO ============================================================
+2026-08-31 10:57:10,624 INFO Cargando pestaña 'nombreop' → tabla 'ordenes_de_produccion'...
+2026-08-31 10:57:12,142 INFO   └─ ordenes_de_produccion: 3,778 filas cargadas
+2026-08-31 10:57:12,144 INFO   └─ ✅ ordenes_de_produccion: 3,778 filas cargadas
+2026-08-31 10:57:12,148 INFO ✅ Carga completada.
