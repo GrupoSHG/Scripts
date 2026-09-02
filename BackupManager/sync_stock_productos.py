@@ -147,8 +147,17 @@ def upsert_stock(conn, df: pd.DataFrame):
     log.info(f"  └─ {SCHEMA_NAME}.{TABLE_NAME}: {len(df):,} filas upserteadas")
 
     # Borra lo que ya no vino en esta corrida (producto/bodega sin stock real)
+    #
+    # FIX: el pooler de Supabase (PgBouncer/Supavisor) puede reciclar la
+    # misma sesión de Postgres entre corridas distintas de este script
+    # (sobre todo en runners de GitHub Actions, que abren conexiones
+    # nuevas seguido) — así que una tabla temporal creada en una corrida
+    # anterior puede seguir "viva" para la sesión que nos toca esta vez.
+    # DROP IF EXISTS antes de crearla asegura que siempre partamos de
+    # cero, sin depender de que la sesión de Postgres sea nueva.
     claves = [(codigo, bodega) for codigo, bodega, *_ in filas]
     with conn.cursor() as cur:
+        cur.execute(sql.SQL("DROP TABLE IF EXISTS _claves_vigentes"))
         cur.execute(
             sql.SQL("CREATE TEMP TABLE _claves_vigentes (codigo TEXT, bodega_nombre TEXT)")
         )
@@ -167,6 +176,11 @@ def upsert_stock(conn, df: pd.DataFrame):
             """).format(sql.Identifier(SCHEMA_NAME, TABLE_NAME))
         )
         borradas = cur.rowcount
+        # Limpieza explícita al final también, para no dejarla ni siquiera
+        # para el resto de esta misma sesión (por si el pooler la reutiliza
+        # para otro script del pipeline que corra después, en la misma
+        # conexión).
+        cur.execute(sql.SQL("DROP TABLE IF EXISTS _claves_vigentes"))
     conn.commit()
     if borradas:
         log.info(f"  └─ {SCHEMA_NAME}.{TABLE_NAME}: {borradas:,} filas obsoletas eliminadas (sin stock ya / bodega distinta)")
