@@ -29,11 +29,12 @@ SELECT
     FAC.NUMFACT                                                         AS [factura_asociada],
     CONVERT(varchar(10), FAC.FECHA, 23)                                 AS [fecha_factura],
 
-    -- NOTA DE CRÉDITO asociada a la misma Nota de Venta (TIPODOC = 4,
-    -- confirmado). Vinculada por el mismo NROPEDIDO, igual que la Factura.
-    NC.NUMFACT                                                          AS [nota_credito],
-    CONVERT(varchar(10), NC.FECHA, 23)                                  AS [fecha_nota_credito],
-    NC.TOTAL                                                            AS [monto_nota_credito]
+    -- TODAS las Notas de Crédito asociadas a la misma Nota de Venta
+    -- (TIPODOC = 4, confirmado), agrupadas para no duplicar la fila de
+    -- la guía si hay más de una NC.
+    ISNULL(NC.numeros_nc, '')                                           AS [notas_credito],
+    ISNULL(NC.cantidad_nc, 0)                                           AS [cantidad_notas_credito],
+    ISNULL(NC.monto_total_nc, 0)                                        AS [monto_total_notas_credito]
 
 FROM NOTV_DB NV
 LEFT JOIN CLIEN_DB  CL  ON CL.NREGUIST = NV.NRUTCLIE
@@ -42,7 +43,16 @@ JOIN      DOCU_DB   D   ON D.NROPEDIDO = NV.NUMNOTA AND D.TIPODOC = 2
 JOIN      DOCDE_DB  DD  ON DD.NUMRECOR = D.NUMREG
 LEFT JOIN ART_DB    AP  ON AP.NREGUIST = DD.NCODART
 LEFT JOIN DOCU_DB   FAC ON FAC.NROPEDIDO = NV.NUMNOTA AND FAC.TIPODOC IN (0, 1)
-LEFT JOIN DOCU_DB   NC  ON NC.NROPEDIDO  = NV.NUMNOTA AND NC.TIPODOC = 4
+LEFT JOIN (
+    SELECT
+        NROPEDIDO,
+        STRING_AGG(CAST(NUMFACT AS VARCHAR(20)), ', ') AS numeros_nc,
+        COUNT(*)                                        AS cantidad_nc,
+        SUM(TOTAL)                                       AS monto_total_nc
+    FROM DOCU_DB
+    WHERE TIPODOC = 4
+    GROUP BY NROPEDIDO
+) NC ON NC.NROPEDIDO = NV.NUMNOTA
 
 WHERE NV.FECHA >= '2026-01-01'
   AND NV.TOTAL <> 0
