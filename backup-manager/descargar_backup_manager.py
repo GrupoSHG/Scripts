@@ -28,11 +28,11 @@ from selenium.webdriver.support import expected_conditions as EC
 # ─────────────────────────────────────────────
 MANAGER_URL     = "https://prodkernel.manager.cl"
 EMPRESA_CD      = "prodkernel"
-# En tu notebook, si no seteas estas 2 variables de entorno, sigue usando
-# los valores de siempre (no hay que cambiar nada local). En GitHub
-# Actions, se sobreescriben con los Secrets MANAGER_USER / MANAGER_PASSWORD.
-USUARIO         = os.environ.get("MANAGER_USER", "respaldos_poliuretano")
-CONTRASENA      = os.environ.get("MANAGER_PASSWORD", "puCvufRrcjXemsU5jLY4V9uz")
+# Requiere las variables de entorno MANAGER_USER y MANAGER_PASSWORD (localmente
+# expórtalas o usa un archivo .env; en GitHub Actions vienen de los Secrets
+# MANAGER_USER / MANAGER_PASSWORD). Sin ellas, el script falla al iniciar.)
+USUARIO         = os.environ["MANAGER_USER"]
+CONTRASENA      = os.environ["MANAGER_PASSWORD"]  # sin valor por defecto: debe venir de env var / GitHub Secret
 CARPETA_DESTINO = r"C:\Backups\Manager"
 # ─────────────────────────────────────────────
 
