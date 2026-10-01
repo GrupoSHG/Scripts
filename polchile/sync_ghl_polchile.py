@@ -211,3 +211,7 @@ if __name__ == "__main__":
         if e.code not in (None, 0) and os.environ.get("GITHUB_ACTIONS"):
             print(f"::error::{e.code}")
         raise
+    except Exception as e:
+        if os.environ.get("GITHUB_ACTIONS"):
+            print(f"::error::{type(e).__name__}: {e}")
+        raise
