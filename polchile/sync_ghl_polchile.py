@@ -144,9 +144,11 @@ def main():
         if not despues:
             break
 
-    oportunidades, pagina = [], 1
+    # Paginación por cursor (startAfter + startAfterId): con muchas oportunidades GHL
+    # rechaza "page" (SEARCH_USE_START_AFTER_PAGINATION).
+    oportunidades, cursor = [], {}
     while True:
-        datos = ghl("/opportunities/search", {"location_id": loc, "limit": 100, "page": pagina})
+        datos = ghl("/opportunities/search", {"location_id": loc, "limit": 100, **cursor})
         lote = datos.get("opportunities", [])
         for o in lote:
             c = o.get("contact") or {}
@@ -173,10 +175,11 @@ def main():
             for k in ("fuente_sesion", "medio", "campana"):      # sin atribución propia: la del contacto
                 fila[k] = fila[k] or ficha.get(k)
             oportunidades.append(fila)
-        total = (datos.get("meta") or {}).get("total")
-        if len(lote) < 100 or (total is not None and len(oportunidades) >= total):
+        meta = datos.get("meta") or {}
+        total = meta.get("total")
+        if len(lote) < 100 or (total is not None and len(oportunidades) >= total) or not meta.get("startAfterId"):
             break
-        pagina += 1
+        cursor = {"startAfter": meta.get("startAfter"), "startAfterId": meta.get("startAfterId")}
 
     print(f"GHL Polchile: {len(pipelines)} pipelines, {len(etapas)} etapas, {len(usuarios)} usuarios, "
           f"{len(oportunidades)} oportunidades, {len(contactos)} contactos, {len(razones)} razones de pérdida")

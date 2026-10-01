@@ -114,9 +114,11 @@ def main():
     nombres = usuarios()
     nombres_campos = campos_personalizados()
 
-    oportunidades, pagina = [], 1
+    # Paginación por cursor (startAfter + startAfterId): con muchas oportunidades GHL
+    # rechaza "page" (SEARCH_USE_START_AFTER_PAGINATION).
+    oportunidades, cursor = [], {}
     while True:
-        datos = ghl("/opportunities/search", {"location_id": LOCATION, "limit": 100, "page": pagina})
+        datos = ghl("/opportunities/search", {"location_id": LOCATION, "limit": 100, **cursor})
         lote = datos.get("opportunities", [])
         for o in lote:
             contacto = o.get("contact") or {}
@@ -134,10 +136,11 @@ def main():
                 "campos": {nombres_campos.get(c.get("id"), c.get("id")): valor_campo(c)
                            for c in (o.get("customFields") or []) if valor_campo(c) is not None},
             })
-        total = (datos.get("meta") or {}).get("total")
-        if len(lote) < 100 or (total is not None and len(oportunidades) >= total):
+        meta = datos.get("meta") or {}
+        total = meta.get("total")
+        if len(lote) < 100 or (total is not None and len(oportunidades) >= total) or not meta.get("startAfterId"):
             break
-        pagina += 1
+        cursor = {"startAfter": meta.get("startAfter"), "startAfterId": meta.get("startAfterId")}
 
     print(f"GHL: {len(pipelines)} pipelines, {len(etapas)} etapas, {len(oportunidades)} oportunidades")
     if "--simular" in sys.argv:
