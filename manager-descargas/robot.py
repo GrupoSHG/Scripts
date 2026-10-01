@@ -309,7 +309,17 @@ def abrir_manager(ctx, correo, clave_ramaflex):
             pg.wait_for_timeout(1000)
         if not m.is_closed() and "time.manager.cl" in m.url:
             return m
-        log(f"la pestaña de Manager no cargó ({m.url[:40] if not m.is_closed() else 'cerrada'}), reintento")
+        detalle = 'cerrada'
+        if not m.is_closed():
+            detalle = m.url[:40]
+            try:   # la página de error de Chrome trae el código (ERR_CONNECTION_REFUSED, ERR_TIMED_OUT...)
+                texto = m.evaluate("document.body ? document.body.innerText : ''")
+                codigo = [t for t in texto.split() if t.startswith('ERR_')]
+                if codigo:
+                    detalle += ' ' + codigo[0]
+            except Exception:
+                pass
+        log(f"la pestaña de Manager no cargó ({detalle}), reintento")
         if not m.is_closed():
             m.close()
         pg.wait_for_timeout(5000)
@@ -327,7 +337,14 @@ def descargar(visible=False):
         try:
             for intento in range(1, INTENTOS_SESION + 1):
                 log(f"abriendo Manager (intento {intento})")
-                s = Sesion(abrir_manager(ctx, env["RAMAFLEX_CORREO"], env["RAMAFLEX_CLAVE"]))
+                try:
+                    s = Sesion(abrir_manager(ctx, env["RAMAFLEX_CORREO"], env["RAMAFLEX_CLAVE"]))
+                except FalloRobot as e:   # Ramaflex o el servidor de Manager no respondieron
+                    log(f"intento {intento} falló: {e}")
+                    if intento == INTENTOS_SESION:
+                        raise
+                    time.sleep(45)
+                    continue
                 try:
                     s.login_manager(env["MANAGER_USUARIO"], env["MANAGER_CLAVE"])
                     break
