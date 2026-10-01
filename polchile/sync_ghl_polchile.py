@@ -204,7 +204,19 @@ def main():
 LOTE = 1000
 
 
+def limpiar(v):
+    """Postgres no acepta el carácter nulo (\u0000) en texto; algunos campos del CRM lo traen."""
+    if isinstance(v, str):
+        return v.replace("\x00", "")
+    if isinstance(v, list):
+        return [limpiar(x) for x in v]
+    if isinstance(v, dict):
+        return {limpiar(k): limpiar(x) for k, x in v.items()}
+    return v
+
+
 def rpc(funcion, cuerpo):
+    cuerpo = limpiar(cuerpo)
     key = os.environ["SUPABASE_SERVICE_KEY"]
     req = urllib.request.Request(
         f"{SUPABASE_URL}/rest/v1/rpc/{funcion}", data=json.dumps(cuerpo).encode("utf-8"),
