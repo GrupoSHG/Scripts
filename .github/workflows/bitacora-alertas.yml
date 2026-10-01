@@ -1,0 +1,84 @@
+# Aviso por correo de la Bitácora de Iniciativas
+# Lunes a viernes, cada hora entre 09:00 y 18:00 (hora de Santiago), envía un correo
+# preguntando en qué se trabajó la hora que terminó, con link a la bitácora.
+#
+# Requiere (Settings → Secrets and variables → Actions):
+#   Secrets:   BITACORA_MAIL_USER  (cuenta que envía, ej. atorres@polchile.cl)
+#              BITACORA_MAIL_PASS  (contraseña de aplicación de Google de esa cuenta)
+#   Variables: BITACORA_URL        (link de Netlify de la bitácora)
+#              BITACORA_MAIL_TO    (opcional; por defecto atorres@polchile.cl)
+
+name: Bitácora – aviso por correo cada hora
+
+on:
+  schedule:
+    # En UTC. Cubre 09:00–18:00 de Santiago tanto en horario de verano (UTC-3)
+    # como de invierno (UTC-4); el script descarta las horas fuera de jornada.
+    - cron: "3 12-22 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      forzar:
+        description: "Enviar un aviso de prueba ahora (aunque sea fuera de horario)"
+        type: boolean
+        default: true
+
+jobs:
+  aviso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Enviar aviso
+        env:
+          MAIL_USER: ${{ secrets.BITACORA_MAIL_USER }}
+          MAIL_PASS: ${{ secrets.BITACORA_MAIL_PASS }}
+          MAIL_TO: ${{ vars.BITACORA_MAIL_TO || 'atorres@polchile.cl' }}
+          BITACORA_URL: ${{ vars.BITACORA_URL }}
+          FORZAR: ${{ github.event_name == 'workflow_dispatch' && inputs.forzar }}
+        run: |
+          python3 - <<'PY'
+          import os, ssl, smtplib, datetime
+          from zoneinfo import ZoneInfo
+          from email.message import EmailMessage
+
+          ahora = datetime.datetime.now(ZoneInfo("America/Santiago"))
+          h = ahora.hour
+          forzar = os.environ.get("FORZAR") == "true"
+          if not forzar and (ahora.isoweekday() > 5 or not 9 <= h <= 18):
+              print(f"Fuera de jornada ({ahora:%a %H:%M}), no se envía.")
+              raise SystemExit(0)
+
+          user, pw = os.environ.get("MAIL_USER"), os.environ.get("MAIL_PASS")
+          if not user or not pw:
+              raise SystemExit("Faltan los secrets BITACORA_MAIL_USER / BITACORA_MAIL_PASS.")
+          para = os.environ.get("MAIL_TO") or "atorres@polchile.cl"
+          url = os.environ.get("BITACORA_URL") or ""
+
+          desde, hasta = f"{h-1:02d}:00", f"{h:02d}:00"
+          asunto = f"Bitácora: ¿qué hiciste de {desde} a {hasta}?"
+          boton = (f'<a href="{url}" style="display:inline-block;background:#1f2422;color:#fff;'
+                   'text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:700;'
+                   'font-size:14px">Registrar hora</a>') if url else ""
+          html = f"""
+          <div style="font-family:Arial,sans-serif;max-width:480px;color:#242722">
+            <div style="background:#1f3d52;color:#fff;padding:16px 20px;border-radius:12px 12px 0 0">
+              <div style="font-size:18px;font-weight:700">Bitácora de Iniciativas</div>
+              <div style="font-size:13px;opacity:.85">{desde} – {hasta}</div>
+            </div>
+            <div style="border:1px solid #e2e0d8;border-top:0;padding:18px 20px;border-radius:0 0 12px 12px">
+              <p style="margin:0 0 14px;font-size:15px">¿En qué iniciativa estuviste trabajando y cuánto avanzaste?</p>
+              {boton}
+            </div>
+          </div>"""
+
+          msg = EmailMessage()
+          msg["Subject"] = asunto
+          msg["From"] = f"Bitácora <{user}>"
+          msg["To"] = para
+          msg.set_content(f"{asunto}\nRegistra la hora en: {url}")
+          msg.add_alternative(html, subtype="html")
+
+          with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl.create_default_context()) as s:
+              s.login(user, pw)
+              s.send_message(msg)
+          print(f"Aviso enviado a {para}: {asunto}")
+          PY

@@ -1,0 +1,59 @@
+# Monitoreo de los sistemas Polchile
+# Cada hora chequea sitios (Netlify/Firebase), backends Apps Script y
+# Supabase; avisa por correo cuando algo se cae, recordatorio cada 6 h si sigue
+# caído, y cuando se recupera. Lógica en .github/scripts/monitoreo.py.
+#
+# Usa los mismos secrets de correo que la Bitácora:
+#   Secrets:   BITACORA_MAIL_USER, BITACORA_MAIL_PASS
+#   Variables: MONITOREO_MAIL_TO (opcional; por defecto atorres@polchile.cl)
+#              BITACORA_URL      (opcional; si existe, también se chequea)
+
+name: Monitoreo de sistemas
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+    inputs:
+      forzar:
+        description: "Enviar el correo con el estado completo aunque no haya cambios"
+        type: boolean
+        default: true
+
+concurrency:
+  group: monitoreo
+  cancel-in-progress: false
+
+jobs:
+  chequeo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+
+      # El estado (qué estaba caído y desde cuándo) se guarda entre corridas en
+      # el cache de Actions, para avisar solo cuando algo cambia.
+      - name: Restaurar estado anterior
+        uses: actions/cache/restore@v4
+        with:
+          path: estado.json
+          key: monitoreo-estado-${{ github.run_id }}
+          restore-keys: monitoreo-estado-
+
+      - name: Chequear sistemas
+        env:
+          MAIL_USER: ${{ secrets.BITACORA_MAIL_USER }}
+          MAIL_PASS: ${{ secrets.BITACORA_MAIL_PASS }}
+          MAIL_TO: ${{ vars.MONITOREO_MAIL_TO || 'atorres@polchile.cl' }}
+          BITACORA_URL: ${{ vars.BITACORA_URL }}
+          FORZAR: ${{ github.event_name == 'workflow_dispatch' && inputs.forzar }}
+        run: python3 .github/scripts/monitoreo.py
+
+      - name: Guardar estado
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: estado.json
+          key: monitoreo-estado-${{ github.run_id }}

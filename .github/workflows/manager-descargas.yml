@@ -1,0 +1,89 @@
+# Robot de descargas de Manager -> Supabase (ver manager-descargas/README.md)
+# Lunes a viernes, cada hora de 09:00 a 18:00 (hora de Santiago): exporta
+# "02-INFORME DE VENTAS FULL" y "Notas de Venta" desde Manager Time ERP y
+# reemplaza shg_dashboards.ventas_full / notas_de_venta.
+#
+# Secrets requeridos: RAMAFLEX_CORREO, RAMAFLEX_CLAVE, MANAGER_CLAVE, SUPABASE_SERVICE_KEY
+# Si falla, las capturas de pantalla quedan como artefacto de la corrida, y el
+# monitoreo avisa por correo si pasan más de 2 h sin carga.
+
+name: Manager – descargas cada hora
+
+on:
+  schedule:
+    # En UTC. Cubre 09:00–18:00 de Santiago en horario de verano (UTC-3) e
+    # invierno (UTC-4); el primer paso descarta las horas fuera de jornada.
+    - cron: "7 12-22 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      forzar:
+        description: "Correr ahora aunque sea fuera de horario"
+        type: boolean
+        default: true
+      sin_cargar:
+        description: "Solo descargar (no reemplazar las tablas en Supabase)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: manager-descargas
+  cancel-in-progress: false
+
+jobs:
+  descargar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: manager-descargas
+    steps:
+      - name: ¿Dentro de jornada?
+        id: horario
+        working-directory: .
+        run: |
+          h=$(TZ=America/Santiago date +%-H); d=$(TZ=America/Santiago date +%u)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.forzar }}" = "true" ]; then
+            echo "correr=true" >> "$GITHUB_OUTPUT"
+          elif [ "$d" -le 5 ] && [ "$h" -ge 9 ] && [ "$h" -le 18 ]; then
+            echo "correr=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Fuera de jornada (día $d, $h h en Santiago), no se corre."
+            echo "correr=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.horario.outputs.correr == 'true'
+        with:
+          sparse-checkout: manager-descargas
+
+      - uses: actions/setup-python@v5
+        if: steps.horario.outputs.correr == 'true'
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: manager-descargas/requirements.txt
+
+      - name: Instalar dependencias y Chromium
+        if: steps.horario.outputs.correr == 'true'
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Descargar informes y cargar a Supabase
+        if: steps.horario.outputs.correr == 'true'
+        env:
+          RAMAFLEX_CORREO: ${{ secrets.RAMAFLEX_CORREO }}
+          RAMAFLEX_CLAVE: ${{ secrets.RAMAFLEX_CLAVE }}
+          MANAGER_CLAVE: ${{ secrets.MANAGER_CLAVE }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python robot.py ${{ inputs.sin_cargar && '--sin-cargar' || '' }}
+
+      - name: Subir capturas (para revisar si algo falla)
+        if: always() && steps.horario.outputs.correr == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: capturas-${{ github.run_id }}
+          path: manager-descargas/capturas/
+          retention-days: 7
+          if-no-files-found: ignore
