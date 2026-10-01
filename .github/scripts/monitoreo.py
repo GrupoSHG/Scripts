@@ -41,6 +41,7 @@ CHEQUEOS = [
     {"nombre": "Calendario Despachos (web)", "tipo": "web", "url": "https://calendario-despachos.netlify.app/"},
     {"nombre": "Hojalatería El Abuelo (Firebase)", "tipo": "web", "url": "https://hojalateria-el-abuelo.web.app/"},
     {"nombre": "Trazabilidad NV (web)", "tipo": "web", "url": "https://trazabilidad-nv-polchile.netlify.app/"},
+    {"nombre": "M5 Pipeline y Proyectos (web)", "tipo": "web", "url": "https://m5-proyectos-polchile.netlify.app/"},
     {"nombre": "App CyS (web)", "tipo": "web", "url": "https://appcys.netlify.app/", "min_bytes": 400},
     {"nombre": "Bitácora de Iniciativas (web)", "tipo": "web", "url": "https://bitacorapiopio.netlify.app/"},
     {"nombre": "Intranet Polchile (web)", "tipo": "web", "url": "https://intranetpolchile.netlify.app/"},

@@ -79,6 +79,9 @@ begin
   if mi = 17 then
     perform automatizacion.disparar('monitoreo.yml', '{"forzar": "false"}');
   end if;
+  if h between 8 and 21 and mi = 12 then
+    perform automatizacion.disparar('m5-ghl-sync.yml');
+  end if;
 end $$;
 
 revoke all on function automatizacion.disparar(text, jsonb) from public, anon, authenticated;

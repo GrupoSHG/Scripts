@@ -1,0 +1,30 @@
+# Sincronización CRM M5 Industrial (GoHighLevel) -> Supabase schema m5
+# Cada hora (lo dispara Supabase) copia pipelines y oportunidades de la subcuenta M5
+# y crea un proyecto por cada oportunidad ganada. Lógica en .github/scripts/sync_ghl_m5.py.
+#
+#   Secrets: GHL_M5_TOKEN (Private Integration de la subcuenta M5), SUPABASE_SERVICE_KEY
+
+name: Sincronizar CRM M5
+
+on:
+  # Sin "schedule": lo dispara Supabase (automatizacion/disparador_workflows.sql).
+  workflow_dispatch:
+
+concurrency:
+  group: m5-ghl-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+
+      - name: Sincronizar
+        env:
+          GHL_M5_TOKEN: ${{ secrets.GHL_M5_TOKEN }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python3 .github/scripts/sync_ghl_m5.py
