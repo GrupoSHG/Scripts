@@ -82,6 +82,9 @@ begin
   if h between 8 and 21 and mi = 12 then
     perform automatizacion.disparar('m5-ghl-sync.yml');
   end if;
+  if h between 8 and 21 and mi = 22 then
+    perform automatizacion.disparar('ghl-polchile-sync.yml');
+  end if;
 end $$;
 
 revoke all on function automatizacion.disparar(text, jsonb) from public, anon, authenticated;
