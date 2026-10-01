@@ -264,7 +264,8 @@ class Sesion:
 
     def logoff(self):
         try:
-            self.click(TASKBAR_REMOTE_APP, 2)
+            if not self.calza("panel_remote_app", PANTALLAS["panel_remote_app"]):
+                self.click(TASKBAR_REMOTE_APP, 2)   # traer el panel al frente (si ya está, el clic lo escondería)
             self.click(PANEL_LOGOFF, 2)
             self.esperar("cierre_sesion", 15)
             self.click(CIERRE_SESION_SI, 3)
@@ -297,9 +298,22 @@ def abrir_manager(ctx, correo, clave_ramaflex):
             pg.screenshot(path=os.path.join(CAPTURAS, "error_ramaflex.png"))
             raise FalloRobot("no aparece el botón 'Manager Time ERP' (¿falló el login de Ramaflex?)")
         pg.wait_for_timeout(1000)
-    with ctx.expect_page(timeout=20000) as nueva:
-        boton.click()
-    return nueva.value
+    pg.wait_for_timeout(6000)       # el botón aparece antes de que Ramaflex prepare el acceso
+    for _ in range(3):
+        with ctx.expect_page(timeout=20000) as nueva:
+            boton.click()
+        m = nueva.value
+        # La pestaña nace en about:blank y debe navegar a time.manager.cl; si queda en blanco, reintentar.
+        limite = time.time() + 30
+        while time.time() < limite and not m.is_closed() and "time.manager.cl" not in m.url:
+            pg.wait_for_timeout(1000)
+        if not m.is_closed() and "time.manager.cl" in m.url:
+            return m
+        log(f"la pestaña de Manager no cargó ({m.url[:40] if not m.is_closed() else 'cerrada'}), reintento")
+        if not m.is_closed():
+            m.close()
+        pg.wait_for_timeout(5000)
+    raise FalloRobot("Ramaflex no abrió Manager Time ERP (la pestaña quedó en blanco)")
 
 
 def descargar(visible=False):
