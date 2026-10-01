@@ -277,27 +277,34 @@ class Sesion:
 
 
 def abrir_manager(ctx, correo, clave_ramaflex):
-    pg = ctx.pages[0] if ctx.pages else ctx.new_page()
+    # Pestaña nueva en cada intento: una anterior puede quedar a medio cargar.
+    pg = ctx.new_page()
+    for vieja in [x for x in ctx.pages if x is not pg]:
+        vieja.close()
     pg.goto("https://home.ramaflex.cl", timeout=60000)
-    pg.wait_for_timeout(5000)
-    if pg.locator("input[name=password]").count():
-        log("login Ramaflex")
-        pg.fill("input[name=username]", correo)
-        pg.fill("input[name=password]", clave_ramaflex)
-        pg.click("button[name=action]")
-        pg.wait_for_timeout(8000)
-    # Ramaflex puede tardar y suele mostrar un aviso ("Entendido") que oculta el
-    # resto de la página: cerrarlo y esperar el botón hasta 45 s.
+    # Ramaflex puede tardar en mostrar el formulario o el panel, y suele mostrar un aviso
+    # ("Entendido") que oculta el resto de la página. Se reacciona a lo que aparezca.
     boton = pg.get_by_role("button", name="Manager Time ERP")
     aviso = pg.get_by_role("button", name="Entendido")
-    limite = time.time() + 45
-    while not boton.count() or not boton.is_visible():
-        if aviso.count() and aviso.is_visible():
+    clave = pg.locator("input[name=password]")
+    logueado = False
+    limite = time.time() + 60
+    while not (boton.count() and boton.is_visible()):
+        if not logueado and clave.count() and clave.is_visible():
+            log("login Ramaflex")
+            pg.fill("input[name=username]", correo)
+            clave.fill(clave_ramaflex)
+            pg.click("button[name=action]")
+            logueado = True
+            limite = time.time() + 60       # dar tiempo a que cargue el panel
+        elif aviso.count() and aviso.is_visible():
             aviso.click()
         if time.time() > limite:
             pg.screenshot(path=os.path.join(CAPTURAS, "error_ramaflex.png"))
             raise FalloRobot("no aparece el botón 'Manager Time ERP' (¿falló el login de Ramaflex?)")
         pg.wait_for_timeout(1000)
+    if aviso.count() and aviso.is_visible():
+        aviso.click()
     pg.wait_for_timeout(6000)       # el botón aparece antes de que Ramaflex prepare el acceso
     for _ in range(3):
         with ctx.expect_page(timeout=20000) as nueva:
