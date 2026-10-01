@@ -3,7 +3,8 @@ para el Dashboard Gerencia Comercial (informe "Dashboard Gerencia Comercial Polc
 
 Trae pipelines, usuarios, todas las oportunidades (con fuente, atribución de marketing,
 razón de pérdida, etiquetas, región y campos personalizados) y todos los contactos, y
-los reemplaza en una sola transacción con polchile_crm.sincronizar_ghl.
+los sube por lotes a las tablas de carga y los publica en una sola transacción
+(polchile_crm.iniciar_carga / cargar_lote / publicar_carga).
 
 Variables de entorno: GHL_POLCHILE_TOKEN, SUPABASE_SERVICE_KEY, GHL_POLCHILE_LOCATION (opcional).
 Para probar en local se pueden poner en un .env junto a este archivo (no se sube a git):
@@ -191,19 +192,35 @@ def main():
         print(f"Oportunidades con fuente/atribución: {con_fuente} de {len(oportunidades)}")
         return
 
+    rpc("iniciar_carga", {})
+    for nombre, filas in (("pipeline_etapas", etapas), ("usuarios", usuarios),
+                          ("oportunidades", oportunidades), ("contactos", contactos)):
+        for k in range(0, len(filas), LOTE):
+            rpc("cargar_lote", {"tabla": nombre, "filas": filas[k:k + LOTE]})
+    print("Supabase:", json.dumps(rpc("publicar_carga", {})))
+
+
+# Lotes chicos: una sola llamada con todo el CRM saturó la base (HTTP 520).
+LOTE = 1000
+
+
+def rpc(funcion, cuerpo):
     key = os.environ["SUPABASE_SERVICE_KEY"]
     req = urllib.request.Request(
-        f"{SUPABASE_URL}/rest/v1/rpc/sincronizar_ghl",
-        data=json.dumps({"etapas": etapas, "usuarios": usuarios, "oportunidades": oportunidades,
-                         "contactos": contactos}).encode("utf-8"),
+        f"{SUPABASE_URL}/rest/v1/rpc/{funcion}", data=json.dumps(cuerpo).encode("utf-8"),
         headers={"apikey": key, "Authorization": "Bearer " + key, "Content-Type": "application/json",
                  "Content-Profile": "polchile_crm"},
         method="POST")
-    try:
-        with urllib.request.urlopen(req, timeout=300) as r:
-            print("Supabase:", r.read().decode())
-    except urllib.error.HTTPError as e:
-        raise SystemExit(f"Supabase rechazó la sincronización (HTTP {e.code}): {e.read().decode('utf-8', 'replace')[:500]}")
+    for intento in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=120) as r:
+                texto = r.read().decode()
+                return json.loads(texto) if texto else None
+        except urllib.error.HTTPError as e:
+            if e.code >= 500 and intento < 2:
+                time.sleep(10)
+                continue
+            raise SystemExit(f"Supabase rechazó {funcion} (HTTP {e.code}): {e.read().decode('utf-8', 'replace')[:500]}")
 
 
 if __name__ == "__main__":
