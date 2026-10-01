@@ -3,7 +3,7 @@
 # CRM de Polchile para el Dashboard Gerencia Comercial. Lógica en polchile/sync_ghl_polchile.py.
 #
 #   Secrets:   GHL_POLCHILE_TOKEN (Private Integration de Polchile), SUPABASE_SERVICE_KEY
-#   Variables: GHL_POLCHILE_LOCATION (id de la subcuenta, sale en la URL /v2/location/<id>/)
+#   Variables: GHL_POLCHILE_LOCATION (opcional; por defecto la subcuenta de Polchile, fija en el script)
 
 name: Sincronizar CRM Polchile
 

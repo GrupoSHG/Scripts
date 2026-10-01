@@ -5,7 +5,7 @@ Trae pipelines, usuarios, todas las oportunidades (con fuente, atribución de ma
 razón de pérdida, etiquetas, región y campos personalizados) y todos los contactos, y
 los reemplaza en una sola transacción con polchile_crm.sincronizar_ghl.
 
-Variables de entorno: GHL_POLCHILE_TOKEN, GHL_POLCHILE_LOCATION, SUPABASE_SERVICE_KEY.
+Variables de entorno: GHL_POLCHILE_TOKEN, SUPABASE_SERVICE_KEY, GHL_POLCHILE_LOCATION (opcional).
 Para probar en local se pueden poner en un .env junto a este archivo (no se sube a git):
   python polchile/sync_ghl_polchile.py --simular
 
@@ -31,11 +31,12 @@ GHL_API = "https://services.leadconnectorhq.com"
 SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 
 
+# Subcuenta de Polchile en hub.thehublab.cl (sale en la URL /v2/location/<id>/). No es secreto.
+LOCATION_POLCHILE = "Gx3QQKLSPxmRU9211gGO"
+
+
 def location():
-    loc = os.environ.get("GHL_POLCHILE_LOCATION")
-    if not loc:
-        raise SystemExit("Falta GHL_POLCHILE_LOCATION (el id que aparece en la URL /v2/location/<id>/ del CRM de Polchile)")
-    return loc
+    return os.environ.get("GHL_POLCHILE_LOCATION") or LOCATION_POLCHILE
 
 
 def ghl(ruta, params=None, cuerpo=None, opcional=False):
