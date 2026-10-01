@@ -9,11 +9,9 @@
 
 name: Manager – descargas cada hora
 
+# Sin "schedule": el de GitHub llega con horas de atraso. Lo dispara a la hora
+# exacta Supabase (automatizacion/disparador_workflows.sql) o el botón "Run workflow".
 on:
-  schedule:
-    # En UTC. Cubre 09:00–18:00 de Santiago en horario de verano (UTC-3) e
-    # invierno (UTC-4); el primer paso descarta las horas fuera de jornada.
-    - cron: "7 12-22 * * 1-5"
   workflow_dispatch:
     inputs:
       forzar:
