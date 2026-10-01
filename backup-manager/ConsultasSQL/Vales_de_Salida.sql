@@ -37,4 +37,4 @@ WHERE d.tipodoc IN (2, 6, 8)
   AND d.FECHA <  @FechaFin
   AND d.NULA = 0
 
-ORDER BY origen DESC, dd.NUMOT, d.FECHA;
+ORDER BY origen DESC, OP, FECHA_VS;

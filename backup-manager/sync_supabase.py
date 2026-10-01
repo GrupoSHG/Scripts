@@ -80,12 +80,23 @@ def leer_proveedores_desde_excel() -> pd.DataFrame:
     return df
 
 
+def _a_texto(v):
+    """Las columnas de proveedores son text. NaN no se puede mandar en JSON, y en
+    columnas numéricas (ej. teléfono) pandas vuelve a convertir None en NaN; por
+    eso cada valor se pasa a str (o None) uno por uno."""
+    if v is None or (isinstance(v, float) and pd.isna(v)):
+        return None
+    if isinstance(v, float) and v.is_integer():
+        return str(int(v))          # 22334455.0 -> "22334455"
+    return str(v).strip() or None
+
+
 def normalizar_proveedores(df: pd.DataFrame) -> pd.DataFrame:
     """Limpia nulos y descarta filas sin RUT (no se puede hacer match sin RUT)."""
     df = df[df["rut"].notna()].copy()
-    for col in ["nombre", "direccion", "ciudad", "comuna", "telefono", "email"]:
-        df[col] = df[col].where(df[col].notna(), None)
-    return df[["rut", "nombre", "direccion", "ciudad", "comuna", "telefono", "email"]]
+    cols = ["rut", "nombre", "direccion", "ciudad", "comuna", "telefono", "email"]
+    df = df[cols].astype(object)
+    return df
 
 
 def sincronizar_a_supabase(df: pd.DataFrame):
@@ -101,7 +112,9 @@ def sincronizar_a_supabase(df: pd.DataFrame):
     actualizados = 0
     errores = 0
 
-    for _, row in df.iterrows():
+    for _, fila in df.iterrows():
+        # Se limpia al armar el envío: iterrows() vuelve a convertir los None en NaN.
+        row = {k: _a_texto(fila[k]) for k in df.columns}
         payload = {
             "rut": row["rut"],
             "nombre": row["nombre"],
