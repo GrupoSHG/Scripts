@@ -55,7 +55,9 @@ def ghl(ruta, params):
     url = f"{GHL_API}{ruta}?{urllib.parse.urlencode(params)}"
     req = urllib.request.Request(url, headers={
         "Authorization": "Bearer " + os.environ["GHL_M5_TOKEN"],
-        "Version": "2021-07-28", "Accept": "application/json"})
+        "Version": "2021-07-28", "Accept": "application/json",
+        # Cloudflare (error 1010) bloquea la firma por defecto de Python-urllib.
+        "User-Agent": "Mozilla/5.0 (compatible; PolchileDashboardM5/1.0)"})
     for intento in range(4):
         try:
             with urllib.request.urlopen(req, timeout=60) as r:
