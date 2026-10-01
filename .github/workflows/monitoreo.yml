@@ -1,5 +1,5 @@
 # Monitoreo de los sistemas Polchile
-# Cada hora chequea sitios (Netlify/Firebase), backends Apps Script y
+# Cada hora (lo dispara Supabase) chequea sitios (Netlify/Firebase), backends Apps Script y
 # Supabase; avisa por correo cuando algo se cae, recordatorio cada 6 h si sigue
 # caído, y cuando se recupera. Lógica en .github/scripts/monitoreo.py.
 #
@@ -11,8 +11,8 @@
 name: Monitoreo de sistemas
 
 on:
-  schedule:
-    - cron: "17 * * * *"
+  # Sin "schedule": el de GitHub llega con horas de atraso o se salta corridas.
+  # Lo dispara a la hora exacta Supabase (automatizacion/disparador_workflows.sql).
   workflow_dispatch:
     inputs:
       forzar:

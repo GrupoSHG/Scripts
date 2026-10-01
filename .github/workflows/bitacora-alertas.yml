@@ -1,5 +1,5 @@
 # Aviso por correo de la Bitácora de Iniciativas
-# Lunes a viernes, cada hora entre 09:00 y 18:00 (hora de Santiago), envía un correo
+# Lunes a viernes, cada hora entre 09:00 y 18:00 (hora de Santiago; lo dispara Supabase), envía un correo
 # preguntando en qué se trabajó la hora que terminó, con link a la bitácora.
 #
 # Requiere (Settings → Secrets and variables → Actions):
@@ -11,10 +11,8 @@
 name: Bitácora – aviso por correo cada hora
 
 on:
-  schedule:
-    # En UTC. Cubre 09:00–18:00 de Santiago tanto en horario de verano (UTC-3)
-    # como de invierno (UTC-4); el script descarta las horas fuera de jornada.
-    - cron: "3 12-22 * * 1-5"
+  # Sin "schedule": el de GitHub llega con horas de atraso o se salta corridas.
+  # Lo dispara a la hora exacta Supabase (automatizacion/disparador_workflows.sql).
   workflow_dispatch:
     inputs:
       forzar:
