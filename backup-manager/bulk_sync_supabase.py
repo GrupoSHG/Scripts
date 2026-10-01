@@ -157,9 +157,35 @@ def crear_tabla(conn, nombre_tabla: str, df: pd.DataFrame):
     conn.commit()
 
 
+def columnas_existentes(conn, nombre_tabla: str):
+    """Columnas actuales de la tabla en orden, o None si la tabla no existe."""
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT column_name FROM information_schema.columns "
+            "WHERE table_schema = %s AND table_name = %s ORDER BY ordinal_position",
+            (SCHEMA_NAME, nombre_tabla))
+        cols = [r[0] for r in cur.fetchall()]
+    return cols or None
+
+
+def preparar_tabla(conn, nombre_tabla: str, df: pd.DataFrame):
+    """Si la tabla ya existe con las mismas columnas, solo se vacía (TRUNCATE) sin
+    confirmar la transacción: así el COPY siguiente queda en la misma transacción,
+    los dashboards nunca ven la tabla vacía y las vistas que dependen de ella
+    (ej. shg_dashboards.trazabilidad_nv sobre guias y notas_de_venta) no se rompen.
+    Un DROP falla con "cannot drop table ... because other objects depend on it".
+    Si cambiaron las columnas, se recrea como antes."""
+    if columnas_existentes(conn, nombre_tabla) == [str(c) for c in df.columns]:
+        with conn.cursor() as cur:
+            cur.execute(sql.SQL("TRUNCATE TABLE {}").format(sql.Identifier(SCHEMA_NAME, nombre_tabla)))
+        return
+    crear_tabla(conn, nombre_tabla, df)
+
+
 def cargar_datos_copy(conn, nombre_tabla: str, df: pd.DataFrame):
     """Carga masiva rápida vía COPY (mucho más veloz que INSERT fila por fila)."""
     if df.empty:
+        conn.commit()
         log.info(f"  └─ {nombre_tabla}: sin filas, tabla queda vacía")
         return
 
@@ -175,8 +201,8 @@ def cargar_datos_copy(conn, nombre_tabla: str, df: pd.DataFrame):
     tabla_id = sql.Identifier(SCHEMA_NAME, nombre_tabla)
     with conn.cursor() as cur:
         cur.copy_expert(
-            sql.SQL("COPY {} FROM STDIN WITH (FORMAT csv, NULL '')").format(
-                tabla_id
+            sql.SQL("COPY {} ({}) FROM STDIN WITH (FORMAT csv, NULL '')").format(
+                tabla_id, sql.SQL(", ").join(sql.Identifier(str(c)) for c in df_csv.columns)
             ).as_string(conn),
             buffer
         )
@@ -208,7 +234,7 @@ def sincronizar_todo(ruta_excel: Path):
             try:
                 df = pd.read_excel(ruta_excel, sheet_name=nombre_pestana)
                 df = preparar_dataframe(df)
-                crear_tabla(conn, nombre_tabla, df)
+                preparar_tabla(conn, nombre_tabla, df)
                 cargar_datos_copy(conn, nombre_tabla, df)
                 resumen_ok.append((nombre_tabla, len(df)))
             except Exception as e:
