@@ -2,7 +2,7 @@
 
 Flujo (calibrado sobre la pantalla real, viewport 1600x900):
   home.ramaflex.cl -> login -> botón "Manager Time ERP" (abre el escritorio remoto TSplus)
-  -> panel Remote App -> "ERP Manager SQL Polchile" -> login Manager (clave)
+  -> panel Remote App -> "ERP Manager SQL Polchile" -> login Manager (usuario + clave)
   -> menú Manager -> Centro de Información -> informe -> Guardar (disquete)
   -> nombre + OK -> "¿Abrir con Excel?" Sí -> el navegador recibe el .xls
   -> Logoff del panel Remote App.
@@ -57,6 +57,8 @@ INFORMES = [
 
 # Coordenadas calibradas
 PANEL_ERP_MANAGER = (80, 443)
+LOGIN_USUARIO = (460, 369)
+CAJA_USUARIO = (349, 364, 470, 376)  # texto del campo Usuario (referencia: usuario_manager.png)
 LOGIN_CLAVE = (468, 417)
 LOGIN_OK = (485, 440)
 CAJA_CLAVE = (352, 410, 585, 425)  # campo Clave: se ven puntos cuando tiene texto
@@ -145,11 +147,28 @@ class Sesion:
 
     # ── Pasos ──
 
-    def login_manager(self, clave):
+    def elegir_usuario(self, usuario):
+        """El login recuerda el último usuario que entró desde el escritorio remoto
+        (hay varios). Se escribe el nombre en el combo y se confirma contra la
+        referencia antes de escribir la clave, para no usarla en otro usuario."""
+        for _ in range(3):
+            self.click(LOGIN_USUARIO)
+            self.tecla("Home", 0.5)
+            self.tecla("Shift+End", 0.5)
+            self.escribir(usuario)
+            self.tecla("Tab", 2.5)                   # Manager valida el nombre y carga el email
+            if self.calza("usuario_manager", CAJA_USUARIO):
+                return
+        self.captura("error_usuario")
+        raise FalloRobot(f"no se pudo seleccionar el usuario '{usuario}' en el login de Manager "
+                         "(si cambió MANAGER_USUARIO, hay que recapturar referencias/usuario_manager.png)")
+
+    def login_manager(self, usuario, clave):
         self.esperar("panel_remote_app", 90)
         self.click(PANEL_ERP_MANAGER)
         self.esperar("login_manager", 90)
         self.m.wait_for_timeout(1500)
+        self.elegir_usuario(usuario)
         # El diálogo puede aparecer sin foco: clic en Clave y confirmar que el texto llegó.
         for intento in range(3):
             self.click(LOGIN_CLAVE)
@@ -290,7 +309,7 @@ def descargar(visible=False):
                 log(f"abriendo Manager (intento {intento})")
                 s = Sesion(abrir_manager(ctx, env["RAMAFLEX_CORREO"], env["RAMAFLEX_CLAVE"]))
                 try:
-                    s.login_manager(env["MANAGER_CLAVE"])
+                    s.login_manager(env["MANAGER_USUARIO"], env["MANAGER_CLAVE"])
                     break
                 except Exception as e:
                     # La sesión remota a veces se corta al conectar (otra sesión del mismo

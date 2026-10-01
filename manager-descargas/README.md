@@ -14,7 +14,7 @@ Esas tablas alimentan el Cockpit, el Calendario y el Dashboard de Producción.
 1. `robot.py` hace la navegación, calibrada sobre la pantalla real en un viewport de 1600x900:
    - entra a home.ramaflex.cl y presiona "Manager Time ERP", que abre el escritorio remoto TSplus;
    - en el panel Remote App abre "ERP Manager SQL Polchile";
-   - en el login de Manager escribe la clave;
+   - en el login de Manager escribe el usuario (`MANAGER_USUARIO`; el combo recuerda al último que entró, y hay varios), confirma que quedó el correcto comparándolo con `referencias/usuario_manager.png` y recién entonces escribe la clave;
    - va a Manager → Centro de Información, abre el informe, presiona Guardar (el disquete), escribe el nombre, OK y "¿Abrir con Excel?" Sí;
    - el navegador recibe el `.xls`;
    - al final hace Logoff.
@@ -26,7 +26,7 @@ Esas tablas alimentan el Cockpit, el Calendario y el Dashboard de Producción.
 
 En GitHub Actions: workflow `.github/workflows/manager-descargas.yml`, de lunes a viernes cada hora de 9 a 18 (hora de Santiago). Tiene el botón "Run workflow" para correrlo a mano.
 
-Necesita estos secrets del repo (Settings → Secrets and variables → Actions): `RAMAFLEX_CORREO`, `RAMAFLEX_CLAVE`, `MANAGER_CLAVE` y `SUPABASE_SERVICE_KEY`. Si una corrida falla, las capturas de pantalla quedan como artefacto de esa corrida.
+Necesita estos secrets del repo (Settings → Secrets and variables → Actions): `RAMAFLEX_CORREO`, `RAMAFLEX_CLAVE`, `MANAGER_USUARIO`, `MANAGER_CLAVE` y `SUPABASE_SERVICE_KEY`. Si una corrida falla, las capturas de pantalla quedan como artefacto de esa corrida.
 
 Para correrlo en un PC (por ejemplo, para recalibrar):
 
@@ -52,5 +52,6 @@ copy .env.example .env      (completar las credenciales)
 
 - Revisa la corrida en Actions: el log del paso "Descargar informes" y el artefacto `capturas-...`. Los archivos `error_*.png` muestran la pantalla donde se detuvo.
 - **Usa el mismo usuario de Manager que tú.** La URL de TSplus trae `disconnect=1`, así que si tienes Manager abierto cuando corre el robot, una sesión expulsa a la otra. El robot reintenta hasta 4 veces.
+- Si se cambia `MANAGER_USUARIO` a otra persona, hay que recapturar `referencias/usuario_manager.png` (el texto del campo Usuario con ese nombre).
 - Si Manager cambia de versión o de diseño (posiciones, colores, textos), hay que recalibrar. Las coordenadas están en las constantes al inicio de `robot.py`, y las referencias se recortan de capturas nuevas.
 - Si se agrega un informe nuevo al Centro de Información, no pasa nada: el robot busca por nombre, no por posición.

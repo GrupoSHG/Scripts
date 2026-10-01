@@ -3,7 +3,7 @@
 # "02-INFORME DE VENTAS FULL" y "Notas de Venta" desde Manager Time ERP y
 # reemplaza shg_dashboards.ventas_full / notas_de_venta.
 #
-# Secrets requeridos: RAMAFLEX_CORREO, RAMAFLEX_CLAVE, MANAGER_CLAVE, SUPABASE_SERVICE_KEY
+# Secrets requeridos: RAMAFLEX_CORREO, RAMAFLEX_CLAVE, MANAGER_USUARIO, MANAGER_CLAVE, SUPABASE_SERVICE_KEY
 # Si falla, las capturas de pantalla quedan como artefacto de la corrida, y el
 # monitoreo avisa por correo si pasan más de 2 h sin carga.
 
@@ -74,6 +74,7 @@ jobs:
         env:
           RAMAFLEX_CORREO: ${{ secrets.RAMAFLEX_CORREO }}
           RAMAFLEX_CLAVE: ${{ secrets.RAMAFLEX_CLAVE }}
+          MANAGER_USUARIO: ${{ secrets.MANAGER_USUARIO }}
           MANAGER_CLAVE: ${{ secrets.MANAGER_CLAVE }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           PYTHONIOENCODING: utf-8
