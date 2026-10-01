@@ -15,6 +15,7 @@ users.readonly y locations/customFields.readonly.
 """
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -33,7 +34,7 @@ GHL_API = "https://services.leadconnectorhq.com"
 LOCATION = os.environ.get("GHL_M5_LOCATION") or "LVfUGrPaqm62ekFL9z0I"
 SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 
-# Probabilidad inicial por etapa, igual que el pipeline de Polchile (cockpit-comercial).
+# Si el nombre de la etapa no trae el %, probabilidad inicial como en el pipeline de Polchile (cockpit-comercial).
 # Después se puede ajustar a mano en m5.pipeline_etapas.
 PROB = [("lead no atendido", 5), ("lead atendido", 10), ("cotizacion enviada", 40),
         ("negociacion cierre", 70), ("nv emitida", 90), ("compromiso de comp", 95), ("ganado", 100)]
@@ -44,6 +45,10 @@ def sin_tildes(s):
 
 
 def probabilidad(nombre):
+    # En M5 la etapa trae su probabilidad en el nombre: "Visita a Terreno y Reunión 25%".
+    m = re.search(r"(\d+)\s*%\s*$", nombre)
+    if m:
+        return int(m.group(1))
     n = sin_tildes(nombre)
     for clave, p in PROB:
         if clave in n:
