@@ -8,7 +8,7 @@ m5.sincronizar_ghl, que en una sola transacción:
 
 Variables de entorno: GHL_M5_TOKEN, SUPABASE_SERVICE_KEY, GHL_M5_LOCATION (opcional).
 Para probar en local se pueden poner en un .env junto a este archivo (no se sube a git):
-  python .github/scripts/sync_ghl_m5.py --simular
+  python m5/sync_ghl_m5.py --simular
 
 Scopes del Private Integration Token: opportunities.readonly, contacts.readonly,
 users.readonly y locations/customFields.readonly.
