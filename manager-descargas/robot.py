@@ -285,14 +285,17 @@ def abrir_manager(ctx, correo, clave_ramaflex):
         pg.fill("input[name=password]", clave_ramaflex)
         pg.click("button[name=action]")
         pg.wait_for_timeout(8000)
+    # Ramaflex puede tardar y suele mostrar un aviso ("Entendido") que oculta el
+    # resto de la página: cerrarlo y esperar el botón hasta 45 s.
     boton = pg.get_by_role("button", name="Manager Time ERP")
-    try:
-        boton.wait_for(state="visible", timeout=45000)   # Ramaflex a veces tarda en cargar
-    except PlaywrightTimeout:
-        pg.screenshot(path=os.path.join(CAPTURAS, "error_ramaflex.png"))
-        raise FalloRobot("no aparece el botón 'Manager Time ERP' (¿falló el login de Ramaflex?)")
-    if pg.get_by_role("button", name="Entendido").count():
-        pg.get_by_role("button", name="Entendido").click()
+    aviso = pg.get_by_role("button", name="Entendido")
+    limite = time.time() + 45
+    while not boton.count() or not boton.is_visible():
+        if aviso.count() and aviso.is_visible():
+            aviso.click()
+        if time.time() > limite:
+            pg.screenshot(path=os.path.join(CAPTURAS, "error_ramaflex.png"))
+            raise FalloRobot("no aparece el botón 'Manager Time ERP' (¿falló el login de Ramaflex?)")
         pg.wait_for_timeout(1000)
     with ctx.expect_page(timeout=20000) as nueva:
         boton.click()
