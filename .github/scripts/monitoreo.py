@@ -7,7 +7,6 @@ cuando sigue caído (recordatorio cada RECORDATORIO_HORAS) y cuando se recupera.
 Variables de entorno:
   MAIL_USER, MAIL_PASS   cuenta Gmail y contraseña de aplicación (obligatorias para enviar)
   MAIL_TO                destinatario(s), separados por coma
-  BITACORA_URL           (opcional) se agrega como sitio a chequear
   ESTADO_PATH            archivo de estado (default: estado.json)
   FORZAR=true            envía el correo con el estado completo aunque no haya cambios
 """
@@ -41,6 +40,12 @@ CHEQUEOS = [
     {"nombre": "Dashboard Finanzas (web)", "tipo": "web", "url": "https://dashboard-finanzasweb.netlify.app/"},
     {"nombre": "Calendario Despachos (web)", "tipo": "web", "url": "https://calendario-despachos.netlify.app/"},
     {"nombre": "Hojalatería El Abuelo (Firebase)", "tipo": "web", "url": "https://hojalateria-el-abuelo.web.app/"},
+    {"nombre": "Trazabilidad NV (web)", "tipo": "web", "url": "https://trazabilidad-nv-polchile.netlify.app/"},
+    {"nombre": "App CyS (web)", "tipo": "web", "url": "https://appcys.netlify.app/", "min_bytes": 400},
+    {"nombre": "Bitácora de Iniciativas (web)", "tipo": "web", "url": "https://bitacorapiopio.netlify.app/"},
+    {"nombre": "Intranet Polchile (web)", "tipo": "web", "url": "https://intranetpolchile.netlify.app/"},
+    {"nombre": "Stock por Familias (web)", "tipo": "web", "url": "https://productosstock.netlify.app/"},
+    {"nombre": "Cubicador de Ramplas (web)", "tipo": "web", "url": "https://lucky-piroshki-0c9c53.netlify.app/"},
     {"nombre": "Apps Script Finanzas", "tipo": "appscript",
      "url": APPS_SCRIPT.format("AKfycby0pnIUuRy8bjn108mc9ly4eET4Aa8_B0qD4qZrkqJZAGOtKmvYIOmq-M_mv3Fjuc0Y", "getDatos")},
     {"nombre": "Apps Script Producción", "tipo": "appscript",
@@ -57,8 +62,6 @@ CHEQUEOS = [
      "url": SUPABASE_URL + "/rest/v1/rpc/ultima_carga_manager"},
 ]
 MAX_HORAS_CARGA = 2
-if os.environ.get("BITACORA_URL"):
-    CHEQUEOS.append({"nombre": "Bitácora de Iniciativas", "tipo": "web", "url": os.environ["BITACORA_URL"]})
 
 
 def pedir(url, headers=None, data=None):
@@ -107,7 +110,7 @@ def chequear_una_vez(c):
     if status != 200:
         return False, f"HTTP {status}"
     if c["tipo"] == "web":
-        if len(cuerpo) < 200:
+        if len(cuerpo) < c.get("min_bytes", 200):
             return False, "página vacía"
     else:
         try:

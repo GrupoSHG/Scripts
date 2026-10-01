@@ -6,7 +6,6 @@
 # Usa los mismos secrets de correo que la Bitácora:
 #   Secrets:   BITACORA_MAIL_USER, BITACORA_MAIL_PASS
 #   Variables: MONITOREO_MAIL_TO (opcional; por defecto atorres@polchile.cl)
-#              BITACORA_URL      (opcional; si existe, también se chequea)
 
 name: Monitoreo de sistemas
 
@@ -47,7 +46,6 @@ jobs:
           MAIL_USER: ${{ secrets.BITACORA_MAIL_USER }}
           MAIL_PASS: ${{ secrets.BITACORA_MAIL_PASS }}
           MAIL_TO: ${{ vars.MONITOREO_MAIL_TO || 'atorres@polchile.cl' }}
-          BITACORA_URL: ${{ vars.BITACORA_URL }}
           FORZAR: ${{ github.event_name == 'workflow_dispatch' && inputs.forzar }}
         run: python3 .github/scripts/monitoreo.py
 
