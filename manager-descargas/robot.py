@@ -46,14 +46,29 @@ PANTALLAS = {
     "dialogo_exportar":   (40, 165, 148, 207),    # etiquetas Nombre / Formato
     "abrir_con_excel":    (700, 402, 930, 430),   # "¿Desea ahora abrir ... Excel?"
     "cierre_sesion":      (713, 446, 875, 460),   # "¿Quiere dejar su sesión ahora?"
+    "filtro_fechas_op":   (25, 127, 500, 157),    # filtro de fechas del informe de OP (01-01-2018 a 31-12-2030)
+    # Finanzas > Informes > Documentos Pendientes
+    "informes_ctas_ctes":     (40, 143, 180, 215),    # lista "Consultas" de Informes de cuentas corrientes
+    "dialogo_doc_pendientes": (560, 340, 710, 450),   # opciones "por Fecha de Vencimiento"...
+    "tipo_doc_fav_campo":     (787, 472, 1000, 486),  # campo con "Factura de Venta" ya elegido
+    "grilla_doc_pendientes":  (20, 138, 720, 150),    # encabezados Vmto. / Fecha / Documento...
+    "gestor_impresion":       (580, 276, 1015, 310),  # botones Impresora / Pantalla / Exportar...
+    "formato_exportacion":    (598, 368, 760, 382),   # "Formato de exportación:"
+    "abrir_luego_marcado":    (828, 594, 842, 607),   # casilla "Abrir archivo luego de exportar" marcada
 }
 CAJA_FILTRO = (15, 510, 420, 525)   # línea "Descripción del Filtro : <informe>"
+# Hay tres informes "*PRODUCCIÓN* OP ASOCIADAS A NV POR RANGO FECHA..." que solo se distinguen
+# por el final ("", "(co", "V2"): para ese se compara solo el sufijo, con umbral estricto.
+CAJAS_FILTRO_ESPECIALES = {"filtro_op_asociadas_nv": ((415, 510, 450, 525), 3)}
 
 INFORMES = [
     # (tabla Supabase, referencia de la línea de filtro, sufijo del nombre de archivo)
     ("ventas_full", "filtro_ventas_full", "vf"),
     ("notas_de_venta", "filtro_notas_de_venta", "nvs"),
+    # *PRODUCCIÓN* OP ASOCIADAS A NV POR RANGO FECHA V2: al abrirlo pide un filtro de fechas (se acepta tal cual)
+    ("ordenes_de_produccion", "filtro_op_asociadas_nv", "op"),
 ]
+CON_FILTRO_FECHAS = {"ordenes_de_produccion"}
 
 # Coordenadas calibradas
 PANEL_ERP_MANAGER = (80, 443)
@@ -70,6 +85,20 @@ VISOR_CERRAR = (1573, 62)
 EXPORT_NOMBRE = (380, 171)
 EXPORT_OK = (155, 112)
 EXCEL_SI = (760, 519)
+FILTRO_FECHAS_OK = (704, 93)
+MENU_FINANZAS = (155, 327)
+MENU_FINANZAS_INFORMES = (432, 384)
+INFORMES_DOC_PENDIENTES = (108, 201)
+DOC_PEND_BUSCAR_TIPO = (650, 480)      # botón de búsqueda junto a "Tipo Documento"
+CAJA_FILA_SELECCIONADA_TIPO = (584, 601, 800, 614)   # última fila visible de la lista de tipos
+DOC_PEND_OK = (640, 309)
+DOC_PEND_IMPRIMIR = (84, 89)
+GESTOR_EXPORTAR = (769, 292)
+EXPORTAR_ABRIR_LUEGO = (834, 600)
+EXPORTAR_EJECUTAR = (880, 667)
+GESTOR_CERRAR = (978, 342)
+DOC_PEND_CERRAR = (819, 62)
+INFORMES_CERRAR = (70, 90)       # botón "OK" de Informes de cuentas corrientes
 TASKBAR_REMOTE_APP = (1535, 887)
 PANEL_LOGOFF = (67, 524)
 CIERRE_SESION_SI = (768, 502)
@@ -116,9 +145,9 @@ class Sesion:
             img.save(os.path.join(CAPTURAS, f"{nombre}.png"))
         return img
 
-    def calza(self, ref, caja, img=None):
+    def calza(self, ref, caja, img=None, umbral=UMBRAL):
         img = img or self.captura()
-        return diferencia(self.refs[ref], img.crop(caja)) < UMBRAL
+        return diferencia(self.refs[ref], img.crop(caja)) < umbral
 
     def esperar(self, pantalla, timeout=60):
         caja = PANTALLAS[pantalla]
@@ -210,8 +239,9 @@ class Sesion:
         for _ in range(12):
             self.tecla("PageUp", 0.3)
         self.tecla("Home", 1)
+        caja, umbral = CAJAS_FILTRO_ESPECIALES.get(ref_filtro, (CAJA_FILTRO, UMBRAL))
         for _ in range(80):
-            if self.calza(ref_filtro, CAJA_FILTRO):
+            if self.calza(ref_filtro, caja, umbral=umbral):
                 return
             self.tecla("ArrowDown", 0.7)
         self.captura(f"error_{ref_filtro}")
@@ -222,7 +252,7 @@ class Sesion:
         img = self.captura().convert("RGB")
         racha = []
         for y in range(148, 505):
-            r, g, b = img.getpixel((450, y))
+            r, g, b = img.getpixel((580, y))   # entre "Autor" y "Creado": ahí nunca hay texto
             if r < 40 and 90 < g < 150 and b > 180:
                 racha.append(y)
             elif len(racha) >= 8:
@@ -233,9 +263,12 @@ class Sesion:
             raise FalloRobot("no se encontró la fila seleccionada en la lista de informes")
         return racha[len(racha) // 2]
 
-    def exportar(self, sufijo):
+    def exportar(self, sufijo, con_filtro_fechas=False):
         antes = len(self.descargas)
         self.m.mouse.dblclick(300, self.fila_seleccionada())   # abre el informe seleccionado
+        if con_filtro_fechas:
+            self.esperar("filtro_fechas_op", 30)
+            self.click(FILTRO_FECHAS_OK, 2)
         self.esperar("visor_consultas", 180)
         self.m.wait_for_timeout(4000)            # que termine de cargar la grilla
         self.click(VISOR_GUARDAR, 2)
@@ -260,6 +293,72 @@ class Sesion:
                 raise FalloRobot("no se pudo cerrar el visor de consultas")
             self.click(VISOR_CERRAR, 4)
         self.m.wait_for_timeout(1500)
+        return self.descargas[-1]
+
+    def exportar_documentos_pendientes(self):
+        """Finanzas > Informes > Documentos Pendientes, tipo FAV (facturas de venta por cobrar),
+        exportado a Excel desde el Gestor de Impresión."""
+        antes = len(self.descargas)
+        for _ in range(4):
+            self.click(MENU_MANAGER, 2)
+            if not self.calza("menu_desplegado", PANTALLAS["menu_desplegado"]):
+                self.tecla("Escape", 1)
+                continue
+            self.click(MENU_FINANZAS, 1.5)
+            self.click(MENU_FINANZAS_INFORMES, 3)
+            if self.calza("informes_ctas_ctes", PANTALLAS["informes_ctas_ctes"]):
+                break
+            self.tecla("Escape", 1)
+        else:
+            self.captura("error_menu_finanzas")
+            raise FalloRobot("no se pudo abrir Finanzas > Informes")
+        self.click(INFORMES_DOC_PENDIENTES, 3)
+        self.esperar("dialogo_doc_pendientes", 30)
+        # Tipo de documento: el campo no acepta texto; se elige FAV en la lista bajando de a una fila.
+        self.click(DOC_PEND_BUSCAR_TIPO, 3)
+        self.tecla("Home", 1)                     # la lista puede abrir con otra fila seleccionada
+        for _ in range(45):
+            if self.calza("tipo_doc_fav_fila", CAJA_FILA_SELECCIONADA_TIPO):
+                break
+            self.tecla("ArrowDown", 0.7)
+        else:
+            self.captura("error_tipo_fav")
+            raise FalloRobot("no se encontró el tipo de documento FAV en la lista")
+        self.tecla("Enter", 2)
+        self.esperar("tipo_doc_fav_campo", 15)
+        self.click(DOC_PEND_OK, 3)
+        self.esperar("grilla_doc_pendientes", 120)
+        self.m.wait_for_timeout(2000)
+        self.click(DOC_PEND_IMPRIMIR, 3)
+        self.esperar("gestor_impresion", 30)
+        self.click(GESTOR_EXPORTAR, 3)
+        self.esperar("formato_exportacion", 30)
+        # "Abrir archivo luego de exportar" es lo que hace llegar el archivo al navegador.
+        if not self.calza("abrir_luego_marcado", PANTALLAS["abrir_luego_marcado"]):
+            self.click(EXPORTAR_ABRIR_LUEGO, 1.5)
+        self.click(EXPORTAR_EJECUTAR, 2)
+        limite = time.time() + 180
+        while len(self.descargas) == antes:
+            if time.time() > limite or self.m.is_closed():
+                self.captura("error_descarga_doc_pendientes")
+                raise FalloRobot("no llegó la descarga de Documentos Pendientes")
+            self.m.wait_for_timeout(1000)
+        self.m.wait_for_timeout(3000)
+        # Cerrar en orden lo que quede encima: Gestor de Impresión, la grilla y la ventana
+        # modal "Informes de cuentas corrientes" (mientras esté abierta bloquea el menú Manager).
+        for _ in range(10):
+            img = self.captura()
+            if self.calza("gestor_impresion", PANTALLAS["gestor_impresion"], img) or                self.calza("formato_exportacion", PANTALLAS["formato_exportacion"], img):
+                self.click(GESTOR_CERRAR, 3)
+            elif self.calza("grilla_doc_pendientes", PANTALLAS["grilla_doc_pendientes"], img):
+                self.click(DOC_PEND_CERRAR, 3)
+            elif self.calza("informes_ctas_ctes", PANTALLAS["informes_ctas_ctes"], img):
+                self.click(INFORMES_CERRAR, 3)
+            else:
+                break
+        else:
+            self.captura("error_cerrar_doc_pendientes")
+            raise FalloRobot("no se pudieron cerrar las ventanas de Documentos Pendientes")
         return self.descargas[-1]
 
     def logoff(self):
@@ -288,8 +387,26 @@ def abrir_manager(ctx, correo, clave_ramaflex):
     aviso = pg.get_by_role("button", name="Entendido")
     clave = pg.locator("input[name=password]")
     logueado = False
-    limite = time.time() + 60
+    reseteado = False
+    inicio = time.time()
+    limite = inicio + 60
     while not (boton.count() and boton.is_visible()):
+        # Sesión de Ramaflex invalidada (otra sesión del mismo usuario inició después): la página
+        # queda en blanco con 401 en vez de mandar al login. Se borra la sesión y se recarga.
+        if (not logueado and not reseteado and time.time() - inicio > 20
+                and not (clave.count() and clave.is_visible())):
+            log("Ramaflex sin respuesta (sesión vencida); se borra la sesión guardada y se recarga")
+            ctx.clear_cookies()
+            try:
+                pg.evaluate("localStorage.clear(); sessionStorage.clear()")
+            except Exception:
+                pass
+            try:
+                pg.goto("https://home.ramaflex.cl", timeout=60000)
+            except Exception:
+                pass    # la página puede estar navegando sola (ERR_ABORTED): basta con seguir esperando
+            reseteado = True
+            limite = time.time() + 60
         if not logueado and clave.count() and clave.is_visible():
             log("login Ramaflex")
             pg.fill("input[name=username]", correo)
@@ -346,7 +463,7 @@ def descargar(visible=False):
                 log(f"abriendo Manager (intento {intento})")
                 try:
                     s = Sesion(abrir_manager(ctx, env["RAMAFLEX_CORREO"], env["RAMAFLEX_CLAVE"]))
-                except FalloRobot as e:   # Ramaflex o el servidor de Manager no respondieron
+                except Exception as e:   # Ramaflex o el servidor de Manager no respondieron
                     log(f"intento {intento} falló: {e}")
                     if intento == INTENTOS_SESION:
                         raise
@@ -369,11 +486,13 @@ def descargar(visible=False):
             log("sesión de Manager iniciada")
             archivos = {}
             try:
+                log("exportando documentos_pendientes_fav")
+                archivos["documentos_pendientes_fav"] = s.exportar_documentos_pendientes()
                 s.abrir_centro_informacion()
                 for tabla, ref_filtro, sufijo in INFORMES:
                     log(f"exportando {tabla}")
                     s.seleccionar_informe(ref_filtro)
-                    archivos[tabla] = s.exportar(sufijo)
+                    archivos[tabla] = s.exportar(sufijo, con_filtro_fechas=tabla in CON_FILTRO_FECHAS)
             finally:
                 s.captura("ultimo_estado")
                 s.logoff()

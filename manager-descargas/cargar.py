@@ -38,6 +38,23 @@ COLUMNAS = {
         "cto_repos_total": "entero", "cto_ult_compra_total": "decimal",
         "resultado_cto_prom": "decimal", "resultado_cto_repos": "decimal", "resultado_cto_ult_compra": "decimal",
     },
+    "ordenes_de_produccion": {
+        "nota_vta": "entero", "num_op": "entero", "fechacrea": "fecha", "fechaent": "fecha", "fechain": "fecha",
+        "iniciada": "fecha", "fechafin": "fecha", "cantidad_op": "decimal", "unidmed": "texto",
+        "cantidad_terminada": "decimal", "cantidad_pendiente": "decimal", "nombre_op": "texto",
+        "codigo_producto": "texto", "nombre_producto": "texto", "clase1": "texto", "clase2": "texto",
+        "clase3": "texto", "clase4": "texto", "bodega_id_op": "entero", "bodega_nombre_op": "texto",
+        "bodega_id_nv": "decimal", "bodega_nombre_nv": "texto",
+    },
+    # Documentos Pendientes (FAV): las columnas del Excel tienen otros nombres -> (tipo, columna de origen)
+    "documentos_pendientes_fav": {
+        "documento": ("entero", "numfact"), "doc_cod": ("texto", "doc_cod"),
+        "fecha": ("fecha", "fecha"), "vencimiento": ("fecha", "vencimie"),
+        "debe": ("entero", "debe"), "haber": ("entero", "haber"), "saldo": ("entero", "doc_sdo"),
+        "total": ("entero", "total"), "total_neto": ("entero", "totneto"), "total_iva": ("entero", "totiva"),
+        "razon_social": ("texto", "razsoc"), "rut": ("texto", "rut"), "cod_vendedor": ("texto", "pers_cod"),
+        "vendedor": ("texto", "pers_nom"), "cuenta": ("texto", "cta_cod"), "numreg": ("entero", "numreg"),
+    },
     "notas_de_venta": {
         "numreg": "entero", "numnota": "entero", "fecha": "texto",
         "nrutclie": "entero", "nrutfact": "entero", "rutfact": "texto",
@@ -66,24 +83,31 @@ def leer_xls(tabla, ruta):
     libro = xlrd.open_workbook(ruta, logfile=open(os.devnull, "w"))
     hoja = libro.sheet_by_index(0)
     header = [str(c.value).strip().lower() for c in hoja.row(0)]
-    columnas = COLUMNAS[tabla]
+    # Cada columna es "tipo" (mismo nombre en el Excel) o ("tipo", "columna_en_el_excel").
+    columnas = {col: (d if isinstance(d, tuple) else (d, col)) for col, d in COLUMNAS[tabla].items()}
 
-    faltan = [c for c in columnas if c not in header]
+    faltan = [origen for _, origen in columnas.values() if origen not in header]
     if faltan:
         raise SystemExit(f"{os.path.basename(ruta)} no parece ser el informe de {tabla}: faltan columnas {faltan}")
 
     filas = []
     for r in range(1, hoja.nrows):
         fila = {}
-        for col, tipo in columnas.items():
-            c = header.index(col)
-            celda = hoja.cell(r, c)
+        for col, (tipo, origen) in columnas.items():
+            celda = hoja.cell(r, header.index(origen))
             fila[col] = convertir(celda.value, tipo, celda.ctype, libro.datemode)
         if all(v is None for v in fila.values()):
             continue
         # Igual que la carga histórica: el mes va en inglés, derivado de la fecha.
         if tabla == "ventas_full" and fila["fecha_emision"]:
             fila["mes"] = MESES_EN[int(fila["fecha_emision"][5:7]) - 1]
+        if tabla == "documentos_pendientes_fav":
+            apellido = hoja.cell(r, header.index("pers_apell")).value
+            if fila["vendedor"] and str(apellido).strip():
+                fila["vendedor"] = f'{fila["vendedor"].strip()} {str(apellido).strip()}'
+            for k in ("razon_social", "rut", "vendedor", "doc_cod"):
+                if fila[k]:
+                    fila[k] = fila[k].strip()
         filas.append(fila)
     return filas
 

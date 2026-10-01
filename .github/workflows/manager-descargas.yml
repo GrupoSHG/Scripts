@@ -1,7 +1,8 @@
 # Robot de descargas de Manager -> Supabase (ver manager-descargas/README.md)
-# Lunes a viernes, cada hora de 09:00 a 18:00 (hora de Santiago): exporta
-# "02-INFORME DE VENTAS FULL" y "Notas de Venta" desde Manager Time ERP y
-# reemplaza shg_dashboards.ventas_full / notas_de_venta.
+# Lunes a viernes, cada hora de 09:00 a 18:00 (hora de Santiago): exporta desde
+# Manager Time ERP Documentos Pendientes (FAV), Ventas Full, Notas de Venta y OP
+# asociadas a NV, y reemplaza documentos_pendientes_fav, ventas_full,
+# notas_de_venta y ordenes_de_produccion en shg_dashboards.
 #
 # Secrets requeridos: RAMAFLEX_CORREO, RAMAFLEX_CLAVE, MANAGER_USUARIO, MANAGER_CLAVE, SUPABASE_SERVICE_KEY
 # Si falla, las capturas de pantalla quedan como artefacto de la corrida, y el

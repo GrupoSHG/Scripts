@@ -1,13 +1,15 @@
 # Robot de descargas de Manager → Supabase
 
-Cada hora, de lunes a viernes entre las 9:00 y las 18:00, entra a Manager Time ERP con un navegador sin ventana desde GitHub Actions. Exporta dos informes del Centro de Información y reemplaza estas tablas en Supabase:
+Cada hora, de lunes a viernes entre las 9:00 y las 18:00, entra a Manager Time ERP con un navegador sin ventana desde GitHub Actions. Exporta cuatro informes y reemplaza estas tablas en Supabase:
 
-| Informe en Manager | Tabla |
-|---|---|
-| 02-INFORME DE VENTAS FULL | `shg_dashboards.ventas_full` |
-| Notas de Venta | `shg_dashboards.notas_de_venta` |
+| Informe en Manager | Dónde está | Tabla |
+|---|---|---|
+| Documentos Pendientes, tipo FAV (facturas por cobrar) | Manager → Finanzas → Informes… | `shg_dashboards.documentos_pendientes_fav` |
+| 02-INFORME DE VENTAS FULL | Centro de Información | `shg_dashboards.ventas_full` |
+| Notas de Venta | Centro de Información | `shg_dashboards.notas_de_venta` |
+| \*PRODUCCIÓN\* OP ASOCIADAS A NV POR RANGO FECHA V2 | Centro de Información (acepta el filtro de fechas tal cual) | `shg_dashboards.ordenes_de_produccion` |
 
-Esas tablas alimentan el Cockpit, el Calendario y el Dashboard de Producción.
+Esas tablas alimentan el Cockpit, el Calendario, el Dashboard de Producción y las cuentas por cobrar del SSC Cash Report de Finanzas.
 
 ## Cómo funciona
 
@@ -15,7 +17,8 @@ Esas tablas alimentan el Cockpit, el Calendario y el Dashboard de Producción.
    - entra a home.ramaflex.cl y presiona "Manager Time ERP", que abre el escritorio remoto TSplus;
    - en el panel Remote App abre "ERP Manager SQL Polchile";
    - en el login de Manager escribe el usuario (`MANAGER_USUARIO`; el combo recuerda al último que entró, y hay varios), confirma que quedó el correcto comparándolo con `referencias/usuario_manager.png` y recién entonces escribe la clave;
-   - va a Manager → Centro de Información, abre el informe, presiona Guardar (el disquete), escribe el nombre, OK y "¿Abrir con Excel?" Sí;
+   - Documentos Pendientes: Manager → Finanzas → Informes… → Documentos Pendientes; elige FAV en la lista de tipos (el campo no acepta texto), OK, Imprimir → Gestor de Impresión → Exportar, Hoja de Cálculo con "Abrir archivo luego de exportar" marcado → Ejecutar;
+   - informes del Centro de Información: Manager → Centro de Información, abre el informe, presiona Guardar (el disquete), escribe el nombre, OK y "¿Abrir con Excel?" Sí;
    - el navegador recibe el `.xls`;
    - al final hace Logoff.
 2. En cada paso el robot espera a reconocer la pantalla, comparando una franja con las imágenes de `referencias/`. El escritorio remoto pierde teclas si llegan rápido. Por eso la lista de informes se recorre de a una fila, hasta que la línea "Descripción del Filtro" calza con la referencia del informe.
@@ -54,4 +57,5 @@ copy .env.example .env      (completar las credenciales)
 - **Usa el mismo usuario de Manager que tú.** La URL de TSplus trae `disconnect=1`, así que si tienes Manager abierto cuando corre el robot, una sesión expulsa a la otra. El robot reintenta hasta 4 veces.
 - Si se cambia `MANAGER_USUARIO` a otra persona, hay que recapturar `referencias/usuario_manager.png` (el texto del campo Usuario con ese nombre).
 - Si Manager cambia de versión o de diseño (posiciones, colores, textos), hay que recalibrar. Las coordenadas están en las constantes al inicio de `robot.py`, y las referencias se recortan de capturas nuevas.
-- Si se agrega un informe nuevo al Centro de Información, no pasa nada: el robot busca por nombre, no por posición.
+- Si se agrega un informe nuevo al Centro de Información, no pasa nada: el robot busca por nombre, no por posición. Hay tres informes "OP ASOCIADAS A NV POR RANGO FECHA…" que solo difieren en el final del nombre; para la V2 se compara solo ese final (`CAJAS_FILTRO_ESPECIALES`).
+- **Ramaflex permite una sola sesión por usuario:** si entras a Ramaflex mientras corre el robot (o el robot entra mientras tú estás), una de las dos sesiones queda invalidada. El robot lo detecta (página en blanco con 401), borra su sesión y vuelve a entrar.
