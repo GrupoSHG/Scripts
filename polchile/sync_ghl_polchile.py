@@ -136,6 +136,8 @@ def main():
             fila.update({k: v for k, v in atribucion(c).items() if k != "utm_source"})
             contactos.append(fila)
             contacto_por_id[c["id"]] = fila
+        if len(contactos) % 2000 < 100:
+            print(f"  contactos: {len(contactos)}", flush=True)
         if len(lote) < 100:
             break
         despues = lote[-1].get("searchAfter")
@@ -202,4 +204,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit as e:
+        # En GitHub Actions el error queda como anotación visible en el resumen de la corrida.
+        if e.code not in (None, 0) and os.environ.get("GITHUB_ACTIONS"):
+            print(f"::error::{e.code}")
+        raise
