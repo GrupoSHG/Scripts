@@ -10,7 +10,14 @@
 --   pipeline.yml            lun-vie 06:30
 --   manager-descargas.yml   lun-vie 09:07 a 18:07, cada hora
 --   bitacora-alertas.yml    lun-vie 09:03 a 18:03, cada hora
---   monitoreo.yml           todos los días, cada hora a los :17
+--   monitoreo.yml           todos los días, cada 4 h (00:17, 04:17, ... 20:17)
+--   m5-ghl-sync.yml         todos los días, cada 4 h (08:12, 12:12, 16:12, 20:12)
+--   ghl-polchile-sync.yml   todos los días, cada 4 h (08:22, 12:22, 16:22, 20:22)
+--
+-- Cadencia de 4 h (02-10-2026): si el repo pasa a privado, GitHub cobra los minutos
+-- de Actions sobre los 2.000 gratis al mes. Monitoreo y los dos syncs de CRM cada
+-- hora sumaban ~3.800 min/mes; cada 4 h quedan en ~1.000. El botón "Actualizar
+-- datos" de los dashboards sigue disparando una corrida al instante.
 --
 -- Antes de correr esto, guardar el token en Vault (fine-grained PAT con owner
 -- GrupoSHG, solo el repo Scripts, permiso Actions: Read and write):
@@ -76,13 +83,13 @@ begin
   if habil and h between 9 and 18 and mi = 3 then
     perform automatizacion.disparar('bitacora-alertas.yml', '{"forzar": "false"}');
   end if;
-  if mi = 17 then
+  if h % 4 = 0 and mi = 17 then
     perform automatizacion.disparar('monitoreo.yml', '{"forzar": "false"}');
   end if;
-  if h between 8 and 21 and mi = 12 then
+  if h in (8, 12, 16, 20) and mi = 12 then
     perform automatizacion.disparar('m5-ghl-sync.yml');
   end if;
-  if h between 8 and 21 and mi = 22 then
+  if h in (8, 12, 16, 20) and mi = 22 then
     perform automatizacion.disparar('ghl-polchile-sync.yml');
   end if;
 end $$;

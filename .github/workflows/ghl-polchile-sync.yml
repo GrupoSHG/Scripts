@@ -1,5 +1,5 @@
 # Sincronización CRM Polchile (GoHighLevel) -> Supabase schema polchile_crm
-# Cada hora (lo dispara Supabase) copia pipelines, usuarios, oportunidades y contactos del
+# Cada 4 h (lo dispara Supabase a las 08:22, 12:22, 16:22 y 20:22) copia pipelines, usuarios, oportunidades y contactos del
 # CRM de Polchile para el Dashboard Gerencia Comercial. Lógica en polchile/sync_ghl_polchile.py.
 #
 #   Secrets:   GHL_POLCHILE_TOKEN (Private Integration de Polchile), SUPABASE_SERVICE_KEY

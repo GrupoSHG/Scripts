@@ -1,5 +1,5 @@
 # Sincronización CRM M5 Industrial (GoHighLevel) -> Supabase schema m5
-# Cada hora (lo dispara Supabase) copia pipelines y oportunidades de la subcuenta M5
+# Cada 4 h (lo dispara Supabase a las 08:12, 12:12, 16:12 y 20:12) copia pipelines y oportunidades de la subcuenta M5
 # y crea un proyecto por cada oportunidad ganada. Lógica en m5/sync_ghl_m5.py.
 #
 #   Secrets: GHL_M5_TOKEN (Private Integration de la subcuenta M5), SUPABASE_SERVICE_KEY
