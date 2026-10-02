@@ -43,7 +43,6 @@ CHEQUEOS = [
     {"nombre": "Trazabilidad NV (web)", "tipo": "web", "url": "https://trazabilidad-nv-polchile.netlify.app/"},
     {"nombre": "M5 Pipeline y Proyectos (web)", "tipo": "web", "url": "https://m5-proyectos-polchile.netlify.app/"},
     {"nombre": "App CyS (web)", "tipo": "web", "url": "https://appcys.netlify.app/", "min_bytes": 400},
-    {"nombre": "Bitácora de Iniciativas (web)", "tipo": "web", "url": "https://bitacorapiopio.netlify.app/"},
     {"nombre": "Intranet Polchile (web)", "tipo": "web", "url": "https://intranetpolchile.netlify.app/"},
     {"nombre": "Stock por Familias (web)", "tipo": "web", "url": "https://productosstock.netlify.app/"},
     {"nombre": "Cubicador de Ramplas (web)", "tipo": "web", "url": "https://lucky-piroshki-0c9c53.netlify.app/"},
