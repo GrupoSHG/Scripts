@@ -4,7 +4,7 @@ para el Dashboard Gerencia Comercial (informe "Dashboard Gerencia Comercial Polc
 Trae pipelines, usuarios, todas las oportunidades (con fuente, atribución de marketing,
 razón de pérdida, etiquetas, región y campos personalizados) y todos los contactos, y
 los sube por lotes a las tablas de carga y los publica en una sola transacción
-(polchile_crm.iniciar_carga / cargar_lote / publicar_carga).
+(polchile_crm.iniciar_carga / cargar_lote / publicar_carga; su SQL está en polchile/carga_polchile_crm.sql).
 
 Variables de entorno: GHL_POLCHILE_TOKEN, SUPABASE_SERVICE_KEY, GHL_POLCHILE_LOCATION (opcional).
 Para probar en local se pueden poner en un .env junto a este archivo (no se sube a git):
