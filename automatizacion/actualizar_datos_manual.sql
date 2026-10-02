@@ -148,6 +148,20 @@ revoke all on function public.actualizar_datos(text) from public, anon;
 grant execute on function public.estado_actualizacion(text) to authenticated;
 grant execute on function public.actualizar_datos(text) to authenticated;
 
+-- Hora de la última carga de datos de un workflow, para mostrarla ("Actualizado: hoy 08:49")
+-- también en los dashboards sin login (Calendario, Aceros, Plan). Solo devuelve una fecha y
+-- solo para los workflows habilitados.
+create or replace function public.ultima_actualizacion(p_workflow text)
+returns timestamptz language plpgsql stable security definer set search_path = automatizacion, public as $$
+begin
+  if not exists (select 1 from automatizacion.workflows_manual where workflow = p_workflow) then
+    raise exception 'Workflow no habilitado: %', p_workflow;
+  end if;
+  return automatizacion.ultimo_dato(p_workflow);
+end $$;
+revoke all on function public.ultima_actualizacion(text) from public;
+grant execute on function public.ultima_actualizacion(text) to anon, authenticated;
+
 -- La vista de control muestra también quién pidió cada corrida (se recrea: cambia la lista de columnas).
 drop view if exists automatizacion.ultimos_disparos;
 create or replace view automatizacion.ultimos_disparos as
