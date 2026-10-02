@@ -56,12 +56,12 @@ CHEQUEOS = [
      "url": APPS_SCRIPT.format("AKfycbzqtyzqc9YdCWMZMJd8FRGonBkyAve3Er4WB9MEJxRncEsYuyVSudu_yLzdUWfz2HiR_A", "getDashboardData")},
     {"nombre": "Supabase (app_cys)", "tipo": "supabase",
      "url": SUPABASE_URL + "/rest/v1/centros_costo?select=id&limit=1"},
-    # El robot manager-descargas corre lun-vie cada hora de 9 a 18: avisa si la última
+    # El robot manager-descargas corre lun-vie a las 9, 12, 15 y 18: avisa si la última
     # carga completa (Ventas Full + Notas de Venta) tiene más de MAX_HORAS_CARGA en horario laboral.
     {"nombre": "Robot descargas Manager", "tipo": "frescura",
      "url": SUPABASE_URL + "/rest/v1/rpc/ultima_carga_manager"},
 ]
-MAX_HORAS_CARGA = 2
+MAX_HORAS_CARGA = 4
 
 
 def pedir(url, headers=None, data=None):
@@ -89,7 +89,7 @@ def chequear_frescura(c):
     # Solo se exige frescura cuando el robot debió haber corrido: lun-vie desde las 10 hasta las 19.
     en_horario = ahora.isoweekday() <= 5 and 10 <= ahora.hour <= 19
     if en_horario and horas > MAX_HORAS_CARGA:
-        return False, detalle + f"; debería cargar cada hora (revisar la corrida 'Manager – descargas cada hora' en Actions)"
+        return False, detalle + f"; debería cargar a las 9, 12, 15 y 18 (revisar la corrida 'Manager – descargas (4 veces al día)' en Actions)"
     return True, detalle
 
 

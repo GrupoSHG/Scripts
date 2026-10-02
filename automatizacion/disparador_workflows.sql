@@ -8,16 +8,19 @@
 -- Qué hace: cada minuto, automatizacion.programa() mira la hora de Santiago y,
 -- cuando corresponde, llama a la API de GitHub (workflow_dispatch):
 --   pipeline.yml            lun-vie 06:30
---   manager-descargas.yml   lun-vie 09:07 a 18:07, cada hora
---   bitacora-alertas.yml    lun-vie 09:03 a 18:03, cada hora
---   monitoreo.yml           todos los días, cada 4 h (00:17, 04:17, ... 20:17)
---   m5-ghl-sync.yml         todos los días, cada 4 h (08:12, 12:12, 16:12, 20:12)
---   ghl-polchile-sync.yml   todos los días, cada 4 h (08:22, 12:22, 16:22, 20:22)
+--   manager-descargas.yml   lun-vie 09:07, 12:07, 15:07 y 18:07
+--   monitoreo.yml           todos los días 07:17, 13:17 y 19:17
+--   m5-ghl-sync.yml         lun-vie 08:12, 13:12 y 18:12
+--   ghl-polchile-sync.yml   lun-vie 08:22, 13:22 y 18:22
 --
--- Cadencia de 4 h (02-10-2026): si el repo pasa a privado, GitHub cobra los minutos
--- de Actions sobre los 2.000 gratis al mes. Monitoreo y los dos syncs de CRM cada
--- hora sumaban ~3.800 min/mes; cada 4 h quedan en ~1.000. El botón "Actualizar
--- datos" de los dashboards sigue disparando una corrida al instante.
+-- Cadencia reducida (02-10-2026): si el repo pasa a privado, GitHub cobra los
+-- minutos de Actions sobre los 2.000 gratis al mes (cada corrida se redondea al
+-- minuto; Windows cuenta doble). Con todo cada hora se gastaban ~6.100 min/mes; con
+-- esta cadencia quedan ~1.800: pipeline ~570 (Windows), robot Manager ~620,
+-- CRM Polchile ~330, monitoreo ~180, CRM M5 ~70. El aviso por correo de la
+-- Bitácora (bitacora-alertas.yml) se eliminó. El botón "Actualizar datos" de los
+-- dashboards sigue disparando al instante, pero cada clic cuesta ~40 min
+-- (incluye el pipeline en Windows), así que conviene usarlo con criterio.
 --
 -- Antes de correr esto, guardar el token en Vault (fine-grained PAT con owner
 -- GrupoSHG, solo el repo Scripts, permiso Actions: Read and write):
@@ -77,19 +80,16 @@ begin
   if habil and h = 6 and mi = 30 then
     perform automatizacion.disparar('pipeline.yml');
   end if;
-  if habil and h between 9 and 18 and mi = 7 then
+  if habil and h in (9, 12, 15, 18) and mi = 7 then
     perform automatizacion.disparar('manager-descargas.yml', '{"forzar": "true", "sin_cargar": "false"}');
   end if;
-  if habil and h between 9 and 18 and mi = 3 then
-    perform automatizacion.disparar('bitacora-alertas.yml', '{"forzar": "false"}');
-  end if;
-  if h % 4 = 0 and mi = 17 then
+  if h in (7, 13, 19) and mi = 17 then
     perform automatizacion.disparar('monitoreo.yml', '{"forzar": "false"}');
   end if;
-  if h in (8, 12, 16, 20) and mi = 12 then
+  if habil and h in (8, 13, 18) and mi = 12 then
     perform automatizacion.disparar('m5-ghl-sync.yml');
   end if;
-  if h in (8, 12, 16, 20) and mi = 22 then
+  if habil and h in (8, 13, 18) and mi = 22 then
     perform automatizacion.disparar('ghl-polchile-sync.yml');
   end if;
 end $$;

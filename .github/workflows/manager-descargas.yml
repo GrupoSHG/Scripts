@@ -1,14 +1,15 @@
 # Robot de descargas de Manager -> Supabase (ver manager-descargas/README.md)
-# Lunes a viernes, cada hora de 09:00 a 18:00 (hora de Santiago): exporta desde
+# Lunes a viernes a las 09:07, 12:07, 15:07 y 18:07 (hora de Santiago, lo dispara
+# Supabase; ver automatizacion/disparador_workflows.sql): exporta desde
 # Manager Time ERP Documentos Pendientes (FAV), Ventas Full, Notas de Venta y OP
 # asociadas a NV, y reemplaza documentos_pendientes_fav, ventas_full,
 # notas_de_venta y ordenes_de_produccion en shg_dashboards.
 #
 # Secrets requeridos: RAMAFLEX_CORREO, RAMAFLEX_CLAVE, MANAGER_USUARIO, MANAGER_CLAVE, SUPABASE_SERVICE_KEY
 # Si falla, las capturas de pantalla quedan como artefacto de la corrida, y el
-# monitoreo avisa por correo si pasan más de 2 h sin carga.
+# monitoreo avisa por correo si pasan más de 4 h sin carga.
 
-name: Manager – descargas cada hora
+name: Manager – descargas (4 veces al día)
 
 # Sin "schedule": el de GitHub llega con horas de atraso. Lo dispara a la hora
 # exacta Supabase (automatizacion/disparador_workflows.sql) o el botón "Run workflow".

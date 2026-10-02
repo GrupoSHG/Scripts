@@ -1,5 +1,5 @@
 # Monitoreo de los sistemas Polchile
-# Cada 4 h (lo dispara Supabase a las 00:17, 04:17, ... 20:17) chequea sitios (Netlify/Firebase), backends Apps Script y
+# Tres veces al día (lo dispara Supabase a las 07:17, 13:17 y 19:17) chequea sitios (Netlify/Firebase), backends Apps Script y
 # Supabase; avisa por correo cuando algo se cae, recordatorio cada 6 h si sigue
 # caído, y cuando se recupera. Lógica en .github/scripts/monitoreo.py.
 #

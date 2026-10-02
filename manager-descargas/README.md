@@ -1,6 +1,6 @@
 # Robot de descargas de Manager → Supabase
 
-Cada hora, de lunes a viernes entre las 9:00 y las 18:00, entra a Manager Time ERP con un navegador sin ventana desde GitHub Actions. Exporta cuatro informes y reemplaza estas tablas en Supabase:
+Cuatro veces al día, de lunes a viernes a las 9:07, 12:07, 15:07 y 18:07, entra a Manager Time ERP con un navegador sin ventana desde GitHub Actions. Exporta cuatro informes y reemplaza estas tablas en Supabase:
 
 | Informe en Manager | Dónde está | Tabla |
 |---|---|---|
@@ -27,7 +27,7 @@ Esas tablas alimentan el Cockpit, el Calendario, el Dashboard de Producción y l
 
 ## Dónde corre
 
-En GitHub Actions: workflow `.github/workflows/manager-descargas.yml`, de lunes a viernes cada hora de 9 a 18 (hora de Santiago). Tiene el botón "Run workflow" para correrlo a mano.
+En GitHub Actions: workflow `.github/workflows/manager-descargas.yml`, lo dispara Supabase (pg_cron) de lunes a viernes a las 9:07, 12:07, 15:07 y 18:07 (hora de Santiago). Tiene el botón "Run workflow" para correrlo a mano.
 
 Necesita estos secrets del repo (Settings → Secrets and variables → Actions): `RAMAFLEX_CORREO`, `RAMAFLEX_CLAVE`, `MANAGER_USUARIO`, `MANAGER_CLAVE` y `SUPABASE_SERVICE_KEY`. Si una corrida falla, las capturas de pantalla quedan como artefacto de esa corrida.
 
