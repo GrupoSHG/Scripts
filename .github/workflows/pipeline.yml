@@ -11,7 +11,7 @@ jobs:
     timeout-minutes: 45  # margen sobre los ~11 min que ya toma, por si CI va más lento
     defaults:
       run:
-        working-directory: polchile/backup-manager
+        working-directory: Polchile_Systems/backup-manager
 
     steps:
       - name: Checkout del repo
@@ -28,7 +28,7 @@ jobs:
         with:
           python-version: '3.13'
           cache: 'pip'
-          cache-dependency-path: polchile/backup-manager/requirements.txt
+          cache-dependency-path: Polchile_Systems/backup-manager/requirements.txt
 
       - name: Instalar dependencias
         run: pip install -r requirements.txt
@@ -81,5 +81,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pipeline-log
-          path: polchile/backup-manager/pipeline_main.log
+          path: Polchile_Systems/backup-manager/pipeline_main.log
           retention-days: 14

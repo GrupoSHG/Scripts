@@ -1,4 +1,4 @@
-# Robot de descargas de Manager -> Supabase (ver polchile/manager-descargas/README.md)
+# Robot de descargas de Manager -> Supabase (ver Polchile_Systems/manager-descargas/README.md)
 # Lunes a viernes, cada hora de 09:00 a 18:00 (hora de Santiago): exporta desde
 # Manager Time ERP Documentos Pendientes (FAV), Ventas Full, Notas de Venta y OP
 # asociadas a NV, y reemplaza documentos_pendientes_fav, ventas_full,
@@ -34,7 +34,7 @@ jobs:
     timeout-minutes: 25
     defaults:
       run:
-        working-directory: polchile/manager-descargas
+        working-directory: Polchile_Systems/manager-descargas
     steps:
       - name: ¿Dentro de jornada?
         id: horario
@@ -53,14 +53,14 @@ jobs:
       - uses: actions/checkout@v4
         if: steps.horario.outputs.correr == 'true'
         with:
-          sparse-checkout: polchile/manager-descargas
+          sparse-checkout: Polchile_Systems/manager-descargas
 
       - uses: actions/setup-python@v5
         if: steps.horario.outputs.correr == 'true'
         with:
           python-version: "3.13"
           cache: pip
-          cache-dependency-path: polchile/manager-descargas/requirements.txt
+          cache-dependency-path: Polchile_Systems/manager-descargas/requirements.txt
 
       - name: Instalar dependencias y Chromium
         if: steps.horario.outputs.correr == 'true'
@@ -84,6 +84,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: capturas-${{ github.run_id }}
-          path: polchile/manager-descargas/capturas/
+          path: Polchile_Systems/manager-descargas/capturas/
           retention-days: 7
           if-no-files-found: ignore
