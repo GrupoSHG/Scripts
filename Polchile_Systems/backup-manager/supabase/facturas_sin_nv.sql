@@ -2,7 +2,7 @@
 -- facturas_sin_nv.sql  (se aplica a mano en el SQL Editor de Supabase)
 -- Proyecto ffxopvzxyeacpbtxuagu, esquema shg_dashboards. Idempotente.
 --
--- Acompaña a backup-manager/ConsultasSQL/Facturas.sql (pipeline diario):
+-- Acompaña a backup-manager/ConsultasSQL/Facturas_Manager.sql (pipeline diario):
 -- trae TODAS las facturas, boletas, notas de débito y de crédito de venta
 -- desde 2025 (una fila por documento), incluidas las que el Ventas Full
 -- deja fuera (líneas con el artículo genérico "-") y las que no
@@ -11,7 +11,7 @@
 -- Problema que resuelve: hay facturas emitidas sin NV (sin NROPEDIDO ni
 -- guía de origen), así que la NV del cliente sigue apareciendo con saldo
 -- pendiente en Trazabilidad NV aunque ya se facturó. Ahora:
---   1. shg_dashboards.facturas            tabla espejo (la llena el pipeline).
+--   1. shg_dashboards.facturas_manager            tabla espejo (la llena el pipeline).
 --   2. shg_dashboards.facturas_nv_manual  asociación factura -> NV hecha a
 --      mano desde la app Trazabilidad NV (RPC asignar_factura_nv).
 --   3. trazabilidad_nv / trazabilidad_nv_documentos  suman también las
@@ -21,13 +21,13 @@
 -- =====================================================================
 
 -- ---------------------------------------------------------------------
--- 1. Tabla facturas. Mismas columnas, orden y tipos que infiere
---    bulk_sync_supabase.py desde Facturas.sql: así el pipeline la vacía con
+-- 1. Tabla facturas_manager. Mismas columnas, orden y tipos que infiere
+--    bulk_sync_supabase.py desde Facturas_Manager.sql: así el pipeline la vacía con
 --    TRUNCATE + COPY y no intenta recrearla (un DROP fallaría por las vistas).
 --    nota_venta / factura_ref / numguiaf van bigint (ajustar_enteros los
 --    convierte desde float).
 -- ---------------------------------------------------------------------
-create table if not exists shg_dashboards.facturas (
+create table if not exists shg_dashboards.facturas_manager (
     docto             text,
     num_docto         bigint,
     numreg            bigint,
@@ -49,13 +49,13 @@ create table if not exists shg_dashboards.facturas (
     n_lineas          bigint,
     glosa             text
 );
-alter table shg_dashboards.facturas enable row level security;
-drop policy if exists lectura_publica_facturas on shg_dashboards.facturas;
-create policy lectura_publica_facturas on shg_dashboards.facturas for select to authenticated using (true);
-revoke all on shg_dashboards.facturas from anon;
-grant select on shg_dashboards.facturas to authenticated, service_role;
-create index if not exists facturas_docto_num_idx on shg_dashboards.facturas (docto, num_docto);
-create index if not exists facturas_nota_venta_idx on shg_dashboards.facturas (nota_venta);
+alter table shg_dashboards.facturas_manager enable row level security;
+drop policy if exists lectura_publica_facturas_manager on shg_dashboards.facturas_manager;
+create policy lectura_publica_facturas_manager on shg_dashboards.facturas_manager for select to authenticated using (true);
+revoke all on shg_dashboards.facturas_manager from anon;
+grant select on shg_dashboards.facturas_manager to authenticated, service_role;
+create index if not exists facturas_manager_docto_num_idx on shg_dashboards.facturas_manager (docto, num_docto);
+create index if not exists facturas_manager_nota_venta_idx on shg_dashboards.facturas_manager (nota_venta);
 
 -- ---------------------------------------------------------------------
 -- 2. Asociaciones manuales factura -> NV (desde la app Trazabilidad NV).
@@ -93,7 +93,7 @@ begin
   if p_nota_venta is null or p_nota_venta <= 0 then return 'ERROR: N° de NV inválido'; end if;
 
   select exists (select 1 from shg_dashboards.ventas_full v where v.docto = p_docto and v.num_docto = p_num_docto)
-      or exists (select 1 from shg_dashboards.facturas f where f.docto = p_docto and f.num_docto = p_num_docto)
+      or exists (select 1 from shg_dashboards.facturas_manager f where f.docto = p_docto and f.num_docto = p_num_docto)
     into v_existe;
   if not v_existe then return 'ERROR: el documento ' || p_docto || ' ' || p_num_docto || ' no existe en Manager'; end if;
 
@@ -158,7 +158,7 @@ solo_facturas as (
         f.factura_ref,
         coalesce(f.n_lineas, 0)                                      as n_lineas,
         (f.nota_venta is null and m.nota_venta is not null)          as asignacion_manual
-    from shg_dashboards.facturas f
+    from shg_dashboards.facturas_manager f
     left join shg_dashboards.facturas_nv_manual m on m.docto = f.docto and m.num_docto = f.num_docto
     where coalesce(f.nota_venta, m.nota_venta) is not null
       and coalesce(f.nula, 0) = 0
@@ -262,8 +262,8 @@ with docs as (
     union all
     select
         f.docto, f.num_docto, f.fecha::date, f.cliente, f.rut, f.vendedor,
-        round(coalesce(f.total_neto, 0))::bigint, coalesce(f.n_lineas, 0), 'facturas'::text
-    from shg_dashboards.facturas f
+        round(coalesce(f.total_neto, 0))::bigint, coalesce(f.n_lineas, 0), 'facturas_manager'::text
+    from shg_dashboards.facturas_manager f
     where f.nota_venta is null
       and coalesce(f.nula, 0) = 0
       and f.docto in ('FAV', 'BOV', 'NDV', 'NCV')
