@@ -47,6 +47,7 @@ jobs:
           MAIL_PASS: ${{ secrets.BITACORA_MAIL_PASS }}
           MAIL_TO: ${{ vars.MONITOREO_MAIL_TO || 'atorres@polchile.cl' }}
           FORZAR: ${{ github.event_name == 'workflow_dispatch' && inputs.forzar }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: python3 .github/scripts/monitoreo.py
 
       - name: Guardar estado

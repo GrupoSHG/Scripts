@@ -30,8 +30,9 @@ RECORDATORIO_HORAS = 6
 
 APPS_SCRIPT = "https://script.google.com/macros/s/{}/exec?action={}"
 SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
-# Llave publicable (la misma que usan los frontends; no es secreta).
-SUPABASE_KEY = "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
+# Clave de servicio (secret SUPABASE_SERVICE_KEY del repo): las tablas y RPC que se
+# revisan ya no aceptan la clave anónima. Si falta, se intenta con la publicable.
+SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY") or "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
 
 CHEQUEOS = [
     {"nombre": "Command Center", "tipo": "web", "url": "https://melodic-dasik-d903ff.netlify.app/"},

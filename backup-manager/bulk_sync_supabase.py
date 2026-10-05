@@ -129,7 +129,7 @@ def asegurar_esquema(conn):
 
 def crear_tabla(conn, nombre_tabla: str, df: pd.DataFrame):
     """DROP + CREATE de la tabla dentro de SCHEMA_NAME, con columnas y tipos autodetectados.
-    También habilita RLS + una política de lectura pública (SELECT), ya que
+    También habilita RLS + una política de lectura para usuarios autenticados, ya que
     la tabla se recrea desde cero en cada corrida y perdería cualquier
     configuración de seguridad hecha a mano en el dashboard de Supabase."""
     columnas_def = [
@@ -148,12 +148,15 @@ def crear_tabla(conn, nombre_tabla: str, df: pd.DataFrame):
         cur.execute(
             sql.SQL("ALTER TABLE {} ENABLE ROW LEVEL SECURITY").format(tabla_id)
         )
+        # Solo usuarios con sesión (los dashboards web) y las claves de servicio
+        # (Apps Script, GitHub Actions) leen estas tablas; nunca la clave anónima.
         cur.execute(
-            sql.SQL("CREATE POLICY {} ON {} FOR SELECT USING (true)").format(
+            sql.SQL("CREATE POLICY {} ON {} FOR SELECT TO authenticated USING (true)").format(
                 sql.Identifier("lectura_publica_" + nombre_tabla),
                 tabla_id
             )
         )
+        cur.execute(sql.SQL("REVOKE ALL ON {} FROM anon").format(tabla_id))
     conn.commit()
 
 
