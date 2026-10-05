@@ -1,0 +1,77 @@
+# Respaldo propio de la base de Supabase (proyecto ffxopvzxyeacpbtxuagu).
+#
+# Supabase Pro guarda un respaldo diario, pero solo se puede restaurar el
+# proyecto completo desde su panel. Este workflow hace un pg_dump de los
+# esquemas de aplicación y deja el archivo en dos lugares descargables:
+#   - artefacto "respaldo-supabase-<fecha>" de esta corrida (30 días), y
+#   - la carpeta de Drive donde el pipeline sube el Excel de respaldo
+#     (ver .github/scripts/respaldo_supabase_drive.py; conserva 30 días).
+#
+# Restaurar una tabla a partir del archivo (formato custom de pg_dump):
+#   pg_restore --no-owner --no-privileges -d "$SUPABASE_DB_URL" \
+#       -n shg_dashboards -t ventas_full --clean respaldo_....dump
+#
+# Lo dispara Supabase (automatizacion/disparador_workflows.sql) todos los
+# días a las 05:30; el botón "Run workflow" sirve para una copia de emergencia.
+name: Respaldo Supabase
+
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: respaldo-supabase
+  cancel-in-progress: false
+
+jobs:
+  respaldar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout (solo scripts)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+          sparse-checkout-cone-mode: false
+
+      - name: Instalar cliente PostgreSQL 17 (misma versión mayor que el servidor)
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client-17
+          pg_dump --version
+
+      - name: pg_dump de los esquemas de aplicación
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          fecha=$(TZ=America/Santiago date +%Y%m%d_%H%M)
+          archivo="respaldo_supabase_${fecha}.dump"
+          echo "ARCHIVO=$archivo" >> "$GITHUB_ENV"
+          echo "FECHA=$fecha" >> "$GITHUB_ENV"
+          # Formato custom (comprimido, restaurable por tabla con pg_restore).
+          # Sin owners ni grants: los roles de Supabase no existen en otro servidor.
+          pg_dump "$SUPABASE_DB_URL" \
+            --format=custom --compress=6 --no-owner --no-privileges \
+            --schema=public --schema=shg_dashboards --schema=polchile_crm \
+            --schema=m5 --schema=app_cys --schema=automatizacion \
+            --schema=stock_productos --schema=hea \
+            --file="$archivo"
+          ls -lh "$archivo"
+          pg_restore --list "$archivo" | grep -c "TABLE DATA" | xargs -I{} echo "{} tablas con datos"
+
+      - name: Subir como artefacto (30 días)
+        uses: actions/upload-artifact@v4
+        with:
+          name: respaldo-supabase-${{ env.FECHA }}
+          path: ${{ env.ARCHIVO }}
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Copiar a Google Drive y borrar copias de más de 30 días
+        env:
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
+        run: |
+          pip install -q google-api-python-client google-auth
+          python .github/scripts/respaldo_supabase_drive.py "$ARCHIVO"
