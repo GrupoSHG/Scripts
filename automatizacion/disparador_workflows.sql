@@ -11,6 +11,7 @@
 --   manager-descargas.yml   lun-vie 09:07 a 18:07, cada hora
 --   bitacora-alertas.yml    lun-vie 09:03 a 18:03, cada hora
 --   monitoreo.yml           todos los días, cada hora a los :17
+--   respaldo-supabase.yml   todos los días 05:30 (pg_dump de la base a Drive)
 --
 -- Antes de correr esto, guardar el token en Vault (fine-grained PAT con owner
 -- GrupoSHG, solo el repo Scripts, permiso Actions: Read and write):
@@ -84,6 +85,10 @@ begin
   end if;
   if h between 8 and 21 and mi = 22 then
     perform automatizacion.disparar('ghl-polchile-sync.yml');
+  end if;
+  -- Respaldo propio de la base (pg_dump a Drive + artefacto), antes del pipeline
+  if h = 5 and mi = 30 then
+    perform automatizacion.disparar('respaldo-supabase.yml');
   end if;
 end $$;
 

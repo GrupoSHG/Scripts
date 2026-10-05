@@ -13,8 +13,10 @@ Para probar en local se pueden poner en un .env junto a este archivo (no se sube
 Scopes del Private Integration Token: opportunities.readonly, contacts.readonly,
 users.readonly, locations.readonly y locations/customFields.readonly.
 """
+import http.client
 import json
 import os
+import socket
 import sys
 import time
 import urllib.error
@@ -40,27 +42,46 @@ def location():
     return os.environ.get("GHL_POLCHILE_LOCATION") or LOCATION_POLCHILE
 
 
+# Reintentos ante GHL: el 429 (límite de tasa), los 5xx (caídas pasajeras de GHL o de
+# Cloudflare) y los cortes de conexión se reintentan con esperas crecientes. Antes solo se
+# reintentaba el 429 y un 502/503 aislado abortaba la sincronización completa (02-10-2026).
+REINTENTOS_GHL = 5
+ESPERAS_GHL = (5, 10, 20, 30)   # segundos entre intentos
+ERRORES_RED = (urllib.error.URLError, socket.timeout, TimeoutError, ConnectionError, http.client.HTTPException)
+
+
 def ghl(ruta, params=None, cuerpo=None, opcional=False):
     url = f"{GHL_API}{ruta}" + (f"?{urllib.parse.urlencode(params)}" if params else "")
-    req = urllib.request.Request(url, data=json.dumps(cuerpo).encode() if cuerpo is not None else None,
-                                 method="POST" if cuerpo is not None else "GET", headers={
-        "Authorization": "Bearer " + os.environ["GHL_POLCHILE_TOKEN"],
-        "Version": "2021-07-28", "Accept": "application/json", "Content-Type": "application/json",
-        # Cloudflare (error 1010) bloquea la firma por defecto de Python-urllib.
-        "User-Agent": "Mozilla/5.0 (compatible; PolchileDashboardComercial/1.0)"})
-    for intento in range(5):
+    datos = json.dumps(cuerpo).encode() if cuerpo is not None else None
+    ultimo = None
+    for intento in range(REINTENTOS_GHL):
+        req = urllib.request.Request(url, data=datos, method="POST" if cuerpo is not None else "GET", headers={
+            "Authorization": "Bearer " + os.environ["GHL_POLCHILE_TOKEN"],
+            "Version": "2021-07-28", "Accept": "application/json", "Content-Type": "application/json",
+            # Cloudflare (error 1010) bloquea la firma por defecto de Python-urllib.
+            "User-Agent": "Mozilla/5.0 (compatible; PolchileDashboardComercial/1.0)"})
         try:
             with urllib.request.urlopen(req, timeout=60) as r:
                 return json.loads(r.read())
         except urllib.error.HTTPError as e:
-            if e.code == 429 and intento < 4:
-                time.sleep(5 * (intento + 1))
-                continue
             detalle = f"GHL rechazó {ruta} (HTTP {e.code}): {e.read().decode('utf-8', 'replace')[:300]}"
-            if opcional:
-                print("aviso:", detalle)
-                return None
-            raise SystemExit(detalle)
+            if e.code != 429 and e.code < 500:
+                # 400/401/403/404: reintentar no sirve (token, permisos o ruta).
+                if opcional:
+                    print("aviso:", detalle)
+                    return None
+                raise SystemExit(detalle)
+            ultimo = detalle
+        except ERRORES_RED as e:
+            ultimo = f"GHL no respondió en {ruta}: {type(e).__name__}: {e}"
+        if intento < REINTENTOS_GHL - 1:
+            espera = ESPERAS_GHL[min(intento, len(ESPERAS_GHL) - 1)]
+            print(f"aviso: {ultimo}; reintento {intento + 2}/{REINTENTOS_GHL} en {espera} s", flush=True)
+            time.sleep(espera)
+    if opcional:
+        print("aviso:", ultimo)
+        return None
+    raise SystemExit(ultimo)
 
 
 def campos_personalizados(loc, modelo):
@@ -235,15 +256,25 @@ def rpc(funcion, cuerpo):
             raise SystemExit(f"Supabase rechazó {funcion} (HTTP {e.code}): {e.read().decode('utf-8', 'replace')[:500]}")
 
 
+def anotar_error(mensaje):
+    """En GitHub Actions deja el error como anotación y en el resumen de la corrida,
+    para leer el motivo sin abrir el log."""
+    if not os.environ.get("GITHUB_ACTIONS"):
+        return
+    print(f"::error::{mensaje}")
+    resumen = os.environ.get("GITHUB_STEP_SUMMARY")
+    if resumen:
+        with open(resumen, "a", encoding="utf-8") as f:
+            f.write(f"### Sincronización CRM Polchile: falló\n\n```\n{mensaje}\n```\n")
+
+
 if __name__ == "__main__":
     try:
         main()
     except SystemExit as e:
-        # En GitHub Actions el error queda como anotación visible en el resumen de la corrida.
-        if e.code not in (None, 0) and os.environ.get("GITHUB_ACTIONS"):
-            print(f"::error::{e.code}")
+        if e.code not in (None, 0):
+            anotar_error(str(e.code))
         raise
     except Exception as e:
-        if os.environ.get("GITHUB_ACTIONS"):
-            print(f"::error::{type(e).__name__}: {e}")
+        anotar_error(f"{type(e).__name__}: {e}")
         raise
