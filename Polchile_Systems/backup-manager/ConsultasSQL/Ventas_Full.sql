@@ -53,10 +53,55 @@ SELECT DISTINCT
         DOCDE_DB.CANTIDAD*-1*(((DOCDE_DB.PRECUNIT*TASACBIO-((DOCDE_DB.PRECUNIT*TASACBIO-DOCDE_DB.PRECUNIT*TASACBIO*(1-DOCDE_DB.DESCTO/100))))*(1-DOCU_DB.DCTOPJE/100))-PULTCOM)
     ELSE
         DOCDE_DB.CANTIDAD*(((DOCDE_DB.PRECUNIT*TASACBIO-((DOCDE_DB.PRECUNIT*TASACBIO-DOCDE_DB.PRECUNIT*TASACBIO*(1-DOCDE_DB.DESCTO/100))))*(1-DOCU_DB.DCTOPJE/100))-PULTCOM)
-    END AS RESULTADO_CTO_ULT_COMPRA
+    END AS RESULTADO_CTO_ULT_COMPRA,
+
+    -- Trazabilidad: Nota de Venta de la que proviene cada línea y, en las
+    -- notas de crédito, la factura a la que hacen referencia (ver NV_DOC).
+    NV_DOC.NOTA_VENTA AS NOTA_VENTA,
+    NV_DOC.FACTURA_REF AS FACTURA_REF
 
 FROM art_db, PLAN_DB,
-    docde_db LEFT OUTER JOIN cent_db ON docde_db.cencosto = cent_db.nreguist,
+    docde_db LEFT OUTER JOIN cent_db ON docde_db.cencosto = cent_db.nreguist
+             LEFT OUTER JOIN (
+        -- Resuelve la Nota de Venta de cada línea de documento, en este orden:
+        --   1. SQNVDET  -> línea de la NV (NOTDE_DB.SEQNVDET) -> NOTV_DB.NUMNOTA
+        --   2. SQGDDET  -> guía de despacho de origen (DOCU_DB.NUMREG) -> su NROPEDIDO
+        --   3. NROPEDIDO de la cabecera del documento
+        --   4. Notas de crédito: NUMFV es el NUMREG de la factura referenciada
+        --      -> NROPEDIDO de esa factura
+        --   5. Notas de crédito: NV más frecuente entre las guías de esa factura
+        -- NROPEDIDO es varchar en Manager; por eso se limpia y se convierte.
+        SELECT
+            dd.SEQLINE,
+            COALESCE(
+                nvl.NUMNOTA,
+                TRY_CONVERT(int, NULLIF(LTRIM(RTRIM(g.NROPEDIDO)), '')),
+                TRY_CONVERT(int, NULLIF(LTRIM(RTRIM(d.NROPEDIDO)), '')),
+                TRY_CONVERT(int, NULLIF(LTRIM(RTRIM(fr.NROPEDIDO)), '')),
+                frg.NOTA_VENTA
+            ) AS NOTA_VENTA,
+            CAST(fr.NUMFACT AS bigint) AS FACTURA_REF
+        FROM DOCU_DB d
+        INNER JOIN DOCDE_DB dd ON dd.NUMRECOR = d.NUMREG
+        LEFT JOIN NOTDE_DB nd  ON dd.SQNVDET <> 0 AND nd.SEQNVDET = dd.SQNVDET
+        LEFT JOIN NOTV_DB  nvl ON nvl.NUMREG = nd.NUMRECOR
+        LEFT JOIN DOCU_DB  g   ON dd.SQGDDET <> 0 AND g.NUMREG = dd.SQGDDET AND g.TIPODOC = 2
+        LEFT JOIN DOCU_DB  fr  ON d.TIPODOC = 4 AND ISNULL(d.NUMFV, 0) <> 0 AND fr.NUMREG = d.NUMFV
+        OUTER APPLY (
+            SELECT TOP 1 TRY_CONVERT(int, NULLIF(LTRIM(RTRIM(g2.NROPEDIDO)), '')) AS NOTA_VENTA
+            FROM DOCDE_DB dd2
+            INNER JOIN DOCU_DB g2 ON g2.NUMREG = dd2.SQGDDET AND g2.TIPODOC = 2
+            WHERE fr.NUMREG IS NOT NULL
+              AND dd2.NUMRECOR = fr.NUMREG
+              AND dd2.SQGDDET <> 0
+              AND NULLIF(LTRIM(RTRIM(g2.NROPEDIDO)), '') IS NOT NULL
+            GROUP BY TRY_CONVERT(int, NULLIF(LTRIM(RTRIM(g2.NROPEDIDO)), ''))
+            ORDER BY COUNT(*) DESC
+        ) frg
+        WHERE d.TIPODOC IN (1, 3, 4, 79, 146)
+          AND d.FECHA >= CONVERT(datetime, '01/01/{AÑO_ACTUAL}', 103)
+          AND d.FECHA <= CONVERT(datetime, '31/12/{AÑO_ACTUAL}', 103)
+    ) NV_DOC ON NV_DOC.SEQLINE = docde_db.SEQLINE,
     DOCU_DB LEFT OUTER JOIN CHOI_DB ON DOCU_DB.TIPOVTA = CHOI_DB.NUMREG
             LEFT OUTER JOIN PERSO_DB ON perso_db.numreg = docu_db.codvend
             LEFT OUTER JOIN CLIEN_DB ON docu_db.nrutclie = clien_db.nreguist
