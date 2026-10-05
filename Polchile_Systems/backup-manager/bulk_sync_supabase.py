@@ -168,6 +168,28 @@ def columnas_existentes(conn, nombre_tabla: str):
     return cols or None
 
 
+def tipos_existentes(conn, nombre_tabla: str) -> dict:
+    """Tipo Postgres de cada columna actual de la tabla ({columna: data_type})."""
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT column_name, data_type FROM information_schema.columns "
+            "WHERE table_schema = %s AND table_name = %s",
+            (SCHEMA_NAME, nombre_tabla))
+        return dict(cur.fetchall())
+
+
+def ajustar_enteros(df: pd.DataFrame, tipos: dict) -> pd.DataFrame:
+    """Las columnas enteras con vacíos llegan de pandas como float ('12956.0'),
+    y COPY las rechaza si la columna en Postgres es bigint (p. ej. nota_venta
+    y factura_ref de ventas_full, que también escribe el robot vía RPC). Se
+    pasan a entero nullable para que el CSV lleve '12956' o vacío."""
+    enteros = {"bigint", "integer", "smallint"}
+    for col in df.columns:
+        if tipos.get(col) in enteros and str(df[col].dtype).startswith("float"):
+            df[col] = df[col].round().astype("Int64")
+    return df
+
+
 def preparar_tabla(conn, nombre_tabla: str, df: pd.DataFrame):
     """Si la tabla ya existe con las mismas columnas, solo se vacía (TRUNCATE) sin
     confirmar la transacción: así el COPY siguiente queda en la misma transacción,
@@ -191,7 +213,7 @@ def cargar_datos_copy(conn, nombre_tabla: str, df: pd.DataFrame):
 
     buffer = StringIO()
     # Reemplaza NaN/NaT por cadena vacía; COPY con NULL '' las interpreta como NULL real
-    df_csv = df.copy()
+    df_csv = ajustar_enteros(df.copy(), tipos_existentes(conn, nombre_tabla))
     for col in df_csv.columns:
         if str(df_csv[col].dtype).startswith("datetime"):
             df_csv[col] = df_csv[col].dt.strftime("%Y-%m-%d %H:%M:%S")
