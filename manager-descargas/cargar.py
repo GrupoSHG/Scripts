@@ -37,6 +37,9 @@ COLUMNAS = {
         "cto_ult_compra_unit": "decimal", "total_neto": "decimal", "cto_promedio_total": "decimal",
         "cto_repos_total": "entero", "cto_ult_compra_total": "decimal",
         "resultado_cto_prom": "decimal", "resultado_cto_repos": "decimal", "resultado_cto_ult_compra": "decimal",
+        # Trazabilidad (ver backup-manager/ConsultasSQL/Ventas_Full.sql): NV de origen de
+        # cada línea y, en las notas de crédito, la factura referenciada.
+        "nota_venta": "entero", "factura_ref": "entero",
     },
     "ordenes_de_produccion": {
         "nota_vta": "entero", "num_op": "entero", "fechacrea": "fecha", "fechaent": "fecha", "fechain": "fecha",
@@ -64,6 +67,11 @@ COLUMNAS = {
 }
 
 
+# Columnas que pueden faltar en el Excel (quedan en NULL) mientras el informe de
+# Manager no se actualice con la misma query que usa el pipeline.
+OPCIONALES = {"ventas_full": {"nota_venta", "factura_ref"}}
+
+
 def convertir(valor, tipo, ctype, datemode):
     if ctype in (xlrd.XL_CELL_EMPTY, xlrd.XL_CELL_BLANK) or (ctype == xlrd.XL_CELL_TEXT and not valor.strip()):
         return None
@@ -86,14 +94,20 @@ def leer_xls(tabla, ruta):
     # Cada columna es "tipo" (mismo nombre en el Excel) o ("tipo", "columna_en_el_excel").
     columnas = {col: (d if isinstance(d, tuple) else (d, col)) for col, d in COLUMNAS[tabla].items()}
 
+    opcionales = OPCIONALES.get(tabla, set())
     faltan = [origen for _, origen in columnas.values() if origen not in header]
-    if faltan:
+    if [c for c in faltan if c not in opcionales]:
         raise SystemExit(f"{os.path.basename(ruta)} no parece ser el informe de {tabla}: faltan columnas {faltan}")
+    if faltan:
+        print(f"Aviso: {os.path.basename(ruta)} no trae {faltan}; esas columnas quedan vacías")
 
     filas = []
     for r in range(1, hoja.nrows):
         fila = {}
         for col, (tipo, origen) in columnas.items():
+            if origen in faltan:
+                fila[col] = None
+                continue
             celda = hoja.cell(r, header.index(origen))
             fila[col] = convertir(celda.value, tipo, celda.ctype, libro.datemode)
         if all(v is None for v in fila.values()):
