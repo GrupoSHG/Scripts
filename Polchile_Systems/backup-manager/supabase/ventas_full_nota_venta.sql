@@ -74,7 +74,8 @@ select
     round(coalesce(p.notas_credito, 0))::bigint                        as notas_credito,
     (coalesce(p.facturado_bruto, 0) - coalesce(p.notas_credito, 0))::double precision as despachado_neto,
     (coalesce(p.facturado_bruto, 0) - coalesce(p.notas_credito, 0) - nv.totneto)::double precision as diferencia,
-    (coalesce(p.facturado_bruto, 0) - coalesce(p.notas_credito, 0)) > (nv.totneto + 1) as excede_valor_nv,
+    -- Se redondea a pesos: el total de la NV viene entero y el Ventas Full con decimales
+    round((coalesce(p.facturado_bruto, 0) - coalesce(p.notas_credito, 0))::numeric) > (nv.totneto + 1) as excede_valor_nv,
     p.n_facturas,
     coalesce(g.n_guias, 0)                                             as n_guias,
     p.facturas_lista,
