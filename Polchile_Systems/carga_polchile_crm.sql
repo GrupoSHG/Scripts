@@ -13,7 +13,8 @@
 -- jsonb tarda 20-35 s en esta base (error 57014 "canceling statement due to
 -- statement timeout" desde el 01/10/2026 19:22). Renombrar tablas es instantáneo y
 -- no depende del tamaño del CRM. Para eso las tablas carga_* son idénticas a las
--- publicadas: mismas columnas, NOT NULL, índices, permisos y política RLS. Los
+-- publicadas: mismas columnas, NOT NULL, índices, permisos y política RLS (en oportunidades
+-- la política es por rol, ver más abajo). Los
 -- índices conservan su nombre original, así que uno llamado oportunidades_* puede
 -- estar en carga_oportunidades (no afecta a nada).
 --
@@ -35,7 +36,13 @@ grant select on polchile_crm.carga_pipeline_etapas, polchile_crm.carga_usuarios,
                 polchile_crm.carga_oportunidades, polchile_crm.carga_contactos to authenticated;
 create policy lectura_autenticados on polchile_crm.carga_pipeline_etapas for select to authenticated using (true);
 create policy lectura_autenticados on polchile_crm.carga_usuarios         for select to authenticated using (true);
-create policy lectura_autenticados on polchile_crm.carga_oportunidades    for select to authenticated using (true);
+-- oportunidades: lectura por rol (GrupoSHG_Systems/accesos/crm_vendedores.sql). Ven todo admin,
+-- director y jefatura/colaborador comercial; cada vendedor solo las asignadas a su usuario de
+-- GoHighLevel. Misma política en la tabla publicada: como publicar_carga() intercambia las dos
+-- tablas por nombre, la regla debe existir en ambas. Requiere shg_dashboards.ve_crm_completo()
+-- y polchile_crm.mi_usuario_id(), creadas por ese archivo (correrlo antes que este si se recrea).
+create policy lectura_por_rol on polchile_crm.carga_oportunidades for select to authenticated
+  using (shg_dashboards.ve_crm_completo() or asignado_id = polchile_crm.mi_usuario_id());
 create policy lectura_autenticados on polchile_crm.carga_contactos        for select to authenticated using (true);
 
 create or replace function polchile_crm.iniciar_carga()
