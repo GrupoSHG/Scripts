@@ -114,6 +114,60 @@ def razones_perdida(loc):
     return razones
 
 
+def ghl_crudo(ruta, params=None, version="2021-07-28"):
+    """Una sola llamada GET; devuelve (código HTTP, texto) sin reintentos. Solo para diagnóstico."""
+    url = f"{GHL_API}{ruta}" + (f"?{urllib.parse.urlencode(params)}" if params else "")
+    req = urllib.request.Request(url, headers={
+        "Authorization": "Bearer " + os.environ["GHL_POLCHILE_TOKEN"], "Version": version,
+        "Accept": "application/json", "User-Agent": "Mozilla/5.0 (compatible; PolchileDashboardComercial/1.0)"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            return r.status, r.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:
+        return e.code, e.read().decode("utf-8", "replace")
+    except ERRORES_RED as e:
+        return 0, f"{type(e).__name__}: {e}"
+
+
+def diagnostico_razones(loc):
+    """Imprime la respuesta cruda de GHL sobre razones de pérdida: varias rutas y versiones del
+    endpoint, y una oportunidad perdida por cada lostReasonId (GET individual), para ver si el
+    nombre viene por algún lado. No escribe nada en Supabase."""
+    print("== Endpoints de razones de pérdida")
+    for ruta, version in (("/opportunities/lost-reason", "v3"), ("/opportunities/lost-reason", "2021-07-28"),
+                          ("/opportunities/lost-reasons", "v3"), ("/opportunities/lost-reasons", "2021-07-28"),
+                          (f"/locations/{loc}/lost-reasons", "2021-07-28")):
+        for params in ({"locationId": loc}, {"locationId": loc, "deleted": "true"}, {"location_id": loc}):
+            codigo, texto = ghl_crudo(ruta, params, version)
+            print(f"-- {ruta} {params} Version={version} -> HTTP {codigo}\n{texto[:1500]}")
+    print("== Una oportunidad perdida por código (GET individual)")
+    vistos, cursor = {}, {}
+    while len(vistos) < 12:
+        datos = ghl("/opportunities/search", {"location_id": loc, "limit": 100, "status": "lost", **cursor})
+        lote = datos.get("opportunities", [])
+        for o in lote:
+            rid = o.get("lostReasonId")
+            if rid and rid not in vistos:
+                vistos[rid] = o["id"]
+        meta = datos.get("meta") or {}
+        if len(lote) < 100 or not meta.get("startAfterId"):
+            break
+        cursor = {"startAfter": meta.get("startAfter"), "startAfterId": meta.get("startAfterId")}
+    for rid, oid in vistos.items():
+        for version in ("2021-07-28", "v3"):
+            codigo, texto = ghl_crudo(f"/opportunities/{oid}", None, version)
+            claves = ""
+            try:
+                obj = json.loads(texto)
+                op = obj.get("opportunity", obj)
+                claves = {k: op.get(k) for k in op if "lost" in k.lower() or "reason" in k.lower()}
+            except Exception:
+                pass
+            print(f"-- lostReasonId {rid} oportunidad {oid} Version={version} -> HTTP {codigo} campos lost/reason: {claves}")
+            if claves:
+                break
+
+
 def campos_personalizados(loc, modelo):
     datos = ghl(f"/locations/{loc}/customFields", {"model": modelo}, opcional=True) or {}
     return {c["id"]: c.get("name") or c["id"] for c in datos.get("customFields", [])}
@@ -145,6 +199,9 @@ def atribucion(obj):
 
 def main():
     loc = location()
+    if "--diagnostico-razones" in sys.argv:
+        diagnostico_razones(loc)
+        return
     pipelines = ghl("/opportunities/pipelines", {"locationId": loc}).get("pipelines", [])
     etapas, info_etapa = [], {}
     for p in pipelines:
