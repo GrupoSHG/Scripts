@@ -2,6 +2,7 @@
 
   python cargar.py ventas_full    ruta\\...-NOMBREVF.xls
   python cargar.py notas_de_venta ruta\\...-NOMBRENVS.xls
+  python cargar.py stock_bodegas  ruta\\...-NOMBREstk.xls
   python cargar.py ... --simular   (solo convierte y muestra un resumen, no sube)
 
 El reemplazo es atómico: la función shg_dashboards.reemplazar_<tabla> borra e
@@ -64,12 +65,19 @@ COLUMNAS = {
         "codvend": "texto", "nom_vddor": "texto", "apell_vddor": "texto", "moneda": "texto",
         "dctopje": "entero", "totneto": "entero", "dctotipo": "entero", "dctopeso": "entero", "tasacbio": "entero",
     },
+    # Stock de Productos en Bodegas de Stock (misma query que backup-manager/ConsultasSQL/Productos_Stock.sql).
+    # reemplazar_stock_bodegas hace upsert en stock_productos.stock por (codigo, bodega_nombre)
+    # y borra lo que ya no viene, igual que sync_stock_productos.py en el pipeline diario.
+    "stock_bodegas": {
+        "bodega": "texto", "bodega_nombre": "texto", "codigo": "texto", "nombre": "texto",
+        "unidmed": "texto", "stk_fisico": "decimal",
+    },
 }
 
 
 # Columnas que pueden faltar en el Excel (quedan en NULL) mientras el informe de
 # Manager no se actualice con la misma query que usa el pipeline.
-OPCIONALES = {"ventas_full": {"nota_venta", "factura_ref"}}
+OPCIONALES = {"ventas_full": {"nota_venta", "factura_ref"}, "stock_bodegas": {"bodega"}}
 
 
 def convertir(valor, tipo, ctype, datemode):

@@ -1,6 +1,6 @@
 # Robot de descargas de Manager → Supabase
 
-Cada hora, de lunes a viernes entre las 9:00 y las 18:00, entra a Manager Time ERP con un navegador sin ventana desde GitHub Actions. Exporta cuatro informes y reemplaza estas tablas en Supabase:
+Cada hora, de lunes a viernes entre las 9:00 y las 18:00, entra a Manager Time ERP con un navegador sin ventana desde GitHub Actions. Exporta cinco informes y reemplaza estas tablas en Supabase:
 
 | Informe en Manager | Dónde está | Tabla |
 |---|---|---|
@@ -8,6 +8,7 @@ Cada hora, de lunes a viernes entre las 9:00 y las 18:00, entra a Manager Time E
 | 02-INFORME DE VENTAS FULL | Centro de Información | `shg_dashboards.ventas_full` |
 | Notas de Venta | Centro de Información | `shg_dashboards.notas_de_venta` |
 | \*PRODUCCIÓN\* OP ASOCIADAS A NV POR RANGO FECHA V2 | Centro de Información (acepta el filtro de fechas tal cual) | `shg_dashboards.ordenes_de_produccion` |
+| Stock de Productos en Bodegas de Stock | Centro de Información | `stock_productos.stock` (upsert por código y bodega; misma tabla que llena el pipeline diario) |
 
 Esas tablas alimentan el Cockpit, el Calendario, el Dashboard de Producción y las cuentas por cobrar del SSC Cash Report de Finanzas.
 
@@ -58,5 +59,6 @@ copy .env.example .env      (completar las credenciales)
 - **Usa el mismo usuario de Manager que tú.** La URL de TSplus trae `disconnect=1`, así que si tienes Manager abierto cuando corre el robot, una sesión expulsa a la otra. El robot reintenta hasta 4 veces.
 - Si se cambia `MANAGER_USUARIO` a otra persona, hay que recapturar `referencias/usuario_manager.png` (el texto del campo Usuario con ese nombre).
 - Si Manager cambia de versión o de diseño (posiciones, colores, textos), hay que recalibrar. Las coordenadas están en las constantes al inicio de `robot.py`, y las referencias se recortan de capturas nuevas.
+- Para que el robot exporte un informe nuevo del Centro de Información hace falta su referencia `referencias/filtro_<informe>.png` (la franja "Descripción del Filtro" con ese informe seleccionado). La forma rápida de obtenerla sin entrar a Manager: correr el workflow con `calibrar = true` (o `python robot.py --calibrar`); recorre la lista, guarda la franja de cada fila en el artefacto `calibracion-<run_id>` (`fila_NN.png`, más `fila_NN_pantalla.png` para ver cuál es cuál) y basta copiar la del informe buscado con el nombre de la referencia. Luego se agrega la fila a `INFORMES` en `robot.py` y las columnas a `COLUMNAS` en `cargar.py`.
 - Si se agrega un informe nuevo al Centro de Información, no pasa nada: el robot busca por nombre, no por posición. Hay tres informes "OP ASOCIADAS A NV POR RANGO FECHA…" que solo difieren en el final del nombre; para la V2 se compara solo ese final (`CAJAS_FILTRO_ESPECIALES`).
 - **Ramaflex permite una sola sesión por usuario:** si entras a Ramaflex mientras corre el robot (o el robot entra mientras tú estás), una de las dos sesiones queda invalidada. El robot lo detecta (página en blanco con 401), borra su sesión y vuelve a entrar.

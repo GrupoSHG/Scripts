@@ -15,6 +15,9 @@ informes se recorre de a una fila, confirmando el informe por la línea
   python robot.py              descarga y carga a Supabase
   python robot.py --sin-cargar solo descarga
   python robot.py --ver        con ventana visible (para depurar)
+  python robot.py --calibrar   solo recorre la lista del Centro de Información y guarda en
+                               calibracion/ la línea "Descripción del Filtro" de cada informe
+                               (para recortar la referencia de un informe nuevo)
 """
 import io
 import os
@@ -67,6 +70,8 @@ INFORMES = [
     ("notas_de_venta", "filtro_notas_de_venta", "nvs"),
     # *PRODUCCIÓN* OP ASOCIADAS A NV POR RANGO FECHA V2: al abrirlo pide un filtro de fechas (se acepta tal cual)
     ("ordenes_de_produccion", "filtro_op_asociadas_nv", "op"),
+    # Stock de Productos en Bodegas de Stock -> stock_productos.stock (misma tabla que llena el pipeline diario)
+    ("stock_bodegas", "filtro_stock_bodegas", "stk"),
 ]
 CON_FILTRO_FECHAS = {"ordenes_de_produccion"}
 
@@ -246,6 +251,35 @@ class Sesion:
             self.tecla("ArrowDown", 0.7)
         self.captura(f"error_{ref_filtro}")
         raise FalloRobot(f"no se encontró el informe '{ref_filtro}' en la lista")
+
+    def calibrar_lista(self):
+        """Recorre la lista del Centro de Información desde el inicio y guarda, por fila,
+        la franja "Descripción del Filtro" (calibracion/fila_NN.png) y la pantalla completa
+        (fila_NN_pantalla.png). Sirve para recortar la referencia de un informe nuevo sin
+        tener que entrar a Manager: la franja del informe buscado se copia tal cual a
+        referencias/filtro_<informe>.png. Termina cuando la selección deja de moverse."""
+        carpeta = os.path.join(BASE, "calibracion")
+        os.makedirs(carpeta, exist_ok=True)
+        self.click(LISTA_PRIMERA_FILA)
+        for _ in range(12):
+            self.tecla("PageUp", 0.3)
+        self.tecla("Home", 1)
+        anterior, repetidas, guardadas = None, 0, 0
+        for i in range(120):
+            img = self.captura()
+            franja = img.crop(CAJA_FILTRO)
+            if anterior is not None and diferencia(franja, anterior) < 1:
+                repetidas += 1
+                if repetidas >= 2:      # fin de la lista: ArrowDown ya no cambia la fila
+                    break
+            else:
+                repetidas = 0
+                franja.save(os.path.join(carpeta, f"fila_{i:02d}.png"))
+                img.save(os.path.join(carpeta, f"fila_{i:02d}_pantalla.png"))
+                guardadas += 1
+            anterior = franja
+            self.tecla("ArrowDown", 0.7)
+        log(f"calibración: {guardadas} filas guardadas en calibracion/")
 
     def fila_seleccionada(self):
         """Centro vertical de la franja azul de selección en la lista de informes."""
@@ -450,7 +484,7 @@ def abrir_manager(ctx, correo, clave_ramaflex):
     raise FalloRobot("Ramaflex no abrió Manager Time ERP (la pestaña quedó en blanco)")
 
 
-def descargar(visible=False):
+def descargar(visible=False, calibrar=False):
     os.makedirs(DESCARGAS, exist_ok=True)
     os.makedirs(CAPTURAS, exist_ok=True)
     env = os.environ
@@ -486,6 +520,10 @@ def descargar(visible=False):
             log("sesión de Manager iniciada")
             archivos = {}
             try:
+                if calibrar:
+                    s.abrir_centro_informacion()
+                    s.calibrar_lista()
+                    return archivos
                 log("exportando documentos_pendientes_fav")
                 archivos["documentos_pendientes_fav"] = s.exportar_documentos_pendientes()
                 s.abrir_centro_informacion()
@@ -511,7 +549,7 @@ def main():
     load_dotenv(os.path.join(BASE, ".env"))
     inicio = time.time()
     try:
-        archivos = descargar(visible="--ver" in sys.argv)
+        archivos = descargar(visible="--ver" in sys.argv, calibrar="--calibrar" in sys.argv)
         if "--sin-cargar" not in sys.argv:
             for tabla, ruta in archivos.items():
                 cargar.cargar(tabla, ruta)

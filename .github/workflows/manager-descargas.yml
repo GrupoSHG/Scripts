@@ -23,6 +23,10 @@ on:
         description: "Solo descargar (no reemplazar las tablas en Supabase)"
         type: boolean
         default: false
+      calibrar:
+        description: "Solo guardar la línea de filtro de cada informe del Centro de Información (artefacto calibracion-...)"
+        type: boolean
+        default: false
 
 concurrency:
   group: manager-descargas
@@ -77,7 +81,7 @@ jobs:
           MANAGER_CLAVE: ${{ secrets.MANAGER_CLAVE }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           PYTHONIOENCODING: utf-8
-        run: python robot.py ${{ inputs.sin_cargar && '--sin-cargar' || '' }}
+        run: python robot.py ${{ inputs.sin_cargar && '--sin-cargar' || '' }} ${{ inputs.calibrar && '--calibrar' || '' }}
 
       - name: Subir capturas (para revisar si algo falla)
         if: always() && steps.horario.outputs.correr == 'true'
@@ -85,5 +89,14 @@ jobs:
         with:
           name: capturas-${{ github.run_id }}
           path: Polchile_Systems/manager-descargas/capturas/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Subir franjas de calibración (solo con calibrar = true)
+        if: always() && steps.horario.outputs.correr == 'true' && inputs.calibrar
+        uses: actions/upload-artifact@v4
+        with:
+          name: calibracion-${{ github.run_id }}
+          path: Polchile_Systems/manager-descargas/calibracion/
           retention-days: 7
           if-no-files-found: ignore
