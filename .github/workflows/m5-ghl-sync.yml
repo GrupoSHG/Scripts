@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: m5
+          sparse-checkout: M5_Systems
 
       - name: Sincronizar
         env:

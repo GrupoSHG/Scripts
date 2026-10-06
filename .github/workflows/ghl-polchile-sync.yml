@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: polchile
+          sparse-checkout: Polchile_Systems
 
       - name: Sincronizar
         env:
