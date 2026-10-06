@@ -10,6 +10,11 @@ name: Sincronizar CRM Polchile
 on:
   # Sin "schedule": lo dispara Supabase (automatizacion/disparador_workflows.sql).
   workflow_dispatch:
+    inputs:
+      modo:
+        description: "sync (normal) o diagnostico-razones (solo imprime la respuesta de GHL sobre razones de pérdida)"
+        required: false
+        default: sync
 
 concurrency:
   group: ghl-polchile-sync
@@ -29,4 +34,9 @@ jobs:
           GHL_POLCHILE_TOKEN: ${{ secrets.GHL_POLCHILE_TOKEN }}
           GHL_POLCHILE_LOCATION: ${{ vars.GHL_POLCHILE_LOCATION }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        run: python3 Polchile_Systems/sync_ghl_polchile.py
+        run: |
+          if [ "${{ inputs.modo }}" = "diagnostico-razones" ]; then
+            python3 Polchile_Systems/sync_ghl_polchile.py --diagnostico-razones
+          else
+            python3 Polchile_Systems/sync_ghl_polchile.py
+          fi
