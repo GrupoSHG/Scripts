@@ -85,10 +85,11 @@ def ghl(ruta, params=None, cuerpo=None, opcional=False, version="2021-07-28"):
 
 
 def razones_perdida(loc):
-    """Razones de pérdida (id -> nombre). El endpoint exige Version "v3" y pagina con
-    skip/limit; con la versión genérica devolvía una sola razón y las perdidas quedaban
-    con código sin nombre (4.089 de 5.654 al 06-10-2026). Se piden también las eliminadas,
-    porque las oportunidades antiguas siguen apuntando a ellas."""
+    """Razones de pérdida (id -> nombre). GHL las devuelve con la clave "_id" (no "id"):
+    por eso durante meses se leían 0 o 1 razones y 4.089 de 5.654 perdidas quedaban con
+    código sin nombre (06-10-2026). Se piden también las eliminadas (deleted=true), porque
+    las oportunidades antiguas siguen apuntando a ellas; con "deleted" GHL devuelve solo
+    las eliminadas, así que se hacen las dos pasadas."""
     razones = {}
     for eliminadas in ("false", "true"):
         skip = 0
@@ -100,8 +101,9 @@ def razones_perdida(loc):
             if isinstance(lista, dict):
                 lista = [lista]
             for r in lista:
-                if r.get("id") and r.get("name"):
-                    razones[r["id"]] = r["name"]
+                rid = r.get("_id") or r.get("id")     # GHL devuelve "_id"
+                if rid and r.get("name"):
+                    razones[rid] = r["name"]
             total = datos.get("total")
             if len(lista) < 100 or (total is not None and skip + len(lista) >= total):
                 break
@@ -109,8 +111,9 @@ def razones_perdida(loc):
     if not razones:   # respaldo: la llamada antigua, por si GHL rechaza "v3"
         datos = ghl("/opportunities/lost-reason", {"locationId": loc}, opcional=True) or {}
         for r in datos.get("lostReasons", datos.get("lostReason", [])) or []:
-            if r.get("id") and r.get("name"):
-                razones[r["id"]] = r["name"]
+            rid = r.get("_id") or r.get("id")
+            if rid and r.get("name"):
+                razones[rid] = r["name"]
     return razones
 
 
