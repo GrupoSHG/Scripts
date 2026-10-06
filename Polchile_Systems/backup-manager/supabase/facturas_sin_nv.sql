@@ -126,7 +126,10 @@ grant execute on function public.quitar_factura_nv(text, bigint) to authenticate
 -- ---------------------------------------------------------------------
 -- 3. Vistas de trazabilidad: la NV de cada documento es la del Ventas Full
 --    o, si no tiene, la asociación manual. Los documentos que solo están en
---    facturas (artículo genérico "-") entran con su total neto de cabecera.
+--    facturas_manager (artículo genérico "-") entran con su total neto de
+--    cabecera, solo los del año en curso (mismo alcance que el Ventas Full;
+--    la tabla guarda desde 2025 y sin este filtro aparecían ~730 NV de 2025
+--    como "Sin NV en Manager").
 --    Mismas columnas que antes (la app sigue igual); se agregan al final
 --    n_facturas_manual (trazabilidad_nv) y asignacion_manual (documentos).
 -- ---------------------------------------------------------------------
@@ -163,6 +166,7 @@ solo_facturas as (
     where coalesce(f.nota_venta, m.nota_venta) is not null
       and coalesce(f.nula, 0) = 0
       and f.docto in ('FAV', 'BOV', 'NDV', 'NCV')
+      and f.fecha >= date_trunc('year', current_date)
       and not exists (select 1 from shg_dashboards.ventas_full v where v.docto = f.docto and v.num_docto = f.num_docto)
 )
 select * from vf
@@ -267,6 +271,7 @@ with docs as (
     where f.nota_venta is null
       and coalesce(f.nula, 0) = 0
       and f.docto in ('FAV', 'BOV', 'NDV', 'NCV')
+      and f.fecha >= date_trunc('year', current_date)
       and not exists (select 1 from shg_dashboards.ventas_full v where v.docto = f.docto and v.num_docto = f.num_docto)
 ),
 pend as (
