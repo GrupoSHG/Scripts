@@ -18,6 +18,8 @@
 --      asociaciones manuales y los documentos que solo están en facturas.
 --   4. trazabilidad_facturas_sin_nv       lista de facturas sin NV con las NV
 --      del mismo RUT que aún tienen saldo pendiente (candidatas).
+--   5. trazabilidad_nv_auto              asociación automática: factura sin NV ->
+--      NV de la factura anterior del mismo RUT (correlativo, <= 30 días) con saldo.
 -- =====================================================================
 
 -- ---------------------------------------------------------------------
@@ -122,18 +124,30 @@ revoke all on function public.asignar_factura_nv(text, bigint, bigint) from publ
 grant execute on function public.asignar_factura_nv(text, bigint, bigint) to authenticated;
 revoke all on function public.quitar_factura_nv(text, bigint) from public, anon;
 grant execute on function public.quitar_factura_nv(text, bigint) to authenticated;
-
 -- ---------------------------------------------------------------------
--- 3. Vistas de trazabilidad: la NV de cada documento es la del Ventas Full
---    o, si no tiene, la asociación manual. Los documentos que solo están en
---    facturas_manager (artículo genérico "-") entran con su total neto de
---    cabecera, solo los del año en curso (mismo alcance que el Ventas Full;
---    la tabla guarda desde 2025 y sin este filtro aparecían ~730 NV de 2025
---    como "Sin NV en Manager").
---    Mismas columnas que antes (la app sigue igual); se agregan al final
---    n_facturas_manual (trazabilidad_nv) y asignacion_manual (documentos).
+-- 3. Vistas de trazabilidad. La NV de cada documento es la del Ventas Full
+--    o, si no tiene, la asociación manual o la automática. Los documentos
+--    que solo están en facturas_manager (artículo genérico "-") entran con su
+--    total neto de cabecera, solo los del año en curso (mismo alcance que el
+--    Ventas Full; la tabla guarda desde 2025 y sin este filtro aparecían
+--    ~730 NV de 2025 como "Sin NV en Manager").
+--
+--    Asociación automática (trazabilidad_nv_auto): una factura sin NV se
+--    asigna a la NV de la factura anterior del mismo RUT (número menor más
+--    cercano, emitida hasta 30 días antes) mientras esa NV tenga saldo
+--    pendiente sin contar las automáticas. La manual tiene prioridad.
+--    Verificado el 05-oct-2026: las 6 facturas de Agrícola Los del Monte
+--    cuadran las NV 14022 y 14090, y la 19117 la NV 13211.
+--
+--    Orden de dependencia:
+--      trazabilidad_nv_documentos_base    docs con NV (Ventas Full, manual, facturas_manager)
+--      trazabilidad_facturas_sin_nv_base  docs sin NV (Ventas Full + facturas_manager)
+--      trazabilidad_nv_auto               regla automática
+--      trazabilidad_nv_documentos         base + automáticas (+ asignacion_manual / asignacion_auto)
+--      trazabilidad_nv                    mismas columnas de siempre + n_facturas_manual, n_facturas_auto
+--      trazabilidad_facturas_sin_nv       base sin NV + manual + auto + NV candidatas por RUT
 -- ---------------------------------------------------------------------
-create or replace view shg_dashboards.trazabilidad_nv_documentos as
+create or replace view shg_dashboards.trazabilidad_nv_documentos_base as
 with vf as (
     select
         coalesce(v.nota_venta, m.nota_venta)                         as nota_venta,
@@ -173,6 +187,91 @@ select * from vf
 union all
 select * from solo_facturas;
 
+create or replace view shg_dashboards.trazabilidad_facturas_sin_nv_base as
+select
+    v.docto,
+    v.num_docto,
+    min(v.fecha_emision)::date                                        as fecha,
+    max(v.cliente)                                                    as cliente,
+    max(v.rut)                                                        as rut,
+    max(trim(coalesce(v.nom_vddor, '') || ' ' || coalesce(v.apell_vddor, ''))) as vendedor,
+    round(sum(coalesce(v.total_neto, 0)))::bigint                     as total_neto,
+    count(*)                                                          as n_lineas,
+    'ventas_full'::text                                               as fuente
+from shg_dashboards.ventas_full v
+where v.nota_venta is null
+group by v.docto, v.num_docto
+union all
+select
+    f.docto, f.num_docto, f.fecha::date, f.cliente, f.rut, f.vendedor,
+    round(coalesce(f.total_neto, 0))::bigint, coalesce(f.n_lineas, 0), 'facturas_manager'::text
+from shg_dashboards.facturas_manager f
+where f.nota_venta is null
+  and coalesce(f.nula, 0) = 0
+  and f.docto in ('FAV', 'BOV', 'NDV', 'NCV')
+  and f.fecha >= date_trunc('year', current_date)
+  and not exists (select 1 from shg_dashboards.ventas_full v where v.docto = f.docto and v.num_docto = f.num_docto);
+
+create or replace view shg_dashboards.trazabilidad_nv_auto as
+with con_nv as (
+    -- Facturas con NV conocida (Ventas Full o manual) y su RUT
+    select v.docto, v.num_docto, min(v.fecha_emision)::date as fecha, max(v.rut) as rut,
+           max(coalesce(v.nota_venta, m.nota_venta)) as nota_venta
+    from shg_dashboards.ventas_full v
+    left join shg_dashboards.facturas_nv_manual m on m.docto = v.docto and m.num_docto = v.num_docto
+    where coalesce(v.nota_venta, m.nota_venta) is not null and v.docto in ('FAV', 'BOV', 'NDV')
+    group by v.docto, v.num_docto
+    union all
+    select f.docto, f.num_docto, f.fecha::date, f.rut, coalesce(f.nota_venta, m.nota_venta)
+    from shg_dashboards.facturas_manager f
+    left join shg_dashboards.facturas_nv_manual m on m.docto = f.docto and m.num_docto = f.num_docto
+    where coalesce(f.nota_venta, m.nota_venta) is not null
+      and coalesce(f.nula, 0) = 0 and f.docto in ('FAV', 'BOV', 'NDV')
+      and f.fecha >= date_trunc('year', current_date)
+      and not exists (select 1 from shg_dashboards.ventas_full v where v.docto = f.docto and v.num_docto = f.num_docto)
+),
+pend as (
+    -- Saldo de cada NV sin contar las asociaciones automáticas
+    select nv.numnota,
+           nv.totneto - coalesce(sum(case when b.docto = 'NCV' then -b.total_neto else b.total_neto end), 0) as pendiente
+    from shg_dashboards.notas_de_venta nv
+    left join shg_dashboards.trazabilidad_nv_documentos_base b on b.nota_venta = nv.numnota
+    group by nv.numnota, nv.totneto
+)
+select
+    s.docto,
+    s.num_docto,
+    p.nota_venta                       as nv_auto,
+    p.num_docto                        as doc_prev,
+    p.fecha                            as fecha_prev,
+    pe.pendiente                       as pendiente_nv
+from shg_dashboards.trazabilidad_facturas_sin_nv_base s
+left join shg_dashboards.facturas_nv_manual m on m.docto = s.docto and m.num_docto = s.num_docto
+join lateral (
+    select d.nota_venta, d.num_docto, d.fecha
+    from con_nv d
+    where d.rut = s.rut
+      and d.num_docto < s.num_docto
+      and d.fecha <= s.fecha
+      and d.fecha >= s.fecha - 30
+    order by d.num_docto desc
+    limit 1
+) p on true
+join pend pe on pe.numnota = p.nota_venta and pe.pendiente > 1
+where m.nota_venta is null
+  and s.docto in ('FAV', 'BOV', 'NDV')
+  and coalesce(s.rut, '') <> '';
+
+create or replace view shg_dashboards.trazabilidad_nv_documentos as
+select b.nota_venta, b.docto, b.num_docto, b.fecha, b.cliente, b.total_neto, b.factura_ref, b.n_lineas,
+       b.asignacion_manual, false as asignacion_auto
+from shg_dashboards.trazabilidad_nv_documentos_base b
+union all
+select a.nv_auto, s.docto, s.num_docto, s.fecha, s.cliente, s.total_neto, null::bigint, s.n_lineas,
+       false, true
+from shg_dashboards.trazabilidad_facturas_sin_nv_base s
+join shg_dashboards.trazabilidad_nv_auto a on a.docto = s.docto and a.num_docto = s.num_docto;
+
 create or replace view shg_dashboards.trazabilidad_nv as
 with docs as (
     select
@@ -182,7 +281,8 @@ with docs as (
         d.fecha                                   as fecha_emision,
         d.cliente,
         d.total_neto::double precision            as total_neto,
-        d.asignacion_manual
+        d.asignacion_manual,
+        d.asignacion_auto
     from shg_dashboards.trazabilidad_nv_documentos d
 ),
 vendedor_nv as (
@@ -203,7 +303,8 @@ por_nv as (
         count(distinct num_docto) filter (where docto in ('FAV', 'BOV', 'NDV'))    as n_facturas,
         string_agg(distinct num_docto::text, ', ') filter (where docto in ('FAV', 'BOV', 'NDV')) as facturas_lista,
         string_agg(distinct num_docto::text, ', ') filter (where docto = 'NCV')   as nc_lista,
-        count(*) filter (where asignacion_manual)                                  as n_facturas_manual
+        count(*) filter (where asignacion_manual)                                  as n_facturas_manual,
+        count(*) filter (where asignacion_auto)                                    as n_facturas_auto
     from docs
     group by nota_venta
 ),
@@ -235,7 +336,8 @@ select
     round(coalesce(p.notas_credito, 0) * 1.19)::bigint                 as notas_credito_iva,
     p.nc_lista,
     nv.numnota is not null                                             as nv_en_manager,
-    p.n_facturas_manual
+    p.n_facturas_manual,
+    p.n_facturas_auto
 from por_nv p
 left join shg_dashboards.notas_de_venta nv on nv.numnota = p.nota_venta
 left join info_nv i       on i.nota_venta = p.nota_venta
@@ -243,38 +345,13 @@ left join vendedor_nv vn  on vn.nota_venta = p.nota_venta
 left join guias_por_nv g  on g.nota_de_venta = p.nota_venta;
 
 -- ---------------------------------------------------------------------
--- 4. Facturas sin NV: documentos cuya NV Manager no conoce. Vienen del
---    Ventas Full (cada hora) y, si no están ahí, de facturas (diario).
---    nv_candidatas: NV del mismo RUT con saldo pendiente (> $1), ordenadas
---    de mayor a menor pendiente. nv_asignada: asociación manual vigente.
+-- 4. Facturas sin NV: documentos cuya NV Manager no conoce, con la
+--    asociación manual (nv_asignada), la automática (nv_auto, doc_prev,
+--    fecha_prev) y las NV candidatas del mismo RUT con saldo pendiente
+--    (> $1), ordenadas de mayor a menor pendiente.
 -- ---------------------------------------------------------------------
 create or replace view shg_dashboards.trazabilidad_facturas_sin_nv as
-with docs as (
-    select
-        v.docto,
-        v.num_docto,
-        min(v.fecha_emision)::date                                        as fecha,
-        max(v.cliente)                                                    as cliente,
-        max(v.rut)                                                        as rut,
-        max(trim(coalesce(v.nom_vddor, '') || ' ' || coalesce(v.apell_vddor, ''))) as vendedor,
-        round(sum(coalesce(v.total_neto, 0)))::bigint                     as total_neto,
-        count(*)                                                          as n_lineas,
-        'ventas_full'::text                                               as fuente
-    from shg_dashboards.ventas_full v
-    where v.nota_venta is null
-    group by v.docto, v.num_docto
-    union all
-    select
-        f.docto, f.num_docto, f.fecha::date, f.cliente, f.rut, f.vendedor,
-        round(coalesce(f.total_neto, 0))::bigint, coalesce(f.n_lineas, 0), 'facturas_manager'::text
-    from shg_dashboards.facturas_manager f
-    where f.nota_venta is null
-      and coalesce(f.nula, 0) = 0
-      and f.docto in ('FAV', 'BOV', 'NDV', 'NCV')
-      and f.fecha >= date_trunc('year', current_date)
-      and not exists (select 1 from shg_dashboards.ventas_full v where v.docto = f.docto and v.num_docto = f.num_docto)
-),
-pend as (
+with pend as (
     select
         nv.numnota,
         nv.rutfact                                                        as rut,
@@ -308,17 +385,23 @@ select
     m.nota_venta                                                          as nv_asignada,
     m.asignado_por,
     m.asignado_en,
-    coalesce(c.nv_candidatas, '[]'::jsonb)                                as nv_candidatas
-from docs d
+    coalesce(c.nv_candidatas, '[]'::jsonb)                                as nv_candidatas,
+    a.nv_auto,
+    a.doc_prev,
+    a.fecha_prev
+from shg_dashboards.trazabilidad_facturas_sin_nv_base d
 left join shg_dashboards.facturas_nv_manual m on m.docto = d.docto and m.num_docto = d.num_docto
-left join cand c on c.rut = d.rut;
+left join cand c on c.rut = d.rut
+left join shg_dashboards.trazabilidad_nv_auto a on a.docto = d.docto and a.num_docto = d.num_docto;
 
-revoke all on shg_dashboards.trazabilidad_facturas_sin_nv from anon;
-grant select on shg_dashboards.trazabilidad_facturas_sin_nv to authenticated, service_role;
-revoke all on shg_dashboards.trazabilidad_nv_documentos from anon;
-grant select on shg_dashboards.trazabilidad_nv_documentos to authenticated, service_role;
+revoke all on shg_dashboards.trazabilidad_nv_documentos_base, shg_dashboards.trazabilidad_facturas_sin_nv_base,
+              shg_dashboards.trazabilidad_nv_auto, shg_dashboards.trazabilidad_facturas_sin_nv,
+              shg_dashboards.trazabilidad_nv_documentos from anon;
+grant select on shg_dashboards.trazabilidad_nv_documentos_base, shg_dashboards.trazabilidad_facturas_sin_nv_base,
+                shg_dashboards.trazabilidad_nv_auto, shg_dashboards.trazabilidad_facturas_sin_nv,
+                shg_dashboards.trazabilidad_nv_documentos to authenticated, service_role;
 
 -- Comprobación
--- select count(*) filter (where nv_asignada is null) as sin_nv, count(*) as total,
---        sum(total_neto) filter (where nv_asignada is null) as neto_sin_nv
+-- select * from shg_dashboards.trazabilidad_nv_auto order by num_docto;
+-- select count(*) filter (where nv_asignada is null and nv_auto is null) as sin_nv, count(*) as total
 -- from shg_dashboards.trazabilidad_facturas_sin_nv;
