@@ -50,14 +50,14 @@ ESPERAS_GHL = (5, 10, 20, 30)   # segundos entre intentos
 ERRORES_RED = (urllib.error.URLError, socket.timeout, TimeoutError, ConnectionError, http.client.HTTPException)
 
 
-def ghl(ruta, params=None, cuerpo=None, opcional=False):
+def ghl(ruta, params=None, cuerpo=None, opcional=False, version="2021-07-28"):
     url = f"{GHL_API}{ruta}" + (f"?{urllib.parse.urlencode(params)}" if params else "")
     datos = json.dumps(cuerpo).encode() if cuerpo is not None else None
     ultimo = None
     for intento in range(REINTENTOS_GHL):
         req = urllib.request.Request(url, data=datos, method="POST" if cuerpo is not None else "GET", headers={
             "Authorization": "Bearer " + os.environ["GHL_POLCHILE_TOKEN"],
-            "Version": "2021-07-28", "Accept": "application/json", "Content-Type": "application/json",
+            "Version": version, "Accept": "application/json", "Content-Type": "application/json",
             # Cloudflare (error 1010) bloquea la firma por defecto de Python-urllib.
             "User-Agent": "Mozilla/5.0 (compatible; PolchileDashboardComercial/1.0)"})
         try:
@@ -82,6 +82,36 @@ def ghl(ruta, params=None, cuerpo=None, opcional=False):
         print("aviso:", ultimo)
         return None
     raise SystemExit(ultimo)
+
+
+def razones_perdida(loc):
+    """Razones de pérdida (id -> nombre). El endpoint exige Version "v3" y pagina con
+    skip/limit; con la versión genérica devolvía una sola razón y las perdidas quedaban
+    con código sin nombre (4.089 de 5.654 al 06-10-2026). Se piden también las eliminadas,
+    porque las oportunidades antiguas siguen apuntando a ellas."""
+    razones = {}
+    for eliminadas in ("false", "true"):
+        skip = 0
+        while True:
+            datos = ghl("/opportunities/lost-reason",
+                        {"locationId": loc, "limit": 100, "skip": skip, "deleted": eliminadas},
+                        opcional=True, version="v3") or {}
+            lista = datos.get("lostReasons") or datos.get("lostReason") or []
+            if isinstance(lista, dict):
+                lista = [lista]
+            for r in lista:
+                if r.get("id") and r.get("name"):
+                    razones[r["id"]] = r["name"]
+            total = datos.get("total")
+            if len(lista) < 100 or (total is not None and skip + len(lista) >= total):
+                break
+            skip += 100
+    if not razones:   # respaldo: la llamada antigua, por si GHL rechaza "v3"
+        datos = ghl("/opportunities/lost-reason", {"locationId": loc}, opcional=True) or {}
+        for r in datos.get("lostReasons", datos.get("lostReason", [])) or []:
+            if r.get("id") and r.get("name"):
+                razones[r["id"]] = r["name"]
+    return razones
 
 
 def campos_personalizados(loc, modelo):
@@ -131,10 +161,7 @@ def main():
                  "rol": (u.get("roles") or {}).get("role")} for u in usuarios_raw]
     nombre_usuario = {u["id"]: u["nombre"] for u in usuarios}
 
-    razones = {}
-    datos_razones = ghl("/opportunities/lost-reason", {"locationId": loc}, opcional=True) or {}
-    for r in datos_razones.get("lostReasons", datos_razones.get("lostReason", [])) or []:
-        razones[r.get("id")] = r.get("name")
+    razones = razones_perdida(loc)
 
     campos_opp = campos_personalizados(loc, "opportunity")
     campos_con = campos_personalizados(loc, "contact")
@@ -219,6 +246,7 @@ def main():
         for k in range(0, len(filas), LOTE):
             rpc("cargar_lote", {"tabla": nombre, "filas": filas[k:k + LOTE]})
     print("Supabase:", json.dumps(rpc("publicar_carga", {})))
+    guardar_razones(razones)
 
 
 # Lotes chicos: una sola llamada con todo el CRM saturó la base (HTTP 520).
@@ -254,6 +282,25 @@ def rpc(funcion, cuerpo):
                 time.sleep(10)
                 continue
             raise SystemExit(f"Supabase rechazó {funcion} (HTTP {e.code}): {e.read().decode('utf-8', 'replace')[:500]}")
+
+
+def guardar_razones(razones):
+    """Deja los nombres en polchile_crm.razones_perdida (tabla fija, no se intercambia con la
+    carga), que usan resumen_dashboard y la pestaña Mi CRM para traducir los códigos."""
+    filas = [{"id": k, "nombre": v} for k, v in razones.items() if k and v]
+    if not filas:
+        return
+    key = os.environ["SUPABASE_SERVICE_KEY"]
+    req = urllib.request.Request(
+        f"{SUPABASE_URL}/rest/v1/razones_perdida?on_conflict=id", data=json.dumps(limpiar(filas)).encode("utf-8"),
+        headers={"apikey": key, "Authorization": "Bearer " + key, "Content-Type": "application/json",
+                 "Content-Profile": "polchile_crm", "Prefer": "resolution=merge-duplicates,return=minimal"},
+        method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=60):
+            print(f"Razones de pérdida guardadas en razones_perdida: {len(filas)}")
+    except urllib.error.HTTPError as e:
+        print(f"aviso: no se pudieron guardar las razones de pérdida (HTTP {e.code}): {e.read().decode('utf-8', 'replace')[:300]}")
 
 
 def anotar_error(mensaje):
