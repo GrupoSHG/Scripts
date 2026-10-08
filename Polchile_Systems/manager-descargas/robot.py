@@ -551,8 +551,17 @@ def main():
     try:
         archivos = descargar(visible="--ver" in sys.argv, calibrar="--calibrar" in sys.argv)
         if "--sin-cargar" not in sys.argv:
+            # Cada tabla se reemplaza por separado: si una falla (por ejemplo, Supabase
+            # cancela por timeout) igual se cargan las demás y recién al final se falla.
+            fallidas = []
             for tabla, ruta in archivos.items():
-                cargar.cargar(tabla, ruta)
+                try:
+                    cargar.cargar(tabla, ruta)
+                except SystemExit as e:
+                    log(str(e))
+                    fallidas.append(tabla)
+            if fallidas:
+                raise RuntimeError(f"no se cargaron: {', '.join(fallidas)}")
         limpiar_descargas()
         log(f"OK en {time.time() - inicio:.0f}s")
     except Exception as e:
