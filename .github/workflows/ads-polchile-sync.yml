@@ -1,0 +1,38 @@
+# Inversión publicitaria Polchile (Google Ads, Meta) -> Supabase polchile_crm.inversion_ads
+# Diario (lo dispara Supabase a las 07:40) lee la hoja de Google que escribe el script de
+# Google Ads (Polchile_Systems/google_ads_script.js) y la carga para la inversión, el costo por
+# lead y el retorno del Cockpit Comercial y del dashboard CRM. Lógica en
+# Polchile_Systems/sync_ads_polchile.py; instalación en Polchile_Systems/INVERSION_ADS.md.
+#
+#   Secrets:   GOOGLE_CREDENTIALS_JSON (cuenta de servicio del pipeline, lectora de la hoja),
+#              SUPABASE_SERVICE_KEY
+#   Variables: ADS_POLCHILE_HOJA (id de la hoja de Google)
+
+name: Sincronizar inversión Ads Polchile
+
+on:
+  # Sin "schedule": lo dispara Supabase (automatizacion/disparador_workflows.sql).
+  workflow_dispatch:
+
+concurrency:
+  group: ads-polchile-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: Polchile_Systems
+
+      - name: Dependencias
+        run: pip install -q google-api-python-client google-auth
+
+      - name: Cargar inversión
+        env:
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          ADS_POLCHILE_HOJA: ${{ vars.ADS_POLCHILE_HOJA }}
+        run: python3 Polchile_Systems/sync_ads_polchile.py

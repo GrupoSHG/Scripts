@@ -10,8 +10,15 @@
 --   pipeline.yml            lun-vie 06:30
 --   manager-descargas.yml   lun-vie 09:07 a 18:07, cada hora
 --   bitacora-alertas.yml    lun-vie 09:03 a 18:03, cada hora
---   monitoreo.yml           todos los días, cada hora a los :17
+--   monitoreo.yml           todos los días, cada 4 h a los :17
+--   m5-ghl-sync.yml         todos los días 08:12, 12:12, 16:12 y 20:12
+--   ghl-polchile-sync.yml   todos los días 08:22, 12:22, 16:22 y 20:22
+--   ads-polchile-sync.yml   todos los días 07:40 (inversión Google Ads desde la hoja)
 --   respaldo-supabase.yml   todos los días 05:30 (pg_dump de la base a Drive)
+--
+-- Este archivo se aplica a mano, así que la cadencia viva puede diferir: antes de volver a
+-- correrlo, comparar con `select prosrc from pg_proc where proname = 'programa'`.
+-- Última vez igualado a la función viva: 08-10-2026 (cadencia reducida de monitoreo y GHL).
 --
 -- Antes de correr esto, guardar el token en Vault (fine-grained PAT con owner
 -- GrupoSHG, solo el repo Scripts, permiso Actions: Read and write):
@@ -77,14 +84,18 @@ begin
   if habil and h between 9 and 18 and mi = 3 then
     perform automatizacion.disparar('bitacora-alertas.yml', '{"forzar": "false"}');
   end if;
-  if mi = 17 then
+  if h % 4 = 0 and mi = 17 then
     perform automatizacion.disparar('monitoreo.yml', '{"forzar": "false"}');
   end if;
-  if h between 8 and 21 and mi = 12 then
+  if h in (8, 12, 16, 20) and mi = 12 then
     perform automatizacion.disparar('m5-ghl-sync.yml');
   end if;
-  if h between 8 and 21 and mi = 22 then
+  if h in (8, 12, 16, 20) and mi = 22 then
     perform automatizacion.disparar('ghl-polchile-sync.yml');
+  end if;
+  -- Inversión en Ads (hoja de Google que escribe el script de Google Ads a las 06:00)
+  if h = 7 and mi = 40 then
+    perform automatizacion.disparar('ads-polchile-sync.yml');
   end if;
   -- Respaldo propio de la base (pg_dump a Drive + artefacto), antes del pipeline
   if h = 5 and mi = 30 then
