@@ -11,7 +11,7 @@
  * de los días recientes). Para la primera carga poner DIAS = 400, ejecutar una vez, y volver a 60.
  * Programarlo diario (p. ej. 06:00); el workflow corre a las 07:40 hora de Chile.
  */
-var HOJA_ID = 'PEGAR_AQUI_EL_ID_DE_LA_HOJA';   // docs.google.com/spreadsheets/d/<ID>/edit
+var HOJA_ID = '18RH7f65V080ChSQUJYgmYeJmg-mYdG0OwI2sCj6SVv0';   // hoja "Inversión Ads Polchile" (Drive de atorres), compartida con bot-erp
 var DIAS    = 60;                              // ventana que se reescribe en cada corrida
 var PESTANA = 'google';
 

@@ -29,17 +29,18 @@ Google Ads.
 
 ## Instalación (una sola vez)
 
-1. **Hoja de Google.** Crear una hoja vacía (por ejemplo "Inversión Ads Polchile") y compartirla
-   como *Lector* con la cuenta de servicio del pipeline (la de `GOOGLE_CREDENTIALS_JSON`; en este
-   equipo `Polchile/Credencialesbot.json` es `bot-erp@polchile.iam.gserviceaccount.com`). Copiar el
-   id de la URL (`docs.google.com/spreadsheets/d/<ID>/edit`) y guardarlo como variable del repo:
+1. **Hoja de Google.** *Hecho el 08-10-2026:* la hoja "Inversión Ads Polchile"
+   (`docs.google.com/spreadsheets/d/18RH7f65V080ChSQUJYgmYeJmg-mYdG0OwI2sCj6SVv0`, en el Drive de
+   atorres@polchile.cl) está compartida como *Lector* con la cuenta de servicio del pipeline
+   (`bot-erp@polchile.iam.gserviceaccount.com`, la de `GOOGLE_CREDENTIALS_JSON`) y su id quedó en la
+   variable `ADS_POLCHILE_HOJA` del repo. Si algún día se reemplaza la hoja:
 
    ```
    gh variable set ADS_POLCHILE_HOJA -R GrupoSHG/Scripts --body "<ID>"
    ```
 
 2. **Script en Google Ads.** En la cuenta de Polchile: Herramientas → Acciones masivas →
-   Secuencias de comandos → **+**. Pegar `google_ads_script.js`, poner el `HOJA_ID`, dejar
+   Secuencias de comandos → **+**. Pegar `google_ads_script.js` (ya trae el `HOJA_ID`), dejar
    `DIAS = 400` para la primera carga, **Autorizar**, *Vista previa* y luego *Ejecutar*. Revisar que
    la pestaña `google` quedó con filas y la pestaña `estado` dice `moneda CLP`. Después cambiar a
    `DIAS = 60`, guardar y programarlo **Diario a las 06:00**.
