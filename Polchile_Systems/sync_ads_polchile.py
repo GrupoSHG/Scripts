@@ -140,8 +140,8 @@ def filas_de(valores, pestana):
         raise SystemExit(f'La pestaña "{pestana}" no tiene una fila de encabezado con fecha y costo (primera fila: {valores[0]})')
     filas, malas = [], 0
     for n, fila in enumerate(valores[inicio + 1:], start=inicio + 2):
-        if fila and normalizar(fila[0]) in ("total", "totales", "total:", "grand total"):
-            continue                            # fila de totales del complemento
+        if fila and normalizar(fila[0]).startswith(("total", "grand total")):
+            continue                            # filas de totales del complemento o de la exportación de Google Ads
         celda = lambda c: fila[idx[c]] if c in idx and idx[c] < len(fila) else None
         try:
             f = a_fecha(celda("fecha"))
