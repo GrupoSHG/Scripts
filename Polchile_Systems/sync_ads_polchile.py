@@ -98,16 +98,50 @@ def a_numero(v):
     return float(s)
 
 
+# Nombres alternativos de columna: los que escribe el complemento "Google Ads" de Hojas de cálculo
+# (informe por campaña segmentado por día, en español o inglés) y variantes a mano.
+ALIAS = {
+    "fecha": ("fecha", "dia", "day", "date", "fecha del dia"),
+    "campana_id": ("campana_id", "campaign id", "id de campana", "id de la campana", "campaign_id"),
+    "campana": ("campana", "campaign", "nombre de la campana", "campaign name", "nombre de campana"),
+    "costo": ("costo", "cost", "coste", "gasto", "spend", "amount spent", "importe gastado"),
+    "impresiones": ("impresiones", "impressions", "impr.", "impr"),
+    "clics": ("clics", "clicks", "click", "clic"),
+    "conversiones": ("conversiones", "conversions", "conv.", "conv", "resultados", "results"),
+}
+
+
+def normalizar(c):
+    s = str(c).strip().lower().replace("ñ", "n")
+    return s.translate(str.maketrans("áéíóú", "aeiou"))
+
+
+def encabezado(valores):
+    """Primera fila que trae fecha y costo (el complemento de Google Ads deja el título del informe arriba)."""
+    for i, fila in enumerate(valores[:10]):
+        enc = [normalizar(c) for c in fila]
+        idx = {}
+        for col, nombres in ALIAS.items():
+            for j, c in enumerate(enc):
+                if c in nombres:
+                    idx[col] = j
+                    break
+        if "fecha" in idx and "costo" in idx:
+            return i, idx
+    return None, {}
+
+
 def filas_de(valores, pestana):
     """Convierte la pestaña (lista de listas) en filas para el RPC. Avisa y salta las filas malas."""
     if not valores:
         return []
-    enc = [str(c).strip().lower().replace("ñ", "n") for c in valores[0]]
-    idx = {c: enc.index(c) for c in COLUMNAS if c in enc}
-    if "fecha" not in idx or "costo" not in idx:
-        raise SystemExit(f'La pestaña "{pestana}" no tiene las columnas fecha y costo en la fila 1 (tiene: {enc})')
+    inicio, idx = encabezado(valores)
+    if inicio is None:
+        raise SystemExit(f'La pestaña "{pestana}" no tiene una fila de encabezado con fecha y costo (primera fila: {valores[0]})')
     filas, malas = [], 0
-    for n, fila in enumerate(valores[1:], start=2):
+    for n, fila in enumerate(valores[inicio + 1:], start=inicio + 2):
+        if fila and normalizar(fila[0]) in ("total", "totales", "total:", "grand total"):
+            continue                            # fila de totales del complemento
         celda = lambda c: fila[idx[c]] if c in idx and idx[c] < len(fila) else None
         try:
             f = a_fecha(celda("fecha"))

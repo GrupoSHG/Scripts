@@ -72,6 +72,26 @@ Google Ads.
    En el Cockpit (pestaña CRM Polchile) aparece la sección **Inversión en Ads**; mientras la tabla
    esté vacía la sección lo dice.
 
+## Plan B si Google Ads no deja crear scripts
+
+Si al pulsar **+** en Secuencias de comandos aparece "No se ha podido crear el script en este
+momento", casi siempre es por el nivel de acceso del usuario: los scripts exigen acceso *Estándar* o
+*Administrador* en esa cuenta (Herramientas → Acceso y seguridad). Si no se puede subir el acceso,
+el mismo gasto se puede traer con el complemento oficial **Google Ads para Hojas de cálculo**, que
+no usa scripts:
+
+1. Abrir la hoja "Inversión Ads Polchile" → Extensiones → Complementos → Descargar complementos →
+   instalar **Google Ads** (de Google).
+2. Extensiones → Google Ads → *Create report*: cuenta de Polchile, tipo **Campaign**, segmentar por
+   **Day**, columnas *Campaign*, *Campaign ID*, *Cost*, *Impressions*, *Clicks*, *Conversions*,
+   rango *Last 400 days* la primera vez (después *Last 60 days*), y programarlo **Daily**.
+3. Renombrar la pestaña donde quedó el informe a `google` (o dejar el nombre y pedirle al
+   complemento que escriba ahí).
+
+El sincronizador reconoce ese formato: busca la fila de encabezado aunque el complemento ponga el
+título del informe arriba, acepta los nombres de columna en inglés o español (*Day* / *Día*,
+*Campaign* / *Campaña*, *Cost* / *Coste*…) y salta la fila de totales.
+
 ## Meta Ads (opcional, a mano)
 
 Agregar una pestaña `meta` a la misma hoja con el encabezado
