@@ -25,6 +25,8 @@ Esas tablas alimentan el Cockpit, el Calendario, el Dashboard de Producción y l
 2. En cada paso el robot espera a reconocer la pantalla, comparando una franja con las imágenes de `referencias/`. El escritorio remoto pierde teclas si llegan rápido. Por eso la lista de informes se recorre de a una fila, hasta que la línea "Descripción del Filtro" calza con la referencia del informe.
 3. `cargar.py` convierte el `.xls` al formato de la tabla y llama a `shg_dashboards.reemplazar_<tabla>(filas)`. Esa función borra e inserta en una sola transacción, así los dashboards nunca ven datos a medias. Además registra la carga en `shg_dashboards.cargas_manager`.
    - El informe de Ventas Full debe traer, además de las columnas históricas, `NOTA_VENTA` (NV de origen de cada línea) y `FACTURA_REF` (factura referenciada en las notas de crédito). Su SQL es el mismo de `backup-manager/ConsultasSQL/Ventas_Full.sql`; si el informe en Manager aún no las incluye, `cargar.py` avisa y las deja vacías.
+   - Si Supabase cancela la función por `statement timeout` (código 57014) o responde 502/503/504, `cargar.py` espera 20 s y reintenta hasta 3 veces. Como el reemplazo es una sola transacción, reintentar no duplica filas. El límite de 8 s que trae el rol de la API se sube para `service_role` con `supabase/timeout_service_role.sql` (se aplica a mano en el SQL Editor).
+   - Las tablas se reemplazan una por una: si una falla, el robot igual carga las demás y termina con error indicando cuáles quedaron sin cargar.
 4. El monitoreo (`.github/scripts/monitoreo.py`) consulta `ultima_carga_manager()`. Si en horario laboral pasan más de 2 h sin carga, envía un correo.
 
 ## Dónde corre
