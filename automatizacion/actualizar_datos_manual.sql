@@ -32,7 +32,8 @@ insert into automatizacion.workflows_manual (workflow, nombre, inputs, espera_mi
   ('manager-descargas.yml', 'Descargas de Manager (NV, ventas, OP, CxC)', '{"forzar": "true", "sin_cargar": "false"}', 10, 8),
   ('ghl-polchile-sync.yml', 'CRM Polchile (GoHighLevel)',                '{}', 5, 3),
   ('m5-ghl-sync.yml',       'CRM M5 Industrial (GoHighLevel)',           '{}', 5, 2),
-  ('pipeline.yml',          'Pipeline Manager (NV pendientes, stock, facturación)', '{}', 30, 15)
+  ('pipeline.yml',          'Pipeline Manager (NV pendientes, stock, facturación)', '{}', 30, 15),
+  ('dte-correo-sync.yml',   'Facturas recibidas por correo (XML DTE)',   '{}', 5, 3)
 on conflict (workflow) do update set nombre = excluded.nombre, inputs = excluded.inputs,
   espera_min = excluded.espera_min, duracion_min = excluded.duracion_min;
 
@@ -72,6 +73,7 @@ returns timestamptz language sql stable security definer set search_path = autom
     when 'manager-descargas.yml' then shg_dashboards.ultima_carga_manager()
     when 'ghl-polchile-sync.yml' then (select max(sincronizado_en) from polchile_crm.oportunidades)
     when 'm5-ghl-sync.yml'       then (select max(sincronizado_en) from m5.oportunidades)
+    when 'dte-correo-sync.yml'   then (select max(actualizado_en) from shg_dashboards.dte_correo_cursor)
     when 'pipeline.yml'          then greatest(
                                         (select max(actualizado_en) from shg_dashboards.notas_venta_pendientes),
                                         (select max(actualizado_en) from shg_dashboards.facturacion_periodo))

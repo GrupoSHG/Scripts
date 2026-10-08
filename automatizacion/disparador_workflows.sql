@@ -12,6 +12,7 @@
 --   bitacora-alertas.yml    lun-vie 09:03 a 18:03, cada hora
 --   monitoreo.yml           todos los días, cada hora a los :17
 --   respaldo-supabase.yml   todos los días 05:30 (pg_dump de la base a Drive)
+--   dte-correo-sync.yml     lun-vie 07:42 a 20:42, cada hora (XML de facturas de dte@polchile.cl)
 --
 -- Antes de correr esto, guardar el token en Vault (fine-grained PAT con owner
 -- GrupoSHG, solo el repo Scripts, permiso Actions: Read and write):
@@ -89,6 +90,10 @@ begin
   -- Respaldo propio de la base (pg_dump a Drive + artefacto), antes del pipeline
   if h = 5 and mi = 30 then
     perform automatizacion.disparar('respaldo-supabase.yml');
+  end if;
+  -- Facturas recibidas por correo (XML de DTE de dte@polchile.cl), cada hora en horario hábil
+  if habil and h between 7 and 20 and mi = 42 then
+    perform automatizacion.disparar('dte-correo-sync.yml');
   end if;
 end $$;
 
