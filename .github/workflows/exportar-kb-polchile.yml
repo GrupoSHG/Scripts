@@ -1,0 +1,34 @@
+# Exportación puntual de la base de conocimientos (Knowledge Base) del CRM de Polchile.
+# Se corre a mano ("Run workflow" o `gh workflow run exportar-kb-polchile.yml -R GrupoSHG/Scripts`)
+# y deja el resultado como artifact "kb-polchile" (JSON + Markdown). Lógica en
+# Polchile_Systems/exportar_kb_polchile.py.
+#
+#   Secrets:   GHL_POLCHILE_TOKEN (Private Integration de Polchile, con acceso a Knowledge Base)
+#   Variables: GHL_POLCHILE_LOCATION (opcional)
+
+name: Exportar base de conocimientos CRM Polchile
+
+on:
+  workflow_dispatch:
+
+jobs:
+  exportar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: Polchile_Systems
+
+      - name: Exportar
+        env:
+          GHL_POLCHILE_TOKEN: ${{ secrets.GHL_POLCHILE_TOKEN }}
+          GHL_POLCHILE_LOCATION: ${{ vars.GHL_POLCHILE_LOCATION }}
+        run: python3 Polchile_Systems/exportar_kb_polchile.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kb-polchile
+          path: salida/
+          retention-days: 7
+          if-no-files-found: error
