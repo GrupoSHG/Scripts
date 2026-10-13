@@ -35,10 +35,10 @@ SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY") or "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
 
 CHEQUEOS = [
-    {"nombre": "Command Center", "tipo": "web", "url": "https://melodic-dasik-d903ff.netlify.app/"},
-    {"nombre": "Cockpit Comercial (web)", "tipo": "web", "url": "https://cockpit-comericial-web.netlify.app/"},
+    {"nombre": "Command Center", "tipo": "web", "url": "https://shg-command-center.netlify.app/"},
+    {"nombre": "Cockpit Comercial (web)", "tipo": "web", "url": "https://polchile-cockpit-comercial.netlify.app/"},
     {"nombre": "Dashboard Producción (web)", "tipo": "web", "url": "https://polchile-produccion.netlify.app/"},
-    {"nombre": "Dashboard Finanzas (web)", "tipo": "web", "url": "https://dashboard-finanzasweb.netlify.app/"},
+    {"nombre": "Dashboard Finanzas (web)", "tipo": "web", "url": "https://polchile-finanzas.netlify.app/"},
     {"nombre": "Calendario Despachos (web)", "tipo": "web", "url": "https://calendario-despachos.netlify.app/"},
     {"nombre": "Hojalatería El Abuelo (Firebase)", "tipo": "web", "url": "https://hojalateria-el-abuelo.web.app/"},
     {"nombre": "Trazabilidad NV (web)", "tipo": "web", "url": "https://trazabilidad-nv-polchile.netlify.app/"},
@@ -46,7 +46,7 @@ CHEQUEOS = [
     {"nombre": "App CyS (web)", "tipo": "web", "url": "https://appcys.netlify.app/", "min_bytes": 400},
     {"nombre": "Intranet Polchile (web)", "tipo": "web", "url": "https://intranetpolchile.netlify.app/"},
     {"nombre": "Stock por Familias (web)", "tipo": "web", "url": "https://productosstock.netlify.app/"},
-    {"nombre": "Cubicador de Ramplas (web)", "tipo": "web", "url": "https://lucky-piroshki-0c9c53.netlify.app/"},
+    {"nombre": "Cubicador de Ramplas (web)", "tipo": "web", "url": "https://polchile-cubicador.netlify.app/"},
     {"nombre": "Apps Script Finanzas", "tipo": "appscript",
      "url": APPS_SCRIPT.format("AKfycby0pnIUuRy8bjn108mc9ly4eET4Aa8_B0qD4qZrkqJZAGOtKmvYIOmq-M_mv3Fjuc0Y", "getDatos")},
     {"nombre": "Apps Script Producción", "tipo": "appscript",
