@@ -57,7 +57,7 @@ CHEQUEOS = [
      "url": APPS_SCRIPT.format("AKfycbzqtyzqc9YdCWMZMJd8FRGonBkyAve3Er4WB9MEJxRncEsYuyVSudu_yLzdUWfz2HiR_A", "getDashboardData")},
     {"nombre": "Supabase (app_cys)", "tipo": "supabase",
      "url": SUPABASE_URL + "/rest/v1/centros_costo?select=id&limit=1"},
-    # El robot manager-descargas corre lun-vie cada hora de 9 a 18: avisa si la última
+    # El robot de Manager (manager-robot-horario, workflow manager-descargas.yml) corre lun-vie cada hora de 9 a 18: avisa si la última
     # carga completa (Ventas Full + Notas de Venta) tiene más de MAX_HORAS_CARGA en horario laboral.
     {"nombre": "Robot descargas Manager", "tipo": "frescura",
      "url": SUPABASE_URL + "/rest/v1/rpc/ultima_carga_manager"},

@@ -39,7 +39,7 @@ COLUMNAS = {
         "cto_ult_compra_unit": "decimal", "total_neto": "decimal", "cto_promedio_total": "decimal",
         "cto_repos_total": "entero", "cto_ult_compra_total": "decimal",
         "resultado_cto_prom": "decimal", "resultado_cto_repos": "decimal", "resultado_cto_ult_compra": "decimal",
-        # Trazabilidad (ver backup-manager/ConsultasSQL/Ventas_Full.sql): NV de origen de
+        # Trazabilidad (ver manager-pipeline-diario/ConsultasSQL/Ventas_Full.sql): NV de origen de
         # cada línea y, en las notas de crédito, la factura referenciada.
         "nota_venta": "entero", "factura_ref": "entero",
     },
@@ -66,7 +66,7 @@ COLUMNAS = {
         "codvend": "texto", "nom_vddor": "texto", "apell_vddor": "texto", "moneda": "texto",
         "dctopje": "entero", "totneto": "entero", "dctotipo": "entero", "dctopeso": "entero", "tasacbio": "entero",
     },
-    # Stock de Productos en Bodegas de Stock (misma query que backup-manager/ConsultasSQL/Productos_Stock.sql).
+    # Stock de Productos en Bodegas de Stock (misma query que manager-pipeline-diario/ConsultasSQL/Productos_Stock.sql).
     # reemplazar_stock_bodegas hace upsert en stock_productos.stock por (codigo, bodega_nombre)
     # y borra lo que ya no viene, igual que sync_stock_productos.py en el pipeline diario.
     "stock_bodegas": {
