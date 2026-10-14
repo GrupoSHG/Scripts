@@ -35,18 +35,18 @@ SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY") or "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
 
 CHEQUEOS = [
-    {"nombre": "Command Center", "tipo": "web", "url": "https://melodic-dasik-d903ff.netlify.app/"},
-    {"nombre": "Cockpit Comercial (web)", "tipo": "web", "url": "https://cockpit-comericial-web.netlify.app/"},
-    {"nombre": "Dashboard Producción (web)", "tipo": "web", "url": "https://polchile-produccion.netlify.app/"},
-    {"nombre": "Dashboard Finanzas (web)", "tipo": "web", "url": "https://dashboard-finanzasweb.netlify.app/"},
-    {"nombre": "Calendario Despachos (web)", "tipo": "web", "url": "https://calendario-despachos.netlify.app/"},
+    {"nombre": "Command Center", "tipo": "web", "url": "https://gruposhg-command-center.netlify.app/"},
+    {"nombre": "Cockpit Comercial (web)", "tipo": "web", "url": "https://gruposhg-comercial.netlify.app/"},
+    {"nombre": "Dashboard Producción (web)", "tipo": "web", "url": "https://gruposhg-produccion.netlify.app/"},
+    {"nombre": "Dashboard Finanzas (web)", "tipo": "web", "url": "https://gruposhg-finanzas.netlify.app/"},
+    {"nombre": "Calendario Despachos (web)", "tipo": "web", "url": "https://gruposhg-calendario.netlify.app/"},
     {"nombre": "Hojalatería El Abuelo (Firebase)", "tipo": "web", "url": "https://hojalateria-el-abuelo.web.app/"},
-    {"nombre": "Trazabilidad NV (web)", "tipo": "web", "url": "https://trazabilidad-nv-polchile.netlify.app/"},
-    {"nombre": "M5 Pipeline y Proyectos (web)", "tipo": "web", "url": "https://m5-proyectos-polchile.netlify.app/"},
-    {"nombre": "App CyS (web)", "tipo": "web", "url": "https://appcys.netlify.app/", "min_bytes": 400},
-    {"nombre": "Intranet Polchile (web)", "tipo": "web", "url": "https://intranetpolchile.netlify.app/"},
-    {"nombre": "Stock por Familias (web)", "tipo": "web", "url": "https://productosstock.netlify.app/"},
-    {"nombre": "Cubicador de Ramplas (web)", "tipo": "web", "url": "https://lucky-piroshki-0c9c53.netlify.app/"},
+    {"nombre": "Trazabilidad NV (web)", "tipo": "web", "url": "https://gruposhg-trazabilidad.netlify.app/"},
+    {"nombre": "M5 Pipeline y Proyectos (web)", "tipo": "web", "url": "https://gruposhg-m5-proyectos.netlify.app/"},
+    {"nombre": "App CyS (web)", "tipo": "web", "url": "https://gruposhg-app-cys.netlify.app/", "min_bytes": 400},
+    {"nombre": "Intranet Polchile (web)", "tipo": "web", "url": "https://gruposhg-intranet.netlify.app/"},
+    {"nombre": "Stock por Familias (web)", "tipo": "web", "url": "https://gruposhg-stock.netlify.app/"},
+    {"nombre": "Cubicador de Ramplas (web)", "tipo": "web", "url": "https://gruposhg-cubicador.netlify.app/"},
     {"nombre": "Apps Script Finanzas", "tipo": "appscript",
      "url": APPS_SCRIPT.format("AKfycby0pnIUuRy8bjn108mc9ly4eET4Aa8_B0qD4qZrkqJZAGOtKmvYIOmq-M_mv3Fjuc0Y", "getDatos")},
     {"nombre": "Apps Script Producción", "tipo": "appscript",
@@ -57,7 +57,7 @@ CHEQUEOS = [
      "url": APPS_SCRIPT.format("AKfycbzqtyzqc9YdCWMZMJd8FRGonBkyAve3Er4WB9MEJxRncEsYuyVSudu_yLzdUWfz2HiR_A", "getDashboardData")},
     {"nombre": "Supabase (app_cys)", "tipo": "supabase",
      "url": SUPABASE_URL + "/rest/v1/centros_costo?select=id&limit=1"},
-    # El robot manager-descargas corre lun-vie cada hora de 9 a 18: avisa si la última
+    # El robot de Manager (manager-robot-horario, workflow manager-descargas.yml) corre lun-vie cada hora de 9 a 18: avisa si la última
     # carga completa (Ventas Full + Notas de Venta) tiene más de MAX_HORAS_CARGA en horario laboral.
     {"nombre": "Robot descargas Manager", "tipo": "frescura",
      "url": SUPABASE_URL + "/rest/v1/rpc/ultima_carga_manager"},
@@ -120,6 +120,11 @@ def chequear_una_vez(c):
             # Apps Script devuelve una página HTML cuando el script falla o pide login.
             return False, "la respuesta no es JSON (¿script con error o sin acceso público?)"
         if isinstance(datos, dict) and datos.get("error"):
+            # Desde octubre de 2026 los Apps Script exigen el token de sesión de Supabase
+            # (Seguridad.js). El monitoreo no lo manda, así que "No autorizado" es la
+            # respuesta esperada y prueba que el backend está vivo y protegido.
+            if c["tipo"] == "appscript" and str(datos["error"]).startswith("No autorizado"):
+                return True, f"OK (protegido, responde en {seg:.1f}s)"
             return False, f"error del backend: {str(datos['error'])[:200]}"
     return True, f"OK en {seg:.1f}s"
 

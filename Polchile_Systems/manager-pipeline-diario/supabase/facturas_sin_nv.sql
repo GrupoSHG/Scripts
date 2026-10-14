@@ -2,7 +2,7 @@
 -- facturas_sin_nv.sql  (se aplica a mano en el SQL Editor de Supabase)
 -- Proyecto ffxopvzxyeacpbtxuagu, esquema shg_dashboards. Idempotente.
 --
--- Acompaña a backup-manager/ConsultasSQL/Facturas_Manager.sql (pipeline diario):
+-- Acompaña a manager-pipeline-diario/ConsultasSQL/Facturas_Manager.sql (pipeline diario):
 -- trae TODAS las facturas, boletas, notas de débito y de crédito de venta
 -- desde 2025 (una fila por documento), incluidas las que el Ventas Full
 -- deja fuera (líneas con el artículo genérico "-") y las que no

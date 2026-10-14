@@ -2,7 +2,7 @@
 -- ventas_full_nota_venta.sql  (se aplica a mano en el SQL Editor de Supabase)
 -- Proyecto ffxopvzxyeacpbtxuagu, esquema shg_dashboards.
 --
--- Acompaña al cambio de backup-manager/ConsultasSQL/Ventas_Full.sql, que
+-- Acompaña al cambio de manager-pipeline-diario/ConsultasSQL/Ventas_Full.sql, que
 -- agrega a cada línea del Ventas Full la Nota de Venta de origen
 -- (nota_venta) y, en las notas de crédito, la factura referenciada
 -- (factura_ref).
@@ -10,7 +10,7 @@
 -- 1. Agrega las dos columnas a shg_dashboards.ventas_full. No hace falta
 --    para el pipeline diario (bulk_sync_supabase.py recrea la tabla si
 --    cambian las columnas), pero sí para que el robot horario
---    (manager-descargas/cargar.py -> reemplazar_ventas_full) pueda
+--    (manager-robot-horario/cargar.py -> reemplazar_ventas_full) pueda
 --    insertarlas desde ya: jsonb_populate_recordset ignora las claves que
 --    no existen en la tabla.
 -- 2. Reescribe la vista shg_dashboards.trazabilidad_nv (y 3. crea trazabilidad_nv_documentos) para que lo

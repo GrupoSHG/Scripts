@@ -15,7 +15,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-# Misma carpeta que DRIVE_FOLDER_ID en Polchile_Systems/backup-manager/subir_a_drive.py
+# Misma carpeta que DRIVE_FOLDER_ID en Polchile_Systems/manager-pipeline-diario/subir_a_drive.py
 CARPETA_PIPELINE = "1AQgW1Mrr4MbBNi7yXA8kPNpjZBoo9Ntq"
 SUBCARPETA = "Respaldos Supabase"
 RETENCION_DIAS = 30
