@@ -87,6 +87,8 @@ CAJA_USUARIO = (349, 364, 470, 376)  # texto del campo Usuario (referencia: usua
 LOGIN_CLAVE = (468, 417)
 LOGIN_OK = (485, 440)
 CAJA_CLAVE = (352, 410, 585, 425)  # campo Clave: se ven puntos cuando tiene texto
+CAJA_CENTRO = (700, 380, 900, 520)  # centro de la ventana principal: fondo azul, o gris si un aviso modal
+                                    # (p. ej. "Feliz Cumpleaños") está encima y bloquea el menú
 MENU_MANAGER = (138, 33)
 MENU_CENTRO_INFO = (192, 402)
 LISTA_PRIMERA_FILA = (300, 154)
@@ -184,6 +186,26 @@ class Sesion:
             self.m.keyboard.type(c)
             self.m.wait_for_timeout(200)
 
+    def hay_aviso(self, img=None):
+        """Un aviso modal centrado (cumpleaños, recordatorios de Manager) se ve como un bloque
+        gris/blanco en el centro de la ventana principal, que normalmente es azul."""
+        img = img or self.captura()
+        hist = img.crop(CAJA_CENTRO).convert("L").histogram()
+        return sum(hist[200:]) > 0.5 * sum(hist)
+
+    def cerrar_avisos(self):
+        """Manager muestra avisos modales al entrar que bloquean el menú. El botón Aceptar
+        trae el foco, así que se aceptan con Enter; si no, se prueba con Escape."""
+        for tecla in ("Enter", "Escape", "Enter"):
+            if not self.hay_aviso():
+                return
+            self.captura("aviso_manager")
+            log(f"aviso de Manager en pantalla: se cierra con {tecla}")
+            self.tecla(tecla, 2)
+        if self.hay_aviso():
+            self.captura("error_aviso")
+            raise FalloRobot("un aviso de Manager bloquea el menú y no se pudo cerrar (ver aviso_manager.png)")
+
     # ── Pasos ──
 
     def elegir_usuario(self, usuario):
@@ -227,6 +249,7 @@ class Sesion:
         self.click(LOGIN_OK, 2)
         self.esperar("menu_principal", 60)
         self.m.wait_for_timeout(2000)
+        self.cerrar_avisos()                     # p. ej. "Feliz Cumpleaños" tapa el menú al entrar
 
     def abrir_centro_informacion(self):
         for _ in range(4):
@@ -342,7 +365,10 @@ class Sesion:
         for _ in range(4):
             self.click(MENU_MANAGER, 2)
             if not self.calza("menu_desplegado", PANTALLAS["menu_desplegado"]):
-                self.tecla("Escape", 1)
+                if self.hay_aviso():             # un aviso modal se come el clic en el menú
+                    self.cerrar_avisos()
+                else:
+                    self.tecla("Escape", 1)
                 continue
             self.click(MENU_FINANZAS, 1.5)
             self.click(MENU_FINANZAS_INFORMES, 3)
