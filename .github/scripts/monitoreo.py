@@ -120,6 +120,11 @@ def chequear_una_vez(c):
             # Apps Script devuelve una página HTML cuando el script falla o pide login.
             return False, "la respuesta no es JSON (¿script con error o sin acceso público?)"
         if isinstance(datos, dict) and datos.get("error"):
+            # Desde octubre de 2026 los Apps Script exigen el token de sesión de Supabase
+            # (Seguridad.js). El monitoreo no lo manda, así que "No autorizado" es la
+            # respuesta esperada y prueba que el backend está vivo y protegido.
+            if c["tipo"] == "appscript" and str(datos["error"]).startswith("No autorizado"):
+                return True, f"OK (protegido, responde en {seg:.1f}s)"
             return False, f"error del backend: {str(datos['error'])[:200]}"
     return True, f"OK en {seg:.1f}s"
 
