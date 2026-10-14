@@ -37,7 +37,7 @@ concurrency:
 jobs:
   descargar:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35   # hasta 18 min para conseguir sesión (Manager tarda en levantarla) + ~8 min de exportación
     defaults:
       run:
         working-directory: Polchile_Systems/manager-robot-horario
