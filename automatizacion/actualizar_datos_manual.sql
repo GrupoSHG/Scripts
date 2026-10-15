@@ -129,6 +129,8 @@ declare
   v_quien text;
 begin
   if auth.uid() is null then raise exception 'Hay que iniciar sesión para actualizar los datos'; end if;
+  -- Clientes externos (rol 'cliente', portal de M5 Proyectos): tienen sesión pero no disparan workflows.
+  if shg_dashboards.rol_actual() = 'cliente' then raise exception 'Los clientes no pueden actualizar los datos' using errcode = '42501'; end if;
   select * into w from automatizacion.workflows_manual where workflow = p_workflow;
   if not found then raise exception 'Workflow no habilitado para actualización manual: %', p_workflow; end if;
 
