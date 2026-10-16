@@ -1,0 +1,20 @@
+{
+  "api": {
+    "base": "https://api.mercadopublico.cl/servicios/v1/publico/",
+    "timeout_conexion_s": 10,
+    "timeout_lectura_s": 60,
+    "reintentos": 4,
+    "espera_base_s": 2,
+    "pausa_entre_llamadas_s": 0.4
+  },
+  "limites": {
+    "solicitudes_diarias": 10000,
+    "tope_pct": 80
+  },
+  "horario": {
+    "zona": "America/Santiago",
+    "carga_masiva_desde": "22:00",
+    "carga_masiva_hasta": "07:00",
+    "max_solicitudes_fuera_de_horario": 50
+  }
+}
