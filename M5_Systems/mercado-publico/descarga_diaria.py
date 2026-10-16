@@ -157,7 +157,10 @@ def main():
         historico.update(supabase_mp.leer_todas())
         log.info("Supabase: %d licitaciones ya guardadas", len(historico))
 
-    # 1. Listado
+    # 1. Listado. Con la tabla vacía (primera corrida programada) se parte de todas las activas.
+    if args.supabase and not historico and not args.fecha:
+        log.info("Tabla vacía: carga inicial desde todas las licitaciones activas")
+        args.activas = True
     if args.activas:
         consultas = [{"estado": "activas"}]
     elif args.fecha:

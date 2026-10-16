@@ -41,6 +41,8 @@ python -m venv .venv
 .venv\Scripts\python descarga_diaria.py --activas --supabase        # carga inicial (de noche)
 ```
 
+Con `--supabase` y la tabla vacía, la primera corrida hace sola la carga inicial desde todas las activas.
+
 Cómo filtra: el listado trae solo código, nombre, estado y cierre, así que primero filtra por nombre y
 solo pide el detalle (1 solicitud cada una) de las candidatas; con el detalle vuelve a filtrar por
 descripción, ítems y rubro UNSPSC 72. Las ya guardadas no se vuelven a pedir: si aparecen en el listado
