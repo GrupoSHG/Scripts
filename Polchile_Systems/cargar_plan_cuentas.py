@@ -133,6 +133,26 @@ def main():
     # imputable: el nivel va en la sangría del nombre (3 espacios por nivel), las
     # cuentas de agrupación son las que terminan en "00" y el tipo es el nombre de la
     # cuenta raíz (ACTIVOS, PASIVOS, ...) bajo la que cuelgan. Se infieren si faltan.
+    # Primera pasada: las cuentas raíz del plan (código de 6 dígitos terminado en 00000)
+    # dan el tipo de todas las que comparten su primer dígito (1 Activos, 2 Pasivos,
+    # 3 Ingresos, 4 Gastos...). Es más fiable que la sangría, que el export a veces pierde.
+    raices = {}
+    for fila in filas[inicio:]:
+        j_c, j_n = mapa.get("codigo"), mapa.get("nombre")
+        if j_c is None or j_n is None or j_c >= len(fila) or j_n >= len(fila):
+            continue
+        cod = limpiar_codigo(fila[j_c])
+        if cod and cod.isdigit() and len(cod) == 6 and cod.endswith("00000") and fila[j_n]:
+            raices[cod[0]] = re.sub(r"\s+", " ", str(fila[j_n])).strip().title()
+
+    def nivel_por_codigo(cod):
+        if not (cod.isdigit() and len(cod) == 6):
+            return None
+        if cod.endswith("00000"): return 1
+        if cod.endswith("0000"):  return 2
+        if cod.endswith("00"):    return 3
+        return 4
+
     cuentas, vistos, tipo_raiz = [], set(), None
     for fila in filas[inicio:]:
         def celda(campo):
@@ -151,7 +171,7 @@ def main():
             nivel = None
         sangria = len(nombre_crudo) - len(nombre_crudo.lstrip(" "))
         if nivel is None:
-            nivel = sangria // 3 + 1
+            nivel = nivel_por_codigo(codigo) or (sangria // 3 + 1)
         imputable = a_bool(celda("imputable"))
         if imputable is None:
             imputable = not (codigo.isdigit() and codigo.endswith("00"))
@@ -159,6 +179,8 @@ def main():
         tipo = str(tipo).strip() if tipo not in (None, "") else None
         if nivel == 1:
             tipo_raiz = nombre.title()
+        if tipo is None:
+            tipo = raices.get(codigo[0]) if codigo.isdigit() else None
         if tipo is None:
             tipo = tipo_raiz
         cuentas.append({
