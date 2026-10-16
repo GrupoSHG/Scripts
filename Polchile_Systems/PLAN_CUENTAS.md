@@ -36,6 +36,22 @@ finanzas digita código + cuenta ──▶ rcv-sii POST /cuenta-contable ──�
    cuentas nuevas; con `--desactivar-faltantes` además marca `activo=false` las que ya no
    vienen en el archivo.
 
+## Cargar el calce código de artículo → cuenta desde Manager
+
+Manager exporta por artículo sus cuentas (compra `art_ctacom`, venta `art_ctavta`, costo
+`art_ctacto`, más centros de costo y datos libres). Ese archivo (6.641 artículos en oct-2026,
+cuenta de compra `110804` Existencias en el 97 %, cuentas de gasto `4105xx`/`4205xx` en los
+códigos `G0xx`) se carga con:
+
+```bash
+python3 Polchile_Systems/cargar_codigos_cuenta.py "articulos_cuentas.xlsx" --simular
+python3 Polchile_Systems/cargar_codigos_cuenta.py "articulos_cuentas.xlsx"
+```
+
+Las filas con cuenta de compra `0` se saltan. Cada carga actualiza los códigos que ya existen
+(la última carga gana sobre lo asignado desde la pantalla), así que conviene corregir en Manager
+y volver a exportar en vez de corregir solo en Supabase.
+
 ## Corregir un calce código → cuenta
 
 Basta con volver a asignar la cuenta en la pantalla: la última asignación gana. Para
