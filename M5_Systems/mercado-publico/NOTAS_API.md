@@ -10,4 +10,9 @@ La documentación oficial tiene errores en algunos códigos de estado; aquí que
 
 ## Códigos de estado de licitación
 
-Pendiente: se completa con la primera respuesta real (`CodigoEstado` / `Estado` del listado y del detalle).
+- `licitaciones.json?estado=activas` (2026-10-16): 4.839 licitaciones, **todas con `CodigoEstado` = 5**
+  (Publicada). El listado trae solo `CodigoExterno`, `Nombre`, `CodigoEstado` y `FechaCierre`;
+  organismo, montos y descripción requieren el detalle (`?codigo=`), una solicitud por licitación.
+- La respuesta trae `Cantidad`, `FechaCreacion` (UTC), `Version` y `Listado`.
+- Pendiente para la etapa 2: verificar el resto de códigos (cerrada, desierta, adjudicada, revocada,
+  suspendida) con el listado por fecha, que incluye todos los estados.
