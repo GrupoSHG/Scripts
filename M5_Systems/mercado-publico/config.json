@@ -1,0 +1,83 @@
+{
+  "api": {
+    "base": "https://api.mercadopublico.cl/servicios/v1/publico/",
+    "timeout_conexion_s": 10,
+    "timeout_lectura_s": 60,
+    "reintentos": 4,
+    "espera_base_s": 2,
+    "pausa_entre_llamadas_s": 1.5
+  },
+  "limites": {
+    "solicitudes_diarias": 10000,
+    "tope_pct": 80
+  },
+  "horario": {
+    "zona": "America/Santiago",
+    "carga_masiva_desde": "22:00",
+    "carga_masiva_hasta": "07:00",
+    "max_solicitudes_fuera_de_horario": 50
+  },
+  "estados": {
+    "_nota": "Códigos verificados contra la API el 2026-10-16 (ver NOTAS_API.md). La documentación dice 18 = Revocada; la API devuelve 15.",
+    "5": "Publicada",
+    "6": "Cerrada",
+    "7": "Desierta",
+    "8": "Adjudicada",
+    "15": "Revocada",
+    "16": "Suspendida"
+  },
+  "estados_a_descargar": [
+    5
+  ],
+  "palabras_clave": [
+    "obra civil",
+    "obras civiles",
+    "obras de",
+    "edificacion",
+    "edificio",
+    "construccion",
+    "infraestructura",
+    "pavimentacion",
+    "pavimento",
+    "ampliacion",
+    "mantencion de edificio",
+    "mantenimiento de edificio",
+    "conservacion de edificio",
+    "reparacion de edificio",
+    "habilitacion",
+    "remodelacion",
+    "normalizacion",
+    "reposicion de",
+    "galpon",
+    "estructura metalica"
+  ],
+  "exclusiones": [
+    "adquisicion",
+    "suministro",
+    "mobiliario",
+    "equipamiento",
+    "diseno",
+    "arriendo",
+    "servicio de aseo",
+    "alimentacion",
+    "capacitacion",
+    "consultoria",
+    "asesoria",
+    "medicamento",
+    "licencias de software",
+    "televigilancia",
+    "camaras de"
+  ],
+  "prefijos_categoria": [
+    "7210",
+    "7211",
+    "7212",
+    "7213",
+    "7214",
+    "7215"
+  ],
+  "reporte": {
+    "dias_cierre": 7
+  },
+  "_nota_filtro": "palabras_clave y exclusiones se comparan sin tildes ni mayúsculas, desde el inicio de palabra ('edificio' también encuentra 'edificios'). Una exclusión en el NOMBRE descarta la licitación."
+}
