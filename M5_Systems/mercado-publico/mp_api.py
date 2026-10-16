@@ -27,7 +27,7 @@ def cargar_env():
     for carpeta in [CARPETA, *CARPETA.parents][:7]:
         archivo = carpeta / ".env"
         if archivo.is_file():
-            for linea in archivo.read_text(encoding="utf-8").splitlines():
+            for linea in archivo.read_text(encoding="utf-8-sig").splitlines():
                 clave, _, valor = linea.strip().partition("=")
                 if clave and not clave.startswith("#"):
                     os.environ.setdefault(clave.strip(), valor.strip().strip('"'))
