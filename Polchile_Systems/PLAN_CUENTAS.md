@@ -36,6 +36,15 @@ finanzas digita código + cuenta ──▶ rcv-sii POST /cuenta-contable ──�
    cuentas nuevas; con `--desactivar-faltantes` además marca `activo=false` las que ya no
    vienen en el archivo.
 
+El "Plan de Cuentas Manager.xlsx" (Drive) trae el plan en la primera hoja, columnas `q_cod`
+y `q_nom`, con la jerarquía en la sangría del nombre y un listado de facturas en las columnas
+de al lado (se ignora). El cargador infiere nivel y tipo desde el código de 6 dígitos (raíz
+`x00000`, grupo `xx0000`, subgrupo `xxxx00`, cuenta imputable el resto) y marca como
+agrupación las que terminan en `00`. Cargado el 16/10/2026: 313 cuentas, 220 imputables.
+Excepción: `420900 COMISION POR MEDIOS DE PAGO` termina en `00` pero Manager la usa como
+cuenta de compra de artículos; se dejó imputable a mano
+(`update shg_dashboards.plan_cuentas set imputable = true where codigo in (select cuenta from shg_dashboards.codigos_cuenta)`).
+
 ## Cargar el calce código de artículo → cuenta desde Manager
 
 Manager exporta por artículo sus cuentas (compra `art_ctacom`, venta `art_ctavta`, costo

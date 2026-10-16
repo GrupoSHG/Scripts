@@ -11,11 +11,14 @@ Uso:
                          y no vienen en el archivo (por defecto se dejan como están)
 
 Columnas: el script reconoce los encabezados por nombre, sin importar mayúsculas ni
-tildes. Obligatorias: código ("codigo", "código", "cuenta", "cod"), nombre ("nombre",
-"descripcion", "glosa", "detalle"). Opcionales: tipo, nivel, imputable ("imputable",
-"movimiento", "analitica": S/N, Sí/No, 1/0, true/false). Si no hay fila de encabezado
-reconocible, toma la primera columna como código y la segunda como nombre.
-Las filas sin código o sin nombre se saltan.
+tildes. Obligatorias: código ("codigo", "código", "cuenta", "cod", "q_cod"), nombre
+("nombre", "descripcion", "glosa", "detalle", "q_nom"). Opcionales: tipo, nivel,
+imputable ("imputable", "movimiento", "analitica": S/N, Sí/No, 1/0, true/false). Si no
+vienen, se infieren como en el export de Manager: nivel = sangría del nombre (3 espacios
+por nivel), imputable = el código no termina en "00", tipo = nombre de la cuenta raíz
+(ACTIVOS, PASIVOS, ...). Si no hay fila de encabezado reconocible, toma la primera
+columna como código y la segunda como nombre. Las filas sin código o sin nombre se saltan;
+otras columnas de la hoja (el export de Manager trae un listado de facturas al lado) se ignoran.
 
 Requiere SUPABASE_SERVICE_KEY (en .env o en el entorno). Para .xlsx usa openpyxl;
 para .xls (Excel 97-2003, como exporta Manager) usa xlrd: `pip install openpyxl xlrd`.
@@ -43,8 +46,8 @@ SCHEMA = "shg_dashboards"
 LOTE = 200
 
 ALIAS = {
-    "codigo":    ["codigo", "cod", "cuenta", "codigo cuenta", "cod cuenta", "numero", "nro", "n"],
-    "nombre":    ["nombre", "descripcion", "glosa", "detalle", "nombre cuenta", "denominacion", "titulo"],
+    "codigo":    ["codigo", "cod", "cuenta", "codigo cuenta", "cod cuenta", "numero", "nro", "n", "q cod"],
+    "nombre":    ["nombre", "descripcion", "glosa", "detalle", "nombre cuenta", "denominacion", "titulo", "q nom"],
     "tipo":      ["tipo", "clasificacion", "clase", "naturaleza", "grupo"],
     "nivel":     ["nivel", "level", "profundidad"],
     "imputable": ["imputable", "movimiento", "analitica", "analitico", "acepta movimiento", "detalle s/n", "imp"],
@@ -126,13 +129,38 @@ def main():
     print(f"Archivo {os.path.basename(ruta)}: {len(filas)} filas; columnas detectadas: "
           + ", ".join(f"{k}=col {v + 1}" for k, v in mapa.items()) + f"; datos desde la fila {inicio + 1}")
 
-    cuentas, vistos = [], set()
+    # El export de Manager ("Plan de Cuentas Manager.xlsx") no trae tipo, nivel ni
+    # imputable: el nivel va en la sangría del nombre (3 espacios por nivel), las
+    # cuentas de agrupación son las que terminan en "00" y el tipo es el nombre de la
+    # cuenta raíz (ACTIVOS, PASIVOS, ...) bajo la que cuelgan. Se infieren si faltan.
+    # Primera pasada: las cuentas raíz del plan (código de 6 dígitos terminado en 00000)
+    # dan el tipo de todas las que comparten su primer dígito (1 Activos, 2 Pasivos,
+    # 3 Ingresos, 4 Gastos...). Es más fiable que la sangría, que el export a veces pierde.
+    raices = {}
+    for fila in filas[inicio:]:
+        j_c, j_n = mapa.get("codigo"), mapa.get("nombre")
+        if j_c is None or j_n is None or j_c >= len(fila) or j_n >= len(fila):
+            continue
+        cod = limpiar_codigo(fila[j_c])
+        if cod and cod.isdigit() and len(cod) == 6 and cod.endswith("00000") and fila[j_n]:
+            raices[cod[0]] = re.sub(r"\s+", " ", str(fila[j_n])).strip().title()
+
+    def nivel_por_codigo(cod):
+        if not (cod.isdigit() and len(cod) == 6):
+            return None
+        if cod.endswith("00000"): return 1
+        if cod.endswith("0000"):  return 2
+        if cod.endswith("00"):    return 3
+        return 4
+
+    cuentas, vistos, tipo_raiz = [], set(), None
     for fila in filas[inicio:]:
         def celda(campo):
             j = mapa.get(campo)
             return fila[j] if j is not None and j < len(fila) else None
         codigo = limpiar_codigo(celda("codigo"))
-        nombre = str(celda("nombre") or "").strip()
+        nombre_crudo = str(celda("nombre") or "")
+        nombre = re.sub(r"\s+", " ", nombre_crudo).strip()
         if not codigo or not nombre or codigo in vistos:
             continue
         vistos.add(codigo)
@@ -141,12 +169,25 @@ def main():
             nivel = int(float(nivel)) if nivel not in (None, "") else None
         except (TypeError, ValueError):
             nivel = None
+        sangria = len(nombre_crudo) - len(nombre_crudo.lstrip(" "))
+        if nivel is None:
+            nivel = nivel_por_codigo(codigo) or (sangria // 3 + 1)
         imputable = a_bool(celda("imputable"))
+        if imputable is None:
+            imputable = not (codigo.isdigit() and codigo.endswith("00"))
+        tipo = celda("tipo")
+        tipo = str(tipo).strip() if tipo not in (None, "") else None
+        if nivel == 1:
+            tipo_raiz = nombre.title()
+        if tipo is None:
+            tipo = raices.get(codigo[0]) if codigo.isdigit() else None
+        if tipo is None:
+            tipo = tipo_raiz
         cuentas.append({
             "empresa": empresa, "codigo": codigo, "nombre": nombre,
-            "tipo": (str(celda("tipo")).strip() or None) if celda("tipo") not in (None, "") else None,
+            "tipo": tipo,
             "nivel": nivel,
-            "imputable": True if imputable is None else imputable,
+            "imputable": imputable,
             "activo": True,
             "actualizado_en": datetime.now(timezone.utc).isoformat(),
         })
