@@ -7,7 +7,7 @@
 --    "anon full access" heredada del sitio gestion-ordenes-compra, que apuntaba a
 --    otro proyecto Supabase (ya eliminado) y hoy responde 404. Nadie las lee ni
 --    escribe con la clave publicable; proveedores la escribe
---    backup-manager/sync_supabase.py con la clave de servicio (no usa políticas).
+--    manager-pipeline-diario/sync_supabase.py con la clave de servicio (no usa políticas).
 --  * Siete tablas de shg_dashboards (asistencia, facturas, gastos, centros_costo,
 --    personas, iniciativas, facturacion) son la copia antigua de la app CyS, que
 --    hoy trabaja en el schema app_cys. Tenían "Lectura pública" y, tres de ellas,

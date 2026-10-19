@@ -143,6 +143,8 @@ def filas_de(valores, pestana):
         if fila and normalizar(fila[0]).startswith(("total", "grand total")):
             continue                            # filas de totales del complemento o de la exportación de Google Ads
         celda = lambda c: fila[idx[c]] if c in idx and idx[c] < len(fila) else None
+        if normalizar(celda("fecha") or "") in ALIAS["fecha"]:
+            continue                            # el complemento repite el encabezado debajo de la fila de totales
         try:
             f = a_fecha(celda("fecha"))
             if f is None:

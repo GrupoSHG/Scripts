@@ -11,6 +11,7 @@ inserta en una sola transacción, así los dashboards nunca ven la tabla vacía.
 import json
 import os
 import sys
+import time
 import urllib.error
 import urllib.request
 
@@ -38,7 +39,7 @@ COLUMNAS = {
         "cto_ult_compra_unit": "decimal", "total_neto": "decimal", "cto_promedio_total": "decimal",
         "cto_repos_total": "entero", "cto_ult_compra_total": "decimal",
         "resultado_cto_prom": "decimal", "resultado_cto_repos": "decimal", "resultado_cto_ult_compra": "decimal",
-        # Trazabilidad (ver backup-manager/ConsultasSQL/Ventas_Full.sql): NV de origen de
+        # Trazabilidad (ver manager-pipeline-diario/ConsultasSQL/Ventas_Full.sql): NV de origen de
         # cada línea y, en las notas de crédito, la factura referenciada.
         "nota_venta": "entero", "factura_ref": "entero",
     },
@@ -65,7 +66,7 @@ COLUMNAS = {
         "codvend": "texto", "nom_vddor": "texto", "apell_vddor": "texto", "moneda": "texto",
         "dctopje": "entero", "totneto": "entero", "dctotipo": "entero", "dctopeso": "entero", "tasacbio": "entero",
     },
-    # Stock de Productos en Bodegas de Stock (misma query que backup-manager/ConsultasSQL/Productos_Stock.sql).
+    # Stock de Productos en Bodegas de Stock (misma query que manager-pipeline-diario/ConsultasSQL/Productos_Stock.sql).
     # reemplazar_stock_bodegas hace upsert en stock_productos.stock por (codigo, bodega_nombre)
     # y borra lo que ya no viene, igual que sync_stock_productos.py en el pipeline diario.
     "stock_bodegas": {
@@ -134,21 +135,42 @@ def leer_xls(tabla, ruta):
     return filas
 
 
+# Errores pasajeros de Supabase que vale la pena reintentar. 57014 = "canceling
+# statement due to statement timeout": la función tarda más que el statement_timeout
+# del rol con que entra la API (8 s por defecto; ver supabase/timeout_service_role.sql).
+# Como reemplazar_<tabla> es una sola transacción, reintentar es seguro: o se cargó
+# todo o no se cargó nada.
+REINTENTOS = 3
+PAUSA_REINTENTO = 20        # segundos; la base suele estar atascada por otro job
+
+
 def reemplazar(tabla, filas):
     key = os.environ.get("SUPABASE_SERVICE_KEY")
     if not key:
         raise SystemExit("Falta SUPABASE_SERVICE_KEY en .env")
-    req = urllib.request.Request(
-        f"{SUPABASE_URL}/rest/v1/rpc/reemplazar_{tabla}",
-        data=json.dumps({"filas": filas}).encode("utf-8"),
-        headers={"apikey": key, "Authorization": "Bearer " + key, "Content-Type": "application/json",
-                 "Content-Profile": "shg_dashboards"},
-        method="POST")
-    try:
-        with urllib.request.urlopen(req, timeout=120) as r:
-            return json.loads(r.read())
-    except urllib.error.HTTPError as e:
-        raise SystemExit(f"Supabase rechazó la carga de {tabla} (HTTP {e.code}): {e.read().decode('utf-8', 'replace')[:500]}")
+    cuerpo = json.dumps({"filas": filas}).encode("utf-8")
+    for intento in range(1, REINTENTOS + 1):
+        req = urllib.request.Request(
+            f"{SUPABASE_URL}/rest/v1/rpc/reemplazar_{tabla}",
+            data=cuerpo,
+            headers={"apikey": key, "Authorization": "Bearer " + key, "Content-Type": "application/json",
+                     "Content-Profile": "shg_dashboards"},
+            method="POST")
+        try:
+            with urllib.request.urlopen(req, timeout=120) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            detalle = e.read().decode("utf-8", "replace")[:500]
+            pasajero = '"57014"' in detalle or e.code in (502, 503, 504)
+            if not pasajero or intento == REINTENTOS:
+                raise SystemExit(f"Supabase rechazó la carga de {tabla} (HTTP {e.code}): {detalle}")
+            motivo = f"HTTP {e.code}: {detalle}"
+        except (urllib.error.URLError, TimeoutError) as e:
+            if intento == REINTENTOS:
+                raise SystemExit(f"No se pudo llegar a Supabase para cargar {tabla}: {e}")
+            motivo = str(e)
+        print(f"{tabla}: carga rechazada ({motivo}); reintento {intento}/{REINTENTOS - 1} en {PAUSA_REINTENTO} s")
+        time.sleep(PAUSA_REINTENTO)
 
 
 def cargar(tabla, ruta, simular=False):

@@ -17,6 +17,14 @@ Se eligió un **script de Google Ads** y no la API porque la API exige un token 
 con los permisos del usuario que lo autoriza y solo escribe una hoja, así ninguna clave queda en
 Google Ads.
 
+**En uso desde oct 2026: el complemento "Google Ads" para Hojas de cálculo, no el script.** La hoja
+"Inversión Ads Polchile" (`ADS_POLCHILE_HOJA`) ya tiene un informe programado del complemento que
+reescribe la pestaña `google` cada día a las ~03:50 (campañas, últimos 30 días, segmentado por día,
+encabezados en español: Día, Campaña, Clics, Impr., Coste, Conversiones, ID de la campaña).
+`sync_ads_polchile.py` reconoce esos encabezados, salta la fila "Total: Cuenta" y busca el
+encabezado dentro de las primeras 10 filas, así que el script de abajo queda como alternativa. Como
+la ventana es de 30 días, la historia anterior solo existe en Supabase desde la primera carga.
+
 ## Archivos
 
 | Archivo | Qué es |

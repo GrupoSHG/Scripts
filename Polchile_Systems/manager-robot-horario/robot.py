@@ -36,7 +36,12 @@ REFS = os.path.join(BASE, "referencias")
 DESCARGAS = os.path.join(BASE, "descargas")
 CAPTURAS = os.path.join(BASE, "capturas")
 UMBRAL = 6          # diferencia media (0-255) bajo la cual una franja "calza" con su referencia
-INTENTOS_SESION = 4
+INTENTOS_SESION = 6          # veces que se vuelve a entrar (Ramaflex + login de Manager) antes de rendirse
+LIMITE_APERTURA = 18 * 60    # s en total para conseguir una sesión de Manager; después se deja de reintentar
+ESPERA_ENTRE_INTENTOS = 60   # s entre un intento de sesión y el siguiente
+ESPERA_PESTANA = 90          # s que se espera a que la pestaña de Manager llegue a time.manager.cl
+PAUSAS_PESTANA = (15, 30, 45, 60)   # s antes de volver a pulsar "Manager Time ERP" cuando la pestaña no cargó
+                                    # (Manager tarda en levantar la sesión por seguridad; cada vez se espera más)
 
 # Franjas de pantalla que identifican cada estado: (referencia, caja x0, y0, x1, y1)
 PANTALLAS = {
@@ -82,6 +87,8 @@ CAJA_USUARIO = (349, 364, 470, 376)  # texto del campo Usuario (referencia: usua
 LOGIN_CLAVE = (468, 417)
 LOGIN_OK = (485, 440)
 CAJA_CLAVE = (352, 410, 585, 425)  # campo Clave: se ven puntos cuando tiene texto
+CAJA_CENTRO = (700, 380, 900, 520)  # centro de la ventana principal: fondo azul, o gris si un aviso modal
+                                    # (p. ej. "Feliz Cumpleaños") está encima y bloquea el menú
 MENU_MANAGER = (138, 33)
 MENU_CENTRO_INFO = (192, 402)
 LISTA_PRIMERA_FILA = (300, 154)
@@ -179,6 +186,26 @@ class Sesion:
             self.m.keyboard.type(c)
             self.m.wait_for_timeout(200)
 
+    def hay_aviso(self, img=None):
+        """Un aviso modal centrado (cumpleaños, recordatorios de Manager) se ve como un bloque
+        gris/blanco en el centro de la ventana principal, que normalmente es azul."""
+        img = img or self.captura()
+        hist = img.crop(CAJA_CENTRO).convert("L").histogram()
+        return sum(hist[200:]) > 0.5 * sum(hist)
+
+    def cerrar_avisos(self):
+        """Manager muestra avisos modales al entrar que bloquean el menú. El botón Aceptar
+        trae el foco, así que se aceptan con Enter; si no, se prueba con Escape."""
+        for tecla in ("Enter", "Escape", "Enter"):
+            if not self.hay_aviso():
+                return
+            self.captura("aviso_manager")
+            log(f"aviso de Manager en pantalla: se cierra con {tecla}")
+            self.tecla(tecla, 2)
+        if self.hay_aviso():
+            self.captura("error_aviso")
+            raise FalloRobot("un aviso de Manager bloquea el menú y no se pudo cerrar (ver aviso_manager.png)")
+
     # ── Pasos ──
 
     def elegir_usuario(self, usuario):
@@ -198,9 +225,10 @@ class Sesion:
                          "(si cambió MANAGER_USUARIO, hay que recapturar referencias/usuario_manager.png)")
 
     def login_manager(self, usuario, clave):
-        self.esperar("panel_remote_app", 90)
+        # El escritorio remoto tarda en dibujar el panel y, después, en abrir Manager: se le da margen.
+        self.esperar("panel_remote_app", 150)
         self.click(PANEL_ERP_MANAGER)
-        self.esperar("login_manager", 90)
+        self.esperar("login_manager", 120)
         self.m.wait_for_timeout(1500)
         self.elegir_usuario(usuario)
         # El diálogo puede aparecer sin foco: clic en Clave y confirmar que el texto llegó.
@@ -221,6 +249,7 @@ class Sesion:
         self.click(LOGIN_OK, 2)
         self.esperar("menu_principal", 60)
         self.m.wait_for_timeout(2000)
+        self.cerrar_avisos()                     # p. ej. "Feliz Cumpleaños" tapa el menú al entrar
 
     def abrir_centro_informacion(self):
         for _ in range(4):
@@ -336,7 +365,10 @@ class Sesion:
         for _ in range(4):
             self.click(MENU_MANAGER, 2)
             if not self.calza("menu_desplegado", PANTALLAS["menu_desplegado"]):
-                self.tecla("Escape", 1)
+                if self.hay_aviso():             # un aviso modal se come el clic en el menú
+                    self.cerrar_avisos()
+                else:
+                    self.tecla("Escape", 1)
                 continue
             self.click(MENU_FINANZAS, 1.5)
             self.click(MENU_FINANZAS_INFORMES, 3)
@@ -456,14 +488,18 @@ def abrir_manager(ctx, correo, clave_ramaflex):
         pg.wait_for_timeout(1000)
     if aviso.count() and aviso.is_visible():
         aviso.click()
-    pg.wait_for_timeout(6000)       # el botón aparece antes de que Ramaflex prepare el acceso
-    for _ in range(3):
-        with ctx.expect_page(timeout=20000) as nueva:
+    pg.wait_for_timeout(8000)       # el botón aparece antes de que Ramaflex prepare el acceso
+    for n, pausa in enumerate(PAUSAS_PESTANA):
+        with ctx.expect_page(timeout=30000) as nueva:
             boton.click()
         m = nueva.value
-        # La pestaña nace en about:blank y debe navegar a time.manager.cl; si queda en blanco, reintentar.
-        limite = time.time() + 30
+        # La pestaña nace en about:blank y debe navegar a time.manager.cl. Manager puede tardar
+        # en levantar la sesión (lo hace por seguridad), así que se le da tiempo; si Chrome ya
+        # mostró su página de error (chrome-error://...), no tiene sentido seguir esperando.
+        limite = time.time() + ESPERA_PESTANA
         while time.time() < limite and not m.is_closed() and "time.manager.cl" not in m.url:
+            if m.url.startswith("chrome-error://"):
+                break
             pg.wait_for_timeout(1000)
         if not m.is_closed() and "time.manager.cl" in m.url:
             return m
@@ -477,10 +513,13 @@ def abrir_manager(ctx, correo, clave_ramaflex):
                     detalle += ' ' + codigo[0]
             except Exception:
                 pass
-        log(f"la pestaña de Manager no cargó ({detalle}), reintento")
         if not m.is_closed():
             m.close()
-        pg.wait_for_timeout(5000)
+        if n == len(PAUSAS_PESTANA) - 1:
+            log(f"la pestaña de Manager no cargó ({detalle})")
+            break
+        log(f"la pestaña de Manager no cargó ({detalle}); se espera {pausa} s a que Manager levante la sesión y se reintenta")
+        pg.wait_for_timeout(pausa * 1000)
     raise FalloRobot("Ramaflex no abrió Manager Time ERP (la pestaña quedó en blanco)")
 
 
@@ -493,15 +532,23 @@ def descargar(visible=False, calibrar=False):
             os.path.join(BASE, ".perfil"), headless=not visible,
             viewport={"width": 1600, "height": 900}, accept_downloads=True)
         try:
+            inicio = time.time()
+
+            def rendirse(intento):
+                # Se deja de reintentar cuando se agotan los intentos o el tiempo total para
+                # abrir Manager (el workflow tiene su propio límite y aún falta exportar).
+                return intento == INTENTOS_SESION or time.time() - inicio > LIMITE_APERTURA
+
             for intento in range(1, INTENTOS_SESION + 1):
                 log(f"abriendo Manager (intento {intento})")
                 try:
                     s = Sesion(abrir_manager(ctx, env["RAMAFLEX_CORREO"], env["RAMAFLEX_CLAVE"]))
                 except Exception as e:   # Ramaflex o el servidor de Manager no respondieron
                     log(f"intento {intento} falló: {e}")
-                    if intento == INTENTOS_SESION:
+                    if rendirse(intento):
                         raise
-                    time.sleep(45)
+                    log(f"se espera {ESPERA_ENTRE_INTENTOS} s antes de volver a entrar")
+                    time.sleep(ESPERA_ENTRE_INTENTOS)
                     continue
                 try:
                     s.login_manager(env["MANAGER_USUARIO"], env["MANAGER_CLAVE"])
@@ -514,9 +561,10 @@ def descargar(visible=False, calibrar=False):
                         s.logoff()       # cerrar limpio: una sesión colgada corta la siguiente
                     if not s.m.is_closed():
                         s.m.close()
-                    if intento == INTENTOS_SESION:
+                    if rendirse(intento):
                         raise
-                    time.sleep(45)
+                    log(f"se espera {ESPERA_ENTRE_INTENTOS} s antes de volver a entrar")
+                    time.sleep(ESPERA_ENTRE_INTENTOS)
             log("sesión de Manager iniciada")
             archivos = {}
             try:
@@ -551,8 +599,17 @@ def main():
     try:
         archivos = descargar(visible="--ver" in sys.argv, calibrar="--calibrar" in sys.argv)
         if "--sin-cargar" not in sys.argv:
+            # Cada tabla se reemplaza por separado: si una falla (por ejemplo, Supabase
+            # cancela por timeout) igual se cargan las demás y recién al final se falla.
+            fallidas = []
             for tabla, ruta in archivos.items():
-                cargar.cargar(tabla, ruta)
+                try:
+                    cargar.cargar(tabla, ruta)
+                except SystemExit as e:
+                    log(str(e))
+                    fallidas.append(tabla)
+            if fallidas:
+                raise RuntimeError(f"no se cargaron: {', '.join(fallidas)}")
         limpiar_descargas()
         log(f"OK en {time.time() - inicio:.0f}s")
     except Exception as e:

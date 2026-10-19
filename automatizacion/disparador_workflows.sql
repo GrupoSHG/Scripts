@@ -10,11 +10,14 @@
 --   pipeline.yml            lun-vie 06:30
 --   manager-descargas.yml   lun-vie 09:07 a 18:07, cada hora
 --   bitacora-alertas.yml    lun-vie 09:03 a 18:03, cada hora
---   monitoreo.yml           todos los días, cada 4 h a los :17
+--   monitoreo.yml           todos los días, cada 4 horas a los :17
 --   m5-ghl-sync.yml         todos los días 08:12, 12:12, 16:12 y 20:12
 --   ghl-polchile-sync.yml   todos los días 08:22, 12:22, 16:22 y 20:22
 --   ads-polchile-sync.yml   todos los días 07:40 (inversión Google Ads desde la hoja)
 --   respaldo-supabase.yml   todos los días 05:30 (pg_dump de la base a Drive)
+--   dte-correo-sync.yml     lun-vie 07:42 a 20:42, cada hora (XML de facturas de dte@polchile.cl)
+--   mercado-publico-m5.yml  todos los días 22:30 (licitaciones de obras para M5)
+-- (programa() sincronizado con la función en vivo el 2026-10-16.)
 --
 -- Este archivo se aplica a mano, así que la cadencia viva puede diferir: antes de volver a
 -- correrlo, comparar con `select prosrc from pg_proc where proname = 'programa'`.
@@ -93,13 +96,22 @@ begin
   if h in (8, 12, 16, 20) and mi = 22 then
     perform automatizacion.disparar('ghl-polchile-sync.yml');
   end if;
-  -- Inversión en Ads (hoja de Google que escribe el script de Google Ads a las 06:00)
+  -- Inversión en Ads (hoja "Inversión Ads Polchile", la reescribe el complemento de Google Ads ~03:50)
   if h = 7 and mi = 40 then
     perform automatizacion.disparar('ads-polchile-sync.yml');
   end if;
   -- Respaldo propio de la base (pg_dump a Drive + artefacto), antes del pipeline
   if h = 5 and mi = 30 then
     perform automatizacion.disparar('respaldo-supabase.yml');
+  end if;
+  -- Facturas recibidas por correo (XML de DTE de dte@polchile.cl), cada hora en horario hábil
+  if habil and h between 7 and 20 and mi = 42 then
+    perform automatizacion.disparar('dte-correo-sync.yml');
+  end if;
+  -- Licitaciones de obras de Mercado Público para M5: todos los días 22:30, dentro de la
+  -- ventana de cargas masivas de la API (22:00-07:00)
+  if h = 22 and mi = 30 then
+    perform automatizacion.disparar('mercado-publico-m5.yml');
   end if;
 end $$;
 

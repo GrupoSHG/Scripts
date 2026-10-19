@@ -1,0 +1,44 @@
+# Facturas recibidas por correo (XML de DTE) -> Supabase shg_dashboards.dte_recibidos
+# Lee la casilla dte@polchile.cl por IMAP y guarda cada DTE (encabezado, ítems y XML)
+# para la pantalla RCV del Dashboard Finanzas. Lógica en Polchile_Systems/sync_dte_correo.py.
+#
+#   Secrets: DTE_MAIL_USER (dte@polchile.cl), DTE_MAIL_PASSWORD (contraseña de
+#            aplicación de Google), SUPABASE_SERVICE_KEY
+
+name: Facturas por correo (DTE)
+
+on:
+  # Sin "schedule": lo dispara Supabase (automatizacion/disparador_workflows.sql).
+  workflow_dispatch:
+    inputs:
+      desde_cero:
+        description: "Ignorar el cursor y releer los últimos N días"
+        type: boolean
+        default: false
+      dias:
+        description: "Días hacia atrás cuando se relee desde cero"
+        type: string
+        default: "90"
+
+concurrency:
+  group: dte-correo-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: Polchile_Systems
+
+      - name: Leer casilla DTE y cargar a Supabase
+        env:
+          DTE_MAIL_USER: ${{ secrets.DTE_MAIL_USER }}
+          DTE_MAIL_PASSWORD: ${{ secrets.DTE_MAIL_PASSWORD }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          ARGS=""
+          if [ "${{ inputs.desde_cero }}" = "true" ]; then ARGS="--desde-cero --dias ${{ inputs.dias || '90' }}"; fi
+          python3 Polchile_Systems/sync_dte_correo.py $ARGS
