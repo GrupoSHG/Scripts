@@ -33,7 +33,12 @@ cualquiera. No subir datos comerciales sensibles de M5 ni evaluaciones al repo.
 - `python -m licitaciones descargar [--fecha ddmmaaaa] [--max N] [--forzar]`
 - `python -m licitaciones evaluar [--dia AAAA-MM-DD] [--max N] [--perfil RUTA]` (etapa 2, `evaluacion.py`)
 - `python -m licitaciones detalle CODIGO`
-- Códigos de salida: 1 config · 2 API MP · 3 tope solicitudes · 4 API Claude · 5 tope gasto · 6 JSON inválido.
+- `python -m licitaciones guardar [--dia AAAA-MM-DD]` (etapa 4, `supabase_mp.py`, REST con `requests`).
+- Códigos de salida: 1 config · 2 API MP · 3 tope solicitudes · 4 API Claude · 5 tope gasto · 6 JSON inválido ·
+  7 Supabase.
+- Supabase: `SUPABASE_KEY` = JWT del rol `licitaciones_m5` (SQL en `supabase/`, generado por el usuario con
+  `generar_clave_supabase.py`); `apikey` = clave publicable de `ajustes.yaml` (pública). No usar la
+  `SUPABASE_SERVICE_KEY` del repo. La página `licitaciones.html` de `GrupoSHG_Systems` oculta `descartar`.
 - Claude: SDK `anthropic` con `api_key` explícita desde `ANTHROPIC_API_KEY` (no usar perfiles `ant`),
   `output_config.format` con `ESQUEMA` + validación local con `Evaluacion` (pydantic). Si se cambia el
   modelo, agregar su precio en `ajustes.yaml` o el tope de gasto no corre.

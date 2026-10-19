@@ -4,8 +4,8 @@ Revisa cada día las licitaciones de Mercado Público (ChileCompra), filtra las 
 perfil de M5 Industrial (Grupo SHG) y deja el resultado en `salida/`. Reemplazará a
 `../mercado-publico/` cuando esté completa.
 
-Etapas: 1 descarga y filtro barato · 2 puntuación con Claude (hechas) · 3 reporte diario ·
-4 Supabase · 5 GitHub Actions.
+Etapas: 1 descarga y filtro barato · 2 puntuación con Claude · 4 Supabase (hechas) · 3 reporte diario ·
+5 GitHub Actions.
 
 ## Instalación
 
@@ -39,6 +39,7 @@ Credenciales **solo por variables de entorno**: `MP_TICKET`, `ANTHROPIC_API_KEY`
 .venv\Scripts\python -m licitaciones descargar --fecha 15102026
 .venv\Scripts\python -m licitaciones evaluar --max 20             # etapa 2 sobre salida/<hoy>/filtradas.json
 .venv\Scripts\python -m licitaciones evaluar --dia 2026-10-19
+.venv\Scripts\python -m licitaciones guardar                    # etapa 4: upsert del día en m5.licitaciones_mp
 .venv\Scripts\python -m licitaciones detalle 4174-34-LP26        # qué entrega la API para una licitación
 .venv\Scripts\python -m unittest discover -s tests -t .
 ```
@@ -50,7 +51,15 @@ US$ de la corrida y del día) y `evaluacion.md` (tabla para calibrar el perfil).
 
 Códigos de salida: 0 ok · 1 configuración · 2 error de la API de Mercado Público · 3 tope de
 solicitudes · 4 error de la API de Claude · 5 tope diario de gasto · 6 más de
-`max_revision_manual_por_json` respuestas inválidas.
+`max_revision_manual_por_json` respuestas inválidas · 7 error de Supabase.
+
+Supabase (etapa 4): `supabase/licitaciones_mp_evaluacion.sql` agrega a `m5.licitaciones_mp` las columnas de
+la evaluación y crea el rol `licitaciones_m5` (solo leer, insertar y actualizar esa tabla). `SUPABASE_KEY` es
+un JWT de ese rol: se genera una vez con `generar_clave_supabase.py` (en tu PowerShell, pide el JWT Secret del
+proyecto sin mostrarlo y lo escribe en `.env` y, con `--github`, en los secrets del repo). `guardar` sube las
+evaluadas y también las descartadas (para no reevaluarlas; la página no las muestra) y actualiza el estado de
+las ya guardadas según el listado del día. Las muestra
+https://gruposhg-m5-proyectos.netlify.app/licitaciones.html (`GrupoSHG_Systems/M5_Systems/proyectos`).
 
 Evaluación (etapa 2): modelo, esfuerzo, `max_tokens`, precios y tope diario de gasto en
 `ajustes.yaml` → `evaluacion` (por defecto `claude-haiku-5-5`, US$ 1 al día). La respuesta tiene esquema

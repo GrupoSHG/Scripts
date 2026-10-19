@@ -42,6 +42,13 @@ evaluacion:
     claude-sonnet-5-5: {entrada: 2.00, salida: 10.00, cache_lectura: 0.20, cache_escritura: 2.50}
     claude-opus-5-5:   {entrada: 4.00, salida: 20.00, cache_lectura: 0.20, cache_escritura: 5.00}
 
+supabase:
+  esquema: m5                 # tabla m5.licitaciones_mp
+  timeout_s: 30
+  # Clave PUBLICABLE del proyecto (pública: es la misma que usan las páginas web). Solo identifica
+  # el proyecto ante la pasarela; los permisos los da SUPABASE_KEY (JWT del rol licitaciones_m5).
+  apikey_publica: sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc
+
 filtro:
   # Categorías UNSPSC de servicios de construcción: un ítem con ese prefijo basta para pasar el
   # filtro fino aunque ninguna palabra clave aparezca en el texto.

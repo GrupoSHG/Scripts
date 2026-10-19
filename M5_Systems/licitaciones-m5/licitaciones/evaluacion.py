@@ -278,9 +278,7 @@ def separar(resultados, ajustes):
         if e is None or e["recomendacion"] in conservar:
             conservadas.append(r)
         else:
-            descartadas.append({"codigo_externo": r["codigo_externo"], "nombre": r.get("nombre"),
-                                "puntaje": e["puntaje"], "recomendacion": e["recomendacion"],
-                                "motivo": e["motivo"], "url_ficha": r.get("url_ficha")})
+            descartadas.append(r)
     return conservadas, descartadas
 
 

@@ -164,7 +164,8 @@ class TestSeparar(unittest.TestCase):
                for c, rec in (("a", "postular"), ("b", "revisar"), ("c", "descartar"), ("d", None))]
         conservadas, descartadas = separar(res, AJUSTES)
         self.assertEqual([r["codigo_externo"] for r in conservadas], ["a", "b", "d"])
-        self.assertEqual([(r["codigo_externo"], r["recomendacion"]) for r in descartadas], [("c", "descartar")])
+        self.assertEqual([(r["codigo_externo"], r["evaluacion"]["recomendacion"]) for r in descartadas],
+                         [("c", "descartar")])
 
 
 if __name__ == "__main__":

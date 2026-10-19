@@ -2,10 +2,12 @@
 
     python -m licitaciones descargar [--fecha ddmmaaaa] [--max N] [--forzar] [--perfil RUTA]
     python -m licitaciones evaluar [--dia AAAA-MM-DD] [--max N] [--perfil RUTA]
+    python -m licitaciones guardar [--dia AAAA-MM-DD]   # upsert en Supabase m5.licitaciones_mp
     python -m licitaciones detalle CODIGO      # qué entrega la API para una licitación real
 
 Códigos de salida: 0 ok · 1 configuración · 2 error de la API de Mercado Público · 3 tope de
-solicitudes · 4 error de la API de Claude · 5 tope de gasto · 6 demasiadas respuestas JSON inválidas.
+solicitudes · 4 error de la API de Claude · 5 tope de gasto · 6 demasiadas respuestas JSON inválidas ·
+7 error de Supabase.
 """
 import argparse
 import json
@@ -14,7 +16,7 @@ import sys
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import descarga, evaluacion
+from . import descarga, evaluacion, supabase_mp
 from .config import SALIDA, cargar_ajustes, cargar_env, cargar_perfil, configurar_logging
 from .detalle import URL_FICHA, estructura, sanitizar
 from .errores import ErrorProceso
@@ -35,6 +37,15 @@ def cmd_evaluar(args):
     costo, resultados = evaluacion.ejecutar(ajustes, cargar_perfil(args.perfil), SALIDA / dia, max_n=args.max)
     print(evaluacion.tabla(resultados))
     print(json.dumps(costo, ensure_ascii=False, indent=1))
+
+
+def _carpeta_dia(ajustes, dia):
+    return SALIDA / (dia or f"{datetime.now(ZoneInfo(ajustes['horario']['zona'])):%Y-%m-%d}")
+
+
+def cmd_guardar(args):
+    ajustes = cargar_ajustes()
+    print(json.dumps(supabase_mp.guardar(ajustes, _carpeta_dia(ajustes, args.dia)), ensure_ascii=False))
 
 
 def cmd_detalle(args):
@@ -71,6 +82,9 @@ def main(argv=None):
     p.add_argument("--max", type=int, help="evaluar a lo más N licitaciones (pruebas)")
     p.add_argument("--perfil", help="otro archivo de perfil (por defecto PERFIL_M5_YAML o config/perfil_m5.yaml)")
     p.set_defaults(fn=cmd_evaluar)
+    p = sub.add_parser("guardar", help="etapa 4: upsert del día en Supabase (m5.licitaciones_mp)")
+    p.add_argument("--dia", help="carpeta salida/AAAA-MM-DD; por defecto la de hoy")
+    p.set_defaults(fn=cmd_guardar)
     p = sub.add_parser("detalle", help="mostrar qué entrega la API para una licitación")
     p.add_argument("codigo")
     p.set_defaults(fn=cmd_detalle)
