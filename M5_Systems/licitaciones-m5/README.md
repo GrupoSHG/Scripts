@@ -1,11 +1,11 @@
-# Licitaciones Mercado Público · M5 Industrial (nueva versión)
+# Licitaciones Mercado Público · M5 Industrial
 
 Revisa cada día las licitaciones de Mercado Público (ChileCompra), filtra las que calzan con el
-perfil de M5 Industrial (Grupo SHG) y deja el resultado en `salida/`. Reemplazará a
-`../mercado-publico/` cuando esté completa.
+perfil de M5 Industrial (Grupo SHG), las puntúa con Claude, las guarda en Supabase (`m5.licitaciones_mp`)
+y deja un reporte en `salida/`. Reemplazó al job `M5_Systems/mercado-publico/` el 19/10/2026.
 
-Etapas: 1 descarga y filtro barato · 2 puntuación con Claude · 3 reporte diario · 4 Supabase (hechas) ·
-5 GitHub Actions.
+Etapas: 1 descarga y filtro barato · 2 puntuación con Claude · 3 reporte diario · 4 Supabase ·
+5 GitHub Actions (todas hechas).
 
 ## Instalación
 
@@ -85,6 +85,13 @@ descripción, ítems, rubro UNSPSC 72, región y monto.
 
 ## Despliegue
 
-Se completa en la etapa 5 (workflow en `.github/workflows/` de este repo).
+Workflow `.github/workflows/licitaciones.yml` (`python -m licitaciones diario`: las cuatro etapas, omitiendo
+las ya evaluadas en Supabase). Sin `schedule:`: lo dispara Supabase a las 22:30 todos los días
+(`automatizacion.programa()`, cambio en `supabase/programa_licitaciones.sql`); manual con
+`gh workflow run licitaciones.yml -R GrupoSHG/Scripts` (inputs `fecha`, `max`). Secrets del repo:
+`MP_TICKET`, `ANTHROPIC_API_KEY`, `SUPABASE_URL`, `SUPABASE_KEY` y `PERFIL_M5_YAML` (el perfil en YAML).
+El repo es público: el log solo trae cifras agregadas y el artefacto (14 días) solo `embudo.json`,
+`costo.json` y `estados_vistos.json`; las evaluaciones se ven con sesión en el dashboard de M5 Proyectos.
+Cualquier error termina con código distinto de 0 y la corrida queda en rojo.
 
 Lo verificado contra la API real está en `NOTAS_API.md`.

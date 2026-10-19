@@ -1,0 +1,109 @@
+# Licitaciones de obras de Mercado Público para M5 Industrial: descarga y filtro, evaluación con
+# Claude, upsert en Supabase (m5.licitaciones_mp, la muestra el dashboard de M5 Proyectos) y reporte.
+# Código en M5_Systems/licitaciones-m5/ (README.md). Reemplaza a mercado-publico-m5.yml.
+#
+# Sin "schedule": lo dispara Supabase todos los días a las 22:30 (automatizacion.programa(), dentro
+# de la ventana de cargas masivas de la API, 22:00-07:00 de Chile). El cron de GitHub llegó 4-7 h
+# tarde en este repo. Manual: gh workflow run licitaciones.yml -R GrupoSHG/Scripts
+#
+#   Secrets: MP_TICKET, ANTHROPIC_API_KEY, SUPABASE_URL, SUPABASE_KEY (JWT del rol licitaciones_m5,
+#            ver generar_clave_supabase.py), PERFIL_M5_YAML (perfil de M5 en YAML; config/perfil_m5.yaml
+#            es solo la plantilla porque el repo es público)
+#
+# El repo es PÚBLICO: el log y los artefactos los puede ver cualquiera. Por eso el log solo trae cifras
+# agregadas y el artefacto lleva solo embudo.json, costo.json y estados_vistos.json; las evaluaciones
+# quedan en Supabase y se ven con sesión en https://gruposhg-m5-proyectos.netlify.app/licitaciones.html
+#
+# Falla de forma visible (código distinto de 0): 1 configuración, 2 API de Mercado Público, 3 tope de
+# solicitudes, 4 API de Claude, 5 tope de gasto, 6 JSON inválido, 7 Supabase.
+
+name: Licitaciones M5 · Mercado Público + Claude
+
+on:
+  workflow_dispatch:
+    inputs:
+      fecha:
+        description: "Solo esta fecha (ddmmaaaa); vacío = hoy y ayer"
+        required: false
+      max:
+        description: "Pedir el detalle de a lo más N candidatas (pruebas); vacío = todas"
+        required: false
+
+concurrency:
+  group: licitaciones-m5
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  diario:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: M5_Systems/licitaciones-m5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: M5_Systems/licitaciones-m5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - name: Fecha de Chile
+        id: hoy
+        run: echo "fecha=$(TZ=America/Santiago date +%Y%m%d)" >> "$GITHUB_OUTPUT"
+
+      # Contador de solicitudes a Mercado Público y gasto en Claude del día: se conservan entre
+      # corridas del mismo día (reintentos manuales) para que los topes diarios valgan.
+      - uses: actions/cache@v4
+        with:
+          path: M5_Systems/licitaciones-m5/estado
+          key: licitaciones-m5-estado-${{ steps.hoy.outputs.fecha }}-${{ github.run_id }}
+          restore-keys: licitaciones-m5-estado-${{ steps.hoy.outputs.fecha }}-
+
+      - name: Pruebas (sin red)
+        run: python -m unittest discover -s tests -t .
+
+      - name: Descargar, evaluar, guardar en Supabase y generar el reporte
+        env:
+          MP_TICKET: ${{ secrets.MP_TICKET }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          PERFIL_M5_YAML: ${{ secrets.PERFIL_M5_YAML }}
+          FECHA: ${{ inputs.fecha }}
+          MAX: ${{ inputs.max }}
+        run: |
+          args=()
+          if [ -n "$FECHA" ]; then
+            [[ "$FECHA" =~ ^[0-9]{8}$ ]] || { echo "::error::fecha debe ser ddmmaaaa"; exit 1; }
+            args+=(--fecha "$FECHA")
+          fi
+          if [ -n "$MAX" ]; then
+            [[ "$MAX" =~ ^[0-9]+$ ]] || { echo "::error::max debe ser un número"; exit 1; }
+            args+=(--max "$MAX")
+          fi
+          python -m licitaciones diario "${args[@]}"
+
+      - name: Resumen de la corrida (sin evaluaciones)
+        if: always()
+        run: |
+          mkdir -p artefacto
+          for f in salida/*/embudo.json salida/*/costo.json; do
+            [ -f "$f" ] && cp "$f" "artefacto/$(basename "$(dirname "$f")")-$(basename "$f")"
+          done
+          [ -f salida/estados_vistos.json ] && cp salida/estados_vistos.json artefacto/
+          true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: licitaciones-m5-${{ steps.hoy.outputs.fecha }}
+          path: M5_Systems/licitaciones-m5/artefacto/
+          retention-days: 14
+          if-no-files-found: warn

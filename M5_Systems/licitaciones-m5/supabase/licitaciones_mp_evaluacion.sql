@@ -2,7 +2,7 @@
 -- Lo usa M5_Systems/licitaciones-m5 (comando `guardar`) y lo muestra
 -- GrupoSHG_Systems/M5_Systems/proyectos/licitaciones.html.
 -- Se aplica a mano (SQL Editor o `supabase --workdir <tmp> db query --linked -f`); es idempotente.
--- La tabla base sigue definida en M5_Systems/mercado-publico/licitaciones_mp.sql.
+-- La tabla base está definida en licitaciones_mp.sql (misma carpeta).
 
 -- 1. Columnas de la evaluación (null = todavía no evaluada, p. ej. las que cargó el job antiguo)
 alter table m5.licitaciones_mp

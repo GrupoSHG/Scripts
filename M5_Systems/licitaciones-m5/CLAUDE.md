@@ -8,12 +8,14 @@ código, comentarios y textos también en español.
 Proceso diario de M5 Industrial (Grupo SHG): descarga licitaciones de la API de Mercado Público,
 las filtra con `config/perfil_m5.yaml` y (etapas siguientes) las puntúa con Claude, genera un
 reporte y las guarda en Supabase (`m5.licitaciones_mp`, proyecto `ffxopvzxyeacpbtxuagu`; la lee
-`GrupoSHG_Systems/M5_Systems/proyectos/licitaciones.html`). Reemplaza a `../mercado-publico/`
-(workflow `mercado-publico-m5.yml`, disparado por `automatizacion.programa()` a las 22:30), que se
-retira en la etapa 5: ambos usan el mismo ticket y no deben correr los dos.
+`GrupoSHG_Systems/M5_Systems/proyectos/licitaciones.html`). Workflow `.github/workflows/licitaciones.yml`
+(`python -m licitaciones diario`), disparado por `automatizacion.programa()` a las 22:30; reemplazó el
+19/10/2026 al job `M5_Systems/mercado-publico/` (`mercado-publico-m5.yml`, borrado).
 
-**`Scripts` es un repo PÚBLICO**: el código, `config/` y los artefactos de Actions los puede ver
-cualquiera. No subir datos comerciales sensibles de M5 ni evaluaciones al repo.
+**`Scripts` es un repo PÚBLICO**: el código, `config/`, el log y los artefactos de Actions los puede ver
+cualquiera. No subir datos comerciales sensibles de M5 ni evaluaciones al repo: el perfil real va en el
+secret `PERFIL_M5_YAML`, el detalle de cada evaluación se loguea en DEBUG y el artefacto lleva solo
+`embudo.json`, `costo.json` y `estados_vistos.json`.
 
 ## Reglas de seguridad
 

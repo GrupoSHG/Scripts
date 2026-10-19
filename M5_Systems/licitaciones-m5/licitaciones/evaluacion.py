@@ -308,7 +308,7 @@ def ejecutar(ajustes, perfil, carpeta, max_n=None, cliente=None, zona=None):
             resultados.append({**{k: reg.get(k) for k in ("codigo_externo", "nombre", "organismo", "region",
                                                           "fecha_cierre", "monto_estimado_clp", "url_ficha",
                                                           "organismo_prioritario")}, **res})
-            log.info("Evaluada %d/%d %s: %s%s", i, len(registros), reg["codigo_externo"], res["estado"],
+            log.debug("Evaluada %d/%d %s: %s%s", i, len(registros), reg["codigo_externo"], res["estado"],
                      f" · puntaje {res['evaluacion']['puntaje']} {res['evaluacion']['recomendacion']}"
                      if res["evaluacion"] else f" · {res['error']}")
     except (ErrorClaude, TopeGasto) as e:

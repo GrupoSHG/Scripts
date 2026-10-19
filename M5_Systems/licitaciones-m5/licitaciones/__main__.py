@@ -4,6 +4,7 @@
     python -m licitaciones evaluar [--dia AAAA-MM-DD] [--max N] [--perfil RUTA]
     python -m licitaciones guardar [--dia AAAA-MM-DD]   # upsert en Supabase m5.licitaciones_mp
     python -m licitaciones reporte [--dia AAAA-MM-DD] [--sin-supabase]   # reporte.html y reporte.txt
+    python -m licitaciones diario [--fecha ddmmaaaa] [--max N]   # las 4 etapas (lo que corre GitHub Actions)
     python -m licitaciones detalle CODIGO      # qué entrega la API para una licitación real
 
 Códigos de salida: 0 ok · 1 configuración · 2 error de la API de Mercado Público · 3 tope de
@@ -57,6 +58,30 @@ def cmd_reporte(args):
     print(f"HTML: {ruta_html}")
 
 
+def cmd_diario(args):
+    """Descarga (omitiendo las ya evaluadas), evaluación, Supabase y reporte. Solo imprime cifras
+    agregadas: en GitHub Actions el log es público y no debe llevar las evaluaciones."""
+    ajustes, perfil = cargar_ajustes(), cargar_perfil(args.perfil)
+    sb = supabase_mp.Supabase(ajustes)
+    evaluadas = {c for c, f in sb.conocidas().items() if f.get("evaluado_en")}
+    log.info("Supabase: %d licitaciones ya evaluadas (no se vuelven a pedir)", len(evaluadas))
+    embudo, _ = descarga.ejecutar(ajustes, perfil, fecha=args.fecha, max_detalles=args.max, evaluadas=evaluadas)
+    carpeta = SALIDA / embudo["corrida"][:10]
+    costo, _ = evaluacion.ejecutar(ajustes, perfil, carpeta)
+    guardado = supabase_mp.guardar(ajustes, carpeta, sb=sb)
+    _, _, datos = reporte.generar(ajustes, carpeta, sb=sb)
+    resumen = {"carpeta": carpeta.name,
+               "embudo": {k: embudo[k] for k in ("listado_total", "en_estados_a_procesar", "ya_evaluadas_omitidas",
+                                                 "pasan_filtro_nombre", "detalles_obtenidos", "pasan_filtro_detalle",
+                                                 "solicitudes_corrida", "respuestas_http")},
+               "claude": {k: costo[k] for k in ("modelo", "evaluadas", "ok", "revisar_manualmente", "conservadas",
+                                                "descartadas_por_claude", "costo_usd_corrida", "gasto_usd_hoy")},
+               "supabase": guardado,
+               "reporte": {"mejores": len(datos["mejores"]), "cierran": len(datos["cierran"]),
+                           "revision_manual": len(datos["manual"])}}
+    print(json.dumps(resumen, ensure_ascii=False, indent=1))
+
+
 def cmd_detalle(args):
     mp = MercadoPublico(cargar_ajustes())
     det = mp.detalle(args.codigo)
@@ -98,6 +123,11 @@ def main(argv=None):
     p.add_argument("--dia", help="carpeta salida/AAAA-MM-DD; por defecto la de hoy")
     p.add_argument("--sin-supabase", action="store_true", help="'cierran pronto' solo con lo evaluado en el día")
     p.set_defaults(fn=cmd_reporte)
+    p = sub.add_parser("diario", help="etapas 1 a 4 seguidas, con Supabase (lo que corre GitHub Actions)")
+    p.add_argument("--fecha", help="ddmmaaaa; por defecto hoy y ayer")
+    p.add_argument("--max", type=int, help="pedir el detalle de a lo más N candidatas (pruebas)")
+    p.add_argument("--perfil", help="otro archivo de perfil (por defecto PERFIL_M5_YAML o config/perfil_m5.yaml)")
+    p.set_defaults(fn=cmd_diario)
     p = sub.add_parser("detalle", help="mostrar qué entrega la API para una licitación")
     p.add_argument("codigo")
     p.set_defaults(fn=cmd_detalle)

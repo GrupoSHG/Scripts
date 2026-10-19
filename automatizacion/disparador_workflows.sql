@@ -15,7 +15,8 @@
 --   ghl-polchile-sync.yml   todos los días 08:22, 12:22, 16:22 y 20:22
 --   respaldo-supabase.yml   todos los días 05:30 (pg_dump de la base a Drive)
 --   dte-correo-sync.yml     lun-vie 07:42 a 20:42, cada hora (XML de facturas de dte@polchile.cl)
---   mercado-publico-m5.yml  todos los días 22:30 (licitaciones de obras para M5)
+--   licitaciones.yml        todos los días 22:30 (licitaciones de obras para M5, evaluadas con Claude;
+--                           reemplazó a mercado-publico-m5.yml el 19/10/2026)
 -- (programa() sincronizado con la función en vivo el 2026-10-16.)
 --
 -- Antes de correr esto, guardar el token en Vault (fine-grained PAT con owner
@@ -102,7 +103,7 @@ begin
   -- Licitaciones de obras de Mercado Público para M5: todos los días 22:30, dentro de la
   -- ventana de cargas masivas de la API (22:00-07:00)
   if h = 22 and mi = 30 then
-    perform automatizacion.disparar('mercado-publico-m5.yml');
+    perform automatizacion.disparar('licitaciones.yml');
   end if;
 end $$;
 

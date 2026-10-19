@@ -42,7 +42,8 @@ def leer_json(ruta, defecto):
         return defecto
 
 
-def ejecutar(ajustes, perfil, fecha=None, max_detalles=None, forzar=False, mp=None):
+def ejecutar(ajustes, perfil, fecha=None, max_detalles=None, forzar=False, mp=None, evaluadas=frozenset()):
+    """`evaluadas`: códigos ya evaluados en Supabase; no se vuelve a pedir su detalle ni a evaluarlas."""
     filtro = Filtro(perfil, ajustes)
     mp = mp or MercadoPublico(ajustes)
     zona = mp.contador.zona
@@ -70,8 +71,11 @@ def ejecutar(ajustes, perfil, fecha=None, max_detalles=None, forzar=False, mp=No
     # 2. Filtro por nombre
     estados = set(desc["estados_a_procesar"])
     en_estado = [l for l in listado.values() if l.get("CodigoEstado") in estados]
-    candidatas, descartadas = [], []
+    candidatas, descartadas, ya_evaluadas = [], [], 0
     for lic in en_estado:
+        if lic["CodigoExterno"] in evaluadas:
+            ya_evaluadas += 1
+            continue
         pasa, info = filtro.por_nombre(lic.get("Nombre"))
         if pasa:
             candidatas.append(lic)
@@ -131,6 +135,7 @@ def ejecutar(ajustes, perfil, fecha=None, max_detalles=None, forzar=False, mp=No
             "listado_total": len(listado),
             "listado_por_estado": dict(por_estado),
             "en_estados_a_procesar": len(en_estado),
+            "ya_evaluadas_omitidas": ya_evaluadas,
             "pasan_filtro_nombre": pasan_nombre,
             "detalles_pedidos": len(candidatas),
             "detalles_obtenidos": obtenidos,
