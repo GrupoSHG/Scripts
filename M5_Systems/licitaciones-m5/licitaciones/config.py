@@ -79,8 +79,10 @@ def configurar_logging(nivel=logging.INFO):
     raiz = logging.getLogger()
     raiz.handlers[:] = [manejador]
     raiz.setLevel(nivel)
-    # urllib3 en DEBUG escribe las URLs completas (con el ticket): nunca bajar de WARNING.
-    logging.getLogger("urllib3").setLevel(logging.WARNING)
+    # urllib3 en DEBUG escribe las URLs completas (con el ticket) y el SDK de Anthropic / httpx2
+    # pueden escribir encabezados: nunca bajar de WARNING.
+    for nombre in ("urllib3", "anthropic", "httpx", "httpx2", "httpcore"):
+        logging.getLogger(nombre).setLevel(logging.WARNING)
 
 
 def _leer_yaml(texto, origen):

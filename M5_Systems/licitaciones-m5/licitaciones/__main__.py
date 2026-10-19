@@ -1,16 +1,20 @@
 """Línea de comandos.
 
     python -m licitaciones descargar [--fecha ddmmaaaa] [--max N] [--forzar] [--perfil RUTA]
+    python -m licitaciones evaluar [--dia AAAA-MM-DD] [--max N] [--perfil RUTA]
     python -m licitaciones detalle CODIGO      # qué entrega la API para una licitación real
 
-Códigos de salida: 0 ok · 1 configuración · 2 error de la API · 3 tope de solicitudes.
+Códigos de salida: 0 ok · 1 configuración · 2 error de la API de Mercado Público · 3 tope de
+solicitudes · 4 error de la API de Claude · 5 tope de gasto · 6 demasiadas respuestas JSON inválidas.
 """
 import argparse
 import json
 import logging
 import sys
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
-from . import descarga
+from . import descarga, evaluacion
 from .config import SALIDA, cargar_ajustes, cargar_env, cargar_perfil, configurar_logging
 from .detalle import URL_FICHA, estructura, sanitizar
 from .errores import ErrorProceso
@@ -23,6 +27,14 @@ def cmd_descargar(args):
     embudo, _ = descarga.ejecutar(cargar_ajustes(), cargar_perfil(args.perfil), fecha=args.fecha,
                                   max_detalles=args.max, forzar=args.forzar)
     print(json.dumps({k: v for k, v in embudo.items() if k != "errores_detalle"}, ensure_ascii=False, indent=1))
+
+
+def cmd_evaluar(args):
+    ajustes = cargar_ajustes()
+    dia = args.dia or f"{datetime.now(ZoneInfo(ajustes['horario']['zona'])):%Y-%m-%d}"
+    costo, resultados = evaluacion.ejecutar(ajustes, cargar_perfil(args.perfil), SALIDA / dia, max_n=args.max)
+    print(evaluacion.tabla(resultados))
+    print(json.dumps(costo, ensure_ascii=False, indent=1))
 
 
 def cmd_detalle(args):
@@ -54,6 +66,11 @@ def main(argv=None):
     p.add_argument("--forzar", action="store_true", help="permitir más detalles fuera de 22:00-07:00")
     p.add_argument("--perfil", help="otro archivo de perfil (por defecto PERFIL_M5_YAML o config/perfil_m5.yaml)")
     p.set_defaults(fn=cmd_descargar)
+    p = sub.add_parser("evaluar", help="etapa 2: puntuar con Claude las filtradas del día")
+    p.add_argument("--dia", help="carpeta salida/AAAA-MM-DD; por defecto la de hoy")
+    p.add_argument("--max", type=int, help="evaluar a lo más N licitaciones (pruebas)")
+    p.add_argument("--perfil", help="otro archivo de perfil (por defecto PERFIL_M5_YAML o config/perfil_m5.yaml)")
+    p.set_defaults(fn=cmd_evaluar)
     p = sub.add_parser("detalle", help="mostrar qué entrega la API para una licitación")
     p.add_argument("codigo")
     p.set_defaults(fn=cmd_detalle)

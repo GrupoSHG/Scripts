@@ -80,6 +80,7 @@ def ejecutar(ajustes, perfil, fecha=None, max_detalles=None, forzar=False, mp=No
                                 "paso": "nombre", "motivo": info})
     log.info("En estados %s: %d · pasan el filtro por nombre: %d", sorted(estados), len(en_estado), len(candidatas))
 
+    pasan_nombre = len(candidatas)
     if max_detalles is not None:
         candidatas = candidatas[:max_detalles]
     limite_fuera = int(ajustes["horario"]["max_detalles_fuera_de_horario"])
@@ -130,7 +131,8 @@ def ejecutar(ajustes, perfil, fecha=None, max_detalles=None, forzar=False, mp=No
             "listado_total": len(listado),
             "listado_por_estado": dict(por_estado),
             "en_estados_a_procesar": len(en_estado),
-            "pasan_filtro_nombre": len(candidatas),
+            "pasan_filtro_nombre": pasan_nombre,
+            "detalles_pedidos": len(candidatas),
             "detalles_obtenidos": obtenidos,
             "detalles_con_error": len(errores),
             "pasan_filtro_detalle": len(filtradas),
@@ -145,8 +147,8 @@ def ejecutar(ajustes, perfil, fecha=None, max_detalles=None, forzar=False, mp=No
         escribir_json(carpeta / "descartadas.json", descartadas)
         escribir_json(carpeta / "embudo.json", embudo)
         escribir_json(SALIDA / "estados_vistos.json", estados_vistos)
-        log.info("Embudo: listado %d -> estado %d -> nombre %d -> detalle %d -> filtradas %d · "
+        log.info("Embudo: listado %d -> estado %d -> nombre %d -> detalle %d de %d -> filtradas %d · "
                  "solicitudes %d (hoy %d de tope %d) · HTTP %s · salida en %s",
-                 len(listado), len(en_estado), len(candidatas), obtenidos, len(filtradas),
+                 len(listado), len(en_estado), pasan_nombre, obtenidos, len(candidatas), len(filtradas),
                  mp.hechas, mp.contador.leer(), mp.contador.tope, embudo["respuestas_http"], carpeta.name)
     return embudo, filtradas

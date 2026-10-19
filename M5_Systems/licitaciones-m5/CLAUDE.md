@@ -31,7 +31,12 @@ cualquiera. No subir datos comerciales sensibles de M5 ni evaluaciones al repo.
 
 - Pruebas: `python -m unittest discover -s tests -t .` (sin red, con sesión falsa).
 - `python -m licitaciones descargar [--fecha ddmmaaaa] [--max N] [--forzar]`
+- `python -m licitaciones evaluar [--dia AAAA-MM-DD] [--max N] [--perfil RUTA]` (etapa 2, `evaluacion.py`)
 - `python -m licitaciones detalle CODIGO`
+- Códigos de salida: 1 config · 2 API MP · 3 tope solicitudes · 4 API Claude · 5 tope gasto · 6 JSON inválido.
+- Claude: SDK `anthropic` con `api_key` explícita desde `ANTHROPIC_API_KEY` (no usar perfiles `ant`),
+  `output_config.format` con `ESQUEMA` + validación local con `Evaluacion` (pydantic). Si se cambia el
+  modelo, agregar su precio en `ajustes.yaml` o el tope de gasto no corre.
 
 ## API (ver NOTAS_API.md)
 

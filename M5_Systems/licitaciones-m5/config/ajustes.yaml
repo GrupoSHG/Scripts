@@ -7,7 +7,7 @@ api:
   reintentos: 4              # solo ante conexión caída, timeout, 429 y 5xx
   espera_base_s: 2           # espera creciente: 2, 4, 8, 16 s (+ azar)
   espera_maxima_s: 60        # tope de cada espera, también si la API manda Retry-After
-  pausa_entre_llamadas_s: 1.5  # con 0,4 s la API respondió 429 a la mitad (ver NOTAS_API.md)
+  pausa_entre_llamadas_s: 3    # con 1,5 s hubo 429 en 12 de 33 solicitudes (ver NOTAS_API.md)
 
 limites:
   solicitudes_diarias: 10000  # por ticket, según ChileCompra
@@ -23,6 +23,21 @@ descarga:
   dias_atras: 1               # listado de hoy y de ayer (fecha=ddmmaaaa)
   estados_a_procesar: [5]     # 5 = Publicada
   max_errores_detalle: 10     # más detalles fallidos que esto hace fallar la corrida
+
+evaluacion:
+  modelo: claude-haiku-5-5    # el más pequeño y barato; cambiar aquí (debe estar en precios_usd_por_mtok)
+  esfuerzo: low               # low | medium | high: cuánto razona el modelo antes de responder
+  max_tokens: 4000            # por respuesta, incluido el razonamiento
+  timeout_s: 120
+  reintentos_sdk: 2           # el SDK reintenta 429, 5xx y caídas de conexión
+  tope_gasto_diario_usd: 1.00 # antes de cada llamada se verifica que el peor caso no lo supere
+  max_revision_manual_por_json: 3   # más respuestas inválidas que esto hace fallar la corrida (código 6)
+  # USD por millón de tokens, lista de Anthropic de octubre de 2026 (Haiku 5.5: hasta 100K tokens
+  # de entrada por solicitud; sobre eso cobra 0,50/2,50). Escritura de caché = 1,25x la entrada.
+  precios_usd_por_mtok:
+    claude-haiku-5-5:  {entrada: 0.10, salida: 0.50,  cache_lectura: 0.01, cache_escritura: 0.125}
+    claude-sonnet-5-5: {entrada: 2.00, salida: 10.00, cache_lectura: 0.20, cache_escritura: 2.50}
+    claude-opus-5-5:   {entrada: 4.00, salida: 20.00, cache_lectura: 0.20, cache_escritura: 5.00}
 
 filtro:
   # Categorías UNSPSC de servicios de construcción: un ítem con ese prefijo basta para pasar el

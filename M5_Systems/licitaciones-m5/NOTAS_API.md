@@ -11,8 +11,10 @@ estado. Aquí queda lo observado en respuestas reales. Cada corrida va sumando a
   error fatal.
 - **HTTP 429**: con 0,4 s entre llamadas llegó a cerca de la mitad de los detalles (16/10). Con 1,5 s
   (`ajustes.yaml`) igual aparece de vez en cuando: el 19/10 hubo 2 de 13 solicitudes con 429 en el
-  primer intento, y las dos se recuperaron en el primer reintento. Cada reintento cuenta para el
-  límite diario.
+  primer intento, y las dos se recuperaron en el primer reintento. En una tanda de 20 detalles
+  seguidos (19/10, 12:44, de día) fueron **12 de 33**: casi una de cada dos solicitudes. Todas se
+  recuperaron al primer reintento, pero cada reintento cuenta para el límite diario, así que la pausa
+  quedó en **3 s**.
 - Desde GitHub Actions (IP de centro de datos, runner `ubuntu-latest`) la API respondió en todas las
   corridas del job anterior del 16 al 18/10/2026. No se ha visto un **403**; si aparece, el proceso
   corta sin reintentar e indica que puede ser un bloqueo de IP.
