@@ -18,6 +18,10 @@ CAMPOS = {
     "UnidadTiempoContratoLicitacion", "JustificacionMontoEstimado", "ObservacionContract", "ExtensionPlazo",
     "EsBaseTipo", "EsRenovable", "ValorTiempoRenovacion", "PeriodoTiempoRenovacion", "ProhibicionContratacion",
     "SubContratacion", "UnidadTiempoEvaluacion", "DireccionVisita", "DireccionEntrega", "Fechas",
+    "Tiempo", "UnidadTiempo", "CodigoBIP",
+    # Adjudicación de la licitación (tipo, fecha, número de oferentes, acta). La de cada ítem
+    # (Items.Listado[].Adjudicacion) trae RUT y nombre del proveedor y queda fuera.
+    "Adjudicacion",
 }
 CAMPOS_COMPRADOR = {
     "CodigoOrganismo", "NombreOrganismo", "RutUnidad", "CodigoUnidad", "NombreUnidad", "DireccionUnidad",

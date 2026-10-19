@@ -22,7 +22,10 @@ Credenciales **solo por variables de entorno**: `MP_TICKET`, `ANTHROPIC_API_KEY`
 ## Configuración
 
 - `config/perfil_m5.yaml`: qué le interesa a M5 (palabras clave, tipos de obra, regiones, montos...).
-  Sin `palabras_clave_incluir` o `tipos_de_obra_que_interesan` el proceso no corre.
+  Sin `palabras_clave_incluir` o `tipos_de_obra_que_interesan` el proceso no corre. **El repo es
+  público**: en el repo queda la plantilla vacía, y el perfil real se completa solo en local o se
+  pasa en Actions con el secret `PERFIL_M5_YAML` (el contenido YAML completo), que tiene prioridad
+  sobre el archivo. `--perfil RUTA` usa otro archivo.
 - `config/ajustes.yaml`: timeouts, reintentos, pausa entre llamadas, tope de solicitudes (80 % de
   10.000 diarias), ventana nocturna 22:00–07:00 y códigos de estado verificados.
 

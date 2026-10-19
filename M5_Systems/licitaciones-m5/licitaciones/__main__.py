@@ -1,6 +1,6 @@
 """Línea de comandos.
 
-    python -m licitaciones descargar [--fecha ddmmaaaa] [--max N] [--forzar]
+    python -m licitaciones descargar [--fecha ddmmaaaa] [--max N] [--forzar] [--perfil RUTA]
     python -m licitaciones detalle CODIGO      # qué entrega la API para una licitación real
 
 Códigos de salida: 0 ok · 1 configuración · 2 error de la API · 3 tope de solicitudes.
@@ -20,7 +20,7 @@ log = logging.getLogger("licitaciones")
 
 
 def cmd_descargar(args):
-    embudo, _ = descarga.ejecutar(cargar_ajustes(), cargar_perfil(), fecha=args.fecha,
+    embudo, _ = descarga.ejecutar(cargar_ajustes(), cargar_perfil(args.perfil), fecha=args.fecha,
                                   max_detalles=args.max, forzar=args.forzar)
     print(json.dumps({k: v for k, v in embudo.items() if k != "errores_detalle"}, ensure_ascii=False, indent=1))
 
@@ -52,6 +52,7 @@ def main(argv=None):
     p.add_argument("--fecha", help="ddmmaaaa; por defecto hoy y ayer")
     p.add_argument("--max", type=int, help="pedir el detalle de a lo más N candidatas (pruebas)")
     p.add_argument("--forzar", action="store_true", help="permitir más detalles fuera de 22:00-07:00")
+    p.add_argument("--perfil", help="otro archivo de perfil (por defecto PERFIL_M5_YAML o config/perfil_m5.yaml)")
     p.set_defaults(fn=cmd_descargar)
     p = sub.add_parser("detalle", help="mostrar qué entrega la API para una licitación")
     p.add_argument("codigo")

@@ -102,5 +102,23 @@ class TestPorDetalle(unittest.TestCase):
         self.assertFalse(self.f.organismo_prioritario(detalle()))
 
 
+
+class TestCargarPerfil(unittest.TestCase):
+    def test_variable_de_entorno_tiene_prioridad(self):
+        import os
+        from unittest import mock
+        from licitaciones.config import cargar_perfil
+        with mock.patch.dict(os.environ, {"PERFIL_M5_YAML": "palabras_clave_incluir: [galpon]\n"}):
+            self.assertEqual(cargar_perfil()["palabras_clave_incluir"], ["galpon"])
+
+    def test_yaml_invalido_es_error_de_config(self):
+        import os
+        from unittest import mock
+        from licitaciones.config import cargar_perfil
+        with mock.patch.dict(os.environ, {"PERFIL_M5_YAML": "- solo una lista"}):
+            with self.assertRaises(ErrorConfig):
+                cargar_perfil()
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -83,23 +83,35 @@ def configurar_logging(nivel=logging.INFO):
     logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 
-def cargar_yaml(nombre):
-    ruta = CARPETA_CONFIG / nombre
+def _leer_yaml(texto, origen):
     try:
-        with open(ruta, encoding="utf-8") as f:
-            datos = yaml.safe_load(f)
-    except FileNotFoundError:
-        raise ErrorConfig(f"No existe {ruta.relative_to(RAIZ)}") from None
+        datos = yaml.safe_load(texto)
     except yaml.YAMLError as e:
-        raise ErrorConfig(f"{ruta.relative_to(RAIZ)} no es YAML válido: {e}") from None
+        raise ErrorConfig(f"{origen} no es YAML válido: {e}") from None
     if not isinstance(datos, dict):
-        raise ErrorConfig(f"{ruta.relative_to(RAIZ)} debe ser un diccionario de campos")
+        raise ErrorConfig(f"{origen} debe ser un diccionario de campos")
     return datos
 
 
+def cargar_yaml(ruta):
+    ruta = Path(ruta)
+    try:
+        texto = ruta.read_text(encoding="utf-8-sig")
+    except FileNotFoundError:
+        raise ErrorConfig(f"No existe {ruta}") from None
+    return _leer_yaml(texto, ruta.name)
+
+
 def cargar_ajustes():
-    return cargar_yaml("ajustes.yaml")
+    return cargar_yaml(CARPETA_CONFIG / "ajustes.yaml")
 
 
-def cargar_perfil():
-    return cargar_yaml("perfil_m5.yaml")
+def cargar_perfil(ruta=None):
+    """Perfil de M5: --perfil RUTA, o la variable PERFIL_M5_YAML (secret en Actions, porque el repo
+    Scripts es público), o config/perfil_m5.yaml."""
+    if ruta:
+        return cargar_yaml(ruta)
+    contenido = os.environ.get("PERFIL_M5_YAML", "").strip()
+    if contenido:
+        return _leer_yaml(contenido, "la variable PERFIL_M5_YAML")
+    return cargar_yaml(CARPETA_CONFIG / "perfil_m5.yaml")
