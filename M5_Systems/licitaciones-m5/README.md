@@ -44,7 +44,8 @@ Credenciales **solo por variables de entorno**: `MP_TICKET`, `ANTHROPIC_API_KEY`
 ```
 
 Salida en `salida/AAAA-MM-DD/`: `listado.json`, `descartadas.json` (con el motivo), `filtradas.json`
-(entrada de la etapa 2) y `embudo.json`; la etapa 2 agrega `evaluadas.json`, `costo.json` (tokens,
+(entrada de la etapa 2) y `embudo.json`; la etapa 2 agrega `evaluadas.json`, `descartadas_claude.json`,
+`costo.json` (tokens,
 US$ de la corrida y del día) y `evaluacion.md` (tabla para calibrar el perfil).
 
 Códigos de salida: 0 ok · 1 configuración · 2 error de la API de Mercado Público · 3 tope de
@@ -55,7 +56,9 @@ Evaluación (etapa 2): modelo, esfuerzo, `max_tokens`, precios y tope diario de 
 `ajustes.yaml` → `evaluacion` (por defecto `claude-haiku-5-5`, US$ 1 al día). La respuesta tiene esquema
 fijo (puntaje 1–5, motivo, tipo de obra, monto, cierre, requisitos, riesgos, recomendación
 postular/revisar/descartar) y se valida en local; el monto y la fecha deben ser los publicados o
-`null`. Si falla, se reintenta una vez y si no queda "revisar_manualmente". La API de Mercado
+`null`. Si falla, se reintenta una vez y si no queda "revisar_manualmente". Siguen al reporte y a
+Supabase solo las "postular" y "revisar" (más las de revisión manual), en `evaluadas.json`; las
+"descartar" quedan en `descartadas_claude.json` (`evaluacion.conservar` en `ajustes.yaml`). La API de Mercado
 Público no entrega las bases, así que requisitos y garantías salen solo de la descripción.
 
 Cómo filtra: el listado solo trae código, nombre, estado y cierre, así que primero filtra por

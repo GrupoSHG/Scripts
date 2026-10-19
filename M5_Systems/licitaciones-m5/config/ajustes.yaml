@@ -32,6 +32,9 @@ evaluacion:
   reintentos_sdk: 2           # el SDK reintenta 429, 5xx y caídas de conexión
   tope_gasto_diario_usd: 1.00 # antes de cada llamada se verifica que el peor caso no lo supere
   max_revision_manual_por_json: 3   # más respuestas inválidas que esto hace fallar la corrida (código 6)
+  # Recomendaciones que siguen al reporte y a Supabase. Las "descartar" quedan solo en
+  # descartadas_claude.json; las de revisión manual se conservan siempre.
+  conservar: [postular, revisar]
   # USD por millón de tokens, lista de Anthropic de octubre de 2026 (Haiku 5.5: hasta 100K tokens
   # de entrada por solicitud; sobre eso cobra 0,50/2,50). Escritura de caché = 1,25x la entrada.
   precios_usd_por_mtok:

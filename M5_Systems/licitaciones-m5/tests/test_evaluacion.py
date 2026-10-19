@@ -156,5 +156,16 @@ class TestEvaluarUna(unittest.TestCase):
             Presupuesto(otro, ZONA)
 
 
+class TestSeparar(unittest.TestCase):
+    def test_conserva_postular_revisar_y_manual(self):
+        from licitaciones.evaluacion import separar
+        res = [{"codigo_externo": c, "nombre": c, "url_ficha": None,
+                "evaluacion": None if rec is None else {"puntaje": 3, "recomendacion": rec, "motivo": "m"}}
+               for c, rec in (("a", "postular"), ("b", "revisar"), ("c", "descartar"), ("d", None))]
+        conservadas, descartadas = separar(res, AJUSTES)
+        self.assertEqual([r["codigo_externo"] for r in conservadas], ["a", "b", "d"])
+        self.assertEqual([(r["codigo_externo"], r["recomendacion"]) for r in descartadas], [("c", "descartar")])
+
+
 if __name__ == "__main__":
     unittest.main()

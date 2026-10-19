@@ -268,8 +268,25 @@ def evaluar_una(cliente, registro, perfil, ajustes, presupuesto):
 
 # --- Corrida ------------------------------------------------------------------
 
+def separar(resultados, ajustes):
+    """(conservadas, descartadas). Se conservan las recomendaciones de `evaluacion.conservar` y siempre
+    las que quedaron para revisión manual (sin una evaluación válida no hay cómo descartarlas)."""
+    conservar = set(ajustes["evaluacion"].get("conservar") or ("postular", "revisar"))
+    conservadas, descartadas = [], []
+    for r in resultados:
+        e = r.get("evaluacion")
+        if e is None or e["recomendacion"] in conservar:
+            conservadas.append(r)
+        else:
+            descartadas.append({"codigo_externo": r["codigo_externo"], "nombre": r.get("nombre"),
+                                "puntaje": e["puntaje"], "recomendacion": e["recomendacion"],
+                                "motivo": e["motivo"], "url_ficha": r.get("url_ficha")})
+    return conservadas, descartadas
+
+
 def ejecutar(ajustes, perfil, carpeta, max_n=None, cliente=None, zona=None):
-    """Evalúa salida/AAAA-MM-DD/filtradas.json y escribe evaluadas.json, costo.json y evaluacion.md."""
+    """Evalúa salida/AAAA-MM-DD/filtradas.json. Escribe evaluadas.json (solo las conservadas: postular,
+    revisar y revisión manual), descartadas_claude.json, costo.json y evaluacion.md."""
     from zoneinfo import ZoneInfo
     from .descarga import escribir_json, leer_json
     from .errores import ErrorEvaluacion
@@ -301,11 +318,14 @@ def ejecutar(ajustes, perfil, carpeta, max_n=None, cliente=None, zona=None):
         raise
     finally:
         tok = {k: sum(r["tokens"][k] for r in resultados) for k in ("entrada", "salida", "cache_lectura", "cache_escritura")}
+        conservadas, descartadas = separar(resultados, ajustes)
         costo = {
             "modelo": ev["modelo"], "esfuerzo": ev["esfuerzo"],
             "licitaciones": len(registros), "evaluadas": len(resultados),
             "ok": sum(r["estado"] == "ok" for r in resultados),
             "revisar_manualmente": sum(r["estado"] != "ok" for r in resultados),
+            "conservadas": len(conservadas),
+            "descartadas_por_claude": len(descartadas),
             "llamadas": sum(r["intentos"] for r in resultados),
             "tokens": tok,
             "costo_usd_corrida": round(sum(r["costo_usd"] for r in resultados), 6),
@@ -314,19 +334,20 @@ def ejecutar(ajustes, perfil, carpeta, max_n=None, cliente=None, zona=None):
             "tope_gasto_diario_usd": presupuesto.tope,
             "interrumpida": interrupcion,
         }
-        escribir_json(carpeta / "evaluadas.json", resultados)
+        escribir_json(carpeta / "evaluadas.json", conservadas)
+        escribir_json(carpeta / "descartadas_claude.json", descartadas)
         escribir_json(carpeta / "costo.json", costo)
-        (carpeta / "evaluacion.md").write_text(tabla(resultados), encoding="utf-8")
-        log.info("Evaluación: %d de %d (%d ok, %d a revisar a mano) · %d llamadas · tokens %s · US$ %.4f "
-                 "(hoy US$ %.4f de tope %.2f)", len(resultados), len(registros), costo["ok"],
-                 costo["revisar_manualmente"], costo["llamadas"], tok, costo["costo_usd_corrida"],
-                 costo["gasto_usd_hoy"], presupuesto.tope)
+        (carpeta / "evaluacion.md").write_text(tabla(conservadas), encoding="utf-8")
+        log.info("Evaluación: %d de %d (%d ok, %d a revisar a mano) · conservadas %d, descartadas por Claude %d · "
+                 "%d llamadas · tokens %s · US$ %.4f (hoy US$ %.4f de tope %.2f)", len(resultados), len(registros),
+                 costo["ok"], costo["revisar_manualmente"], len(conservadas), len(descartadas), costo["llamadas"],
+                 tok, costo["costo_usd_corrida"], costo["gasto_usd_hoy"], presupuesto.tope)
 
     malas = sum(r["estado"] != "ok" and r["error"] and "refusal" not in r["error"] for r in resultados)
     if malas > int(ev["max_revision_manual_por_json"]):
         raise ErrorEvaluacion(f"{malas} respuestas no pasaron la validación del esquema "
                               f"(máximo {ev['max_revision_manual_por_json']}). Ver evaluadas.json.")
-    return costo, resultados
+    return costo, conservadas
 
 
 def _celda(valor, largo=None):
