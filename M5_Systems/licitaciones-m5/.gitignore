@@ -1,0 +1,18 @@
+# Credenciales: nunca al repositorio
+.env
+.env.*
+!.env.example
+
+# Datos generados por el proceso (licitaciones, reportes, contadores)
+salida/
+estado/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Claude Code
+.claude/

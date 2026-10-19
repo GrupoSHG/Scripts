@@ -1,0 +1,40 @@
+# Ajustes técnicos del proceso. El perfil comercial de M5 está en perfil_m5.yaml.
+
+api:
+  base: https://api.mercadopublico.cl/servicios/v1/publico/
+  timeout_conexion_s: 10
+  timeout_lectura_s: 60
+  reintentos: 4              # solo ante conexión caída, timeout, 429 y 5xx
+  espera_base_s: 2           # espera creciente: 2, 4, 8, 16 s (+ azar)
+  espera_maxima_s: 60        # tope de cada espera, también si la API manda Retry-After
+  pausa_entre_llamadas_s: 1.5  # con 0,4 s la API respondió 429 a la mitad (ver NOTAS_API.md)
+
+limites:
+  solicitudes_diarias: 10000  # por ticket, según ChileCompra
+  tope_pct: 80                # el proceso se detiene al llegar a este porcentaje
+
+horario:
+  zona: America/Santiago
+  carga_masiva_desde: "22:00"   # ChileCompra pide descargas masivas solo de noche
+  carga_masiva_hasta: "07:00"
+  max_detalles_fuera_de_horario: 50   # más que esto fuera de la ventana exige --forzar
+
+descarga:
+  dias_atras: 1               # listado de hoy y de ayer (fecha=ddmmaaaa)
+  estados_a_procesar: [5]     # 5 = Publicada
+  max_errores_detalle: 10     # más detalles fallidos que esto hace fallar la corrida
+
+filtro:
+  # Categorías UNSPSC de servicios de construcción: un ítem con ese prefijo basta para pasar el
+  # filtro fino aunque ninguna palabra clave aparezca en el texto.
+  prefijos_rubro_unspsc: ["7210", "7211", "7212", "7213", "7214", "7215"]
+
+# Códigos de estado de licitación verificados contra la API (ver NOTAS_API.md).
+# La documentación oficial dice 18 = Revocada y 19 = Suspendida; la API devuelve 15 y 16.
+estados:
+  5: Publicada
+  6: Cerrada
+  7: Desierta
+  8: Adjudicada
+  15: Revocada
+  16: Suspendida
