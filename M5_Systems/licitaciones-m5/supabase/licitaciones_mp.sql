@@ -1,5 +1,7 @@
 -- Licitaciones de obras de Mercado Público relevantes para M5 Industrial.
--- La llena M5_Systems/mercado-publico/descarga_diaria.py --supabase (service_role, upsert por codigo_externo).
+-- Tabla base. La llena M5_Systems/licitaciones-m5 (comando `diario`, rol licitaciones_m5, upsert por
+-- codigo_externo); las columnas de la evaluación con Claude están en licitaciones_mp_evaluacion.sql.
+-- (Hasta el 19/10/2026 la llenaba M5_Systems/mercado-publico/descarga_diaria.py, ya retirado.)
 -- La lee la página licitaciones.html del sitio M5 Proyectos (GrupoSHG_Systems/M5_Systems/proyectos).
 -- Se aplica a mano (SQL Editor o `supabase db query --linked -f`); es idempotente.
 
@@ -26,7 +28,7 @@ create index if not exists licitaciones_mp_cierre_idx on m5.licitaciones_mp (fec
 create index if not exists licitaciones_mp_estado_idx on m5.licitaciones_mp (codigo_estado);
 
 comment on table m5.licitaciones_mp is
-  'Licitaciones de obras de Mercado Público (ChileCompra) filtradas por palabras clave. Fuente: Scripts/M5_Systems/mercado-publico.';
+  'Licitaciones de obras de Mercado Público (ChileCompra) filtradas por palabras clave. Fuente: Scripts/M5_Systems/licitaciones-m5.';
 
 -- Acceso: solo usuarios con sesión leen; escribe solo service_role (el proceso diario).
 alter table m5.licitaciones_mp enable row level security;

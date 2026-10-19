@@ -1,0 +1,31 @@
+# Perfil de M5 Industrial para filtrar y evaluar licitaciones. Completar cada campo.
+# Las listas de texto se comparan sin tildes ni mayúsculas y desde el inicio de palabra
+# ("edificio" también encuentra "edificios").
+#
+# Cómo se usan:
+# - Filtro barato (etapa 1): palabras_clave_incluir + tipos_de_obra_que_interesan deben aparecer
+#   en el nombre (y luego en el detalle); palabras_clave_excluir + tipos_de_obra_que_descartan en
+#   el NOMBRE descartan la licitación; regiones_de_interes y el rango de montos descartan solo
+#   cuando la licitación trae ese dato (si no lo trae, pasa a la evaluación).
+# - Evaluación con Claude (etapa 2): todo el perfil, incluidas las notas.
+#
+# Para partir, las palabras que usa hoy el job de Scripts/M5_Systems/mercado-publico son:
+#   incluir: obra civil, obras civiles, obras de, edificacion, edificio, construccion,
+#            infraestructura, pavimentacion, pavimento, ampliacion, mantencion de edificio,
+#            conservacion de edificio, reparacion de edificio, habilitacion, remodelacion,
+#            normalizacion, reposicion de, galpon, estructura metalica
+#   excluir: adquisicion, suministro, mobiliario, equipamiento, diseno, arriendo,
+#            servicio de aseo, alimentacion, capacitacion, consultoria, asesoria,
+#            medicamento, licencias de software, televigilancia, camaras de
+
+tipos_de_obra_que_interesan: []
+tipos_de_obra_que_descartan: []
+monto_minimo_clp: null
+monto_maximo_clp: null
+regiones_de_interes: []
+registros_y_certificaciones_que_tiene: []
+capacidad_de_garantias_clp: null
+palabras_clave_incluir: []
+palabras_clave_excluir: []
+organismos_prioritarios: []
+notas_para_el_evaluador: ""
