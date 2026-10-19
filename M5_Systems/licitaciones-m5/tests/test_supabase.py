@@ -112,6 +112,14 @@ class TestGenerarClave(unittest.TestCase):
         esperada = hmac.new(secret.encode(), f"{cab}.{cuerpo}".encode(), hashlib.sha256).digest()
         self.assertEqual(base64.urlsafe_b64decode(relleno(firma)), esperada)
 
+    def test_detecta_secreto_pegado_varias_veces(self):
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+        import generar_clave_supabase as g
+        s = "abcDEF123ghiJKL456mnoPQR789stuVWX0yz"
+        self.assertFalse(g.repetido(s))
+        self.assertTrue(g.repetido(s * 2))
+        self.assertTrue(g.repetido(s * 3))
+
 
 if __name__ == "__main__":
     unittest.main()

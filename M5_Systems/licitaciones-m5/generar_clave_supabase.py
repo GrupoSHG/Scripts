@@ -40,6 +40,12 @@ def firmar(secret, anios):
     return f"{cabecera}.{cuerpo}.{_b64(firma)}"
 
 
+def repetido(texto):
+    """True si el texto es el mismo trozo repetido 2 o más veces (pegado varias veces sin ver la entrada)."""
+    n = len(texto)
+    return any(n % k == 0 and texto == texto[:n // k] * k for k in range(2, n // 16 + 1))
+
+
 def escribir_env(valores):
     lineas = ENV.read_text(encoding="utf-8-sig").splitlines() if ENV.is_file() else []
     pendientes = dict(valores)
@@ -57,9 +63,16 @@ def main():
     ap.add_argument("--anios", type=int, default=3, help="vigencia del JWT (años)")
     args = ap.parse_args()
 
-    secret = getpass.getpass("JWT Secret del proyecto (no se muestra): ").strip()
+    print("Pega el JWT Secret UNA sola vez y presiona Enter (no se ve nada mientras escribes; es normal).")
+    secret = getpass.getpass("JWT Secret del proyecto: ").strip()
+    print(f"Recibí {len(secret)} caracteres.")
     if len(secret) < 32:
         sys.exit("Ese valor es muy corto para ser el JWT Secret. No se escribió nada.")
+    if repetido(secret):
+        sys.exit("El texto parece pegado más de una vez (se repite). Vuelve a correr el script y pégalo una sola vez. "
+                 "No se escribió nada.")
+    if secret.startswith(("eyJ", "sb_")):
+        sys.exit("Eso parece una API key (anon/service_role/publicable), no el JWT Secret. No se escribió nada.")
     clave = firmar(secret, args.anios)
     escribir_env({"SUPABASE_URL": URL, "SUPABASE_KEY": clave})
     print(f"Listo: SUPABASE_URL y SUPABASE_KEY (rol {ROL}, {args.anios} años) escritos en {ENV.name}.")
