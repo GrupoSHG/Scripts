@@ -34,6 +34,8 @@ cualquiera. No subir datos comerciales sensibles de M5 ni evaluaciones al repo.
 - `python -m licitaciones evaluar [--dia AAAA-MM-DD] [--max N] [--perfil RUTA]` (etapa 2, `evaluacion.py`)
 - `python -m licitaciones detalle CODIGO`
 - `python -m licitaciones guardar [--dia AAAA-MM-DD]` (etapa 4, `supabase_mp.py`, REST con `requests`).
+- `python -m licitaciones reporte [--dia AAAA-MM-DD] [--sin-supabase]` (etapa 3, `reporte.py`; todo texto con
+  `html.escape`, solo escribe archivos, nunca envía).
 - Códigos de salida: 1 config · 2 API MP · 3 tope solicitudes · 4 API Claude · 5 tope gasto · 6 JSON inválido ·
   7 Supabase.
 - Supabase: `SUPABASE_KEY` = JWT del rol `licitaciones_m5` (SQL en `supabase/`, generado por el usuario con

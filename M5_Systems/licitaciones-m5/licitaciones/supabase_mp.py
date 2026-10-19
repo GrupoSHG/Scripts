@@ -65,6 +65,14 @@ class Supabase:
                 return filas
             desde += 1000
 
+    def cierran_entre(self, desde, hasta):
+        """Publicadas (estado 5) que cierran entre dos fechas ISO, para el reporte."""
+        campos = ("codigo_externo,nombre,organismo,region,fecha_cierre,monto_estimado,url_ficha,puntaje,"
+                  "recomendacion,estado_evaluacion,motivo,riesgos")
+        r = self._pedir("GET", params=[("select", campos), ("codigo_estado", "eq.5"), ("fecha_cierre", f"gte.{desde}"),
+                                       ("fecha_cierre", f"lte.{hasta}"), ("order", "fecha_cierre")])
+        return r.json()
+
     def upsert(self, filas):
         for i in range(0, len(filas), LOTE):
             self._pedir("POST", params={"on_conflict": "codigo_externo"}, json=filas[i:i + LOTE],

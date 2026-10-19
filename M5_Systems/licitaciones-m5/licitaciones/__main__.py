@@ -3,6 +3,7 @@
     python -m licitaciones descargar [--fecha ddmmaaaa] [--max N] [--forzar] [--perfil RUTA]
     python -m licitaciones evaluar [--dia AAAA-MM-DD] [--max N] [--perfil RUTA]
     python -m licitaciones guardar [--dia AAAA-MM-DD]   # upsert en Supabase m5.licitaciones_mp
+    python -m licitaciones reporte [--dia AAAA-MM-DD] [--sin-supabase]   # reporte.html y reporte.txt
     python -m licitaciones detalle CODIGO      # qué entrega la API para una licitación real
 
 Códigos de salida: 0 ok · 1 configuración · 2 error de la API de Mercado Público · 3 tope de
@@ -16,7 +17,7 @@ import sys
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import descarga, evaluacion, supabase_mp
+from . import descarga, evaluacion, reporte, supabase_mp
 from .config import SALIDA, cargar_ajustes, cargar_env, cargar_perfil, configurar_logging
 from .detalle import URL_FICHA, estructura, sanitizar
 from .errores import ErrorProceso
@@ -46,6 +47,14 @@ def _carpeta_dia(ajustes, dia):
 def cmd_guardar(args):
     ajustes = cargar_ajustes()
     print(json.dumps(supabase_mp.guardar(ajustes, _carpeta_dia(ajustes, args.dia)), ensure_ascii=False))
+
+
+def cmd_reporte(args):
+    ajustes = cargar_ajustes()
+    ruta_html, ruta_txt, _ = reporte.generar(ajustes, _carpeta_dia(ajustes, args.dia),
+                                             usar_supabase=False if args.sin_supabase else None)
+    print(ruta_txt.read_text(encoding="utf-8"))
+    print(f"HTML: {ruta_html}")
 
 
 def cmd_detalle(args):
@@ -85,6 +94,10 @@ def main(argv=None):
     p = sub.add_parser("guardar", help="etapa 4: upsert del día en Supabase (m5.licitaciones_mp)")
     p.add_argument("--dia", help="carpeta salida/AAAA-MM-DD; por defecto la de hoy")
     p.set_defaults(fn=cmd_guardar)
+    p = sub.add_parser("reporte", help="etapa 3: reporte del día en HTML y texto (salida/AAAA-MM-DD/)")
+    p.add_argument("--dia", help="carpeta salida/AAAA-MM-DD; por defecto la de hoy")
+    p.add_argument("--sin-supabase", action="store_true", help="'cierran pronto' solo con lo evaluado en el día")
+    p.set_defaults(fn=cmd_reporte)
     p = sub.add_parser("detalle", help="mostrar qué entrega la API para una licitación")
     p.add_argument("codigo")
     p.set_defaults(fn=cmd_detalle)

@@ -42,6 +42,11 @@ evaluacion:
     claude-sonnet-5-5: {entrada: 2.00, salida: 10.00, cache_lectura: 0.20, cache_escritura: 2.50}
     claude-opus-5-5:   {entrada: 4.00, salida: 20.00, cache_lectura: 0.20, cache_escritura: 5.00}
 
+reporte:
+  dias_cierre: 7              # sección "cierran en los próximos N días"
+  max_mejores: 10             # cuántas mostrar en "mejores del día"
+  max_sin_evaluar: 30         # lista compacta de las que cierran pronto sin evaluación
+
 supabase:
   esquema: m5                 # tabla m5.licitaciones_mp
   timeout_s: 30
