@@ -29,6 +29,28 @@
 -- ============================================================================
 begin;
 
+-- Mismas guardas que el resto de las tablas de Manager (accesos/clientes_m5.sql
+-- y crm_vendedores.sql en GrupoSHG_Systems): ni el portal de clientes M5 ni
+-- los vendedores leen datos de producción. El cargador solo crea la política
+-- de lectura lectura_publica_<tabla>; las vistas de abajo son security
+-- invoker, así que heredan estas restricciones.
+drop policy if exists sin_clientes_externos on shg_dashboards.necesidades_materiales;
+create policy sin_clientes_externos on shg_dashboards.necesidades_materiales as restrictive
+  for all to authenticated
+  using ((select coalesce(shg_dashboards.rol_actual(), '')) <> 'cliente');
+drop policy if exists vendedor_solo_lo_suyo on shg_dashboards.necesidades_materiales;
+create policy vendedor_solo_lo_suyo on shg_dashboards.necesidades_materiales as restrictive
+  for all to authenticated
+  using (not (select shg_dashboards.es_vendedor()));
+drop policy if exists sin_clientes_externos on shg_dashboards.insumos_disponibilidad;
+create policy sin_clientes_externos on shg_dashboards.insumos_disponibilidad as restrictive
+  for all to authenticated
+  using ((select coalesce(shg_dashboards.rol_actual(), '')) <> 'cliente');
+drop policy if exists vendedor_solo_lo_suyo on shg_dashboards.insumos_disponibilidad;
+create policy vendedor_solo_lo_suyo on shg_dashboards.insumos_disponibilidad as restrictive
+  for all to authenticated
+  using (not (select shg_dashboards.es_vendedor()));
+
 drop view if exists shg_dashboards.wip_bandejas;
 drop view if exists shg_dashboards.nv_materiales;
 drop view if exists shg_dashboards.compras_sugeridas;
