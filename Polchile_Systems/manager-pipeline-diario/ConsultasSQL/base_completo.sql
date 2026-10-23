@@ -37,7 +37,9 @@ SELECT
     CAST(ROUND(NV.TOTNETO, 2) AS decimal(16,2))                        AS [total_neto_nv],
     CAST(ROUND(NV.TOTAL , 2) AS decimal(16,2))                         AS [total_nv],
     CAST(ROUND(ISNULL(PAGO.PagadoNV,0), 2) AS decimal(16,2))            AS [pagado_nv],
-    CAST(ROUND(NV.TOTAL - ISNULL(PAGO.PagadoNV,0), 2) AS decimal(16,2)) AS [Totpend],
+    -- Un pendiente de exactamente $1 es diferencia de redondeo: se deja en 0
+    CASE WHEN ROUND(NV.TOTAL - ISNULL(PAGO.PagadoNV,0), 2) = 1 THEN CAST(0 AS decimal(16,2))
+         ELSE CAST(ROUND(NV.TOTAL - ISNULL(PAGO.PagadoNV,0), 2) AS decimal(16,2)) END AS [Totpend],
 
     -- Información de Producción (OP)
     ISNULL(OP.NUM_OP, 0)                                                AS [numero_op],
