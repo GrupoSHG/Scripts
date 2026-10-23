@@ -149,7 +149,10 @@ DESARROLLADOR = {
     "repos": ("GrupoSHG_Systems", "Scripts"),
 }
 
-AGENTES = set(ANALISTAS) | {"dev"}
+# Cuatro desarrolladores (dev, dev2, dev3, dev4): el mismo agente, cada uno con su escritorio y su
+# historial en la Oficina, para dar varias instrucciones de código en paralelo.
+DESARROLLADORES = ("dev", "dev2", "dev3", "dev4")
+AGENTES = set(ANALISTAS) | set(DESARROLLADORES)
 
 
 def mapa(agente):
