@@ -82,6 +82,15 @@ class Varios(unittest.TestCase):
         with mock.patch.dict(os.environ, {"AGENTES_TOPE_DIARIO_USD": "2", "AGENTES_TOPE_INSTRUCCION_USD": "0.5"}):
             self.assertEqual(principal.topes("planta"), (2.0, 0.5))
 
+    def test_cada_analista_sabe_donde_buscar(self):
+        for agente in perfiles.ANALISTAS:
+            prompt = perfiles.sistema(agente)
+            self.assertIn("Dónde está la información", prompt)
+            for tabla, para, columnas, cuando, _ in perfiles.FUENTES[agente]:
+                self.assertRegex(tabla, r"^[a-z0-9_]+\.[a-z0-9_]+$")
+                self.assertTrue(para and columnas and cuando, tabla)
+                self.assertIn(f"- {tabla}: para", prompt)
+
     def test_agentes_conocidos(self):
         self.assertEqual(perfiles.AGENTES, {"comercial", "finanzas", "planta", "dev"})
 
