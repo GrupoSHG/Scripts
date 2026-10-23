@@ -149,7 +149,7 @@ grant execute on function public.agente_consulta(text, int) to service_role;
 -- ---------------------------------------------------------------------------
 create table if not exists shg_dashboards.agentes_instrucciones (
   id             bigint generated always as identity primary key,
-  agente         text not null check (agente in ('comercial', 'finanzas', 'planta', 'dev')),
+  agente         text not null check (agente in ('comercial', 'finanzas', 'planta', 'dev', 'dev2', 'dev3', 'dev4')),
   texto          text not null check (length(texto) between 3 and 4000),
   parametros     jsonb not null default '{}'::jsonb,   -- dev: {"repo": "GrupoSHG_Systems" | "Scripts"}
   estado         text not null default 'pendiente' check (estado in ('pendiente', 'trabajando', 'listo', 'error')),
@@ -188,7 +188,7 @@ begin
   end if;
   select count(*) into v_abiertas from shg_dashboards.agentes_instrucciones
    where estado in ('pendiente', 'trabajando') and creada > now() - interval '1 hour';
-  if v_abiertas >= 6 then
+  if v_abiertas >= 10 then
     raise exception 'Ya hay % instrucciones en curso; espera a que terminen.', v_abiertas;
   end if;
 

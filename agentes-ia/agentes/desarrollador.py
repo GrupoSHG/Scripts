@@ -49,8 +49,25 @@ def rama(id_, texto):
     return f"agente/{id_}-{corto}"
 
 
+def entorno_claude():
+    """Entorno para Claude Code, sin los tokens de GitHub ni de Supabase, y si usa la suscripción.
+
+    Con CLAUDE_CODE_OAUTH_TOKEN (el que genera `claude setup-token` con una suscripción de Claude)
+    Claude Code consume el plan de esa cuenta en vez de la API; se quita ANTHROPIC_API_KEY porque
+    si está presente Claude Code la prefiere.
+    """
+    fuera = {"AGENTES_GH_TOKEN", "SUPABASE_SERVICE_KEY", "GH_TOKEN"}
+    suscripcion = bool(os.environ.get("CLAUDE_CODE_OAUTH_TOKEN"))
+    if suscripcion:
+        fuera.add("ANTHROPIC_API_KEY")
+    else:
+        fuera.add("CLAUDE_CODE_OAUTH_TOKEN")
+    return {k: v for k, v in os.environ.items() if k not in fuera}, suscripcion
+
+
 def responder(instruccion, tope_usd):
-    """Devuelve (respuesta, costo_usd)."""
+    """Devuelve (respuesta, costo_usd cobrado por la API, tokens) — con suscripción el costo es 0 y
+    tokens dice cuánto habría costado por la API."""
     token = os.environ.get("AGENTES_GH_TOKEN")
     if not token:
         raise ErrorDesarrollador("Falta el secret AGENTES_GH_TOKEN en GrupoSHG/Scripts: sin él el Desarrollador "
@@ -67,7 +84,7 @@ def responder(instruccion, tope_usd):
         r = rama(id_, texto)
         _correr(["git", "checkout", "--quiet", "-b", r], cwd=dest)
 
-        env = {k: v for k, v in os.environ.items() if k not in ("AGENTES_GH_TOKEN", "SUPABASE_SERVICE_KEY", "GH_TOKEN")}
+        env, suscripcion = entorno_claude()
         salida = _correr(["claude", "-p", "--output-format", "json", "--model", MODELO,
                           "--permission-mode", "acceptEdits", "--allowedTools", HERRAMIENTAS,
                           "--max-budget-usd", f"{tope_usd:.2f}"],
@@ -77,13 +94,15 @@ def responder(instruccion, tope_usd):
         except json.JSONDecodeError as e:
             raise ErrorDesarrollador("Claude Code no devolvió JSON.") from e
         costo = float(res.get("total_cost_usd") or 0)
+        info = {"suscripcion": suscripcion, "costo_equivalente_usd": round(costo, 4)}
+        cobrado = 0.0 if suscripcion else costo
         resumen = (res.get("result") or "").strip() or "(Claude Code terminó sin texto.)"
         if res.get("is_error"):
-            return f"Claude Code terminó con error.\n\n{resumen}", costo
+            return f"Claude Code terminó con error.\n\n{resumen}", cobrado, info
 
         _correr(["git", "add", "-A", "--", ".", ":(exclude).claude", ":(exclude).netlify", ":(exclude,glob)**/.env"], cwd=dest)
         if not _correr(["git", "diff", "--cached", "--name-only"], cwd=dest).strip():
-            return f"{resumen}\n\n_No hubo cambios en el repo, así que no se abrió PR._", costo
+            return f"{resumen}\n\n_No hubo cambios en el repo, así que no se abrió PR._", cobrado, info
 
         titulo = f"Agente: {texto.splitlines()[0][:70]}"
         _correr(["git", "-c", "user.name=Oficina de Agentes", "-c", "user.email=agentes@gruposhg.cl",
@@ -98,4 +117,4 @@ def responder(instruccion, tope_usd):
         pr = _correr(["gh", "pr", "create", "--draft", "--repo", f"GrupoSHG/{repo}", "--head", r,
                       "--title", titulo, "--body-file", "-"], cwd=dest, entrada=cuerpo,
                      env={**os.environ, "GH_TOKEN": token}).strip().splitlines()[-1]
-        return f"{resumen}\n\n**PR en borrador:** {pr}", costo
+        return f"{resumen}\n\n**PR en borrador:** {pr}", cobrado, info

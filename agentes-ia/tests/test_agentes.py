@@ -92,7 +92,19 @@ class Varios(unittest.TestCase):
                 self.assertIn(f"- {tabla}: para", prompt)
 
     def test_agentes_conocidos(self):
-        self.assertEqual(perfiles.AGENTES, {"comercial", "finanzas", "planta", "dev"})
+        self.assertEqual(perfiles.AGENTES, {"comercial", "finanzas", "planta", "dev", "dev2", "dev3", "dev4"})
+        self.assertEqual(principal.topes("dev3")[1], principal.topes("dev")[1])
+
+    def test_entorno_claude_con_y_sin_suscripcion(self):
+        base = {"ANTHROPIC_API_KEY": "k", "AGENTES_GH_TOKEN": "g", "SUPABASE_SERVICE_KEY": "s", "PATH": "p"}
+        with mock.patch.dict(os.environ, base, clear=True):
+            env, suscripcion = desarrollador.entorno_claude()
+            self.assertFalse(suscripcion)
+            self.assertEqual(set(env), {"ANTHROPIC_API_KEY", "PATH"})
+        with mock.patch.dict(os.environ, {**base, "CLAUDE_CODE_OAUTH_TOKEN": "o"}, clear=True):
+            env, suscripcion = desarrollador.entorno_claude()
+            self.assertTrue(suscripcion)
+            self.assertEqual(set(env), {"CLAUDE_CODE_OAUTH_TOKEN", "PATH"})
 
 
 if __name__ == "__main__":

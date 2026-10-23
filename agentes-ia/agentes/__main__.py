@@ -5,9 +5,10 @@ con el agente que corresponde y deja la respuesta (o el error) en la misma fila.
 muestra cifras: Scripts es un repo público y el texto de la instrucción y la respuesta pueden
 traer datos de la empresa.
 
-Variables: ANTHROPIC_API_KEY, SUPABASE_SERVICE_KEY, AGENTES_GH_TOKEN (solo el Desarrollador),
-AGENTES_TOPE_DIARIO_USD (por defecto 5), AGENTES_TOPE_INSTRUCCION_USD (analistas, por defecto 1,5),
-AGENTES_TOPE_DEV_USD (Desarrollador, por defecto 3),
+Variables: ANTHROPIC_API_KEY, SUPABASE_SERVICE_KEY, AGENTES_GH_TOKEN (solo los Desarrolladores),
+CLAUDE_CODE_OAUTH_TOKEN (opcional: los Desarrolladores usan la suscripción de Claude en vez de la API
+y no cuentan para el tope diario), AGENTES_TOPE_DIARIO_USD (por defecto 5),
+AGENTES_TOPE_INSTRUCCION_USD (analistas, por defecto 1,5), AGENTES_TOPE_DEV_USD (Desarrollador, por defecto 3),
 RUN_URL (enlace a la corrida, lo pone el workflow).
 """
 import argparse
@@ -18,7 +19,7 @@ from . import analista, desarrollador, perfiles, supabase
 
 
 def topes(agente):
-    if agente == "dev":
+    if agente in perfiles.DESARROLLADORES:
         por_instruccion = os.environ.get("AGENTES_TOPE_DEV_USD") or 3
     else:
         por_instruccion = os.environ.get("AGENTES_TOPE_INSTRUCCION_USD") or 1.5
@@ -36,22 +37,25 @@ def ejecutar(id_):
                                         terminada=supabase.ahora_iso())
         return 1
 
+    es_dev = agente in perfiles.DESARROLLADORES
     tope_dia, tope_ins = topes(agente)
-    gastado = supabase.gasto_de_hoy()
-    if gastado >= tope_dia:
-        supabase.actualizar_instruccion(id_, estado="error", terminada=supabase.ahora_iso(),
-                                        error=f"Se alcanzó el tope diario de US$ {tope_dia:.2f} (gastado hoy: US$ {gastado:.2f}).")
-        print(f"Instrucción {id_}: tope diario alcanzado.")
-        return 5
-    tope_ins = min(tope_ins, tope_dia - gastado)
+    # Con suscripción el Desarrollador no gasta de la API: el tope diario no lo frena.
+    if not (es_dev and os.environ.get("CLAUDE_CODE_OAUTH_TOKEN")):
+        gastado = supabase.gasto_de_hoy()
+        if gastado >= tope_dia:
+            supabase.actualizar_instruccion(id_, estado="error", terminada=supabase.ahora_iso(),
+                                            error=f"Se alcanzó el tope diario de US$ {tope_dia:.2f} (gastado hoy: US$ {gastado:.2f}).")
+            print(f"Instrucción {id_}: tope diario alcanzado.")
+            return 5
+        tope_ins = min(tope_ins, tope_dia - gastado)
 
     supabase.actualizar_instruccion(id_, estado="trabajando", iniciada=supabase.ahora_iso(),
                                     run_url=os.environ.get("RUN_URL"))
     print(f"Instrucción {id_}: agente {agente}, tope US$ {tope_ins:.2f}.")
     cuenta, tokens, consultas = {"usd": 0.0}, None, 0
     try:
-        if agente == "dev":
-            respuesta, cuenta["usd"] = desarrollador.responder(ins, tope_ins)
+        if es_dev:
+            respuesta, cuenta["usd"], tokens = desarrollador.responder(ins, tope_ins)
         else:
             import anthropic
             cliente = anthropic.Anthropic(max_retries=3)

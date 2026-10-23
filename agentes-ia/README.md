@@ -20,7 +20,14 @@ Resuelve las instrucciones que se dan en la Oficina de Agentes
 | `comercial` | Analista Comercial | Claude (`claude-opus-5-5`) con la herramienta `consultar_sql` |
 | `finanzas` | Analista Finanzas | igual, con foco en CxC, compras, RCV y cheques |
 | `planta` | Planificador Planta | igual, con foco en OP, WIP, materiales y despachos |
-| `dev` | Desarrollador | Claude Code sin interfaz sobre un clon de `GrupoSHG_Systems` o `Scripts`; abre un **PR en borrador** (rama `agente/<id>-...`), nunca fusiona ni publica |
+| `dev`, `dev2`, `dev3`, `dev4` | Desarrolladores 1 a 4 | Claude Code sin interfaz sobre un clon de `GrupoSHG_Systems` o `Scripts`; abre un **PR en borrador** (rama `agente/<id>-...`), nunca fusiona ni publica. Los cuatro son el mismo agente, cada uno con su escritorio e historial en la Oficina de Desarrollo, para trabajar en paralelo |
+
+**Suscripción de Claude para los Desarrolladores.** Si existe el secret `CLAUDE_CODE_OAUTH_TOKEN`
+(lo genera `claude setup-token` en una cuenta con suscripción de Claude), Claude Code usa el plan de
+esa cuenta en vez de la API: la instrucción queda con `costo_usd = 0`, `tokens.suscripcion = true` y
+`tokens.costo_equivalente_usd` (lo que habría costado por la API), y no cuenta para el tope diario.
+Consume los límites de uso de ese plan (los mismos que usa la persona en claude.ai y Claude Code):
+si se agotan, la instrucción termina en error hasta que se renueven. Sin el secret, vuelve a la API.
 
 Los analistas solo leen datos a través de `public.agente_consulta(sql)`, que corre como el rol
 `agentes_lectura` (solo `SELECT` sobre `shg_dashboards`, `polchile_crm`, `m5`, `app_cys`,
@@ -37,13 +44,16 @@ mapa (`GrupoSHG_Systems/oficina-agentes/agentes.js`): si cambia una tabla, cambi
 
 - Por día (hora de Santiago), sumando todas las instrucciones: `AGENTES_TOPE_DIARIO_USD`, por defecto US$ 5.
 - Por instrucción: `AGENTES_TOPE_INSTRUCCION_USD` (analistas, US$ 1,5) y `AGENTES_TOPE_DEV_USD` (Desarrollador, US$ 3).
-- `public.agente_instruir` no acepta más de 6 instrucciones abiertas a la vez.
+- `public.agente_instruir` no acepta más de 10 instrucciones abiertas a la vez.
+- Los Desarrolladores con `CLAUDE_CODE_OAUTH_TOKEN` no gastan de la API y no los frena el tope diario
+  (el de US$ 3 por instrucción se sigue pasando a Claude Code como `--max-budget-usd`).
 
 Se cambian como variables del repo (Settings → Secrets and variables → Actions → Variables).
 
 ## Puesta en marcha
 
-1. Aplicar `automatizacion/oficina_agentes.sql` en Supabase.
+1. Aplicar `automatizacion/oficina_agentes.sql` y `automatizacion/oficina_agentes_desarrolladores.sql`
+   (acepta dev2 a dev4) en Supabase.
 2. Secrets del repo: `ANTHROPIC_API_KEY` y `SUPABASE_SERVICE_KEY` ya existen. Para el Desarrollador,
    crear `AGENTES_GH_TOKEN`: PAT fine-grained con dueño GrupoSHG, repos `GrupoSHG_Systems` y
    `Scripts`, permisos Contents y Pull requests en lectura y escritura. Sin él, las instrucciones

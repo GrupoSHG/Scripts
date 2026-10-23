@@ -9,7 +9,8 @@
 #
 #   Secrets: ANTHROPIC_API_KEY, SUPABASE_SERVICE_KEY, AGENTES_GH_TOKEN (solo el Desarrollador:
 #            PAT fine-grained de GrupoSHG con Contents + Pull requests de lectura y escritura sobre
-#            GrupoSHG_Systems y Scripts)
+#            GrupoSHG_Systems y Scripts), CLAUDE_CODE_OAUTH_TOKEN (opcional, de `claude setup-token`:
+#            los Desarrolladores usan la suscripción de Claude en vez de la API)
 #   Vars (opcionales): AGENTES_TOPE_DIARIO_USD (5), AGENTES_TOPE_INSTRUCCION_USD (1.5), AGENTES_TOPE_DEV_USD (3)
 #
 # El repo es PÚBLICO: el input es solo el id (el texto no pasa por GitHub), el log solo trae
@@ -63,6 +64,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           AGENTES_GH_TOKEN: ${{ secrets.AGENTES_GH_TOKEN }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           AGENTES_TOPE_DIARIO_USD: ${{ vars.AGENTES_TOPE_DIARIO_USD }}
           AGENTES_TOPE_INSTRUCCION_USD: ${{ vars.AGENTES_TOPE_INSTRUCCION_USD }}
           AGENTES_TOPE_DEV_USD: ${{ vars.AGENTES_TOPE_DEV_USD }}
