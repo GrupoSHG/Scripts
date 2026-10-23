@@ -136,7 +136,11 @@ begin
     into v_filas;
   return jsonb_build_object('filas', v_filas, 'n', jsonb_array_length(v_filas), 'limite', v_limite);
 end $$;
+-- Desde Postgres 16 quien crea un rol no puede hacer SET ROLE a él sin membresía explícita, y
+-- ALTER ... OWNER lo exige: se da solo para el cambio de dueño y se quita al tiro.
+do $$ begin execute format('grant agentes_lectura to %I with inherit false, set true', current_user); end $$;
 alter function public.agente_consulta(text, int) owner to agentes_lectura;
+do $$ begin execute format('revoke agentes_lectura from %I', current_user); end $$;
 revoke all on function public.agente_consulta(text, int) from public, anon, authenticated;
 grant execute on function public.agente_consulta(text, int) to service_role;
 
