@@ -1,0 +1,73 @@
+# Oficina de Agentes: resuelve UNA instrucción de shg_dashboards.agentes_instrucciones con el
+# agente que corresponde (Analista Comercial, Analista Finanzas, Planificador Planta o
+# Desarrollador) y deja la respuesta en la misma fila. Código en agentes-ia/ (README.md).
+#
+# Sin "schedule": lo dispara public.agente_instruir() en Supabase (automatizacion.disparar) cada
+# vez que alguien da una instrucción en https://gruposhg-oficina.netlify.app.
+# Manual (reintentar una instrucción que quedó 'pendiente'):
+#   gh workflow run agente-ia.yml -R GrupoSHG/Scripts -f instruccion=<id>
+#
+#   Secrets: ANTHROPIC_API_KEY, SUPABASE_SERVICE_KEY, AGENTES_GH_TOKEN (solo el Desarrollador:
+#            PAT fine-grained de GrupoSHG con Contents + Pull requests de lectura y escritura sobre
+#            GrupoSHG_Systems y Scripts)
+#   Vars (opcionales): AGENTES_TOPE_DIARIO_USD (5), AGENTES_TOPE_INSTRUCCION_USD (1.5), AGENTES_TOPE_DEV_USD (3)
+#
+# El repo es PÚBLICO: el input es solo el id (el texto no pasa por GitHub), el log solo trae
+# cifras y no hay artefactos. Las respuestas quedan en Supabase y se ven con sesión en la Oficina.
+
+name: Agente IA · instrucción de la Oficina
+
+on:
+  workflow_dispatch:
+    inputs:
+      instruccion:
+        description: "Id de la instrucción (shg_dashboards.agentes_instrucciones)"
+        required: true
+
+concurrency:
+  group: agente-ia-${{ inputs.instruccion }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ejecutar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: agentes-ia
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: agentes-ia
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      # Claude Code sin interfaz, solo lo usa el Desarrollador.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm install -g --silent @anthropic-ai/claude-code@2.1.309
+
+      - name: Pruebas (sin red)
+        run: python -m unittest discover -s tests -t .
+
+      - name: Resolver la instrucción
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          AGENTES_GH_TOKEN: ${{ secrets.AGENTES_GH_TOKEN }}
+          AGENTES_TOPE_DIARIO_USD: ${{ vars.AGENTES_TOPE_DIARIO_USD }}
+          AGENTES_TOPE_INSTRUCCION_USD: ${{ vars.AGENTES_TOPE_INSTRUCCION_USD }}
+          AGENTES_TOPE_DEV_USD: ${{ vars.AGENTES_TOPE_DEV_USD }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ID: ${{ inputs.instruccion }}
+        run: |
+          [[ "$ID" =~ ^[0-9]+$ ]] || { echo "::error::instruccion debe ser un número"; exit 1; }
+          python -m agentes ejecutar --id "$ID"
