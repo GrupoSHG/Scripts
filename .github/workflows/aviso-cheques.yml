@@ -1,0 +1,42 @@
+# Aviso por correo de cheques por cobrar (Dashboard Finanzas → Cheques)
+# Lunes a viernes 08:05 (hora de Santiago; lo dispara Supabase con automatizacion.programa()).
+# Envía si hay cheques en cartera que se cobran hoy (o con fecha cumplida sin depositar) o el
+# próximo día hábil, con la lista de los siguientes por cobrar. Script: .github/scripts/aviso_cheques.py
+#
+# Requiere (Settings → Secrets and variables → Actions):
+#   Secrets:   BITACORA_MAIL_USER, BITACORA_MAIL_PASS  (misma cuenta que bitácora y monitoreo)
+#              SUPABASE_SERVICE_KEY
+#   Variables: CHEQUES_MAIL_TO (destinatarios separados por coma; el repo es público, por eso
+#              los correos van en la variable y no aquí)
+
+name: Cheques por cobrar – aviso por correo
+
+on:
+  # Sin "schedule": el de GitHub llega con horas de atraso o se salta corridas.
+  workflow_dispatch:
+    inputs:
+      forzar:
+        description: "Enviar aunque no haya cheques hoy ni el próximo día hábil (prueba)"
+        type: boolean
+        default: false
+      para:
+        description: "Destinatarios solo para esta corrida (vacío = los de siempre)"
+        type: string
+        default: ""
+
+jobs:
+  aviso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+      - name: Enviar aviso
+        env:
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          MAIL_USER: ${{ secrets.BITACORA_MAIL_USER }}
+          MAIL_PASS: ${{ secrets.BITACORA_MAIL_PASS }}
+          MAIL_TO: ${{ inputs.para || vars.CHEQUES_MAIL_TO }}
+          FORZAR: ${{ inputs.forzar }}
+        run: python3 .github/scripts/aviso_cheques.py
