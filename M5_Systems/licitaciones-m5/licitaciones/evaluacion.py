@@ -172,6 +172,10 @@ class Presupuesto:
                               "puede controlar el tope de gasto. Agregarlo en evaluacion.precios_usd_por_mtok.")
         self.precios = {k: float(v) / 1_000_000 for k, v in precios.items()}
         self.tope = float(ev["tope_gasto_diario_usd"])
+        # Contexto largo: sobre `umbral_tokens` de entrada por solicitud, todo se cobra x `factor`.
+        largo = (ev.get("contexto_largo") or {}).get(self.modelo) or {}
+        self.umbral_largo = int(largo.get("umbral_tokens", 0)) or None
+        self.factor_largo = float(largo.get("factor", 1))
         self.zona = zona
         self.carpeta = carpeta
 
@@ -184,11 +188,20 @@ class Presupuesto:
         except (FileNotFoundError, KeyError, ValueError):
             return 0.0
 
+    def _factor(self, tokens_entrada):
+        return self.factor_largo if self.umbral_largo and tokens_entrada > self.umbral_largo else 1.0
+
     def costo(self, usage):
         g = lambda campo: getattr(usage, campo, None) or 0
-        return (g("input_tokens") * self.precios["entrada"] + g("output_tokens") * self.precios["salida"]
-                + g("cache_read_input_tokens") * self.precios.get("cache_lectura", self.precios["entrada"])
-                + g("cache_creation_input_tokens") * self.precios.get("cache_escritura", self.precios["entrada"]))
+        entrada = g("input_tokens") + g("cache_read_input_tokens") + g("cache_creation_input_tokens")
+        return self._factor(entrada) * (
+            g("input_tokens") * self.precios["entrada"] + g("output_tokens") * self.precios["salida"]
+            + g("cache_read_input_tokens") * self.precios.get("cache_lectura", self.precios["entrada"])
+            + g("cache_creation_input_tokens") * self.precios.get("cache_escritura", self.precios["entrada"]))
+
+    def peor_caso_tokens(self, tokens_entrada, max_tokens):
+        return self._factor(tokens_entrada) * (tokens_entrada * self.precios["entrada"]
+                                               + max_tokens * self.precios["salida"])
 
     def peor_caso(self, caracteres_entrada, max_tokens):
         # ~2,5 caracteres por token sobreestima a propósito (el español ronda 3,5-4).

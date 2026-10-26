@@ -30,7 +30,8 @@ evaluacion:
   max_tokens: 4000            # por respuesta, incluido el razonamiento
   timeout_s: 120
   reintentos_sdk: 2           # el SDK reintenta 429, 5xx y caídas de conexión
-  tope_gasto_diario_usd: 1.00 # antes de cada llamada se verifica que el peor caso no lo supere
+  tope_gasto_diario_usd: 3.00 # antes de cada llamada se verifica que el peor caso no lo supere
+                              # (subió de 1 a 3 el 26/10/2026 por la lectura de bases en PDF)
   max_revision_manual_por_json: 3   # más respuestas inválidas que esto hace fallar la corrida (código 6)
   # Recomendaciones que siguen al reporte y a Supabase. Las "descartar" quedan solo en
   # descartadas_claude.json; las de revisión manual se conservan siempre.
@@ -41,6 +42,9 @@ evaluacion:
     claude-haiku-5-5:  {entrada: 0.10, salida: 0.50,  cache_lectura: 0.01, cache_escritura: 0.125}
     claude-sonnet-5-5: {entrada: 2.00, salida: 10.00, cache_lectura: 0.20, cache_escritura: 2.50}
     claude-opus-5-5:   {entrada: 4.00, salida: 20.00, cache_lectura: 0.20, cache_escritura: 5.00}
+  # Haiku 5.5 cobra 0,50/2,50 (x5) cuando una solicitud pasa de 100K tokens de entrada (PDF de bases).
+  contexto_largo:
+    claude-haiku-5-5: {umbral_tokens: 100000, factor: 5}
 
 precios_oc:
   # Precios de referencia de materiales desde órdenes de compra de Mercado Público (m5.precios_oc_items).
@@ -49,6 +53,16 @@ precios_oc:
   dias_atras: 1               # órdenes de compra de ayer (el listado de hoy aún está incompleto)
   max_ocs_noche: 300          # detalles por noche (1 solicitud cada uno, mismo tope diario del ticket)
   tamano_lote: 25             # ítems por llamada a Claude
+
+bases:
+  # Lectura con Claude de los PDF de bases que M5 sube en licitaciones.html (comando `bases`,
+  # workflow licitaciones-bases.yml y, como respaldo, el comando diario).
+  modelo: claude-haiku-5-5
+  esfuerzo: low
+  max_tokens: 32000           # salida (lista de materiales); se usa streaming
+  max_mb: 30                  # PDF más grande que esto queda en error sin enviarlo a Claude
+  max_por_corrida: 5          # PDF pendientes por corrida
+  tope_por_documento_usd: 0.80  # si el peor caso de un PDF supera esto, queda en error sin gastar
 
 reporte:
   dias_cierre: 7              # sección "cierran en los próximos N días"

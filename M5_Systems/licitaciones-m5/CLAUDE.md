@@ -57,6 +57,16 @@ secret `PERFIL_M5_YAML`, el detalle de cada evaluación se loguea en DEBUG y el 
   conversión a unidad base la hace `CONVERSION` en el código (el modelo convertía mal ml→litro y g→kg).
 - `PrecioNeto` de la OC es por unidad y sin IVA; `Unidad` viene siempre vacía (ver NOTAS_API.md).
 
+## Bases y costo estimado (`bases.py`)
+
+- Comando `bases` (workflow `licitaciones-bases.yml`, botón de licitaciones.html vía `public.actualizar_datos`) y
+  respaldo en `diario`. PDF del bucket privado `licitaciones-bases` (el rol `licitaciones_m5` solo lo lee);
+  `count_tokens` antes de enviar, tope por documento y tope diario; streaming con `output_config.format`.
+- Materiales: reemplaza los de cada PDF (DELETE + INSERT; el rol no tiene UPDATE en esa tabla). El costo lo
+  calcula la vista, no Claude. Un material solo tiene precio si coincide la unidad base (m2 de tabique no
+  se cruza con el precio por plancha).
+- `Presupuesto` aplica `contexto_largo` (Haiku 5.5 x5 sobre 100K tokens de entrada).
+
 ## API (ver NOTAS_API.md)
 
 10.000 solicitudes/día por ticket; el proceso para al 80 %. Descargas masivas solo 22:00–07:00 de
