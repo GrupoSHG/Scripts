@@ -1,11 +1,10 @@
 """Aviso por correo de cheques por cobrar (Dashboard Finanzas → Cheques).
 
-Lo corre .github/workflows/aviso-cheques.yml de lunes a viernes a las 08:05 (lo dispara
+Lo corre .github/workflows/aviso-cheques.yml todos los días a las 08:05 (lo dispara
 automatizacion.programa() en Supabase). Lee los cheques en cartera de
-shg_dashboards.cheques_por_cobrar y, si hay alguno que se cobra HOY (o con fecha ya
-cumplida y aún sin depositar) o el PRÓXIMO DÍA HÁBIL (el viernes cubre sábado, domingo y
-lunes), envía un correo con esos cheques y la lista de los siguientes por cobrar.
-Si no hay nada que avisar, no envía.
+shg_dashboards.cheques_por_cobrar y SOLO si alguno se cobra HOY o MAÑANA (día calendario
+siguiente) envía un correo con esos cheques y la lista de los siguientes por cobrar.
+Los de fecha ya pasada no disparan el aviso. Si no hay nada que avisar, no envía.
 
 Variables de entorno:
   SUPABASE_SERVICE_KEY   clave de servicio (lectura de la tabla)
@@ -48,26 +47,19 @@ def leer_cheques():
         raise SystemExit(f"Supabase respondió HTTP {e.code}: {e.read().decode('utf-8', 'replace')[:300]}")
 
 
-def proximo_habil(d):
-    d += timedelta(days=1)
-    while d.isoweekday() > 5:
-        d += timedelta(days=1)
-    return d
-
-
 def clasificar(cheques, hoy):
-    """(hoy, próximo hábil, siguientes): hoy incluye los de fecha cumplida aún en cartera."""
-    limite = proximo_habil(hoy)
+    """(hoy, mañana, siguientes). Los de fecha ya pasada no entran en ninguna lista."""
+    manana = hoy + timedelta(days=1)
     de_hoy, de_manana, siguientes = [], [], []
     for c in cheques:
         f = date.fromisoformat(c["fecha_cobro"])
-        if f <= hoy:
+        if f == hoy:
             de_hoy.append(c)
-        elif f <= limite:
+        elif f == manana:
             de_manana.append(c)
-        else:
+        elif f > manana:
             siguientes.append(c)
-    return de_hoy, de_manana, siguientes, limite
+    return de_hoy, de_manana, siguientes
 
 
 def pesos(n):
@@ -80,21 +72,15 @@ def fecha_cl(iso):
     return f"{dias[d.weekday()]} {d:%d-%m-%Y}"
 
 
-def tabla(cheques, hoy, con_atraso=False):
+def tabla(cheques):
     filas = []
     for c in cheques:
-        f = date.fromisoformat(c["fecha_cobro"])
-        nota = ""
-        if con_atraso and f < hoy:
-            dias = (hoy - f).days
-            nota = (f'<br><span style="color:#b23a3a;font-size:11px">fecha cumplida hace {dias} '
-                    f'día{"s" if dias != 1 else ""}, sin depositar</span>')
         detalle = " · ".join(x for x in [
             escape(c.get("banco") or ""), ("N° " + escape(c["numero_cheque"])) if c.get("numero_cheque") else "",
             ("Fact. " + escape(c["facturas"])) if c.get("facturas") else ""] if x)
         filas.append(
             '<tr>'
-            f'<td style="padding:7px 10px;border-bottom:1px solid #eef2f6;white-space:nowrap">{fecha_cl(c["fecha_cobro"])}{nota}</td>'
+            f'<td style="padding:7px 10px;border-bottom:1px solid #eef2f6;white-space:nowrap">{fecha_cl(c["fecha_cobro"])}</td>'
             f'<td style="padding:7px 10px;border-bottom:1px solid #eef2f6">{escape(c["cliente"])}'
             f'<br><span style="color:#64748b;font-size:11px">{detalle or "&nbsp;"}</span></td>'
             f'<td style="padding:7px 10px;border-bottom:1px solid #eef2f6;color:#64748b;font-size:12px">'
@@ -116,29 +102,27 @@ def seccion(titulo, color, cuerpo):
 
 def armar_correo(cheques, hoy, forzar=False):
     """(asunto, html, texto) o None si no hay nada que avisar."""
-    de_hoy, de_manana, siguientes, limite = clasificar(cheques, hoy)
+    de_hoy, de_manana, siguientes = clasificar(cheques, hoy)
     if not de_hoy and not de_manana and not forzar:
         return None
     partes = []
     if de_hoy:
         partes.append(f"hoy {len(de_hoy)} ({pesos(sum(float(c['monto']) for c in de_hoy))})")
     if de_manana:
-        cuando = "mañana" if limite == hoy + timedelta(days=1) else f"el {fecha_cl(limite.isoformat())}"
-        partes.append(f"{cuando} {len(de_manana)} ({pesos(sum(float(c['monto']) for c in de_manana))})")
+        partes.append(f"mañana {len(de_manana)} ({pesos(sum(float(c['monto']) for c in de_manana))})")
     asunto = "Cheques por cobrar: " + (" · ".join(partes) if partes else "sin cobros hoy ni mañana")
 
-    nombre_limite = "mañana" if limite == hoy + timedelta(days=1) else \
-        f"hasta el {fecha_cl(limite.isoformat())} (próximo día hábil)"
     cuerpo = ""
     if de_hoy:
-        cuerpo += seccion(f"Se cobran hoy — depositar ({len(de_hoy)})", "#b45309", tabla(de_hoy, hoy, con_atraso=True))
+        cuerpo += seccion(f"Se cobran hoy — depositar ({len(de_hoy)})", "#b45309", tabla(de_hoy))
     if de_manana:
-        cuerpo += seccion(f"Se cobran {nombre_limite} ({len(de_manana)})", "#0b4c8c", tabla(de_manana, hoy))
+        manana = fecha_cl((hoy + timedelta(days=1)).isoformat())
+        cuerpo += seccion(f"Se cobran mañana, {manana} ({len(de_manana)})", "#0b4c8c", tabla(de_manana))
     if siguientes:
         extra = (f'<div style="font-size:12px;color:#64748b">… y {len(siguientes) - MAX_SIGUIENTES} más en la página.</div>'
                  if len(siguientes) > MAX_SIGUIENTES else "")
         cuerpo += seccion(f"Siguientes cheques por cobrar ({len(siguientes)})", "#334155",
-                          tabla(siguientes[:MAX_SIGUIENTES], hoy) + extra)
+                          tabla(siguientes[:MAX_SIGUIENTES]) + extra)
     if not cheques:
         cuerpo += '<p style="font-size:13px;color:#64748b">No hay cheques en cartera.</p>'
     total = sum(float(c["monto"]) for c in cheques)
@@ -156,7 +140,7 @@ def armar_correo(cheques, hoy, forzar=False):
   </div>
 </div>"""
     lineas = [asunto, ""]
-    for titulo, lista in (("Se cobran hoy", de_hoy), ("Se cobran " + nombre_limite, de_manana),
+    for titulo, lista in (("Se cobran hoy", de_hoy), ("Se cobran mañana", de_manana),
                           ("Siguientes", siguientes[:MAX_SIGUIENTES])):
         if lista:
             lineas.append(titulo + ":")
@@ -191,10 +175,10 @@ def main():
     forzar = os.environ.get("FORZAR") == "true"
     cheques = leer_cheques()
     correo = armar_correo(cheques, hoy, forzar)
-    de_hoy, de_manana, siguientes, _ = clasificar(cheques, hoy)
-    print(f"{hoy}: {len(cheques)} en cartera; hoy {len(de_hoy)}, próximo hábil {len(de_manana)}, siguientes {len(siguientes)}")
+    de_hoy, de_manana, siguientes = clasificar(cheques, hoy)
+    print(f"{hoy}: {len(cheques)} en cartera; hoy {len(de_hoy)}, mañana {len(de_manana)}, siguientes {len(siguientes)}")
     if correo is None:
-        print("Sin cheques que cobrar hoy ni el próximo día hábil: no se envía.")
+        print("Sin cheques que cobrar hoy ni mañana: no se envía.")
         return 0
     n = enviar(*correo)
     print(f"Aviso enviado a {n} destinatario(s).")

@@ -18,8 +18,8 @@
 --   dte-correo-sync.yml     lun-vie 07:42 a 20:42, cada hora (XML de facturas de dte@polchile.cl)
 --   licitaciones.yml        todos los días 22:30 (licitaciones de obras para M5, evaluadas con Claude;
 --                           reemplazó a mercado-publico-m5.yml el 19/10/2026)
---   aviso-cheques.yml       lun-vie 08:05 (correo de cheques por cobrar hoy / próximo día hábil;
---                           se agregó a la función viva con aviso_cheques_programa.sql, 26/10/2026)
+--   aviso-cheques.yml       todos los días 08:05 (correo solo si hay cheques que se cobran hoy o
+--                           mañana; se agregó a la función viva con aviso_cheques_programa.sql, 26/10/2026)
 -- (programa() sincronizado con la función en vivo el 2026-10-16.)
 --
 -- Este archivo se aplica a mano, así que la cadencia viva puede diferir: antes de volver a
@@ -116,8 +116,8 @@ begin
   if h = 22 and mi = 30 then
     perform automatizacion.disparar('licitaciones.yml');
   end if;
-  -- Cheques por cobrar: correo a Finanzas si hay cobros hoy o el próximo día hábil
-  if habil and h = 8 and mi = 5 then
+  -- Cheques por cobrar: correo a Finanzas si hay cobros hoy o mañana (todos los días)
+  if h = 8 and mi = 5 then
     perform automatizacion.disparar('aviso-cheques.yml');
   end if;
 end $$;
