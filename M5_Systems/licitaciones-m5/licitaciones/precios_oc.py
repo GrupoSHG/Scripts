@@ -58,7 +58,7 @@ def sanitizar(oc):
         "moneda": oc.get("TipoMoneda"), "fecha_envio": fechas.get("FechaEnvio"),
         "organismo": comp.get("NombreOrganismo"), "region": comp.get("RegionUnidad"),
         "comuna": comp.get("ComunaUnidad"), "region_proveedor": prov.get("Region"),
-        "items": [{"codigo_categoria": i.get("CodigoCategoria"), "categoria": i.get("Categoria"),
+        "items": [{"correlativo": i.get("Correlativo"), "codigo_categoria": i.get("CodigoCategoria"), "categoria": i.get("Categoria"),
                    "codigo_producto": i.get("CodigoProducto"), "producto": i.get("Producto"),
                    "especificacion_comprador": i.get("EspecificacionComprador"),
                    "especificacion_proveedor": i.get("EspecificacionProveedor"),

@@ -103,6 +103,28 @@ def cmd_precios_oc(args):
         print(f"| {x['n']} | {(x['producto'] or '')[:45]} | {x['unidad']} | {x['mediana']:,.0f} | {x['minimo']:,.0f} | {x['maximo']:,.0f} |".replace(",", "."))
 
 
+def cmd_precios_normalizar(args):
+    """Normaliza con Claude los ítems de una prueba de precios-oc (no pide nada a Mercado Público)."""
+    from . import normalizacion
+    from .errores import ErrorConfig
+    origen = SALIDA / "precios_oc" / f"{args.dia}.json"
+    if not origen.is_file():
+        raise ErrorConfig(f"No existe salida/precios_oc/{args.dia}.json: correr primero precios-oc.")
+    ocs = descarga.leer_json(origen, {}).get("ocs") or []
+    filas, resumen = normalizacion.ejecutar(cargar_ajustes(), ocs)
+    grupos = normalizacion.agrupar(filas)
+    descarga.escribir_json(SALIDA / "precios_oc" / f"{args.dia}-normalizado.json",
+                           {"resumen": resumen, "filas": filas, "grupos": grupos})
+    print(json.dumps(resumen, ensure_ascii=False))
+    print("| n | Material | Especificación | Presentación | Mediana presentación | Mediana por unidad base |")
+    print("|---|---|---|---|---|---|")
+    mil = lambda v: "—" if v is None else f"{v:,.0f}".replace(",", ".")
+    for g in grupos[:args.mostrar]:
+        base = f"{mil(g['mediana_unidad_base'])} / {g['unidad_base']}" if g["mediana_unidad_base"] is not None else "—"
+        print(f"| {g['n']} | {g['material']} | {g['especificacion'] or '—'} | {g['presentacion']} | "
+              f"{mil(g['mediana_presentacion'])} | {base} |")
+
+
 def cmd_detalle(args):
     mp = MercadoPublico(cargar_ajustes())
     det = mp.detalle(args.codigo)
@@ -154,6 +176,10 @@ def main(argv=None):
     p.add_argument("--max", type=int, default=50, help="detalles a pedir (fuera de 22:00-07:00, máximo 50)")
     p.add_argument("--mostrar", type=int, default=25, help="filas de la tabla de precios")
     p.set_defaults(fn=cmd_precios_oc)
+    p = sub.add_parser("precios-normalizar", help="prueba: normalizar con Claude los ítems de precios-oc")
+    p.add_argument("--dia", required=True, help="AAAAMMDD del archivo salida/precios_oc/AAAAMMDD.json")
+    p.add_argument("--mostrar", type=int, default=40, help="filas de la tabla")
+    p.set_defaults(fn=cmd_precios_normalizar)
     p = sub.add_parser("detalle", help="mostrar qué entrega la API para una licitación")
     p.add_argument("codigo")
     p.set_defaults(fn=cmd_detalle)
