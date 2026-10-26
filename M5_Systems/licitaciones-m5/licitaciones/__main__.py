@@ -18,7 +18,7 @@ import sys
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import descarga, evaluacion, precios_oc, reporte, supabase_mp
+from . import bases, descarga, evaluacion, precios_oc, reporte, supabase_mp
 from .config import SALIDA, cargar_ajustes, cargar_env, cargar_perfil, configurar_logging
 from .detalle import URL_FICHA, estructura, sanitizar
 from .errores import ErrorProceso
@@ -71,6 +71,8 @@ def cmd_diario(args):
     guardado = supabase_mp.guardar(ajustes, carpeta, sb=sb)
     _, _, datos = reporte.generar(ajustes, carpeta, sb=sb)
     precios = precios_oc.nocturno(ajustes, supabase_mp.Supabase(ajustes, tabla=precios_oc.TABLA))
+    # Respaldo del botón "Procesar bases" de la página: los PDF que hayan quedado pendientes.
+    bases_pendientes = bases.procesar(ajustes)
     resumen = {"carpeta": carpeta.name,
                "embudo": {k: embudo[k] for k in ("listado_total", "en_estados_a_procesar", "ya_evaluadas_omitidas",
                                                  "pasan_filtro_nombre", "detalles_obtenidos", "pasan_filtro_detalle",
@@ -80,7 +82,7 @@ def cmd_diario(args):
                "supabase": guardado,
                "reporte": {"mejores": len(datos["mejores"]), "cierran": len(datos["cierran"]),
                            "revision_manual": len(datos["manual"])},
-               "precios_oc": precios}
+               "precios_oc": precios, "bases": bases_pendientes}
     print(json.dumps(resumen, ensure_ascii=False, indent=1))
 
 
@@ -139,6 +141,11 @@ def cmd_precios_guardar(args):
     print(json.dumps({"subidas": precios_oc.guardar(sb, filas, ajustes["evaluacion"]["modelo"])}))
 
 
+def cmd_bases(args):
+    """Lee con Claude los PDF de bases pendientes (lo dispara el botón de licitaciones.html)."""
+    print(json.dumps(bases.procesar(cargar_ajustes(), maximo=args.max), ensure_ascii=False))
+
+
 def cmd_detalle(args):
     mp = MercadoPublico(cargar_ajustes())
     det = mp.detalle(args.codigo)
@@ -194,6 +201,9 @@ def main(argv=None):
     p.add_argument("--dia", required=True, help="AAAAMMDD del archivo salida/precios_oc/AAAAMMDD.json")
     p.add_argument("--mostrar", type=int, default=40, help="filas de la tabla")
     p.set_defaults(fn=cmd_precios_normalizar)
+    p = sub.add_parser("bases", help="leer con Claude los PDF de bases pendientes y extraer materiales")
+    p.add_argument("--max", type=int, help="PDF a procesar (por defecto bases.max_por_corrida)")
+    p.set_defaults(fn=cmd_bases)
     p = sub.add_parser("precios-guardar", help="subir a Supabase lo normalizado por precios-normalizar")
     p.add_argument("--dia", required=True, help="AAAAMMDD")
     p.set_defaults(fn=cmd_precios_guardar)

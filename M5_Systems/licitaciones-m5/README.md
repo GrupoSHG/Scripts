@@ -95,6 +95,17 @@ material, especificación y presentación (SQL en `supabase/precios_oc.sql`). Pr
 `precios-oc --fecha ddmmaaaa --max 50`, `precios-normalizar --dia AAAAMMDD`, `precios-guardar --dia AAAAMMDD`.
 Son precios de compradores públicos: sirven de referencia, no reemplazan una cotización.
 
+## Bases, materiales y costo estimado
+
+M5 sube los PDF de bases de una licitación en `licitaciones.html` (bucket privado `licitaciones-bases`, tabla
+`m5.licitaciones_bases`) y pide procesarlos (workflow `licitaciones-bases.yml`, `python -m licitaciones bases`;
+el comando `diario` procesa los que queden pendientes). Claude lee cada PDF y extrae los materiales con
+cantidad y unidad tal como están escritas, usando los mismos nombres que los precios de referencia; el
+código convierte a unidad base. La vista `m5.licitaciones_materiales_costo` multiplica cada cantidad por la
+mediana de 90 días del material en esa unidad (`m5.precios_material_base`) y `m5.licitaciones_costo_estimado`
+resume por licitación con la cobertura (cuántos materiales tienen precio). SQL: `supabase/bases_costos.sql`.
+Un PDF cuyo peor caso supera `bases.tope_por_documento_usd` queda en error sin gastar.
+
 ## Despliegue
 
 Workflow `.github/workflows/licitaciones.yml` (`python -m licitaciones diario`: las cuatro etapas, omitiendo

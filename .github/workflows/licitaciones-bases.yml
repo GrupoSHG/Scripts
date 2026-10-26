@@ -1,0 +1,72 @@
+# Bases de licitaciones M5: lee con Claude los PDF que M5 sube en licitaciones.html (M5 Proyectos),
+# extrae los materiales y los deja en m5.licitaciones_materiales; el costo estimado lo calcula la vista
+# m5.licitaciones_materiales_costo con los precios de referencia. Código en M5_Systems/licitaciones-m5
+# (`python -m licitaciones bases`, módulo bases.py).
+#
+# Sin "schedule": lo dispara el botón "Procesar bases" de la página a través de public.actualizar_datos
+# (fila en automatizacion.workflows_manual) y, como respaldo, el comando diario de licitaciones.yml.
+# Manual: gh workflow run licitaciones-bases.yml -R GrupoSHG/Scripts
+#
+#   Secrets: ANTHROPIC_API_KEY, SUPABASE_URL, SUPABASE_KEY (JWT del rol licitaciones_m5: solo lee el bucket
+#            licitaciones-bases y escribe esas dos tablas)
+#
+# Repo PÚBLICO: el log solo lleva cifras (cuántos PDF y materiales, costo); nada del contenido de las bases.
+
+name: Licitaciones M5 · Bases (materiales y costo estimado)
+
+on:
+  workflow_dispatch:
+    inputs:
+      max:
+        description: "PDF a procesar; vacío = bases.max_por_corrida"
+        required: false
+
+concurrency:
+  group: licitaciones-bases
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  bases:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: M5_Systems/licitaciones-m5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: M5_Systems/licitaciones-m5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - name: Fecha de Chile
+        id: hoy
+        run: echo "fecha=$(TZ=America/Santiago date +%Y%m%d)" >> "$GITHUB_OUTPUT"
+
+      # Gasto en Claude del día: el mismo tope que licitaciones.yml.
+      - uses: actions/cache@v4
+        with:
+          path: M5_Systems/licitaciones-m5/estado
+          key: licitaciones-m5-estado-${{ steps.hoy.outputs.fecha }}-${{ github.run_id }}
+          restore-keys: licitaciones-m5-estado-${{ steps.hoy.outputs.fecha }}-
+
+      - name: Leer las bases pendientes
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          MAX: ${{ inputs.max }}
+        run: |
+          args=()
+          if [ -n "$MAX" ]; then
+            [[ "$MAX" =~ ^[0-9]+$ ]] || { echo "::error::max debe ser un número"; exit 1; }
+            args+=(--max "$MAX")
+          fi
+          python -m licitaciones bases "${args[@]}"
