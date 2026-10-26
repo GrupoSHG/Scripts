@@ -62,3 +62,20 @@ los anexos, las garantías exigidas y los registros (MOP, MINVU) están solo en 
 alcanza para clasificar (tipo de obra, organismo, región, monto, plazos, financiamiento), pero no
 para verificar requisitos, garantías ni registros: esos campos salen `null` y la licitación se
 marca para revisar las bases a mano.
+
+## Órdenes de compra (`ordenesdecompra.json`), para precios de referencia (26/10/2026)
+
+Prueba con `python -m licitaciones precios-oc --fecha 22102026 --max 50`:
+
+- El listado por fecha trae solo `Codigo`, `CodigoEstado` y `Nombre` (17.762 órdenes el 22/10/2026).
+  Estados vistos en el detalle: 4 "Enviada a proveedor", 5 "En proceso", 6 "Aceptada",
+  12 "Recepción Conforme"; el 9 (cancelada según la documentación) se excluye.
+- Cada ítem trae `Producto`, `CodigoProducto`, `CodigoCategoria` (UNSPSC), `EspecificacionComprador`,
+  `EspecificacionProveedor`, `Cantidad`, `Unidad`, `Moneda`, `PrecioNeto`, `Total`.
+- **`PrecioNeto` es por unidad y sin IVA**: `Total = Cantidad x PrecioNeto` en 133 de 133 ítems con total.
+- **`Unidad` viene siempre vacía** (0 de 258): la unidad y la presentación están en el texto de la
+  especificación ("SACO", "PLANCHA", "BOLSA 100 UNIDADES"); solo 75 de 258 la dicen explícitamente.
+- **`Producto` suele estar mal clasificado por el comprador** ("Saco de cemento" como "Cementos
+  disolventes", "Gravilla" como "Esparcidoras de gravilla"): no sirve para agrupar precios.
+- El detalle trae nombre, cargo, teléfono y correo de los contactos del comprador y del proveedor, y el
+  nombre y RUT del proveedor (puede ser persona natural): `precios_oc.sanitizar` no guarda ninguno.

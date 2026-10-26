@@ -18,7 +18,7 @@ import sys
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import descarga, evaluacion, reporte, supabase_mp
+from . import descarga, evaluacion, precios_oc, reporte, supabase_mp
 from .config import SALIDA, cargar_ajustes, cargar_env, cargar_perfil, configurar_logging
 from .detalle import URL_FICHA, estructura, sanitizar
 from .errores import ErrorProceso
@@ -70,6 +70,7 @@ def cmd_diario(args):
     costo, _ = evaluacion.ejecutar(ajustes, perfil, carpeta)
     guardado = supabase_mp.guardar(ajustes, carpeta, sb=sb)
     _, _, datos = reporte.generar(ajustes, carpeta, sb=sb)
+    precios = precios_oc.nocturno(ajustes, supabase_mp.Supabase(ajustes, tabla=precios_oc.TABLA))
     resumen = {"carpeta": carpeta.name,
                "embudo": {k: embudo[k] for k in ("listado_total", "en_estados_a_procesar", "ya_evaluadas_omitidas",
                                                  "pasan_filtro_nombre", "detalles_obtenidos", "pasan_filtro_detalle",
@@ -78,8 +79,64 @@ def cmd_diario(args):
                                                 "descartadas_por_claude", "costo_usd_corrida", "gasto_usd_hoy")},
                "supabase": guardado,
                "reporte": {"mejores": len(datos["mejores"]), "cierran": len(datos["cierran"]),
-                           "revision_manual": len(datos["manual"])}}
+                           "revision_manual": len(datos["manual"])},
+               "precios_oc": precios}
     print(json.dumps(resumen, ensure_ascii=False, indent=1))
+
+
+def cmd_precios_oc(args):
+    """Prueba de precios de referencia desde órdenes de compra de Mercado Público."""
+    from .errores import ErrorConfig
+    ajustes = cargar_ajustes()
+    mp = MercadoPublico(ajustes)
+    ahora = datetime.now(mp.contador.zona)
+    tope = int(ajustes["horario"]["max_detalles_fuera_de_horario"])
+    if not descarga.dentro_de_ventana(ajustes, ahora) and args.max > tope:
+        raise ErrorConfig(f"Fuera de la ventana nocturna se piden a lo más {tope} detalles (pediste {args.max}).")
+    fecha = args.fecha or f"{ahora:%d%m%Y}"
+    res = precios_oc.probar(mp, fecha, args.max)
+    descarga.escribir_json(SALIDA / "precios_oc" / f"{fecha[4:]}{fecha[2:4]}{fecha[:2]}.json", res)
+    r = res["resumen"]
+    print(json.dumps({k: v for k, v in res.items() if k not in ("ocs", "resumen")}, ensure_ascii=False, indent=1))
+    print(f"Ítems: {r['items']} · calidad: {r['calidad']}")
+    print("| n | Producto (Mercado Público) | Unidad (texto) | Mediana | Mín | Máx |")
+    print("|---|---|---|---|---|---|")
+    for x in r["productos"][:args.mostrar]:
+        print(f"| {x['n']} | {(x['producto'] or '')[:45]} | {x['unidad']} | {x['mediana']:,.0f} | {x['minimo']:,.0f} | {x['maximo']:,.0f} |".replace(",", "."))
+
+
+def cmd_precios_normalizar(args):
+    """Normaliza con Claude los ítems de una prueba de precios-oc (no pide nada a Mercado Público)."""
+    from . import normalizacion
+    from .errores import ErrorConfig
+    origen = SALIDA / "precios_oc" / f"{args.dia}.json"
+    if not origen.is_file():
+        raise ErrorConfig(f"No existe salida/precios_oc/{args.dia}.json: correr primero precios-oc.")
+    ocs = descarga.leer_json(origen, {}).get("ocs") or []
+    filas, resumen = normalizacion.ejecutar(cargar_ajustes(), ocs)
+    grupos = normalizacion.agrupar(filas)
+    descarga.escribir_json(SALIDA / "precios_oc" / f"{args.dia}-normalizado.json",
+                           {"resumen": resumen, "filas": filas, "grupos": grupos})
+    print(json.dumps(resumen, ensure_ascii=False))
+    print("| n | Material | Especificación | Presentación | Mediana presentación | Mediana por unidad base |")
+    print("|---|---|---|---|---|---|")
+    mil = lambda v: "—" if v is None else f"{v:,.0f}".replace(",", ".")
+    for g in grupos[:args.mostrar]:
+        base = f"{mil(g['mediana_unidad_base'])} / {g['unidad_base']}" if g["mediana_unidad_base"] is not None else "—"
+        print(f"| {g['n']} | {g['material']} | {g['especificacion'] or '—'} | {g['presentacion']} | "
+              f"{mil(g['mediana_presentacion'])} | {base} |")
+
+
+def cmd_precios_guardar(args):
+    """Sube a m5.precios_oc_items lo normalizado por precios-normalizar."""
+    from .errores import ErrorConfig
+    origen = SALIDA / "precios_oc" / f"{args.dia}-normalizado.json"
+    if not origen.is_file():
+        raise ErrorConfig(f"No existe salida/precios_oc/{args.dia}-normalizado.json: correr precios-normalizar.")
+    ajustes = cargar_ajustes()
+    filas = descarga.leer_json(origen, {}).get("filas") or []
+    sb = supabase_mp.Supabase(ajustes, tabla=precios_oc.TABLA)
+    print(json.dumps({"subidas": precios_oc.guardar(sb, filas, ajustes["evaluacion"]["modelo"])}))
 
 
 def cmd_detalle(args):
@@ -128,6 +185,18 @@ def main(argv=None):
     p.add_argument("--max", type=int, help="pedir el detalle de a lo más N candidatas (pruebas)")
     p.add_argument("--perfil", help="otro archivo de perfil (por defecto PERFIL_M5_YAML o config/perfil_m5.yaml)")
     p.set_defaults(fn=cmd_diario)
+    p = sub.add_parser("precios-oc", help="prueba: precios de materiales desde órdenes de compra de Mercado Público")
+    p.add_argument("--fecha", help="ddmmaaaa; por defecto hoy")
+    p.add_argument("--max", type=int, default=50, help="detalles a pedir (fuera de 22:00-07:00, máximo 50)")
+    p.add_argument("--mostrar", type=int, default=25, help="filas de la tabla de precios")
+    p.set_defaults(fn=cmd_precios_oc)
+    p = sub.add_parser("precios-normalizar", help="prueba: normalizar con Claude los ítems de precios-oc")
+    p.add_argument("--dia", required=True, help="AAAAMMDD del archivo salida/precios_oc/AAAAMMDD.json")
+    p.add_argument("--mostrar", type=int, default=40, help="filas de la tabla")
+    p.set_defaults(fn=cmd_precios_normalizar)
+    p = sub.add_parser("precios-guardar", help="subir a Supabase lo normalizado por precios-normalizar")
+    p.add_argument("--dia", required=True, help="AAAAMMDD")
+    p.set_defaults(fn=cmd_precios_guardar)
     p = sub.add_parser("detalle", help="mostrar qué entrega la API para una licitación")
     p.add_argument("codigo")
     p.set_defaults(fn=cmd_detalle)
