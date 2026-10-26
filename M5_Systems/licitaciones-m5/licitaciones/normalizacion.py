@@ -166,7 +166,7 @@ def ejecutar(ajustes, ocs, cliente=None, presupuesto=None, tamano_lote=25):
                 continue
             precio, por_base = precios(it, n)
             filas.append({
-                "oc": oc["codigo"], "correlativo": it.get("correlativo") or (indice + 1), "fecha_envio": oc.get("fecha_envio"), "region": oc.get("region"),
+                "oc": oc["codigo"], "correlativo": it.get("correlativo") or (oc["items"].index(it) + 1), "fecha_envio": oc.get("fecha_envio"), "region": oc.get("region"),
                 "producto_mercado_publico": it.get("producto"), "codigo_categoria": it.get("codigo_categoria"),
                 "especificacion_comprador": it.get("especificacion_comprador"), "cantidad": it.get("cantidad"),
                 "precio_presentacion": precio, "precio_unidad_base": por_base, **n.model_dump(exclude={"indice"}),

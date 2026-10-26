@@ -70,6 +70,7 @@ def cmd_diario(args):
     costo, _ = evaluacion.ejecutar(ajustes, perfil, carpeta)
     guardado = supabase_mp.guardar(ajustes, carpeta, sb=sb)
     _, _, datos = reporte.generar(ajustes, carpeta, sb=sb)
+    precios = precios_oc.nocturno(ajustes, supabase_mp.Supabase(ajustes, tabla=precios_oc.TABLA))
     resumen = {"carpeta": carpeta.name,
                "embudo": {k: embudo[k] for k in ("listado_total", "en_estados_a_procesar", "ya_evaluadas_omitidas",
                                                  "pasan_filtro_nombre", "detalles_obtenidos", "pasan_filtro_detalle",
@@ -78,7 +79,8 @@ def cmd_diario(args):
                                                 "descartadas_por_claude", "costo_usd_corrida", "gasto_usd_hoy")},
                "supabase": guardado,
                "reporte": {"mejores": len(datos["mejores"]), "cierran": len(datos["cierran"]),
-                           "revision_manual": len(datos["manual"])}}
+                           "revision_manual": len(datos["manual"])},
+               "precios_oc": precios}
     print(json.dumps(resumen, ensure_ascii=False, indent=1))
 
 
@@ -123,6 +125,18 @@ def cmd_precios_normalizar(args):
         base = f"{mil(g['mediana_unidad_base'])} / {g['unidad_base']}" if g["mediana_unidad_base"] is not None else "—"
         print(f"| {g['n']} | {g['material']} | {g['especificacion'] or '—'} | {g['presentacion']} | "
               f"{mil(g['mediana_presentacion'])} | {base} |")
+
+
+def cmd_precios_guardar(args):
+    """Sube a m5.precios_oc_items lo normalizado por precios-normalizar."""
+    from .errores import ErrorConfig
+    origen = SALIDA / "precios_oc" / f"{args.dia}-normalizado.json"
+    if not origen.is_file():
+        raise ErrorConfig(f"No existe salida/precios_oc/{args.dia}-normalizado.json: correr precios-normalizar.")
+    ajustes = cargar_ajustes()
+    filas = descarga.leer_json(origen, {}).get("filas") or []
+    sb = supabase_mp.Supabase(ajustes, tabla=precios_oc.TABLA)
+    print(json.dumps({"subidas": precios_oc.guardar(sb, filas, ajustes["evaluacion"]["modelo"])}))
 
 
 def cmd_detalle(args):
@@ -180,6 +194,9 @@ def main(argv=None):
     p.add_argument("--dia", required=True, help="AAAAMMDD del archivo salida/precios_oc/AAAAMMDD.json")
     p.add_argument("--mostrar", type=int, default=40, help="filas de la tabla")
     p.set_defaults(fn=cmd_precios_normalizar)
+    p = sub.add_parser("precios-guardar", help="subir a Supabase lo normalizado por precios-normalizar")
+    p.add_argument("--dia", required=True, help="AAAAMMDD")
+    p.set_defaults(fn=cmd_precios_guardar)
     p = sub.add_parser("detalle", help="mostrar qué entrega la API para una licitación")
     p.add_argument("codigo")
     p.set_defaults(fn=cmd_detalle)

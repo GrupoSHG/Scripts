@@ -26,9 +26,9 @@ class ErrorSupabase(ErrorProceso):
 
 
 class Supabase:
-    def __init__(self, ajustes, sesion=None):
+    def __init__(self, ajustes, sesion=None, tabla=TABLA):
         cfg = ajustes["supabase"]
-        self.url = secreto("SUPABASE_URL").rstrip("/") + "/rest/v1/" + TABLA
+        self.url = secreto("SUPABASE_URL").rstrip("/") + "/rest/v1/" + tabla
         self.esquema = cfg["esquema"]
         self.timeout = float(cfg.get("timeout_s", 30))
         apikey = os.environ.get("SUPABASE_APIKEY", "").strip() or cfg["apikey_publica"]
@@ -73,9 +73,9 @@ class Supabase:
                                        ("fecha_cierre", f"lte.{hasta}"), ("order", "fecha_cierre")])
         return r.json()
 
-    def upsert(self, filas):
+    def upsert(self, filas, conflicto="codigo_externo"):
         for i in range(0, len(filas), LOTE):
-            self._pedir("POST", params={"on_conflict": "codigo_externo"}, json=filas[i:i + LOTE],
+            self._pedir("POST", params={"on_conflict": conflicto}, json=filas[i:i + LOTE],
                         headers={"Prefer": "resolution=merge-duplicates,return=minimal"})
         return len(filas)
 

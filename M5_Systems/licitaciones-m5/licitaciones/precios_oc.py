@@ -107,10 +107,11 @@ def resumir(ocs):
     return {"items": sum(conteo.values()), "calidad": dict(conteo), "productos": productos}
 
 
-def probar(mp, fecha, max_detalles):
-    """Listado del día, filtro por nombre y detalle de a lo más `max_detalles` órdenes."""
+def probar(mp, fecha, max_detalles, omitir=frozenset()):
+    """Listado del día, filtro por nombre y detalle de a lo más `max_detalles` órdenes (sin las de `omitir`)."""
     listado = mp._get(RECURSO, {"fecha": fecha}).get("Listado") or []
-    candidatas = [o for o in listado if o.get("CodigoEstado") not in ESTADOS_EXCLUIDOS and es_de_materiales(o.get("Nombre"))]
+    candidatas = [o for o in listado if o.get("CodigoEstado") not in ESTADOS_EXCLUIDOS and o.get("Codigo") not in omitir
+                  and es_de_materiales(o.get("Nombre"))]
     log.info("OC del %s: %d · pasan el filtro de materiales: %d · se piden %d", fecha, len(listado),
              len(candidatas), min(len(candidatas), max_detalles))
     ocs, estados = [], Counter()
@@ -124,3 +125,66 @@ def probar(mp, fecha, max_detalles):
             "estados_vistos": {f"{k[0]} {k[1]}": n for k, n in estados.items()},
             "solicitudes": mp.hechas, "respuestas_http": {str(k): v for k, v in mp.respuestas.items()},
             "resumen": resumir(ocs), "ocs": ocs}
+
+
+# --- Supabase (m5.precios_oc_items) -----------------------------------------------
+
+TABLA = "precios_oc_items"
+COLUMNAS = ("oc", "correlativo", "fecha_envio", "region", "producto_mercado_publico", "codigo_categoria",
+            "especificacion_comprador", "cantidad", "precio_presentacion", "es_material_construccion", "material",
+            "especificacion", "presentacion", "contenido", "unidad_contenido", "contenido_base", "unidad_base",
+            "precio_unidad_base", "confianza")
+
+
+def fila_tabla(f, modelo):
+    """Fila de m5.precios_oc_items. Las fechas de la API vienen en hora de Chile sin zona."""
+    fila = {c: f.get(c) for c in COLUMNAS}
+    if fila["fecha_envio"] and len(fila["fecha_envio"]) == 19:
+        fila["fecha_envio"] = fila["fecha_envio"] + "-03:00"
+    fila["modelo"] = modelo
+    return fila
+
+
+def ocs_guardadas(sb, dias=15):
+    """Códigos de OC ya guardados en los últimos `dias` (para no volver a pedir su detalle)."""
+    from datetime import datetime, timedelta, timezone
+    desde = (datetime.now(timezone.utc) - timedelta(days=dias)).isoformat(timespec="seconds")
+    r = sb._pedir("GET", params=[("select", "oc"), ("fecha_envio", f"gte.{desde}")],
+                  headers={"Range-Unit": "items", "Range": "0-99999"})
+    return {x["oc"] for x in r.json()}
+
+
+def guardar(sb, filas, modelo):
+    """Upsert por (oc, correlativo) de los ítems normalizados (también los que no son de construcción,
+    para no volver a pedirlos; la vista de referencia los excluye)."""
+    return sb.upsert([fila_tabla(f, modelo) for f in filas], conflicto="oc,correlativo")
+
+
+def nocturno(ajustes, sb, mp=None, max_ocs=None):
+    """Paso del comando diario: OC del día anterior, normalización y guardado. Devuelve un resumen
+    solo con cifras (el log de Actions es público)."""
+    from datetime import datetime, timedelta
+    from . import normalizacion
+    from .mp_api import MercadoPublico
+    cfg = ajustes.get("precios_oc") or {}
+    if not cfg.get("activo", False):
+        return {"activo": False}
+    mp = mp or MercadoPublico(ajustes)
+    fecha = f"{datetime.now(mp.contador.zona) - timedelta(days=int(cfg.get('dias_atras', 1))):%d%m%Y}"
+    omitir = ocs_guardadas(sb)
+    maximo = int(cfg.get("max_ocs_noche", 300))
+    from .descarga import dentro_de_ventana
+    if not dentro_de_ventana(ajustes, datetime.now(mp.contador.zona)):
+        # ChileCompra pide las descargas masivas de noche: de día, a lo más lo mismo que las licitaciones.
+        maximo = min(maximo, int(ajustes["horario"]["max_detalles_fuera_de_horario"]))
+    if max_ocs is not None:
+        maximo = min(maximo, max_ocs)
+    res = probar(mp, fecha, maximo, omitir=omitir)
+    filas, resumen = normalizacion.ejecutar(ajustes, res["ocs"], tamano_lote=int(cfg.get("tamano_lote", 25)))
+    subidas = guardar(sb, filas, ajustes["evaluacion"]["modelo"]) if filas else 0
+    log.info("Precios OC %s: %d órdenes en el listado, %d de materiales, %d ya guardadas, %d detalles, "
+             "%d ítems normalizados, %d con precio por unidad base, US$ %.4f, %d filas subidas", fecha,
+             res["listado"], res["candidatas"], len(omitir), res["detalles"],
+             resumen["normalizados"], resumen["con_precio_unidad_base"], resumen["costo_usd"], subidas)
+    return {"fecha": fecha, "listado": res["listado"], "candidatas": res["candidatas"], "detalles": res["detalles"],
+            "solicitudes": res["solicitudes"], **resumen, "subidas": subidas}

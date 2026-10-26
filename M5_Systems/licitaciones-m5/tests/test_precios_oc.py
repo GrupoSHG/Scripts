@@ -50,5 +50,20 @@ class TestCalidad(unittest.TestCase):
         self.assertEqual((r["productos"][0]["n"], r["productos"][0]["mediana"]), (2, 5000))
 
 
+class TestTabla(unittest.TestCase):
+    def test_fila_tabla_zona_y_modelo(self):
+        from licitaciones.precios_oc import COLUMNAS, fila_tabla
+        f = {c: None for c in COLUMNAS}
+        f.update(oc="1-1-SE26", correlativo=1, fecha_envio="2026-10-22T10:30:00", extra="no va")
+        fila = fila_tabla(f, "claude-haiku-5-5")
+        self.assertEqual(fila["fecha_envio"], "2026-10-22T10:30:00-03:00")
+        self.assertEqual(fila["modelo"], "claude-haiku-5-5")
+        self.assertNotIn("extra", fila)
+
+    def test_nocturno_inactivo_no_hace_nada(self):
+        from licitaciones.precios_oc import nocturno
+        self.assertEqual(nocturno({"precios_oc": {"activo": False}}, sb=None), {"activo": False})
+
+
 if __name__ == "__main__":
     unittest.main()

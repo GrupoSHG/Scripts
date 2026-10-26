@@ -47,6 +47,16 @@ secret `PERFIL_M5_YAML`, el detalle de cada evaluación se loguea en DEBUG y el 
   `output_config.format` con `ESQUEMA` + validación local con `Evaluacion` (pydantic). Si se cambia el
   modelo, agregar su precio en `ajustes.yaml` o el tope de gasto no corre.
 
+## Precios de referencia (`precios_oc.py`, `normalizacion.py`)
+
+- Paso `precios_oc.nocturno` dentro de `diario` (`ajustes.yaml` → `precios_oc`): órdenes de compra de
+  ayer, filtro por nombre, detalle con lista blanca, normalización con Claude en lotes de 25 y upsert en
+  `m5.precios_oc_items` (clave `oc, correlativo`) con el rol `licitaciones_m5`. Fuera de 22:00–07:00 pide
+  a lo más 50 detalles.
+- Claude nunca recibe ni devuelve precios y copia el contenido tal como está escrito (`300 ml`): la
+  conversión a unidad base la hace `CONVERSION` en el código (el modelo convertía mal ml→litro y g→kg).
+- `PrecioNeto` de la OC es por unidad y sin IVA; `Unidad` viene siempre vacía (ver NOTAS_API.md).
+
 ## API (ver NOTAS_API.md)
 
 10.000 solicitudes/día por ticket; el proceso para al 80 %. Descargas masivas solo 22:00–07:00 de

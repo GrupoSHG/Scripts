@@ -83,6 +83,18 @@ Cómo filtra: el listado solo trae código, nombre, estado y cierre, así que pr
 nombre y pide el detalle (1 solicitud) solo de esas; con el detalle vuelve a filtrar por
 descripción, ítems, rubro UNSPSC 72, región y monto.
 
+## Precios de referencia de materiales (órdenes de compra de Mercado Público)
+
+Cada noche, después de las licitaciones, el comando `diario` toma las órdenes de compra de ayer cuyo
+nombre parece de materiales de construcción (hasta `precios_oc.max_ocs_noche`, 300 por defecto),
+guarda solo los datos del producto (sin contactos ni proveedor) y Claude normaliza cada ítem: material
+genérico, especificación, presentación y contenido tal como está escrito. Claude no ve precios; el
+código convierte unidades y calcula el precio por presentación y por unidad base. Todo queda en
+`m5.precios_oc_items` y la vista `m5.precios_referencia` da la mediana de los últimos 90 días por
+material, especificación y presentación (SQL en `supabase/precios_oc.sql`). Prueba manual:
+`precios-oc --fecha ddmmaaaa --max 50`, `precios-normalizar --dia AAAAMMDD`, `precios-guardar --dia AAAAMMDD`.
+Son precios de compradores públicos: sirven de referencia, no reemplazan una cotización.
+
 ## Despliegue
 
 Workflow `.github/workflows/licitaciones.yml` (`python -m licitaciones diario`: las cuatro etapas, omitiendo

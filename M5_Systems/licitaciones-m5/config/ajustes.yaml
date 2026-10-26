@@ -42,6 +42,14 @@ evaluacion:
     claude-sonnet-5-5: {entrada: 2.00, salida: 10.00, cache_lectura: 0.20, cache_escritura: 2.50}
     claude-opus-5-5:   {entrada: 4.00, salida: 20.00, cache_lectura: 0.20, cache_escritura: 5.00}
 
+precios_oc:
+  # Precios de referencia de materiales desde órdenes de compra de Mercado Público (m5.precios_oc_items).
+  # Corre dentro del comando diario, después de las licitaciones (ventana nocturna).
+  activo: true
+  dias_atras: 1               # órdenes de compra de ayer (el listado de hoy aún está incompleto)
+  max_ocs_noche: 300          # detalles por noche (1 solicitud cada uno, mismo tope diario del ticket)
+  tamano_lote: 25             # ítems por llamada a Claude
+
 reporte:
   dias_cierre: 7              # sección "cierran en los próximos N días"
   max_mejores: 10             # cuántas mostrar en "mejores del día"
