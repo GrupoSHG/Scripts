@@ -18,7 +18,7 @@ import sys
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import descarga, evaluacion, reporte, supabase_mp
+from . import descarga, evaluacion, precios_oc, reporte, supabase_mp
 from .config import SALIDA, cargar_ajustes, cargar_env, cargar_perfil, configurar_logging
 from .detalle import URL_FICHA, estructura, sanitizar
 from .errores import ErrorProceso
@@ -82,6 +82,27 @@ def cmd_diario(args):
     print(json.dumps(resumen, ensure_ascii=False, indent=1))
 
 
+def cmd_precios_oc(args):
+    """Prueba de precios de referencia desde órdenes de compra de Mercado Público."""
+    from .errores import ErrorConfig
+    ajustes = cargar_ajustes()
+    mp = MercadoPublico(ajustes)
+    ahora = datetime.now(mp.contador.zona)
+    tope = int(ajustes["horario"]["max_detalles_fuera_de_horario"])
+    if not descarga.dentro_de_ventana(ajustes, ahora) and args.max > tope:
+        raise ErrorConfig(f"Fuera de la ventana nocturna se piden a lo más {tope} detalles (pediste {args.max}).")
+    fecha = args.fecha or f"{ahora:%d%m%Y}"
+    res = precios_oc.probar(mp, fecha, args.max)
+    descarga.escribir_json(SALIDA / "precios_oc" / f"{fecha[4:]}{fecha[2:4]}{fecha[:2]}.json", res)
+    r = res["resumen"]
+    print(json.dumps({k: v for k, v in res.items() if k not in ("ocs", "resumen")}, ensure_ascii=False, indent=1))
+    print(f"Ítems: {r['items']} · calidad: {r['calidad']}")
+    print("| n | Producto (Mercado Público) | Unidad (texto) | Mediana | Mín | Máx |")
+    print("|---|---|---|---|---|---|")
+    for x in r["productos"][:args.mostrar]:
+        print(f"| {x['n']} | {(x['producto'] or '')[:45]} | {x['unidad']} | {x['mediana']:,.0f} | {x['minimo']:,.0f} | {x['maximo']:,.0f} |".replace(",", "."))
+
+
 def cmd_detalle(args):
     mp = MercadoPublico(cargar_ajustes())
     det = mp.detalle(args.codigo)
@@ -128,6 +149,11 @@ def main(argv=None):
     p.add_argument("--max", type=int, help="pedir el detalle de a lo más N candidatas (pruebas)")
     p.add_argument("--perfil", help="otro archivo de perfil (por defecto PERFIL_M5_YAML o config/perfil_m5.yaml)")
     p.set_defaults(fn=cmd_diario)
+    p = sub.add_parser("precios-oc", help="prueba: precios de materiales desde órdenes de compra de Mercado Público")
+    p.add_argument("--fecha", help="ddmmaaaa; por defecto hoy")
+    p.add_argument("--max", type=int, default=50, help="detalles a pedir (fuera de 22:00-07:00, máximo 50)")
+    p.add_argument("--mostrar", type=int, default=25, help="filas de la tabla de precios")
+    p.set_defaults(fn=cmd_precios_oc)
     p = sub.add_parser("detalle", help="mostrar qué entrega la API para una licitación")
     p.add_argument("codigo")
     p.set_defaults(fn=cmd_detalle)
