@@ -1,7 +1,7 @@
 # Aviso por correo de cheques por cobrar (Dashboard Finanzas → Cheques)
-# Lunes a viernes 08:05 (hora de Santiago; lo dispara Supabase con automatizacion.programa()).
-# Envía si hay cheques en cartera que se cobran hoy (o con fecha cumplida sin depositar) o el
-# próximo día hábil, con la lista de los siguientes por cobrar. Script: .github/scripts/aviso_cheques.py
+# Todos los días 08:05 (hora de Santiago; lo dispara Supabase con automatizacion.programa()).
+# Envía SOLO si hay cheques en cartera que se cobran hoy o mañana, con la lista de los
+# siguientes por cobrar. Script: .github/scripts/aviso_cheques.py
 #
 # Requiere (Settings → Secrets and variables → Actions):
 #   Secrets:   BITACORA_MAIL_USER, BITACORA_MAIL_PASS  (misma cuenta que bitácora y monitoreo)
@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
     inputs:
       forzar:
-        description: "Enviar aunque no haya cheques hoy ni el próximo día hábil (prueba)"
+        description: "Enviar aunque no haya cheques hoy ni mañana (prueba)"
         type: boolean
         default: false
       para:
