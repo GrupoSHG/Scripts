@@ -1,0 +1,36 @@
+# Avisos por correo de la App CyS (gruposhg-app-cys.netlify.app)
+# Lo dispara Supabase con automatizacion.programa() SOLO cuando hay avisos pendientes:
+#   documento leído (por revisar)    → supervisores de la app
+#   documento confirmado / rechazado → admin de la app
+# Envía un correo por destinatario con todos sus documentos y marca los avisos.
+# Script: .github/scripts/aviso_cys.py. Destinatarios: roles de app_cys.usuarios_app
+# (no van en el repo, que es público).
+#
+# Requiere (Settings → Secrets and variables → Actions):
+#   Secrets: BITACORA_MAIL_USER, BITACORA_MAIL_PASS (misma cuenta que bitácora y cheques)
+#            SUPABASE_SERVICE_KEY
+
+name: App CyS – avisos por correo
+
+on:
+  # Sin "schedule": lo dispara programa() cuando hay avisos.
+  workflow_dispatch:
+
+concurrency:
+  group: aviso-cys
+  cancel-in-progress: false
+
+jobs:
+  aviso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+      - name: Enviar avisos
+        env:
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          MAIL_USER: ${{ secrets.BITACORA_MAIL_USER }}
+          MAIL_PASS: ${{ secrets.BITACORA_MAIL_PASS }}
+        run: python3 .github/scripts/aviso_cys.py
