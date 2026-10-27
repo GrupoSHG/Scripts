@@ -2,3 +2,5 @@ requests>=2.31
 PyYAML>=6.0
 anthropic>=1.15,<2
 tzdata
+pypdf>=6.0
+cryptography>=42   # pypdf la usa para PDF con cifrado AES (sin contraseña de apertura)

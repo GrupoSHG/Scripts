@@ -4,7 +4,8 @@
     python -m licitaciones evaluar [--dia AAAA-MM-DD] [--max N] [--perfil RUTA]
     python -m licitaciones guardar [--dia AAAA-MM-DD]   # upsert en Supabase m5.licitaciones_mp
     python -m licitaciones reporte [--dia AAAA-MM-DD] [--sin-supabase]   # reporte.html y reporte.txt
-    python -m licitaciones diario [--fecha ddmmaaaa] [--max N]   # las 4 etapas (lo que corre GitHub Actions)
+    python -m licitaciones fichas [--codigo X] [--max N] [--dry-run [--pdf A.pdf ...]]   # fichas desde las bases
+    python -m licitaciones diario [--fecha ddmmaaaa] [--max N]   # las 4 etapas + fichas (lo que corre GitHub Actions)
     python -m licitaciones detalle CODIGO      # qué entrega la API para una licitación real
 
 Códigos de salida: 0 ok · 1 configuración · 2 error de la API de Mercado Público · 3 tope de
@@ -18,7 +19,7 @@ import sys
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import bases, descarga, evaluacion, precios_oc, reporte, supabase_mp
+from . import bases, descarga, evaluacion, fichas, precios_oc, reporte, supabase_mp
 from .config import SALIDA, cargar_ajustes, cargar_env, cargar_perfil, configurar_logging
 from .detalle import URL_FICHA, estructura, sanitizar
 from .errores import ErrorProceso
@@ -69,6 +70,13 @@ def cmd_diario(args):
     carpeta = SALIDA / embudo["corrida"][:10]
     costo, _ = evaluacion.ejecutar(ajustes, perfil, carpeta)
     guardado = supabase_mp.guardar(ajustes, carpeta, sb=sb)
+    # Fichas de postulación desde las bases. Un problema aquí (p. ej. la tabla aún no existe) no impide el reporte.
+    try:
+        res_fichas, generadas = fichas.procesar(ajustes, perfil)
+        descarga.escribir_json(carpeta / "fichas_nuevas.json", fichas.para_reporte(generadas, ajustes["fichas"]))
+    except ErrorProceso as e:
+        log.error("Fichas: %s", e)
+        res_fichas = {"error": type(e).__name__}
     _, _, datos = reporte.generar(ajustes, carpeta, sb=sb)
     precios = precios_oc.nocturno(ajustes, supabase_mp.Supabase(ajustes, tabla=precios_oc.TABLA))
     # Respaldo del botón "Procesar bases" de la página: los PDF que hayan quedado pendientes.
@@ -82,7 +90,7 @@ def cmd_diario(args):
                "supabase": guardado,
                "reporte": {"mejores": len(datos["mejores"]), "cierran": len(datos["cierran"]),
                            "revision_manual": len(datos["manual"])},
-               "precios_oc": precios, "bases": bases_pendientes}
+               "fichas": res_fichas, "precios_oc": precios, "bases": bases_pendientes}
     print(json.dumps(resumen, ensure_ascii=False, indent=1))
 
 
@@ -146,6 +154,31 @@ def cmd_bases(args):
     print(json.dumps(bases.procesar(cargar_ajustes(), maximo=args.max), ensure_ascii=False))
 
 
+def cmd_fichas(args):
+    """Fichas de postulación desde las bases. --dry-run: una licitación, la ficha por pantalla y nada guardado."""
+    from pathlib import Path
+    from .errores import ErrorConfig
+    pdfs = None
+    if args.pdf:
+        if not (args.dry_run and args.codigo):
+            raise ErrorConfig("--pdf solo vale con --dry-run y --codigo.")
+        pdfs = []
+        for ruta in args.pdf:
+            ruta = Path(ruta)
+            if ruta.suffix.lower() != ".pdf" or not ruta.is_file():
+                raise ErrorConfig(f"{ruta.name}: debe ser un archivo .pdf existente.")
+            contenido = ruta.read_bytes()
+            pdfs.append({"id": 0, "ruta": ruta.name, "nombre_archivo": ruta.name, "bytes": len(contenido),
+                         "contenido": contenido})
+    ajustes = cargar_ajustes()
+    resumen, generadas = fichas.procesar(ajustes, cargar_perfil(args.perfil), maximo=1 if args.dry_run else args.max,
+                                         codigo=args.codigo, dry_run=args.dry_run, pdfs_locales=pdfs)
+    if args.dry_run:
+        for _, md in generadas:
+            print(md)
+    print(json.dumps(resumen, ensure_ascii=False, indent=1))
+
+
 def cmd_detalle(args):
     mp = MercadoPublico(cargar_ajustes())
     det = mp.detalle(args.codigo)
@@ -204,6 +237,13 @@ def main(argv=None):
     p = sub.add_parser("bases", help="leer con Claude los PDF de bases pendientes y extraer materiales")
     p.add_argument("--max", type=int, help="PDF a procesar (por defecto bases.max_por_corrida)")
     p.set_defaults(fn=cmd_bases)
+    p = sub.add_parser("fichas", help="fichas de postulación desde las bases (PDF) de las licitaciones con puntaje alto")
+    p.add_argument("--codigo", help="solo esta licitación")
+    p.add_argument("--max", type=int, help="licitaciones a procesar (pruebas)")
+    p.add_argument("--dry-run", action="store_true", help="una licitación, ficha por pantalla, sin guardar nada")
+    p.add_argument("--pdf", nargs="+", help="con --dry-run y --codigo: PDF locales en vez de los del bucket")
+    p.add_argument("--perfil", help="otro archivo de perfil (por defecto PERFIL_M5_YAML o config/perfil_m5.yaml)")
+    p.set_defaults(fn=cmd_fichas)
     p = sub.add_parser("precios-guardar", help="subir a Supabase lo normalizado por precios-normalizar")
     p.add_argument("--dia", required=True, help="AAAAMMDD")
     p.set_defaults(fn=cmd_precios_guardar)

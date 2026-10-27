@@ -106,6 +106,33 @@ mediana de 90 días del material en esa unidad (`m5.precios_material_base`) y `m
 resume por licitación con la cobertura (cuántos materiales tienen precio). SQL: `supabase/bases_costos.sql`.
 Un PDF cuyo peor caso supera `bases.tope_por_documento_usd` queda en error sin gastar.
 
+## Fichas de postulación
+
+`python -m licitaciones fichas` (y un paso del comando `diario`, después de guardar y antes del reporte; módulo
+`fichas.py`, esquema en `ficha_esquema.py`, ajustes en `fichas:` de `ajustes.yaml`). Para cada licitación
+publicada con puntaje >= `fichas.puntaje_minimo` (y no "descartar") arma una ficha con datos clave, fechas de
+la API, admisibilidad, garantías, criterios, contrato, riesgos, checklist con fecha límite y una recomendación
+con 3 razones.
+
+- Los PDF son los del bucket `licitaciones-bases` (la API no entrega las bases). Sin PDF la ficha queda
+  "adjuntos pendientes" con el enlace a la ficha oficial; cuando M5 sube PDF nuevos, se rehace.
+- Se envía el texto que extrae `pypdf`, con marcas `[DOCUMENTO N]` / `[PÁGINA N]`, en partes de a lo más
+  `max_caracteres_por_parte`. Un PDF sin texto queda "escaneado" (sin OCR).
+- Claude devuelve una lista plana `{campo, texto, detalle, documento, pagina, cita}`. La salida estructurada
+  rechazó un esquema anidado con nulos (más de 16 uniones y luego "grammar too large"). Cada cita se busca en
+  el texto de su página y, si no está, se reintenta una vez; lo que sigue sin calzar sale de la ficha y queda
+  en "Revisar a mano" (estado `revision_manual`). Lo mismo si el esquema falla dos veces.
+- El código calcula días corridos y hábiles (con `fichas.feriados`), porcentajes, montos referenciales de
+  garantías y la suma de ponderaciones. Alerta si el cierre está a menos de `dias_habiles_alerta` días hábiles.
+- Topes: `tope_por_corrida_usd`, además del diario de la evaluación. Al llegar, la corrida se detiene sin
+  fallar y lo que falta queda para la siguiente. Un error en una licitación no detiene a las demás.
+- Salida: `m5.licitaciones_fichas` (SQL `supabase/licitaciones_fichas.sql`), `salida/fichas/<código>/ficha.md` y
+  `ficha.json`, costo por licitación en `salida/fichas/costos.jsonl`, y la sección "Licitaciones con ficha
+  nueva" del reporte (`salida/AAAA-MM-DD/fichas_nuevas.json`). Nada de esto va al artefacto, porque el repo es público.
+- Prueba sin guardar nada: `python -m licitaciones fichas --dry-run [--codigo X [--pdf bases.pdf ...]]`.
+  Prueba real del 27/10/2026 (3836-36-LP26, 76 páginas): 3 llamadas, US$ 0,022, con 13 documentos
+  obligatorios, garantía de fiel cumplimiento y 16 riesgos con página y cita.
+
 ## Despliegue
 
 Workflow `.github/workflows/licitaciones.yml` (`python -m licitaciones diario`: las cuatro etapas, omitiendo
