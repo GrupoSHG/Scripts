@@ -1,5 +1,6 @@
 # Licitaciones de obras de Mercado Público para M5 Industrial: descarga y filtro, evaluación con
-# Claude, upsert en Supabase (m5.licitaciones_mp, la muestra el dashboard de M5 Proyectos) y reporte.
+# Claude, upsert en Supabase (m5.licitaciones_mp, la muestra el dashboard de M5 Proyectos), fichas de
+# postulación desde las bases de las de puntaje alto (m5.licitaciones_fichas, fichas.py) y reporte.
 # Código en M5_Systems/licitaciones-m5/ (README.md). Reemplaza a mercado-publico-m5.yml.
 #
 # Sin "schedule": lo dispara Supabase todos los días a las 22:30 (automatizacion.programa(), dentro
@@ -69,7 +70,7 @@ jobs:
       - name: Pruebas (sin red)
         run: python -m unittest discover -s tests -t .
 
-      - name: Descargar, evaluar, guardar en Supabase y generar el reporte
+      - name: Descargar, evaluar, guardar en Supabase, fichas desde las bases y reporte
         env:
           MP_TICKET: ${{ secrets.MP_TICKET }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

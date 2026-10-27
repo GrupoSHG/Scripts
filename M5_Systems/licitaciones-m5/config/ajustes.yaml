@@ -64,8 +64,34 @@ bases:
   max_por_corrida: 5          # PDF pendientes por corrida
   tope_por_documento_usd: 0.80  # si el peor caso de un PDF supera esto, queda en error sin gastar
 
+fichas:
+  # Ficha de postulación desde las bases (fichas.py): requisitos, garantías, criterios, contrato, riesgos,
+  # checklist y recomendación. Corre dentro del comando diario, después de evaluar y guardar. Los PDF son
+  # los que M5 sube en licitaciones.html (la API no entrega las bases); sin PDF queda "adjuntos pendientes".
+  activo: true
+  puntaje_minimo: 4           # puntaje de la evaluación desde el que se arma ficha (y no "descartar")
+  modelo: claude-haiku-5-5    # extracción; debe estar en evaluacion.precios_usd_por_mtok
+  modelo_grande: claude-sonnet-5-5
+  monto_modelo_grande_clp: 1000000000   # licitaciones con monto estimado desde aquí usan modelo_grande
+  esfuerzo: medium            # con low se saltó los anexos obligatorios en las bases reales de 3836-36-LP26
+  max_tokens: 16000           # por respuesta (la extracción es larga)
+  max_mb: 25                  # PDF más grande que esto no se descarga
+  max_caracteres_por_parte: 120000      # ~35K tokens por parte: en partes más chicas el modelo omite menos datos
+  min_caracteres_por_pagina: 40         # menos texto que esto = página sin texto (escaneada)
+  max_por_corrida: 5          # licitaciones con PDF por corrida
+  max_pendientes_por_corrida: 20        # fichas "adjuntos pendientes" (sin Claude, 1 solicitud a la API c/u)
+  tope_por_corrida_usd: 1.50  # además del tope diario de evaluacion; al llegar, lo que falta queda para mañana
+  pausa_descargas_s: 2        # entre PDF de una misma licitación
+  dias_habiles_alerta: 5      # alerta destacada si el cierre está a menos de estos días hábiles
+  url_ficha: https://gruposhg-m5-proyectos.netlify.app/licitaciones.html?ficha={}
+  # Feriados de Chile (días hábiles). Revisar cada año en https://www.feriados.cl
+  feriados: [2026-01-01, 2026-04-03, 2026-04-04, 2026-05-01, 2026-05-21, 2026-06-21, 2026-06-29, 2026-07-16,
+             2026-08-15, 2026-09-18, 2026-09-19, 2026-10-12, 2026-10-31, 2026-11-01, 2026-12-08, 2026-12-25,
+             2027-01-01, 2027-03-26, 2027-03-27, 2027-05-01, 2027-05-21, 2027-06-21, 2027-06-28, 2027-07-16,
+             2027-08-15, 2027-09-18, 2027-09-19, 2027-10-11, 2027-10-31, 2027-11-01, 2027-12-08, 2027-12-25]
+
 reporte:
-  dias_cierre: 7              # sección "cierran en los próximos N días"
+  dias_cierre: 7             # sección "cierran en los próximos N días"
   max_mejores: 10             # cuántas mostrar en "mejores del día"
   max_sin_evaluar: 30         # lista compacta de las que cierran pronto sin evaluación
 

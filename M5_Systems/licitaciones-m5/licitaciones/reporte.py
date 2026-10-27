@@ -1,7 +1,8 @@
 """Etapa 3: reporte diario en HTML y texto (salida/AAAA-MM-DD/reporte.html y reporte.txt).
 
-Secciones: mejores del día (evaluadas hoy, por puntaje), las que cierran en los próximos N días y
-las que quedaron para revisión manual, cada una con enlace a la ficha. "Cierran pronto" sale de
+Secciones: licitaciones con ficha de postulación nueva (fichas.py, salida/AAAA-MM-DD/fichas_nuevas.json, con
+alerta si cierran en menos de N días hábiles), mejores del día (evaluadas hoy, por puntaje), las que cierran
+en los próximos N días y las que quedaron para revisión manual, cada una con enlace a la ficha. "Cierran pronto" sale de
 Supabase (todas las guardadas, no solo las de hoy) cuando hay SUPABASE_URL y SUPABASE_KEY; si no,
 solo de lo evaluado en el día. No envía nada: solo escribe los archivos.
 """
@@ -69,7 +70,7 @@ def armar(ajustes, carpeta, sb=None, ahora=None):
     cierran = [x for x in cierran if x not in sin_evaluar]
 
     return {"fecha": ahora, "dias": dias, "mejores": mejores, "cierran": cierran, "manual": manual,
-            "sin_evaluar": sin_evaluar, "max_sin_evaluar": int(cfg.get("max_sin_evaluar", 30)),
+            "sin_evaluar": sin_evaluar, "fichas": leer_json(carpeta / "fichas_nuevas.json", []), "max_sin_evaluar": int(cfg.get("max_sin_evaluar", 30)),
             "fuente_cierre": fuente_cierre, "embudo": leer_json(carpeta / "embudo.json", {}),
             "costo": leer_json(carpeta / "costo.json", {}), "zona": zona}
 
@@ -87,6 +88,11 @@ def _cierre(x, zona, ahora):
     dias = (c.date() - ahora.date()).days
     resto = "hoy" if dias <= 0 else "mañana" if dias == 1 else f"en {dias} días"
     return f"{c:%d-%m-%Y %H:%M}", resto
+
+
+ESTADOS_FICHA = {"lista": "ficha lista", "revision_manual": "revisar a mano", "adjuntos_pendientes": "adjuntos pendientes",
+                 "escaneado": "PDF escaneado", "error": "error"}
+AVISO_FICHAS = "extraídas automáticamente de las bases: confirmar montos, plazos y garantías con las bases originales"
 
 
 def texto(datos):
@@ -118,6 +124,16 @@ def texto(datos):
                 lineas.append(f"    Riesgos: {'; '.join(x['riesgos'])}")
             lineas.append(f"    {x['url']}")
         lineas.append("")
+
+    if datos["fichas"]:
+        titulo = f"LICITACIONES CON FICHA NUEVA ({len(datos['fichas'])})"
+        lineas.extend([titulo, "-" * len(titulo)])
+        for x in datos["fichas"]:
+            alerta = f"¡CIERRA EN {x['dias_habiles_cierre']} DÍAS HÁBILES! " if x["alerta_cierre"] else ""
+            lineas.append(f"{alerta}{(x['recomendacion'] or ESTADOS_FICHA.get(x['estado'], x['estado'])).upper()} · "
+                          f"{x['codigo']} · {x['organismo'] or '—'} · cierre {_cierre(x, z, ahora)[0]}")
+            lineas.append(f"    {x['url']}")
+        lineas.extend([f"    (Fichas {AVISO_FICHAS}.)", ""])
 
     bloque(f"MEJORES DEL DÍA ({len(datos['mejores'])})", datos["mejores"], "Sin licitaciones evaluadas hoy.")
     bloque(f"CIERRAN EN LOS PRÓXIMOS {datos['dias']} DÍAS ({len(datos['cierran'])}, de {datos['fuente_cierre']})",
@@ -205,6 +221,22 @@ def html_reporte(datos):
         return (f'<section><h2>También cierran en {datos["dias"]} días <small>capturadas antes de la evaluación '
                 f'con Claude ({len(sin)})</small></h2><ul class="compacta">{filas}</ul>{mas}</section>')
 
+    def seccion_fichas():
+        if not datos["fichas"]:
+            return ""
+        filas = []
+        for x in datos["fichas"]:
+            rec = x["recomendacion"] or ESTADOS_FICHA.get(x["estado"], x["estado"])
+            clase_rec = {"postular": "r-postular", "revisar": "r-revisar"}.get(rec, "r-manual")
+            alerta = (f'<span class="urgente">⚠ cierra en {esc(x["dias_habiles_cierre"])} días hábiles</span> · '
+                      if x["alerta_cierre"] else "")
+            filas.append(f'<div class="lic"><div class="cuerpo"><a href="{esc(x["url"])}" target="_blank" rel="noopener">'
+                         f'{esc(x["codigo"])}</a><span class="rec {clase_rec}">{esc(rec)}</span>'
+                         f'<div class="meta">{alerta}{esc(x["organismo"] or "—")} · cierre {esc(_cierre(x, z, ahora)[0])}</div>'
+                         f'</div></div>')
+        return (f'<section><h2>Licitaciones con ficha nueva <small>{esc(AVISO_FICHAS)} ({len(datos["fichas"])})'
+                f'</small></h2>{"".join(filas)}</section>')
+
     resumen = [(len(datos["mejores"]), "mejores del día"), (len(datos["cierran"]), f"evaluadas cierran en {datos['dias']} días"),
                (len(datos["manual"]), "revisión manual")]
     if e:
@@ -220,6 +252,7 @@ def html_reporte(datos):
 <h1>Licitaciones M5 Industrial</h1>
 <div class="sub">Reporte del {ahora:%d-%m-%Y %H:%M} · Mercado Público filtrado y puntuado con Claude según el perfil de M5</div>
 <div class="resumen">{datos_html}</div>
+{seccion_fichas()}
 {seccion("Mejores del día", "evaluadas hoy, por puntaje", datos["mejores"], "Sin licitaciones evaluadas hoy.")}
 {seccion(f"Cierran en los próximos {datos['dias']} días", "de " + datos["fuente_cierre"], datos["cierran"], "Ninguna.")}
 {seccion("Revisión manual", "la evaluación automática no se pudo validar", datos["manual"], "Ninguna.")}

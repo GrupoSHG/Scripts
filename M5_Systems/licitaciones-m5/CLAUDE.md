@@ -35,6 +35,7 @@ secret `PERFIL_M5_YAML`, el detalle de cada evaluación se loguea en DEBUG y el 
 - `python -m licitaciones descargar [--fecha ddmmaaaa] [--max N] [--forzar]`
 - `python -m licitaciones evaluar [--dia AAAA-MM-DD] [--max N] [--perfil RUTA]` (etapa 2, `evaluacion.py`)
 - `python -m licitaciones detalle CODIGO`
+- `python -m licitaciones fichas [--codigo X] [--max N] [--dry-run [--pdf A.pdf ...]]` (`fichas.py`)
 - `python -m licitaciones guardar [--dia AAAA-MM-DD]` (etapa 4, `supabase_mp.py`, REST con `requests`).
 - `python -m licitaciones reporte [--dia AAAA-MM-DD] [--sin-supabase]` (etapa 3, `reporte.py`; todo texto con
   `html.escape`, solo escribe archivos, nunca envía).
@@ -66,6 +67,22 @@ secret `PERFIL_M5_YAML`, el detalle de cada evaluación se loguea en DEBUG y el 
   calcula la vista, no Claude. Un material solo tiene precio si coincide la unidad base (m2 de tabique no
   se cruza con el precio por plancha).
 - `Presupuesto` aplica `contexto_largo` (Haiku 5.5 x5 sobre 100K tokens de entrada).
+
+## Fichas de postulación (`fichas.py`, `ficha_esquema.py`)
+
+- Paso dentro de `diario` (después de `guardar`, antes del reporte; si falla, se registra y el reporte sigue) y
+  comando `fichas [--codigo X] [--max N] [--dry-run [--pdf A.pdf]]`. Candidatas: publicadas con puntaje >=
+  `fichas.puntaje_minimo`, no `descartar`, sin cerrar; se rehace la ficha cuando cambian los `bases_ids`.
+- PDF solo del bucket `licitaciones-bases` (la API no da adjuntos), leídos con `pypdf` (nunca se abre otro
+  formato); se envía el TEXTO por partes, no el PDF. Escaneado = sin OCR, se marca.
+- Esquema hacia la API: lista PLANA `datos[{campo, texto, detalle, documento, pagina, cita}]`. No volver a un
+  esquema anidado con `anyOf`/null: la API respondió 400 (más de 16 uniones, y luego "compiled grammar is too
+  large"). `desde_api` rearma la forma anidada que valida `ExtraccionBases`. Cada cita se verifica contra el
+  texto de su página (`verificar_citas`); lo que no calza se quita y deja la ficha en `revision_manual`.
+- Claude no calcula nada: días hábiles, montos y porcentajes salen de `calcular` (regex sobre el texto copiado).
+- `esfuerzo: medium` y partes de unos 120K caracteres: con `low` y 280K se omitieron los anexos obligatorios.
+- Se guarda en `m5.licitaciones_fichas` (SQL `supabase/licitaciones_fichas.sql`, a mano) y en `salida/fichas/`.
+  El log y el artefacto llevan solo cifras.
 
 ## API (ver NOTAS_API.md)
 
