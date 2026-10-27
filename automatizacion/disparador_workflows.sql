@@ -20,6 +20,9 @@
 --                           reemplazó a mercado-publico-m5.yml el 19/10/2026)
 --   aviso-cheques.yml       todos los días 08:05 (correo solo si hay cheques que se cobran hoy o
 --                           mañana; se agregó a la función viva con aviso_cheques_programa.sql, 26/10/2026)
+--   aviso-cys.yml           cada minuto, solo si hay avisos pendientes de la App CyS (documento por
+--                           revisar → supervisores; confirmado/rechazado → admin); se agregó a la
+--                           función viva con aviso_cys_programa.sql, 27/10/2026
 -- (programa() sincronizado con la función en vivo el 2026-10-16.)
 --
 -- Este archivo se aplica a mano, así que la cadencia viva puede diferir: antes de volver a
@@ -119,6 +122,10 @@ begin
   -- Cheques por cobrar: correo a Finanzas si hay cobros hoy o mañana (todos los días)
   if h = 8 and mi = 5 then
     perform automatizacion.disparar('aviso-cheques.yml');
+  end if;
+  -- App CyS: correo a supervisores/admin cuando un documento cambia de estado (si hay avisos)
+  if app_cys.despachar_avisos_correo() then
+    perform automatizacion.disparar('aviso-cys.yml');
   end if;
 end $$;
 
