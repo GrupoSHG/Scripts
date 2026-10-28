@@ -35,10 +35,11 @@ GHL_API = "https://services.leadconnectorhq.com"
 LOCATION = os.environ["GHL_CYS_LOCATION"]
 SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 
-# Si el nombre de la etapa no trae el %, probabilidad inicial como en el pipeline de Polchile (cockpit-comercial).
-# Después se puede ajustar a mano en cys.pipeline_etapas.
-PROB = [("lead no atendido", 5), ("lead atendido", 10), ("cotizacion enviada", 40),
-        ("negociacion cierre", 70), ("nv emitida", 90), ("compromiso de comp", 95), ("ganado", 100)]
+# Probabilidad inicial de las etapas del pipeline "Negocios" de CyS (acordada el 28/10/2026).
+# Solo se usa la primera vez que aparece una etapa; después se ajusta a mano en cys.pipeline_etapas.
+PROB = [("nuevo lead", 5), ("lead atendido", 10), ("recopilacion", 15), ("elaboracion de presupuesto", 20),
+        ("reunion", 25), ("revision de sergio", 30), ("cotizacion por enviar", 35),
+        ("presupuesto enviado", 40), ("ajustes y negociacion", 70), ("ganado", 100)]
 
 
 def sin_tildes(s):
@@ -46,7 +47,7 @@ def sin_tildes(s):
 
 
 def probabilidad(nombre):
-    # En M5 (y quizás en CyS) la etapa trae su probabilidad en el nombre: "Visita a Terreno y Reunión 25%".
+    # Si algún día el nombre trae el % (como en M5: "Visita a Terreno y Reunión 25%"), manda ese.
     m = re.search(r"(\d+)\s*%\s*$", nombre)
     if m:
         return int(m.group(1))
