@@ -53,17 +53,6 @@ en listados:
   `EmailResponsableContrato`, `FonoResponsableContrato`, `Comprador.NombreUsuario`, ...): el proceso
   guarda solo los campos de la lista blanca de `licitaciones/detalle.py`.
 
-## Adjudicadas (28/10/2026)
-
-- `fecha=ddmmaaaa&estado=adjudicada` sí combina los dos filtros: el 27/10/2026 trajo 363 licitaciones, todas
-  con `CodigoEstado` 8. Mismos 4 campos que cualquier listado.
-- En el detalle, `Adjudicacion` = `{Tipo, Fecha (solo día), Numero (resolución), NumeroOferentes, UrlActa}` y
-  `Fechas.FechaAdjudicacion` trae la hora. Cada ítem trae su `Adjudicacion` =
-  `{RutProveedor, NombreProveedor, Cantidad, MontoUnitario}`; el monto adjudicado es cantidad x unitario,
-  en la `Moneda` de la licitación. El adjudicado puede ser una persona natural (visto en 1422051-30-LE26).
-- El rubro UNSPSC lo pone el comprador y a veces está mal (insumos dentales en `302019`): por eso el filtro
-  por nombre excluye "insumos" y "equipamiento" antes de mirar el rubro.
-
 ## Adjuntos y bases: la API NO los entrega
 
 Verificado con 4174-34-LP26 el 19/10/2026: el detalle no tiene ningún campo de adjuntos, documentos,

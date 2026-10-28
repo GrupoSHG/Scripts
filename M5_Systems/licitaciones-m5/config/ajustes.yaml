@@ -54,15 +54,6 @@ precios_oc:
   max_ocs_noche: 300          # detalles por noche (1 solicitud cada uno, mismo tope diario del ticket)
   tamano_lote: 25             # ítems por llamada a Claude
 
-adjudicadas:
-  # Obras adjudicadas de los últimos días (adjudicadas.py) para la pestaña "Adjudicadas MP" del Cockpit
-  # Comercial: m5.licitaciones_adjudicadas. Corre al final del comando diario. Cada noche pide un listado por
-  # día (14 solicitudes) y el detalle solo de las que aún no están guardadas; el 27/10/2026 hubo 363
-  # adjudicadas en el día y 34 pasaban el filtro por nombre.
-  activo: true
-  dias: 14                    # hoy y los 13 días anteriores
-  max_detalles_noche: 200     # detalles por noche, de la más reciente a la más antigua; el resto queda para mañana
-
 bases:
   # Lectura con Claude de los PDF de bases que M5 sube en licitaciones.html (comando `bases`,
   # workflow licitaciones-bases.yml y, como respaldo, el comando diario).

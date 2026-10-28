@@ -5,8 +5,7 @@
     python -m licitaciones guardar [--dia AAAA-MM-DD]   # upsert en Supabase m5.licitaciones_mp
     python -m licitaciones reporte [--dia AAAA-MM-DD] [--sin-supabase]   # reporte.html y reporte.txt
     python -m licitaciones fichas [--codigo X] [--max N] [--dry-run [--pdf A.pdf ...]]   # fichas desde las bases
-    python -m licitaciones adjudicadas [--dias N] [--max N] [--forzar]   # obras adjudicadas (Cockpit Comercial)
-    python -m licitaciones diario [--fecha ddmmaaaa] [--max N]   # las 4 etapas + fichas + adjudicadas (GitHub Actions)
+    python -m licitaciones diario [--fecha ddmmaaaa] [--max N]   # las 4 etapas + fichas (lo que corre GitHub Actions)
     python -m licitaciones detalle CODIGO      # qué entrega la API para una licitación real
 
 Códigos de salida: 0 ok · 1 configuración · 2 error de la API de Mercado Público · 3 tope de
@@ -20,7 +19,7 @@ import sys
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from . import adjudicadas, bases, descarga, evaluacion, fichas, precios_oc, reporte, supabase_mp
+from . import bases, descarga, evaluacion, fichas, precios_oc, reporte, supabase_mp
 from .config import SALIDA, cargar_ajustes, cargar_env, cargar_perfil, configurar_logging
 from .detalle import URL_FICHA, estructura, sanitizar
 from .errores import ErrorProceso
@@ -82,12 +81,6 @@ def cmd_diario(args):
     precios = precios_oc.nocturno(ajustes, supabase_mp.Supabase(ajustes, tabla=precios_oc.TABLA))
     # Respaldo del botón "Procesar bases" de la página: los PDF que hayan quedado pendientes.
     bases_pendientes = bases.procesar(ajustes)
-    # Obras adjudicadas para el Cockpit Comercial. Al final y sin cortar la corrida si falla.
-    try:
-        res_adj = adjudicadas.ejecutar(ajustes, supabase_mp.Supabase(ajustes, tabla=adjudicadas.TABLA))
-    except ErrorProceso as e:
-        log.error("Adjudicadas: %s", e)
-        res_adj = {"error": type(e).__name__}
     resumen = {"carpeta": carpeta.name,
                "embudo": {k: embudo[k] for k in ("listado_total", "en_estados_a_procesar", "ya_evaluadas_omitidas",
                                                  "pasan_filtro_nombre", "detalles_obtenidos", "pasan_filtro_detalle",
@@ -97,7 +90,7 @@ def cmd_diario(args):
                "supabase": guardado,
                "reporte": {"mejores": len(datos["mejores"]), "cierran": len(datos["cierran"]),
                            "revision_manual": len(datos["manual"])},
-               "fichas": res_fichas, "precios_oc": precios, "bases": bases_pendientes, "adjudicadas": res_adj}
+               "fichas": res_fichas, "precios_oc": precios, "bases": bases_pendientes}
     print(json.dumps(resumen, ensure_ascii=False, indent=1))
 
 
@@ -154,14 +147,6 @@ def cmd_precios_guardar(args):
     filas = descarga.leer_json(origen, {}).get("filas") or []
     sb = supabase_mp.Supabase(ajustes, tabla=precios_oc.TABLA)
     print(json.dumps({"subidas": precios_oc.guardar(sb, filas, ajustes["evaluacion"]["modelo"])}))
-
-
-def cmd_adjudicadas(args):
-    """Obras adjudicadas de los últimos días en m5.licitaciones_adjudicadas (pestaña del Cockpit Comercial)."""
-    ajustes = cargar_ajustes()
-    res = adjudicadas.ejecutar(ajustes, supabase_mp.Supabase(ajustes, tabla=adjudicadas.TABLA), dias=args.dias,
-                               max_detalles=args.max, forzar=args.forzar)
-    print(json.dumps(res, ensure_ascii=False, indent=1))
 
 
 def cmd_bases(args):
@@ -249,11 +234,6 @@ def main(argv=None):
     p.add_argument("--dia", required=True, help="AAAAMMDD del archivo salida/precios_oc/AAAAMMDD.json")
     p.add_argument("--mostrar", type=int, default=40, help="filas de la tabla")
     p.set_defaults(fn=cmd_precios_normalizar)
-    p = sub.add_parser("adjudicadas", help="obras adjudicadas de los últimos días (Cockpit Comercial)")
-    p.add_argument("--dias", type=int, help="días hacia atrás, hoy incluido (por defecto adjudicadas.dias)")
-    p.add_argument("--max", type=int, help="detalles a pedir (fuera de 22:00-07:00, máximo 50 sin --forzar)")
-    p.add_argument("--forzar", action="store_true", help="permitir más detalles fuera de 22:00-07:00")
-    p.set_defaults(fn=cmd_adjudicadas)
     p = sub.add_parser("bases", help="leer con Claude los PDF de bases pendientes y extraer materiales")
     p.add_argument("--max", type=int, help="PDF a procesar (por defecto bases.max_por_corrida)")
     p.set_defaults(fn=cmd_bases)
