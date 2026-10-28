@@ -42,6 +42,7 @@ Credenciales **solo por variables de entorno**: `MP_TICKET`, `ANTHROPIC_API_KEY`
 .venv\Scripts\python -m licitaciones guardar                    # etapa 4: upsert del día en m5.licitaciones_mp
 .venv\Scripts\python -m licitaciones reporte                    # etapa 3: salida/<hoy>/reporte.html y reporte.txt
 .venv\Scripts\python -m licitaciones detalle 4174-34-LP26        # qué entrega la API para una licitación
+.venv\Scripts\python -m licitaciones adjudicadas --dias 2 --max 20  # obras adjudicadas (Cockpit Comercial)
 .venv\Scripts\python -m unittest discover -s tests -t .
 ```
 

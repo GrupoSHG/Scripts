@@ -35,6 +35,7 @@ secret `PERFIL_M5_YAML`, el detalle de cada evaluación se loguea en DEBUG y el 
 - `python -m licitaciones descargar [--fecha ddmmaaaa] [--max N] [--forzar]`
 - `python -m licitaciones evaluar [--dia AAAA-MM-DD] [--max N] [--perfil RUTA]` (etapa 2, `evaluacion.py`)
 - `python -m licitaciones detalle CODIGO`
+- `python -m licitaciones adjudicadas [--dias N] [--max N] [--forzar]` (`adjudicadas.py`)
 - `python -m licitaciones fichas [--codigo X] [--max N] [--dry-run [--pdf A.pdf ...]]` (`fichas.py`)
 - `python -m licitaciones guardar [--dia AAAA-MM-DD]` (etapa 4, `supabase_mp.py`, REST con `requests`).
 - `python -m licitaciones reporte [--dia AAAA-MM-DD] [--sin-supabase]` (etapa 3, `reporte.py`; todo texto con
@@ -83,6 +84,18 @@ secret `PERFIL_M5_YAML`, el detalle de cada evaluación se loguea en DEBUG y el 
 - `esfuerzo: medium` y partes de unos 120K caracteres: con `low` y 280K se omitieron los anexos obligatorios.
 - Se guarda en `m5.licitaciones_fichas` (SQL `supabase/licitaciones_fichas.sql`, a mano) y en `salida/fichas/`.
   El log y el artefacto llevan solo cifras.
+
+## Obras adjudicadas (`adjudicadas.py`)
+
+- Último paso de `diario` (si falla, se registra y la corrida sigue) y comando `adjudicadas [--dias N] [--max N]
+  [--forzar]`. Un listado por día (`fecha=ddmmaaaa&estado=adjudicada`, hoy y los 13 anteriores), filtro por
+  nombre (`INCLUIR`/`EXCLUIR`), se omiten las ya guardadas y se pide el detalle de a lo más
+  `adjudicadas.max_detalles_noche` (50 fuera de 22:00–07:00), de la más reciente a la más antigua.
+- `es_obra` = algún ítem con UNSPSC 72, 30 o 95; las que no, se guardan igual para no volver a pedirlas y
+  la pestaña no las muestra. Ganadores desde `Items.Listado[].Adjudicacion` (monto = cantidad x unitario).
+- RUT y razón social del adjudicado solo si es empresa (RUT desde 50.000.000); si no, "Persona natural".
+- Tabla `m5.licitaciones_adjudicadas` (SQL `supabase/licitaciones_adjudicadas.sql`, a mano); la lee
+  `GrupoSHG_Systems/cockpit-comercial-web/tabs/tab-adjudicadas.js` (últimos 14 días).
 
 ## API (ver NOTAS_API.md)
 
