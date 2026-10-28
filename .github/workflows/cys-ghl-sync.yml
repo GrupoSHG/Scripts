@@ -1,0 +1,33 @@
+# Sincronización CRM CyS (GoHighLevel) -> Supabase schema cys
+# Lo dispara Supabase (mismos horarios que el CRM de M5): copia pipelines y oportunidades
+# de la subcuenta CyS y crea un proyecto por cada oportunidad ganada.
+# Lógica en CyS_Systems/sync_ghl_cys.py; tablas en CyS_Systems/crm_cys.sql.
+#
+#   Secrets: GHL_CYS_TOKEN (Private Integration de la subcuenta CyS), GHL_CYS_LOCATION,
+#            SUPABASE_SERVICE_KEY
+
+name: Sincronizar CRM CyS
+
+on:
+  # Sin "schedule": lo dispara Supabase (automatizacion/disparador_workflows.sql).
+  workflow_dispatch:
+
+concurrency:
+  group: cys-ghl-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: CyS_Systems
+
+      - name: Sincronizar
+        env:
+          GHL_CYS_TOKEN: ${{ secrets.GHL_CYS_TOKEN }}
+          GHL_CYS_LOCATION: ${{ secrets.GHL_CYS_LOCATION }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python3 CyS_Systems/sync_ghl_cys.py

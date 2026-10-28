@@ -12,6 +12,8 @@
 --   bitacora-alertas.yml    lun-vie 09:03 a 18:03, cada hora
 --   monitoreo.yml           todos los días, cada 4 horas a los :17
 --   m5-ghl-sync.yml         todos los días 08:12, 12:12, 16:12 y 20:12
+--   cys-ghl-sync.yml        todos los días 08:14, 12:14, 16:14 y 20:14 (CRM CyS; se agregó a la
+--                           función viva con cys_ghl_sync_programa.sql, 28/10/2026)
 --   ghl-polchile-sync.yml   todos los días 08:22, 12:22, 16:22 y 20:22
 --   ads-polchile-sync.yml   todos los días 07:40 (inversión Google Ads desde la hoja)
 --   respaldo-supabase.yml   todos los días 05:30 (pg_dump de la base a Drive)
@@ -98,6 +100,9 @@ begin
   end if;
   if h in (8, 12, 16, 20) and mi = 12 then
     perform automatizacion.disparar('m5-ghl-sync.yml');
+  end if;
+  if h in (8, 12, 16, 20) and mi = 14 then
+    perform automatizacion.disparar('cys-ghl-sync.yml');
   end if;
   if h in (8, 12, 16, 20) and mi = 22 then
     perform automatizacion.disparar('ghl-polchile-sync.yml');
