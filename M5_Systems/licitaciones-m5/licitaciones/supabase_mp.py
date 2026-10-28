@@ -41,10 +41,21 @@ class Supabase:
         })
 
     def _pedir(self, metodo, **kwargs):
-        try:
-            r = self.sesion.request(metodo, self.url, timeout=self.timeout, **kwargs)
-        except (requests.ConnectionError, requests.Timeout) as e:
-            raise ErrorSupabase(f"Supabase {metodo}: {type(e).__name__}") from None
+        for intento in (1, 2):
+            try:
+                r = self.sesion.request(metodo, self.url, timeout=self.timeout, **kwargs)
+                break
+            except requests.ConnectionError as e:
+                # La pasarela de Supabase cierra las conexiones inactivas: entre leer y guardar pueden pasar más de
+                # 20 minutos (precios_oc pide cientos de detalles de OC) y el POST por la conexión vieja falló con
+                # ConnectionError (corrida del 28/10/2026). Se descarta la conexión y se reintenta una vez.
+                # Un ReadTimeout no se reintenta: la solicitud pudo haberse aplicado.
+                if intento == 2:
+                    raise ErrorSupabase(f"Supabase {metodo}: {type(e).__name__}") from None
+                log.warning("Supabase %s: %s; se reintenta con una conexión nueva", metodo, type(e).__name__)
+                self.sesion.close()
+            except requests.Timeout as e:
+                raise ErrorSupabase(f"Supabase {metodo}: {type(e).__name__}") from None
         if r.status_code >= 300:
             detalle = enmascarar(r.text[:300])
             pista = (" (revisar SUPABASE_KEY: debe ser el JWT del rol licitaciones_m5, y que el SQL esté aplicado)"

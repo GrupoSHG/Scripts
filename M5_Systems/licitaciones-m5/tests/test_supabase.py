@@ -43,7 +43,13 @@ class Sesion:
 
     def request(self, metodo, url, timeout, **kw):
         self.pedidos.append((metodo, url, kw))
-        return self.respuestas.pop(0) if self.respuestas else Respuesta()
+        r = self.respuestas.pop(0) if self.respuestas else Respuesta()
+        if isinstance(r, Exception):
+            raise r
+        return r
+
+    def close(self):
+        self.pedidos.append(("close", None, None))
 
 
 class TestSupabase(unittest.TestCase):
@@ -70,6 +76,28 @@ class TestSupabase(unittest.TestCase):
         f = fila({"codigo_externo": "1-1-LP26", "estado": "revisar_manualmente", "evaluacion": None,
                   "error": "no es JSON"}, REGISTRO, "m", "t")
         self.assertEqual((f["puntaje"], f["estado_evaluacion"], f["motivo"]), (None, "revisar_manualmente", "no es JSON"))
+
+    def test_conexion_vieja_se_reintenta_una_vez(self):
+        # Corrida del 28/10/2026: el POST de precios_oc, 22 min después de la lectura, cayó por la conexión inactiva.
+        import requests
+        sb = self.cliente(requests.ConnectionError("Connection aborted"), Respuesta(201))
+        with mock.patch.dict(os.environ, ENTORNO):
+            self.assertEqual(sb.upsert([{"codigo_externo": "x"}]), 1)
+        self.assertEqual([p[0] for p in sb.sesion.pedidos], ["POST", "close", "POST"])
+
+    def test_conexion_caida_dos_veces_falla(self):
+        import requests
+        sb = self.cliente(requests.ConnectionError("a"), requests.ConnectionError("b"))
+        with mock.patch.dict(os.environ, ENTORNO), self.assertRaises(ErrorSupabase) as e:
+            sb.upsert([{"codigo_externo": "x"}])
+        self.assertIn("ConnectionError", str(e.exception))
+
+    def test_timeout_de_lectura_no_se_reintenta(self):
+        import requests
+        sb = self.cliente(requests.ReadTimeout("lento"), Respuesta(201))
+        with mock.patch.dict(os.environ, ENTORNO), self.assertRaises(ErrorSupabase):
+            sb.upsert([{"codigo_externo": "x"}])
+        self.assertEqual([p[0] for p in sb.sesion.pedidos], ["POST"])
 
     def test_error_401_sin_exponer_la_clave(self):
         sb = self.cliente(Respuesta(401, {"message": "JWT invalid jwt-de-prueba-123456"}))
