@@ -100,12 +100,56 @@ El sincronizador reconoce ese formato: busca la fila de encabezado aunque el com
 título del informe arriba, acepta los nombres de columna en inglés o español (*Day* / *Día*,
 *Campaign* / *Campaña*, *Cost* / *Coste*…) y salta la fila de totales.
 
-## Meta Ads (opcional, a mano)
+## Meta Ads
+
+Dos caminos, **nunca los dos a la vez** (ambos cargan la plataforma `meta` y cada carga reemplaza
+las fechas de la otra):
+
+### A mano, en la hoja (mientras no haya acceso a la API)
 
 Agregar una pestaña `meta` a la misma hoja con el encabezado
 `fecha | campana_id | campana | costo | impresiones | clics | conversiones` (solo `fecha` y
-`costo` son obligatorias; una fila por día o por mes, con la fecha del primer día) y el workflow
-la carga igual. Si más adelante se conecta la Meta Marketing API, basta con que escriba esa pestaña.
+`costo` son obligatorias; una fila por día o por mes, con la fecha del primer día, costo en CLP) y
+`ads-polchile-sync` la carga igual a las 07:40.
+
+### Automático, con la Marketing API (`meta-ads-polchile-sync.yml`)
+
+`Polchile_Systems/sync_meta_ads_polchile.py` lee los insights por campaña y por día de las cuentas
+de `META_ADS_CUENTAS` (últimos 30 días cada corrida, porque Meta ajusta la atribución hasta 28
+días), pasa a CLP las cuentas en USD con el dólar observado del día (mindicador.cl) y llama al
+mismo RPC con plataforma `meta`. Conversiones = formularios de Meta (`lead`) + conversaciones de
+WhatsApp/Messenger iniciadas.
+
+Estado al 29-10-2026: **armado, sin datos.** Las cuentas que ve atorres@polchile.cl (portfolio
+"Polchile Paneles Aislados": 957099393751317, 3319616941759224, 2797680377270758, en USD, solo
+lectura) no tienen gasto; el anuncio activo de la página de Polchile (desde el 24-08-2026) se paga
+en CLP desde una cuenta que maneja la agencia Connection Pro y que no está asignada. Falta:
+
+1. Que la agencia dé el id de esa cuenta y acceso de lectura (y, si se puede, la comparta con el
+   portfolio de Polchile).
+2. En business.facebook.com → Configuración → Usuarios del sistema: crear uno (rol empleado),
+   asignarle la cuenta publicitaria con permiso *Ver rendimiento* y generar un token sin
+   vencimiento con el permiso `ads_read`. Guardarlo y fijar las cuentas:
+
+   ```
+   gh secret set META_ADS_TOKEN -R GrupoSHG/Scripts
+   gh variable set META_ADS_CUENTAS -R GrupoSHG/Scripts --body "<id1>,<id2>"
+   ```
+
+3. Primera carga con historia: `gh workflow run meta-ads-polchile-sync.yml -R GrupoSHG/Scripts -f dias=400`.
+4. Agregar el disparo diario a la función viva `automatizacion.programa()` (leerla antes, no
+   re-aplicar el archivo entero), por ejemplo a las 07:45, después de `ads-polchile-sync`:
+
+   ```sql
+   if h = 7 and mi = 45 then
+     perform automatizacion.disparar('meta-ads-polchile-sync.yml');
+   end if;
+   ```
+
+   y la misma línea en `automatizacion/disparador_workflows.sql`.
+
+Prueba local sin escribir en Supabase: `python Polchile_Systems/sync_meta_ads_polchile.py --simular --dias 90`
+con `META_ADS_TOKEN` y `META_ADS_CUENTAS` en el `.env`.
 
 ## Cómo se calculan los indicadores (`resumen_dashboard`, clave `ads`)
 

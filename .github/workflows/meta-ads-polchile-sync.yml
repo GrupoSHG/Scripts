@@ -1,0 +1,39 @@
+# Inversión Meta Ads (Facebook / Instagram) Polchile -> Supabase polchile_crm.inversion_ads
+# Lee la Marketing API de Meta (gasto diario por campaña, últimos 30 días; USD pasado a CLP) y la
+# carga como plataforma 'meta' para la inversión, el costo por lead y el retorno de Meta en la
+# pestaña CRM del Cockpit Comercial. Lógica en Polchile_Systems/sync_meta_ads_polchile.py;
+# instalación en Polchile_Systems/INVERSION_ADS.md (sección Meta Ads).
+#
+#   Secrets:   META_ADS_TOKEN (usuario del sistema con ads_read), SUPABASE_SERVICE_KEY
+#   Variables: META_ADS_CUENTAS (ids de las cuentas publicitarias, separados por coma)
+
+name: Sincronizar inversión Meta Ads Polchile
+
+on:
+  # Sin "schedule": lo dispara Supabase (automatizacion/disparador_workflows.sql).
+  workflow_dispatch:
+    inputs:
+      dias:
+        description: "Días hacia atrás a releer (30 por omisión; 400 para la primera carga)"
+        required: false
+        default: "30"
+
+concurrency:
+  group: meta-ads-polchile-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: Polchile_Systems
+
+      - name: Cargar inversión Meta
+        env:
+          META_ADS_TOKEN: ${{ secrets.META_ADS_TOKEN }}
+          META_ADS_CUENTAS: ${{ vars.META_ADS_CUENTAS }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python3 Polchile_Systems/sync_meta_ads_polchile.py --dias "${{ inputs.dias || '30' }}"
