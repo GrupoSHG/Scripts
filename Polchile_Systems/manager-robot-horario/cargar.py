@@ -47,6 +47,7 @@ COLUMNAS = {
         "nota_vta": "entero", "num_op": "entero", "fechacrea": "fecha", "fechaent": "fecha", "fechain": "fecha",
         "iniciada": "fecha", "fechafin": "fecha", "cantidad_op": "decimal", "unidmed": "texto",
         "cantidad_terminada": "decimal", "cantidad_pendiente": "decimal", "nombre_op": "texto",
+        "observaciones": "texto",
         "codigo_producto": "texto", "nombre_producto": "texto", "clase1": "texto", "clase2": "texto",
         "clase3": "texto", "clase4": "texto", "bodega_id_op": "entero", "bodega_nombre_op": "texto",
         "bodega_id_nv": "decimal", "bodega_nombre_nv": "texto",
@@ -78,7 +79,13 @@ COLUMNAS = {
 
 # Columnas que pueden faltar en el Excel (quedan en NULL) mientras el informe de
 # Manager no se actualice con la misma query que usa el pipeline.
-OPCIONALES = {"ventas_full": {"nota_venta", "factura_ref"}, "stock_bodegas": {"bodega"}}
+# observaciones de la OP (NOTAOBS en Manager, donde vienen las medidas de las
+# bandejas): el informe de OP de Manager no la trae; la carga el pipeline diario
+# (ConsultasSQL/Ordenes_de_produccion.sql) y reemplazar_ordenes_de_produccion la
+# conserva entre cargas del robot (supabase/op_observaciones.sql). Si se agrega
+# la columna al informe, llega cada hora sin otro cambio.
+OPCIONALES = {"ventas_full": {"nota_venta", "factura_ref"}, "stock_bodegas": {"bodega"},
+              "ordenes_de_produccion": {"observaciones"}}
 
 
 def convertir(valor, tipo, ctype, datemode):
