@@ -10,7 +10,8 @@
 --                        liberar / generar la OP), espera una OC o falta comprar.
 --   * wip_bandejas:      por bandeja PSA, cuánto piden las OP de paneles y las
 --                        NV, cuánto hay en stock y en OP de bandejas, y cuánto
---                        falta programar (el WIP previo a las prensas).
+--                        falta programar (el WIP previo a las prensas). Las PSA
+--                        que se venden solas no son WIP y no se cuentan.
 --
 -- Tablas de origen (las crea el pipeline diario, bulk_sync_supabase.py, desde
 -- ConsultasSQL/Necesidades_Materiales.sql e Insumos_Disponibilidad.sql, con
@@ -165,22 +166,24 @@ from shg_dashboards.necesidades_asignadas
 group by origen, nota_vta, num_op;
 
 -- WIP de bandejas (PSA): lo que piden las OP de paneles y las NV sin OP,
--- más las bandejas vendidas directo, contra el stock de bandejas y lo que ya
--- está en OP de bandejas.
+-- contra el stock de bandejas y lo que ya está en OP de bandejas. Solo las
+-- bandejas que van a un panel (29/10/2026, pedido de producción): las PSA que
+-- se venden solas (líneas de NV de la propia PSA, y la parte de una OP de
+-- bandeja que excede lo que piden los paneles de su NV) no son WIP y no se
+-- cuentan; un código que solo se vende solo no aparece.
 create view shg_dashboards.wip_bandejas
 with (security_invoker = on) as
 with productos as (
-  -- Saldo de cada OP / NV sin OP una sola vez (necesidades_materiales repite
+  -- Saldo de cada OP de bandeja una sola vez (necesidades_materiales repite
   -- el producto en cada fila de componente)
   select distinct origen, nota_vta, num_op, fecha_entrega,
          codigo_producto, nombre_producto, unidad_producto, cantidad_producto
   from shg_dashboards.necesidades_materiales
-  where codigo_producto like 'PSA%'
+  where codigo_producto like 'PSA%' and origen = 'OP'
 ),
--- Por bandeja y NV: lo que piden sus paneles (OP o NV sin OP), lo que se vende
--- directo sin OP y lo que ya está en OP de bandejas de esa misma NV. Una OP de
--- bandeja cubre primero los paneles de su NV; si la NV no tiene paneles que la
--- pidan, es venta directa y su saldo es la necesidad.
+-- Por bandeja y NV: lo que piden sus paneles (OP o NV sin OP) y lo que ya está
+-- en OP de bandejas de esa misma NV. Una OP de bandeja cuenta solo hasta lo
+-- que piden los paneles de su NV.
 por_nv as (
   select
     codigo,
@@ -189,10 +192,9 @@ por_nv as (
     max(unidad)                                     as unidad,
     coalesce(sum(cantidad) filter (where tipo = 'panel_op'), 0) as para_op_paneles,
     coalesce(sum(cantidad) filter (where tipo = 'panel_nv'), 0) as para_nv_paneles,
-    coalesce(sum(cantidad) filter (where tipo = 'directa_nv'), 0) as venta_directa_sin_op,
     coalesce(sum(cantidad) filter (where tipo = 'en_op'), 0)    as en_op,
     string_agg(num_op::text, ', ') filter (where tipo = 'en_op') as ops,
-    min(fecha_entrega)                              as primera_entrega
+    min(fecha_entrega) filter (where tipo <> 'en_op') as primera_entrega
   from (
     select case origen when 'OP' then 'panel_op' else 'panel_nv' end as tipo,
            codigo_componente as codigo, nota_vta, num_op,
@@ -201,12 +203,12 @@ por_nv as (
     from shg_dashboards.necesidades_materiales
     where codigo_componente like 'PSA%'
     union all
-    select case origen when 'OP' then 'en_op' else 'directa_nv' end,
-           codigo_producto, nota_vta, num_op, nombre_producto, unidad_producto,
+    select 'en_op', codigo_producto, nota_vta, num_op, nombre_producto, unidad_producto,
            cantidad_producto, nullif(fecha_entrega, '')::date
     from productos
   ) t
   group by codigo, nota_vta
+  having coalesce(sum(cantidad) filter (where tipo in ('panel_op', 'panel_nv')), 0) > 0
 ),
 pedido as (
   select
@@ -215,17 +217,14 @@ pedido as (
     max(unidad)                                     as unidad,
     sum(para_op_paneles)                            as para_op_paneles,
     sum(para_nv_paneles)                            as para_nv_paneles,
-    sum(venta_directa_sin_op
-        + greatest(en_op - para_op_paneles - para_nv_paneles, 0)) as venta_directa,
-    sum(greatest(para_op_paneles + para_nv_paneles, en_op) + venta_directa_sin_op) as requerido,
-    sum(en_op)                                      as en_op,
+    sum(para_op_paneles + para_nv_paneles)          as requerido,
+    sum(least(en_op, para_op_paneles + para_nv_paneles)) as en_op,
     -- lo que falta poner en OP de bandejas, NV por NV, antes de mirar el stock
-    sum(greatest(para_op_paneles + para_nv_paneles - en_op, 0) + venta_directa_sin_op) as sin_op,
+    sum(greatest(para_op_paneles + para_nv_paneles - en_op, 0)) as sin_op,
     string_agg(ops, ', ')                           as ops,
     min(primera_entrega)                            as primera_entrega,
     string_agg(nota_vta::text, ', ' order by primera_entrega, nota_vta)
-      filter (where greatest(para_op_paneles + para_nv_paneles - en_op, 0)
-                    + venta_directa_sin_op > 0)     as notas_venta_sin_op
+      filter (where para_op_paneles + para_nv_paneles - en_op > 0) as notas_venta_sin_op
   from por_nv
   group by codigo
 )
@@ -235,7 +234,6 @@ select
   coalesce(p.unidad, d.unidad)                      as unidad,
   p.para_op_paneles,
   p.para_nv_paneles,
-  p.venta_directa,
   p.requerido,
   greatest(coalesce(d.stk_total, 0), 0)             as stock,
   p.en_op,
