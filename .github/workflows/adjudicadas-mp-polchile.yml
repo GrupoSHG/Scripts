@@ -1,0 +1,57 @@
+# Obras adjudicadas en Mercado Público -> Supabase polchile_crm.adjudicadas_mp
+# Oportunidades de negocio para Polchile: las constructoras que acaban de ganar una obra pública
+# (techumbres, galpones, cámaras frigoríficas, módulos...) son posibles clientes de paneles y cubiertas.
+# Lo muestra la pestaña "Adjudicadas MP" del Cockpit Comercial (últimos 14 días).
+# Lógica en Polchile_Systems/sync_adjudicadas_mp.py; tabla en Polchile_Systems/adjudicadas_mp.sql.
+#
+# Sin "schedule": lo dispara Supabase todos los días a las 23:20 (automatizacion/adjudicadas_mp_programa.sql),
+# dentro de la ventana de descargas masivas de ChileCompra (22:00-07:00). Manual:
+#   gh workflow run adjudicadas-mp-polchile.yml -R GrupoSHG/Scripts
+#
+#   Secrets: MP_TICKET (el mismo ticket de Mercado Público que licitaciones.yml), SUPABASE_SERVICE_KEY
+#
+# El repo es PÚBLICO: el script solo imprime cifras agregadas.
+
+name: Obras adjudicadas Mercado Público · Polchile
+
+on:
+  workflow_dispatch:
+    inputs:
+      dias:
+        description: "Días hacia atrás, hoy incluido"
+        required: false
+        default: "14"
+      max:
+        description: "Detalles a pedir en la corrida (fuera de 22:00-07:00, máximo 50)"
+        required: false
+        default: "200"
+
+concurrency:
+  group: adjudicadas-mp-polchile
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: Polchile_Systems
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cargar adjudicadas
+        env:
+          MP_TICKET: ${{ secrets.MP_TICKET }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          DIAS: ${{ inputs.dias || '14' }}
+          MAX: ${{ inputs.max || '200' }}
+        run: |
+          [[ "$DIAS" =~ ^[0-9]+$ && "$MAX" =~ ^[0-9]+$ ]] || { echo "::error::dias y max deben ser números"; exit 1; }
+          python3 Polchile_Systems/sync_adjudicadas_mp.py --dias "$DIAS" --max "$MAX"

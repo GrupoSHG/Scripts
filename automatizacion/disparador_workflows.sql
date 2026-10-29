@@ -20,6 +20,9 @@
 --   dte-correo-sync.yml     lun-vie 07:42 a 20:42, cada hora (XML de facturas de dte@polchile.cl)
 --   licitaciones.yml        todos los días 22:30 (licitaciones de obras para M5, evaluadas con Claude;
 --                           reemplazó a mercado-publico-m5.yml el 19/10/2026)
+--   adjudicadas-mp-polchile.yml todos los días 23:20 (obras adjudicadas de Mercado Público,
+--                           oportunidades Polchile; se agregó a la función viva con
+--                           adjudicadas_mp_programa.sql, 28/10/2026)
 --   aviso-cheques.yml       todos los días 08:05 (correo solo si hay cheques que se cobran hoy o
 --                           mañana; se agregó a la función viva con aviso_cheques_programa.sql, 26/10/2026)
 --   aviso-cys.yml           cada minuto, solo si hay avisos pendientes de la App CyS (documento por
@@ -123,6 +126,11 @@ begin
   -- ventana de cargas masivas de la API (22:00-07:00)
   if h = 22 and mi = 30 then
     perform automatizacion.disparar('licitaciones.yml');
+  end if;
+  -- Obras adjudicadas de Mercado Público (oportunidades Polchile): todos los días 23:20,
+  -- en la ventana de cargas masivas y después de licitaciones.yml (mismo ticket)
+  if h = 23 and mi = 20 then
+    perform automatizacion.disparar('adjudicadas-mp-polchile.yml');
   end if;
   -- Cheques por cobrar: correo a Finanzas si hay cobros hoy o mañana (todos los días)
   if h = 8 and mi = 5 then
