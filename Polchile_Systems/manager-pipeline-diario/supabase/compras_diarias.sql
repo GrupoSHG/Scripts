@@ -5,7 +5,8 @@
 -- la fecha de entrega y de tener los materiales. Cada día se desarma lo
 -- pendiente (OP abiertas y NV sin OP) según las recetas de Manager, se compara
 -- con el stock (planta + Los Paltos) y con las OC por llegar, y sale:
---   * compras_sugeridas: por material comprado, cuánto falta y cuánto comprar.
+--   * compras_sugeridas: por material comprado, cuánto falta y cuánto comprar
+--                        (poliol e isocianato siempre juntos y en igual cantidad).
 --   * nv_materiales:     por NV, si todo su material está en bodega (se puede
 --                        liberar / generar la OP), espera una OC o falta comprar.
 --   * wip_bandejas:      por bandeja PSA, cuánto piden las OP de paneles y las
@@ -114,33 +115,68 @@ with dem as (
     min(fecha_entrega) filter (where cobertura <> 'en_bodega') as primera_fecha_sin_stock
   from shg_dashboards.necesidades_asignadas
   group by codigo
+),
+base as (
+  select
+    d.codigo,
+    d.nombre,
+    d.unidad,
+    d.familia,
+    coalesce(m.demanda_op, 0)                       as demanda_op,
+    coalesce(m.demanda_nv, 0)                       as demanda_nv,
+    coalesce(m.demanda_total, 0)                    as demanda_total,
+    coalesce(m.notas_venta, 0)                      as notas_venta,
+    d.stk_planta,
+    d.stk_los_paltos,
+    d.stk_total,
+    d.por_llegar,
+    d.oc_pendientes,
+    nullif(d.proxima_llegada, '')::date             as proxima_llegada,
+    (nullif(d.proxima_llegada, '')::date < current_date) as oc_atrasada,
+    d.oc_detalle,
+    greatest(coalesce(m.demanda_total, 0) - greatest(d.stk_total, 0), 0)                as falta_en_bodega,
+    greatest(coalesce(m.demanda_total, 0) - greatest(d.stk_total, 0) - d.por_llegar, 0) as comprar,
+    d.precio_ultima_compra,
+    m.primera_fecha_sin_stock
+  from shg_dashboards.insumos_disponibilidad d
+  left join dem m on m.codigo = d.codigo
+  where d.es_comprado = 1
+    and (m.codigo is not null or d.codigo in ('ISOC', 'POLIOLPEG', 'POLIOLINY'))
+),
+-- Poliol e isocianato (30/10/2026, pedido de producción): se compran siempre
+-- juntos y en igual cantidad. El isocianato (ISOC) sirve a los dos polioles,
+-- así que el par = lo mayor entre lo que falta de isocianato y lo que falta de
+-- polioles; el isocianato se compra por el par, el poliol inyectado por lo
+-- suyo y el poliol pegado completa hasta el par.
+quimicos as (
+  select
+    greatest(coalesce(sum(comprar) filter (where codigo = 'ISOC'), 0),
+             coalesce(sum(comprar) filter (where codigo in ('POLIOLPEG', 'POLIOLINY')), 0)) as par,
+    coalesce(sum(comprar) filter (where codigo = 'POLIOLINY'), 0) as iny
+  from base
+),
+final as (
+  select b.*,
+         case when b.codigo = 'ISOC'      then q.par
+              when b.codigo = 'POLIOLPEG' then greatest(q.par - q.iny, 0)
+              else b.comprar end                    as comprar_final,
+         case when b.codigo in ('ISOC', 'POLIOLPEG', 'POLIOLINY') and q.par > 0
+              then 'Poliol e isocianato se compran juntos y en igual cantidad: '
+                   || round(q.par::numeric, 0) || ' kg de isocianato y '
+                   || round(q.par::numeric, 0) || ' kg de poliol en total' end as nota_compra
+  from base b cross join quimicos q
 )
 select
-  d.codigo,
-  d.nombre,
-  d.unidad,
-  d.familia,
-  coalesce(m.demanda_op, 0)                         as demanda_op,
-  coalesce(m.demanda_nv, 0)                         as demanda_nv,
-  coalesce(m.demanda_total, 0)                      as demanda_total,
-  coalesce(m.notas_venta, 0)                        as notas_venta,
-  d.stk_planta,
-  d.stk_los_paltos,
-  d.stk_total,
-  d.por_llegar,
-  d.oc_pendientes,
-  nullif(d.proxima_llegada, '')::date               as proxima_llegada,
-  (nullif(d.proxima_llegada, '')::date < current_date) as oc_atrasada,
-  d.oc_detalle,
-  greatest(coalesce(m.demanda_total, 0) - greatest(d.stk_total, 0), 0)                as falta_en_bodega,
-  greatest(coalesce(m.demanda_total, 0) - greatest(d.stk_total, 0) - d.por_llegar, 0) as comprar,
-  round((greatest(coalesce(m.demanda_total, 0) - greatest(d.stk_total, 0) - d.por_llegar, 0)
-         * d.precio_ultima_compra)::numeric, 0)     as costo_estimado,
-  d.precio_ultima_compra,
-  m.primera_fecha_sin_stock
-from shg_dashboards.insumos_disponibilidad d
-join dem m on m.codigo = d.codigo
-where d.es_comprado = 1;
+  codigo, nombre, unidad, familia, demanda_op, demanda_nv, demanda_total, notas_venta,
+  stk_planta, stk_los_paltos, stk_total, por_llegar, oc_pendientes, proxima_llegada, oc_atrasada,
+  oc_detalle, falta_en_bodega,
+  comprar_final                                     as comprar,
+  round((comprar_final * precio_ultima_compra)::numeric, 0) as costo_estimado,
+  precio_ultima_compra,
+  primera_fecha_sin_stock,
+  nota_compra
+from final
+where demanda_total > 0 or comprar_final > 0;
 
 -- Por NV (y OP): estado de materiales. "Lista" = todo en bodega.
 create view shg_dashboards.nv_materiales
