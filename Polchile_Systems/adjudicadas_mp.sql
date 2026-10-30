@@ -42,6 +42,7 @@ comment on table polchile_crm.adjudicadas_mp is
 alter table polchile_crm.adjudicadas_mp enable row level security;
 revoke all on polchile_crm.adjudicadas_mp from anon, public;
 grant select on polchile_crm.adjudicadas_mp to authenticated;
+grant select, insert, update on polchile_crm.adjudicadas_mp to service_role;  -- sin esto la primera corrida (29/10/2026) falló con 42501
 
 drop policy if exists lectura_autenticados on polchile_crm.adjudicadas_mp;
 create policy lectura_autenticados on polchile_crm.adjudicadas_mp for select to authenticated using (true);
