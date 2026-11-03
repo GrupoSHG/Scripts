@@ -222,6 +222,8 @@ with productos as (
   from shg_dashboards.necesidades_materiales n
   left join shg_dashboards.op_saldo_obs s on s.num_op = n.num_op
   where n.codigo_producto like 'PSA%' and n.origen = 'OP'
+    -- OP fuera del plan (op_fuera_plan, plan.html): no son WIP por ahora.
+    and not exists (select 1 from shg_dashboards.op_fuera_plan f where f.num_op = n.num_op)
 ),
 -- Por bandeja y NV: lo que piden sus paneles (OP o NV sin OP) y lo que ya está
 -- en OP de bandejas de esa misma NV. Una OP de bandeja cuenta solo hasta lo
@@ -249,6 +251,7 @@ por_nv as (
     from shg_dashboards.necesidades_materiales n
     left join shg_dashboards.op_saldo_obs s on s.num_op = n.num_op and n.origen = 'OP'
     where n.codigo_componente like 'PSA%'
+      and not (n.origen = 'OP' and exists (select 1 from shg_dashboards.op_fuera_plan f where f.num_op = n.num_op))
     union all
     select 'en_op', codigo_producto, nota_vta, num_op, nombre_producto, unidad_producto,
            cantidad_producto, nullif(fecha_entrega, '')::date
