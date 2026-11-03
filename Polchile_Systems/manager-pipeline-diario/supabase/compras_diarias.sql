@@ -202,6 +202,8 @@ from shg_dashboards.necesidades_asignadas
 group by origen, nota_vta, num_op;
 
 -- WIP de bandejas (PSA): lo que piden las OP de paneles y las NV sin OP,
+-- con el saldo real de cada OP según sus observaciones (op_saldo_obs.sql,
+-- aplicar antes),
 -- contra el stock de bandejas y lo que ya está en OP de bandejas. Solo las
 -- bandejas que van a un panel (29/10/2026, pedido de producción): las PSA que
 -- se venden solas (líneas de NV de la propia PSA, y la parte de una OP de
@@ -212,10 +214,14 @@ with (security_invoker = on) as
 with productos as (
   -- Saldo de cada OP de bandeja una sola vez (necesidades_materiales repite
   -- el producto en cada fila de componente)
-  select distinct origen, nota_vta, num_op, fecha_entrega,
-         codigo_producto, nombre_producto, unidad_producto, cantidad_producto
-  from shg_dashboards.necesidades_materiales
-  where codigo_producto like 'PSA%' and origen = 'OP'
+  -- El saldo de la OP de bandeja es el real según sus observaciones
+  -- (op_saldo_obs.sql: pedido − lo anotado como fabricado), si es menor.
+  select distinct n.origen, n.nota_vta, n.num_op, n.fecha_entrega,
+         n.codigo_producto, n.nombre_producto, n.unidad_producto,
+         least(n.cantidad_producto, coalesce(s.saldo, n.cantidad_producto)) as cantidad_producto
+  from shg_dashboards.necesidades_materiales n
+  left join shg_dashboards.op_saldo_obs s on s.num_op = n.num_op
+  where n.codigo_producto like 'PSA%' and n.origen = 'OP'
 ),
 -- Por bandeja y NV: lo que piden sus paneles (OP o NV sin OP) y lo que ya está
 -- en OP de bandejas de esa misma NV. Una OP de bandeja cuenta solo hasta lo
@@ -232,12 +238,17 @@ por_nv as (
     string_agg(num_op::text, ', ') filter (where tipo = 'en_op') as ops,
     min(fecha_entrega) filter (where tipo <> 'en_op') as primera_entrega
   from (
-    select case origen when 'OP' then 'panel_op' else 'panel_nv' end as tipo,
-           codigo_componente as codigo, nota_vta, num_op,
-           nombre_componente as nombre, unidad_componente as unidad,
-           cantidad_requerida as cantidad, nullif(fecha_entrega, '')::date as fecha_entrega
-    from shg_dashboards.necesidades_materiales
-    where codigo_componente like 'PSA%'
+    -- Lo que pide una OP de paneles se escala a su saldo real (op_saldo_obs)
+    -- cuando sus observaciones dicen que queda menos que en Manager.
+    select case n.origen when 'OP' then 'panel_op' else 'panel_nv' end as tipo,
+           n.codigo_componente as codigo, n.nota_vta, n.num_op,
+           n.nombre_componente as nombre, n.unidad_componente as unidad,
+           n.cantidad_requerida * case when n.origen = 'OP' and s.saldo is not null and n.cantidad_producto > 0
+                                       then least(1, s.saldo / n.cantidad_producto) else 1 end as cantidad,
+           nullif(n.fecha_entrega, '')::date as fecha_entrega
+    from shg_dashboards.necesidades_materiales n
+    left join shg_dashboards.op_saldo_obs s on s.num_op = n.num_op and n.origen = 'OP'
+    where n.codigo_componente like 'PSA%'
     union all
     select 'en_op', codigo_producto, nota_vta, num_op, nombre_producto, unidad_producto,
            cantidad_producto, nullif(fecha_entrega, '')::date
