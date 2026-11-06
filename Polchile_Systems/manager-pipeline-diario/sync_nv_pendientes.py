@@ -15,6 +15,8 @@ import pyodbc
 from decimal import Decimal
 from supabase import create_client
 
+from filtrar_vendedores import filtrar_vendedores_registrados
+
 log = logging.getLogger(__name__)
 
 # ─────────────────────────────────────────────
@@ -105,6 +107,11 @@ def main():
     filas = _limpiar_para_json(filas)
 
     supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY).schema(SUPABASE_SCHEMA)
+
+    filas = filtrar_vendedores_registrados(supabase, filas, "notas_venta_pendientes")
+    if not filas:
+        log.info("Sin NVs pendientes de vendedores registrados.")
+        return
 
     supabase.table("notas_venta_pendientes").upsert(
         filas, on_conflict="nota_venta"
