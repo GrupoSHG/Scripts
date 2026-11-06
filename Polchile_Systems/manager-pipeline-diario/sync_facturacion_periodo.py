@@ -12,6 +12,8 @@ import pyodbc
 from decimal import Decimal
 from supabase import create_client
 
+from filtrar_vendedores import filtrar_vendedores_registrados
+
 log = logging.getLogger(__name__)
 
 # ─────────────────────────────────────────────
@@ -126,6 +128,11 @@ def main():
     filas = _limpiar_para_json(filas)
 
     supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY).schema(SUPABASE_SCHEMA)
+
+    filas = filtrar_vendedores_registrados(supabase, filas, "facturacion_periodo")
+    if not filas:
+        log.info("Sin facturación de vendedores registrados.")
+        return
 
     # Upsert por (codvend, periodo_inicio) — NUNCA se borra historial,
     # solo se actualiza el período actual si se corre más de una vez
