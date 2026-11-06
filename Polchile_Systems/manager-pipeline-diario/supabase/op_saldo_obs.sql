@@ -15,6 +15,11 @@
 -- Misma lectura que plan.html / prensa.html (porFabricar) y 05_plan.js
 -- (hechosDeObservaciones_). 03/11/2026. Va ANTES de compras_diarias.sql (la
 -- vista wip_bandejas la usa). Se aplica a mano; es idempotente.
+-- 06/11/2026: si la OP tiene lo que queda por fabricar cargado a mano
+-- (shg_dashboards.op_medidas_manual, GrupoSHG_Systems
+-- Polchile_Systems/dashboard-produccion/op_medidas_manual.sql, aplicar ANTES),
+-- esa lista reemplaza las observaciones y manda sobre Manager
+-- (medidas_manual = true).
 -- ============================================================================
 begin;
 
@@ -50,14 +55,17 @@ $$;
 create or replace view shg_dashboards.op_saldo_obs
 with (security_invoker = on) as
 with op as (
-  select distinct on (num_op) num_op, nota_vta, codigo_producto, nombre_producto, unidmed,
-         cantidad_op::numeric as cantidad_op, cantidad_pendiente::numeric as pend_manager, observaciones,
-         case when unidmed = 'M2' then (case when nombre_producto ~ 'a1150' then 1.15
-                                             when nombre_producto ~ 'a910' then 0.91 else 1.0 end)
+  select distinct on (o.num_op) o.num_op, o.nota_vta, o.codigo_producto, o.nombre_producto, o.unidmed,
+         o.cantidad_op::numeric as cantidad_op, o.cantidad_pendiente::numeric as pend_manager,
+         coalesce(mm.medidas, o.observaciones) as observaciones,
+         mm.num_op is not null as manual,
+         case when o.unidmed = 'M2' then (case when o.nombre_producto ~ 'a1150' then 1.15
+                                               when o.nombre_producto ~ 'a910' then 0.91 else 1.0 end)
               else 1.0 end as ancho
-    from shg_dashboards.ordenes_de_produccion
-   where cantidad_pendiente > 0 and unidmed in ('M2', 'Ml')
-   order by num_op
+    from shg_dashboards.ordenes_de_produccion o
+    left join shg_dashboards.op_medidas_manual mm on mm.num_op = o.num_op
+   where o.cantidad_pendiente > 0 and o.unidmed in ('M2', 'Ml')
+   order by o.num_op
 ),
 lect as (
   select o.num_op,
@@ -74,20 +82,23 @@ select o.num_op, o.nota_vta, o.codigo_producto, o.nombre_producto, o.unidmed,
        round((l.hecho_ml * o.ancho)::numeric, 2) as anotado,
        l.ajenos and l.pedido_ml > 0 as largos_ajenos,
        case
+         when o.manual then round((l.resto_ml * o.ancho)::numeric, 2)
          when l.hecho_ml = 0 then null
          when l.pedido_ml > 0 and not l.ajenos then round((l.resto_ml * o.ancho)::numeric, 2)
          when l.pedido_ml = 0 then round(greatest(0, o.cantidad_op - l.hecho_ml * o.ancho)::numeric, 2)
        end as saldo_obs,
-       round(least(o.pend_manager, coalesce(
+       case when o.manual then round((l.resto_ml * o.ancho)::numeric, 2)
+       else round(least(o.pend_manager, coalesce(
          case
            when l.hecho_ml = 0 then null
            when l.pedido_ml > 0 and not l.ajenos then l.resto_ml * o.ancho
            when l.pedido_ml = 0 then greatest(0, o.cantidad_op - l.hecho_ml * o.ancho)
-         end, o.pend_manager))::numeric, 2) as saldo
+         end, o.pend_manager))::numeric, 2) end as saldo,
+       o.manual as medidas_manual
   from op o join lect l on l.num_op = o.num_op;
 
 comment on view shg_dashboards.op_saldo_obs is
-  'Saldo de cada OP abierta: el menor entre Manager y pedido − lo anotado como fabricado en sus observaciones.';
+  'Saldo de cada OP abierta: el menor entre Manager y pedido − lo anotado como fabricado en sus observaciones; si hay op_medidas_manual, esa lista.';
 revoke all on shg_dashboards.op_saldo_obs from anon;
 grant select on shg_dashboards.op_saldo_obs to authenticated;
 grant execute on function shg_dashboards.obs_por_largo(text) to authenticated, service_role;
