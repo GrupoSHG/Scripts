@@ -120,6 +120,17 @@ revoke select on hea.profiles, stock_productos.profiles from agentes_lectura;
 -- todo lo que corre como agentes_lectura va dentro de una transacción de solo lectura.
 grant usage, create on schema public to agentes_lectura;
 
+-- La función la crea (y la reemplaza) el propio rol con SET ROLE, y el REVOKE también se hace
+-- como él. Antes se creaba como postgres y luego "alter ... owner to agentes_lectura": los
+-- EXECUTE por defecto de Supabase (public, anon, authenticated) quedaban otorgados POR el nuevo
+-- dueño y el revoke de postgres no los quitaba, así que anon podía leer toda la base con la
+-- clave publicable (detectado y cerrado en producción el 06/11/2026). Verificar después con:
+--   select proacl from pg_proc where proname = 'agente_consulta';  -- solo agentes_lectura y service_role
+-- Desde Postgres 16 hace falta membresía explícita (set true) para SET ROLE a un rol creado;
+-- se da aquí y se quita al final.
+do $$ begin execute format('grant agentes_lectura to %I with inherit false, set true', current_user); end $$;
+set role agentes_lectura;
+
 create or replace function public.agente_consulta(p_sql text, p_limite int default 200)
 returns jsonb language plpgsql security definer set search_path = pg_catalog, public as $$
 declare
@@ -136,13 +147,10 @@ begin
     into v_filas;
   return jsonb_build_object('filas', v_filas, 'n', jsonb_array_length(v_filas), 'limite', v_limite);
 end $$;
--- Desde Postgres 16 quien crea un rol no puede hacer SET ROLE a él sin membresía explícita, y
--- ALTER ... OWNER lo exige: se da solo para el cambio de dueño y se quita al tiro.
-do $$ begin execute format('grant agentes_lectura to %I with inherit false, set true', current_user); end $$;
-alter function public.agente_consulta(text, int) owner to agentes_lectura;
-do $$ begin execute format('revoke agentes_lectura from %I', current_user); end $$;
 revoke all on function public.agente_consulta(text, int) from public, anon, authenticated;
 grant execute on function public.agente_consulta(text, int) to service_role;
+reset role;
+do $$ begin execute format('revoke agentes_lectura from %I', current_user); end $$;
 
 -- ---------------------------------------------------------------------------
 -- 3. Instrucciones a los agentes de IA
