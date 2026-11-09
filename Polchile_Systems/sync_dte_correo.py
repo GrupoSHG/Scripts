@@ -106,7 +106,25 @@ def guardar_cursor(buzon, ultimo_uid, uidvalidity, nuevos):
         prefer="resolution=merge-duplicates,return=minimal")
 
 
+def deduplicar(filas):
+    """Deja una fila por (rut_emisor, tipo_dte, folio), la última que apareció.
+
+    El mismo DTE puede venir en dos correos del mismo lote (reenvío del
+    proveedor, XML adjunto suelto y dentro de un zip, etc.). Postgres rechaza
+    un upsert con la clave repetida en el mismo comando (21000 "ON CONFLICT DO
+    UPDATE command cannot affect row a second time"), así que se depura antes.
+    Los UID se leen en orden ascendente: la última es la del correo más reciente.
+    """
+    unicas = {}
+    for f in filas:
+        clave = (f["rut_emisor"], f["tipo_dte"], f["folio"])
+        unicas.pop(clave, None)
+        unicas[clave] = f
+    return list(unicas.values())
+
+
 def upsert_documentos(filas):
+    filas = deduplicar(filas)
     for i in range(0, len(filas), LOTE_FILAS):
         _sb("POST", "dte_recibidos?on_conflict=rut_emisor,tipo_dte,folio",
             filas[i:i + LOTE_FILAS], prefer="resolution=merge-duplicates,return=minimal")
