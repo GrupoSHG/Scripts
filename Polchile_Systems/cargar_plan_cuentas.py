@@ -35,6 +35,11 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 
+# Supabase: `apikey` lleva la clave publicable (pública, solo identifica el proyecto) y
+# `Authorization` la service_role. Así sirve tanto la clave service_role legada como una nueva
+# firmada con la clave JWT del proyecto (rotación del 10/11/2026).
+SUPABASE_APIKEY = os.environ.get("SUPABASE_APIKEY", "").strip() or "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
+
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -200,7 +205,7 @@ def main():
     key = os.environ.get("SUPABASE_SERVICE_KEY")
     if not key:
         raise SystemExit("Falta SUPABASE_SERVICE_KEY")
-    headers = {"apikey": key, "Authorization": "Bearer " + key, "Content-Type": "application/json",
+    headers = {"apikey": SUPABASE_APIKEY, "Authorization": "Bearer " + key, "Content-Type": "application/json",
                "Accept-Profile": SCHEMA, "Content-Profile": SCHEMA,
                "Prefer": "resolution=merge-duplicates,return=minimal"}
 

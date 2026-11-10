@@ -22,6 +22,11 @@ import urllib.request
 from email.message import EmailMessage
 from zoneinfo import ZoneInfo
 
+# Supabase: `apikey` lleva la clave publicable (pública, solo identifica el proyecto) y
+# `Authorization` la service_role. Así sirve tanto la clave service_role legada como una nueva
+# firmada con la clave JWT del proyecto (rotación del 10/11/2026).
+SUPABASE_APIKEY = os.environ.get("SUPABASE_APIKEY", "").strip() or "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
+
 TZ = ZoneInfo("America/Santiago")
 TIMEOUT = 60
 INTENTOS = 3
@@ -75,7 +80,7 @@ def pedir(url, headers=None, data=None):
 
 def chequear_frescura(c):
     ahora = datetime.datetime.now(TZ)
-    headers = {"apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY,
+    headers = {"apikey": SUPABASE_APIKEY, "Authorization": "Bearer " + SUPABASE_KEY,
                "Content-Profile": "shg_dashboards", "Content-Type": "application/json"}
     try:
         _, cuerpo, _ = pedir(c["url"], headers, data=b"{}")
@@ -100,7 +105,7 @@ def chequear_una_vez(c):
         return chequear_frescura(c)
     headers = None
     if c["tipo"] == "supabase":
-        headers = {"apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Accept-Profile": "app_cys"}
+        headers = {"apikey": SUPABASE_APIKEY, "Authorization": "Bearer " + SUPABASE_KEY, "Accept-Profile": "app_cys"}
     try:
         status, cuerpo, seg = pedir(c["url"], headers)
     except urllib.error.HTTPError as e:

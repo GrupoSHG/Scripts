@@ -46,6 +46,11 @@ except ImportError:
 
 import imaplib
 
+# Supabase: `apikey` lleva la clave publicable (pública, solo identifica el proyecto) y
+# `Authorization` la service_role. Así sirve tanto la clave service_role legada como una nueva
+# firmada con la clave JWT del proyecto (rotación del 10/11/2026).
+SUPABASE_APIKEY = os.environ.get("SUPABASE_APIKEY", "").strip() or "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
+
 SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 SCHEMA = "shg_dashboards"
 IMAP_HOST = os.environ.get("DTE_MAIL_IMAP_HOST", "imap.gmail.com")
@@ -65,7 +70,7 @@ if "--dias" in sys.argv:
 def _sb(metodo, ruta, datos=None, prefer=None):
     key = os.environ["SUPABASE_SERVICE_KEY"]
     headers = {
-        "apikey": key, "Authorization": "Bearer " + key,
+        "apikey": SUPABASE_APIKEY, "Authorization": "Bearer " + key,
         "Accept-Profile": SCHEMA, "Content-Profile": SCHEMA,
         "Content-Type": "application/json",
     }

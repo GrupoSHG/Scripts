@@ -12,6 +12,11 @@ from zoneinfo import ZoneInfo
 
 import requests
 
+# Supabase: `apikey` lleva la clave publicable (pública, solo identifica el proyecto) y
+# `Authorization` la service_role. Así sirve tanto la clave service_role legada como una nueva
+# firmada con la clave JWT del proyecto (rotación del 10/11/2026).
+SUPABASE_APIKEY = os.environ.get("SUPABASE_APIKEY", "").strip() or "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
+
 SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 ESQUEMA = "shg_dashboards"
 TABLA = "agentes_instrucciones"
@@ -26,7 +31,7 @@ def _cabeceras(esquema=None, prefer=None):
     clave = os.environ.get("SUPABASE_SERVICE_KEY")
     if not clave:
         raise ErrorSupabase("Falta SUPABASE_SERVICE_KEY")
-    h = {"apikey": clave, "Authorization": f"Bearer {clave}", "Content-Type": "application/json"}
+    h = {"apikey": SUPABASE_APIKEY, "Authorization": f"Bearer {clave}", "Content-Type": "application/json"}
     if esquema:
         h["Accept-Profile"] = esquema
         h["Content-Profile"] = esquema

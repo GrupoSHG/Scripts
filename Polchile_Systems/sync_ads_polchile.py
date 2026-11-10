@@ -29,6 +29,11 @@ from datetime import date, datetime, timedelta
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
+# Supabase: `apikey` lleva la clave publicable (pública, solo identifica el proyecto) y
+# `Authorization` la service_role. Así sirve tanto la clave service_role legada como una nueva
+# firmada con la clave JWT del proyecto (rotación del 10/11/2026).
+SUPABASE_APIKEY = os.environ.get("SUPABASE_APIKEY", "").strip() or "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
+
 _ENV = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
 if os.path.exists(_ENV):
     for _l in open(_ENV, encoding="utf-8"):
@@ -183,7 +188,7 @@ def rpc(funcion, cuerpo):
     key = os.environ["SUPABASE_SERVICE_KEY"]
     req = urllib.request.Request(
         f"{SUPABASE_URL}/rest/v1/rpc/{funcion}", data=json.dumps(cuerpo).encode("utf-8"),
-        headers={"apikey": key, "Authorization": "Bearer " + key, "Content-Type": "application/json",
+        headers={"apikey": SUPABASE_APIKEY, "Authorization": "Bearer " + key, "Content-Type": "application/json",
                  "Content-Profile": "polchile_crm"},
         method="POST")
     for intento in range(3):
