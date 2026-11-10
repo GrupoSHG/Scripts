@@ -1315,7 +1315,8 @@ textarea.cotizar-input{resize:vertical;min-height:72px}
 <script>
 
 const SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZmeG9wdnp4eWVhY3BidHh1YWd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNTQ3MjUsImV4cCI6MjA5OTYzMDcyNX0.YoKoLslw-FWOdJZ2DZ3yoTpavu89sHqRFPHle-8qOK4"; // Project Settings -> API -> anon public
+// Clave publicable (pública). La anon legada (JWT) se desactiva en la rotación del 10/11/2026.
+const SUPABASE_ANON_KEY = "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"; // Project Settings -> API -> anon public
 const EDIT_FIELDS={
   fecha:{type:'date'},
   tipo_doc:{type:'select',opts:['Factura','Boleta','Por facturar','Nula']},
@@ -1533,7 +1534,7 @@ function cellContent(field,row){
       return`<span style="font-size:10px;color:var(--text2);white-space:normal;line-height:1.3;display:block;max-width:160px" title="${row.observaciones}">${row.observaciones}</span>`;
     }
     case'pdf_ot':{
-      const hasCroquis=row.croquis&&row.croquis.length>100;
+      const hasCroquis=row.has_drawing===true||(row.croquis&&row.croquis.length>100);
       const icon=hasCroquis?'🖨️ PDF':'📄 PDF';
       return`<button class="btn-pdf-row" onclick="window.descargarPDFOT('${row._docId||row.ot}')" title="${hasCroquis?'Descargar PDF con croquis':'Descargar PDF'}">${icon}</button>`;
     }
@@ -1974,12 +1975,15 @@ async function changeUserRole(uid, newRole){
 
 // La API de Supabase tope 1000 filas por respuesta por defecto — como hay
 // más de 1000 OTs, hay que traerlas en páginas o se cortan silenciosamente.
+// La columna croquis (base64 de los dibujos) es muy pesada: traerla en el listado
+// provoca statement timeout (500) en Supabase. Se carga bajo demanda con ensureCroquis().
+const OTS_LIST_COLS = 'ot,fecha,tipo_doc,boleta,factura,rut,cliente,direccion,comuna,telefono,venta,fecha_entrega,tipo_pago,situacion,conciliado,anticipo,fecha_anticipo,saldo,fecha_saldo,tipo_pago_s,conciliado_saldo,pagado_100,has_drawing,items,items_cot,created_at,updated_at,descripcion,metros,observaciones';
 async function fetchAllOts(){
   const pageSize = 1000;
   let all = [];
   let from = 0;
   while(true){
-    const {data:rows, error} = await db.schema('hea').from('ots').select('*').order('ot').range(from, from+pageSize-1);
+    const {data:rows, error} = await db.schema('hea').from('ots').select(OTS_LIST_COLS).order('ot').range(from, from+pageSize-1);
     if(error) throw error;
     if(!rows || !rows.length) break;
     all = all.concat(rows);
@@ -1988,6 +1992,18 @@ async function fetchAllOts(){
   }
   return all;
 }
+
+// Trae el croquis de una OT (solo cuando se necesita: PDF / cargar en Cotizar)
+async function ensureCroquis(row){
+  if(!row || row.croquis !== undefined) return row;
+  try{
+    const {data:c, error} = await db.schema('hea').from('ots').select('croquis').eq('ot', Number(row.ot)).maybeSingle();
+    if(error) throw error;
+    row.croquis = c ? c.croquis : null;
+  }catch(e){ console.warn('No se pudo cargar croquis OT '+row.ot, e); row.croquis = null; }
+  return row;
+}
+window.ensureCroquis = ensureCroquis;
 
 function rowFromOtRecord(r){
   // Mapea una fila de hea.ots (snake_case en la BD) a la forma que usa el resto de la app
@@ -2005,12 +2021,18 @@ async function loadData(){
     document.getElementById('loadingOverlay').classList.add('hidden');
     applyFilters();
     db.channel('hea-ots-changes')
-      .on('postgres_changes', {event:'*', schema:'hea', table:'ots'}, async ()=>{
-        const rows2 = await fetchAllOts();
-        data = (rows2||[]).map(rowFromOtRecord);
-        window.data=data;
-        setSyncStatus('ok','En línea · '+data.length+' OTs');
-        applyFilters();
+      .on('postgres_changes', {event:'*', schema:'hea', table:'ots'}, ()=>{
+        // Agrupa ráfagas de cambios (ej. actualizaciones masivas) en una sola recarga
+        clearTimeout(window._otsReloadTimer);
+        window._otsReloadTimer = setTimeout(async ()=>{
+          try{
+            const rows2 = await fetchAllOts();
+            data = (rows2||[]).map(rowFromOtRecord);
+            window.data=data;
+            setSyncStatus('ok','En línea · '+data.length+' OTs');
+            applyFilters();
+          }catch(e){ console.warn('Recarga realtime falló', e); }
+        }, 1500);
       })
       .subscribe();
     window.cargarCatalogo(); // carga productos desde Supabase al iniciar la app
@@ -2048,9 +2070,9 @@ async function initFirebase(){
       currentUser=user;
       document.getElementById('loginOverlay').classList.add('hidden');
       try{
-        const {data:prof, error} = await db.schema('hea').from('profiles').select('role').eq('id', user.id).single();
+        const {data:prof, error} = await db.schema('hea').from('profiles').select('role').eq('id', user.id).maybeSingle();
         if(error || !prof){
-          await db.schema('hea').from('profiles').upsert({id:user.id, email:user.email, role:'superadmin'});
+          console.warn('Usuario sin perfil en hea.profiles: '+user.email+' ('+user.id+'). Créalo en Supabase para asignarle rol.', error||'');
           currentUserRole='superadmin';
         }else{
           currentUserRole = prof.role || 'superadmin';
@@ -2095,6 +2117,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 // MÓDULO POR COBRAR
 // ══════════════════════════════════════════════
 function calcSaldoPendiente(row) {
+  if (row && row.pagado_100 === 'Sí') return 0;
   const venta    = Number(row.venta)    || 0;
   const anticipo = Number(row.anticipo) || 0;
   return Math.max(0, venta - anticipo);
@@ -2168,7 +2191,7 @@ function renderPorCobrar() {
     const saldo    = calcSaldoPendiente(row);
     const venta    = Number(row.venta)    || 0;
     const anticipo = Number(row.anticipo) || 0;
-    const pct      = venta > 0 ? Math.round((anticipo / venta) * 100) : 0;
+    const pct      = venta > 0 ? Math.round(((venta - saldo) / venta) * 100) : 0;
     const isEven   = i % 2 === 0;
     const bg       = isEven ? '' : 'background:rgba(195,235,210,.15)';
 
@@ -3497,6 +3520,7 @@ window.descargarPDFOT = async function(docId){
   const row = data ? data.find(r=> String(r._docId||r.ot)===String(docId)) : null;
   if(!row){ showToast('OT no encontrada'); return; }
   showToast('Generando PDF…');
+  await ensureCroquis(row);
   await generarPDFInterno(row, false);
 };
 // ── Limpiar cotización ──
@@ -3650,9 +3674,10 @@ window.sugerirOT = function(){
   }, 10);
 };
 
-window.cargarOTEnCotizar = function(docId){
+window.cargarOTEnCotizar = async function(docId){
   const row = (window.data||[]).find(r => String(r._docId||r.ot) === String(docId));
   if(!row){ showToast('OT no encontrada'); return; }
+  await ensureCroquis(row);
   otCargada = row;
 
   // Rellenar formulario
@@ -4116,7 +4141,6 @@ window.cotQpAgregar = function cotQpAgregar(){
   window.cotCancelAdd();
   cotRenderCart();
 };
-
 function cotRenderCart(){
   const wrap = document.getElementById('cot-cart-wrap');
   const body = document.getElementById('cot-cart-body');

@@ -4,3 +4,6 @@ __pycache__/
 
 # Worktrees de Claude Code
 .claude/
+
+# Token de Firebase CLI de HEA: nunca versionar (rotación 10/11/2026)
+HEA_Systems/hea-hojalateria/token
