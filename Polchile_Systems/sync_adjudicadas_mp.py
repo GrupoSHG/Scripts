@@ -41,6 +41,11 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
+# Supabase: `apikey` lleva la clave publicable (pública, solo identifica el proyecto) y
+# `Authorization` la service_role. Así sirve tanto la clave service_role legada como una nueva
+# firmada con la clave JWT del proyecto (rotación del 10/11/2026).
+SUPABASE_APIKEY = os.environ.get("SUPABASE_APIKEY", "").strip() or "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
+
 _ENV = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
 if os.path.exists(_ENV):
     for _l in open(_ENV, encoding="utf-8"):
@@ -236,7 +241,7 @@ class MercadoPublico:
 def supabase(metodo, params, cuerpo=None, extra=None):
     key = os.environ["SUPABASE_SERVICE_KEY"]
     url = f"{SUPABASE_URL}/rest/v1/{TABLA}?" + urllib.parse.urlencode(params)
-    h = {"apikey": key, "Authorization": "Bearer " + key, "Accept-Profile": ESQUEMA, "Content-Profile": ESQUEMA,
+    h = {"apikey": SUPABASE_APIKEY, "Authorization": "Bearer " + key, "Accept-Profile": ESQUEMA, "Content-Profile": ESQUEMA,
          "Content-Type": "application/json", **(extra or {})}
     data = json.dumps(cuerpo).encode() if cuerpo is not None else None
     for intento in (1, 2):

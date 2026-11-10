@@ -13,7 +13,7 @@ import logging
 import os
 import pyodbc
 from decimal import Decimal
-from supabase import create_client
+from postgrest import SyncPostgrestClient
 
 from filtrar_vendedores import filtrar_vendedores_registrados
 
@@ -38,6 +38,10 @@ NOMBRE_BD = "T779354202C"
 SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")
 SUPABASE_SCHEMA = "shg_dashboards"  # esquema donde viven todas las tablas del proyecto consolidado
+# `apikey` lleva la clave publicable (pública, solo identifica el proyecto) y `Authorization` la
+# service_role: así sirve la clave legada y también una nueva firmada con la clave JWT del proyecto
+# (rotación del 10/11/2026). Se usa postgrest directo para fijar los dos encabezados.
+SUPABASE_APIKEY = os.environ.get("SUPABASE_APIKEY", "").strip() or "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
 
 QUERY = """
 SET NOCOUNT ON;
@@ -106,7 +110,9 @@ def main():
 
     filas = _limpiar_para_json(filas)
 
-    supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY).schema(SUPABASE_SCHEMA)
+    supabase = SyncPostgrestClient(f"{SUPABASE_URL}/rest/v1", schema=SUPABASE_SCHEMA,
+                                   headers={"apikey": SUPABASE_APIKEY,
+                                            "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}"})
 
     filas = filtrar_vendedores_registrados(supabase, filas, "notas_venta_pendientes")
     if not filas:

@@ -18,6 +18,11 @@ import urllib.request
 import xlrd
 from dotenv import load_dotenv
 
+# Supabase: `apikey` lleva la clave publicable (pública, solo identifica el proyecto) y
+# `Authorization` la service_role. Así sirve tanto la clave service_role legada como una nueva
+# firmada con la clave JWT del proyecto (rotación del 10/11/2026).
+SUPABASE_APIKEY = os.environ.get("SUPABASE_APIKEY", "").strip() or "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
+
 SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 MESES_EN = ["January", "February", "March", "April", "May", "June", "July",
             "August", "September", "October", "November", "December"]
@@ -160,7 +165,7 @@ def reemplazar(tabla, filas):
         req = urllib.request.Request(
             f"{SUPABASE_URL}/rest/v1/rpc/reemplazar_{tabla}",
             data=cuerpo,
-            headers={"apikey": key, "Authorization": "Bearer " + key, "Content-Type": "application/json",
+            headers={"apikey": SUPABASE_APIKEY, "Authorization": "Bearer " + key, "Content-Type": "application/json",
                      "Content-Profile": "shg_dashboards"},
             method="POST")
         try:

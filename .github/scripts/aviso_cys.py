@@ -30,6 +30,11 @@ from email.message import EmailMessage
 from html import escape
 from zoneinfo import ZoneInfo
 
+# Supabase: `apikey` lleva la clave publicable (pública, solo identifica el proyecto) y
+# `Authorization` la service_role. Así sirve tanto la clave service_role legada como una nueva
+# firmada con la clave JWT del proyecto (rotación del 10/11/2026).
+SUPABASE_APIKEY = os.environ.get("SUPABASE_APIKEY", "").strip() or "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
+
 SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 URL_APP = "https://gruposhg-app-cys.netlify.app"
 MEDIOS = {"caja_chica": "Caja chica", "caja_general": "Caja chica CyS", "tarjeta_empresa": "Tarjeta empresa",
@@ -46,7 +51,7 @@ def _supabase(ruta, metodo="GET", cuerpo=None):
     datos = json.dumps(cuerpo).encode("utf-8") if cuerpo is not None else None
     req = urllib.request.Request(
         f"{SUPABASE_URL}/rest/v1/{ruta}", data=datos, method=metodo,
-        headers={"apikey": key, "Authorization": "Bearer " + key, "Accept-Profile": "app_cys",
+        headers={"apikey": SUPABASE_APIKEY, "Authorization": "Bearer " + key, "Accept-Profile": "app_cys",
                  "Content-Profile": "app_cys", "Content-Type": "application/json"})
     try:
         with urllib.request.urlopen(req, timeout=60) as r:

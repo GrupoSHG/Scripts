@@ -27,7 +27,7 @@ import logging
 from pathlib import Path
 
 import pandas as pd
-from supabase import create_client
+from postgrest import SyncPostgrestClient
 
 # ─────────────────────────────────────────────
 # CONFIG
@@ -39,6 +39,15 @@ from supabase import create_client
 SUPABASE_URL = "https://ffxopvzxyeacpbtxuagu.supabase.co"
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")  # Service Role key, NUNCA la publishable
 SUPABASE_SCHEMA = "shg_dashboards"  # esquema donde viven todas las tablas del proyecto consolidado
+# `apikey` lleva la clave publicable (pública, solo identifica el proyecto) y `Authorization` la
+# service_role: así sirve la clave legada y también una nueva firmada con la clave JWT del proyecto
+# (rotación del 10/11/2026). Se usa postgrest directo para fijar los dos encabezados.
+SUPABASE_APIKEY = os.environ.get("SUPABASE_APIKEY", "").strip() or "sb_publishable_7UxU-do4iR5rP7Fnx8kQiw_XqDLMaHc"
+
+
+def cliente_supabase(clave):
+    return SyncPostgrestClient(f"{SUPABASE_URL}/rest/v1", schema=SUPABASE_SCHEMA,
+                               headers={"apikey": SUPABASE_APIKEY, "Authorization": f"Bearer {clave}"})
 
 NOMBRE_PESTANA = "NV_Proveedores"  # debe calzar con el nombre del .sql en ConsultasSQL/ (sin extensión)
 
@@ -103,7 +112,7 @@ def sincronizar_a_supabase(df: pd.DataFrame):
     if not SUPABASE_KEY:
         raise RuntimeError("Falta la variable de entorno SUPABASE_SERVICE_KEY")
 
-    sb = create_client(SUPABASE_URL, SUPABASE_KEY).schema(SUPABASE_SCHEMA)
+    sb = cliente_supabase(SUPABASE_KEY)
 
     existentes = sb.table("proveedores").select("rut").execute().data
     ruts_existentes = {row["rut"] for row in existentes if row["rut"]}
