@@ -20,6 +20,12 @@
 -- Polchile_Systems/dashboard-produccion/op_medidas_manual.sql, aplicar ANTES),
 -- esa lista reemplaza las observaciones y manda sobre Manager
 -- (medidas_manual = true).
+-- 12/11/2026: también se descuenta lo que la planta registró en las tablets
+-- (shg_dashboards.avance_prensas, en la unidad de la OP), con la misma regla
+-- del plan de prensas: saldo = mínimo entre lo anterior y cantidad de la OP −
+-- todo lo registrado; con medidas a mano, la lista − lo registrado desde que
+-- se cargó. Así una OP terminada en planta sale del WIP de bandejas aunque
+-- Manager todavía la muestre abierta (avance_planta = lo registrado).
 -- ============================================================================
 begin;
 
@@ -59,6 +65,7 @@ with op as (
          o.cantidad_op::numeric as cantidad_op, o.cantidad_pendiente::numeric as pend_manager,
          coalesce(mm.medidas, o.observaciones) as observaciones,
          mm.num_op is not null as manual,
+         mm.creado_en as manual_desde,
          case when o.unidmed = 'M2' then (case when o.nombre_producto ~ 'a1150' then 1.15
                                                when o.nombre_producto ~ 'a910' then 0.91 else 1.0 end)
               else 1.0 end as ancho
@@ -76,6 +83,15 @@ lect as (
     from op o
     left join lateral shg_dashboards.obs_por_largo(o.observaciones) x on true
    group by o.num_op
+),
+av as (
+  select o.num_op,
+         coalesce(sum(case when o.unidmed = 'Ml' then a.ml else a.m2 end), 0)::numeric as total,
+         coalesce(sum(case when o.unidmed = 'Ml' then a.ml else a.m2 end)
+                    filter (where o.manual and a.registrado_en > o.manual_desde), 0)::numeric as desde_manual
+    from op o
+    left join shg_dashboards.avance_prensas a on a.num_op = o.num_op
+   group by o.num_op
 )
 select o.num_op, o.nota_vta, o.codigo_producto, o.nombre_producto, o.unidmed,
        o.cantidad_op, o.pend_manager,
@@ -87,18 +103,19 @@ select o.num_op, o.nota_vta, o.codigo_producto, o.nombre_producto, o.unidmed,
          when l.pedido_ml > 0 and not l.ajenos then round((l.resto_ml * o.ancho)::numeric, 2)
          when l.pedido_ml = 0 then round(greatest(0, o.cantidad_op - l.hecho_ml * o.ancho)::numeric, 2)
        end as saldo_obs,
-       case when o.manual then round((l.resto_ml * o.ancho)::numeric, 2)
-       else round(least(o.pend_manager, coalesce(
+       case when o.manual then round(greatest(0, l.resto_ml * o.ancho - v.desde_manual)::numeric, 2)
+       else round(least(o.pend_manager, greatest(0, o.cantidad_op - v.total), coalesce(
          case
            when l.hecho_ml = 0 then null
            when l.pedido_ml > 0 and not l.ajenos then l.resto_ml * o.ancho
            when l.pedido_ml = 0 then greatest(0, o.cantidad_op - l.hecho_ml * o.ancho)
          end, o.pend_manager))::numeric, 2) end as saldo,
-       o.manual as medidas_manual
-  from op o join lect l on l.num_op = o.num_op;
+       o.manual as medidas_manual,
+       round(v.total, 2) as avance_planta
+  from op o join lect l on l.num_op = o.num_op join av v on v.num_op = o.num_op;
 
 comment on view shg_dashboards.op_saldo_obs is
-  'Saldo de cada OP abierta: el menor entre Manager y pedido − lo anotado como fabricado en sus observaciones; si hay op_medidas_manual, esa lista.';
+  'Saldo de cada OP abierta: el menor entre Manager, pedido − lo anotado en sus observaciones y cantidad − lo registrado en planta (avance_prensas); si hay op_medidas_manual, esa lista − lo registrado desde la carga.';
 revoke all on shg_dashboards.op_saldo_obs from anon;
 grant select on shg_dashboards.op_saldo_obs to authenticated;
 grant execute on function shg_dashboards.obs_por_largo(text) to authenticated, service_role;
