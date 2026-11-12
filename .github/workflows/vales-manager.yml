@@ -1,0 +1,69 @@
+# Vales de Manager con el avance de planta (Producción Polchile).
+#   modo hora: cada hora a los :35 (lun–sáb 09:35–18:35), arma con
+#              public.generar_vales_manager() un vale de ingreso y uno de salida por OP
+#              con lo registrado en las tablets, deja los Excel en Drive ("Vales para
+#              Manager") y los manda por correo. Sin avance nuevo no envía nada.
+#   modo dia:  lun y mar 18:00, mié–sáb 17:00: si quedan vales de hoy sin marcar
+#              importados, manda la producción completa del día de cada OP con sus
+#              ingresos y salidas.
+# Lo dispara Supabase (automatizacion.programa(), automatizacion/vales_manager_programa.sql).
+# SQL de las tablas y la función: GrupoSHG_Systems/Polchile_Systems/dashboard-produccion/vales_manager.sql.
+# Etapa 1: los vales se importan a mano en Manager y se marcan en avance.html.
+#
+# Requiere: Secrets SUPABASE_SERVICE_KEY, GOOGLE_CREDENTIALS_JSON, BITACORA_MAIL_USER,
+#           BITACORA_MAIL_PASS. Variable VALES_MAIL_TO (destinatarios separados por coma;
+#           el repo es público, por eso van en la variable). El log solo muestra cantidades.
+
+name: Vales para Manager (avance de planta)
+
+on:
+  # Sin "schedule": el de GitHub llega con horas de atraso o se salta corridas.
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: "hora = vales de la última hora; dia = resumen de lo no importado hoy"
+        type: choice
+        options: [hora, dia]
+        default: hora
+      para:
+        description: "Destinatarios solo para esta corrida (vacío = los de siempre)"
+        type: string
+        default: ""
+
+concurrency:
+  group: vales-manager
+  cancel-in-progress: false
+
+jobs:
+  vales:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: Polchile_Systems/vales-manager
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Dependencias
+        working-directory: Polchile_Systems/vales-manager
+        run: |
+          npm install --no-audit --no-fund --silent xlsx@0.18.5
+          pip install --quiet google-api-python-client google-auth
+      - name: Armar vales
+        working-directory: Polchile_Systems/vales-manager
+        env:
+          MODO: ${{ inputs.modo }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: node vales.js
+      - name: Drive y correo
+        working-directory: Polchile_Systems/vales-manager
+        env:
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
+          MAIL_USER: ${{ secrets.BITACORA_MAIL_USER }}
+          MAIL_PASS: ${{ secrets.BITACORA_MAIL_PASS }}
+          MAIL_TO: ${{ inputs.para || vars.VALES_MAIL_TO }}
+        run: python enviar.py
