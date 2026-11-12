@@ -50,7 +50,8 @@ function filas(vales, lineas) {
   vales.forEach(v => {
     (porVale[v.id] || []).sort((a, b) => a.item - b.item).forEach(l => {
       datos.push([v.numero, dma(v.fecha), v.movimiento, '', 1, ascii(v.glosa || ''), l.codigo, Number(l.cantidad),
-        l.bodega || v.bodega || '', '', '', Number(v.num_op), l.lote || '', '', '', '', '', '']);
+        l.bodega || v.bodega || '', '', '', Number(v.num_op), l.lote || '', l.vencimiento ? dma(l.vencimiento) : '', '',
+        l.cta_contable || '', '', '']);
     });
   });
   return datos;
