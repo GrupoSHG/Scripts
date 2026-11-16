@@ -13,6 +13,11 @@
 --     vaciarla (las del pipeline) y las que traiga la carga nueva;
 --  2. reemplaza la tabla como antes;
 --  3. rellena las observaciones vacías desde op_observaciones.
+--  4. (05/11/2026) concilia el avance de planta con Manager:
+--     shg_dashboards.conciliar_avance_manager() marca reflejado_en en los
+--     registros de avance_prensas que la cantidad terminada ya incluye
+--     (avance_conciliacion.sql en GrupoSHG_Systems/Polchile_Systems/dashboard-produccion;
+--     aplicar ese archivo ANTES que este).
 -- Una OP creada durante el día tiene sus observaciones desde el pipeline del
 -- día siguiente, salvo que se agregue la columna al informe de Manager (el
 -- robot ya la acepta: cargar.py, OPCIONALES).
@@ -64,6 +69,17 @@ begin
      set observaciones = oo.observaciones
     from shg_dashboards.op_observaciones oo
    where oo.num_op = o.num_op and nullif(trim(o.observaciones), '') is null;
+
+  -- 4. Concilia el avance registrado por planta (avance_prensas) con lo que
+  --    Manager ya refleja en cantidad_terminada: marca reflejado_en en los
+  --    registros que la nueva carga ya incluye (05/11/2026; función y columnas
+  --    en GrupoSHG_Systems/Polchile_Systems/dashboard-produccion/avance_conciliacion.sql).
+  --    Un error acá no debe botar la carga.
+  begin
+    perform shg_dashboards.conciliar_avance_manager();
+  exception when others then
+    raise warning 'conciliar_avance_manager: %', sqlerrm;
+  end;
 
   insert into shg_dashboards.cargas_manager (tabla, filas) values ('ordenes_de_produccion', n);
   return n;
