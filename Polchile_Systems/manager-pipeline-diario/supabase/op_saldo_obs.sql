@@ -26,6 +26,11 @@
 -- todo lo registrado; con medidas a mano, la lista − lo registrado desde que
 -- se cargó. Así una OP terminada en planta sale del WIP de bandejas aunque
 -- Manager todavía la muestre abierta (avance_planta = lo registrado).
+-- 18/11/2026: una OP terminada en Manager (ordenes_de_produccion.fechafin con
+-- fecha) tiene saldo 0 aunque le quede cantidad pendiente (Manager la cerró
+-- corta, p. ej. OP 25945 cerrada el 09/11 con 66 m² sin hacer). Así sale de
+-- las tablets de Bandejera y PC4, de etiquetas.html y del WIP de bandejas
+-- (terminada_manager = true). Pedido de producción.
 -- ============================================================================
 begin;
 
@@ -66,6 +71,7 @@ with op as (
          coalesce(mm.medidas, o.observaciones) as observaciones,
          mm.num_op is not null as manual,
          mm.creado_en as manual_desde,
+         o.fechafin is not null as terminada,
          case when o.unidmed = 'M2' then (case when o.nombre_producto ~ 'a1150' then 1.15
                                                when o.nombre_producto ~ 'a910' then 0.91 else 1.0 end)
               else 1.0 end as ancho
@@ -103,7 +109,8 @@ select o.num_op, o.nota_vta, o.codigo_producto, o.nombre_producto, o.unidmed,
          when l.pedido_ml > 0 and not l.ajenos then round((l.resto_ml * o.ancho)::numeric, 2)
          when l.pedido_ml = 0 then round(greatest(0, o.cantidad_op - l.hecho_ml * o.ancho)::numeric, 2)
        end as saldo_obs,
-       case when o.manual then round(greatest(0, l.resto_ml * o.ancho - v.desde_manual)::numeric, 2)
+       case when o.terminada then 0::numeric
+       when o.manual then round(greatest(0, l.resto_ml * o.ancho - v.desde_manual)::numeric, 2)
        else round(least(o.pend_manager, greatest(0, o.cantidad_op - v.total), coalesce(
          case
            when l.hecho_ml = 0 then null
@@ -111,11 +118,12 @@ select o.num_op, o.nota_vta, o.codigo_producto, o.nombre_producto, o.unidmed,
            when l.pedido_ml = 0 then greatest(0, o.cantidad_op - l.hecho_ml * o.ancho)
          end, o.pend_manager))::numeric, 2) end as saldo,
        o.manual as medidas_manual,
-       round(v.total, 2) as avance_planta
+       round(v.total, 2) as avance_planta,
+       o.terminada as terminada_manager
   from op o join lect l on l.num_op = o.num_op join av v on v.num_op = o.num_op;
 
 comment on view shg_dashboards.op_saldo_obs is
-  'Saldo de cada OP abierta: el menor entre Manager, pedido − lo anotado en sus observaciones y cantidad − lo registrado en planta (avance_prensas); si hay op_medidas_manual, esa lista − lo registrado desde la carga.';
+  'Saldo de cada OP abierta: el menor entre Manager, pedido − lo anotado en sus observaciones y cantidad − lo registrado en planta (avance_prensas); si hay op_medidas_manual, esa lista − lo registrado desde la carga. Saldo 0 si Manager ya la terminó (fechafin).';
 revoke all on shg_dashboards.op_saldo_obs from anon;
 grant select on shg_dashboards.op_saldo_obs to authenticated;
 grant execute on function shg_dashboards.obs_por_largo(text) to authenticated, service_role;
