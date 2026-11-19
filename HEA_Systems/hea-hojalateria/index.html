@@ -544,7 +544,7 @@ textarea.cotizar-input{resize:vertical;min-height:72px}
         <div class="add-user-form">
           <div class="add-user-row">
             <input class="cfg-input" type="email" id="newUserEmail" placeholder="correo@empresa.cl">
-            <input class="cfg-input" type="password" id="newUserPass" placeholder="Contraseña (mín. 6 caracteres)">
+            <input class="cfg-input" type="password" id="newUserPass" placeholder="Contraseña (solo si es usuario nuevo)">
           </div>
           <button class="cfg-add-btn" id="addUserBtn" onclick="addUser()">＋ Agregar usuario</button>
           <div class="cfg-msg" id="cfgMsg"></div>
@@ -1339,29 +1339,32 @@ const FIELDS=['fecha','ot','tipo_doc','boleta','factura','rut','cliente','venta'
 
 let data=[], sortCol='ot', sortDir=-1, filtered=[];
 let db, auth, currentUser=null;
-let currentUserRole = 'superadmin'; // 'superadmin' | 'admin' | 'user'
+let currentUserRole = null; // 'superadmin' | 'admin' | 'user' (null = sin acceso)
 
 // ── ROLES ──
 function canDo(action){
   // action: 'conciliar' | 'admin_panel' | 'add_user' | 'change_role' | 'edit_basic'
   const r = currentUserRole;
   if(r === 'superadmin') return true;
+  // Agregar/quitar usuarios es solo de superadmin (lo exige también la base).
   if(r === 'admin'){
     if(action === 'conciliar')    return false;
     if(action === 'change_role')  return false;
+    if(action === 'add_user')     return false;
     return true;
   }
   // 'user' — mismas restricciones que admin por ahora
   if(r === 'user'){
     if(action === 'conciliar')    return false;
     if(action === 'change_role')  return false;
+    if(action === 'add_user')     return false;
     return true;
   }
   return false;
 }
 
 function roleBadgeHTML(role){
-  if(!role || role === 'superadmin') return '<span class="role-badge-superadmin">Superadmin</span>';
+  if(role === 'superadmin') return '<span class="role-badge-superadmin">Superadmin</span>';
   if(role === 'admin')  return '<span class="role-badge-admin">Admin</span>';
   return '<span class="role-badge-user">Usuario</span>';
 }
@@ -1814,7 +1817,7 @@ async function loadUsers(){
     ul.innerHTML='';
     rows.forEach(u=>{
       const isMe=u.email===currentUser.email;
-      const userRole = u.role || 'superadmin';
+      const userRole = u.role || 'user';
       const row=document.createElement('div');row.className='user-row';
       // Selector de rol — solo superadmin puede cambiarlo
       const roleSelector = canDo('change_role')
@@ -1835,23 +1838,28 @@ async function addUser(){
   const pass=document.getElementById('newUserPass').value;
   const msg=document.getElementById('cfgMsg');
   const btn=document.getElementById('addUserBtn');
-  if(!email||!pass){msg.className='cfg-msg err';msg.textContent='Completa correo y contraseña.';return;}
-  if(pass.length<6){msg.className='cfg-msg err';msg.textContent='Mínimo 6 caracteres.';return;}
-  btn.disabled=true;btn.textContent='Creando…';msg.textContent='';
+  if(!canDo('add_user')){msg.className='cfg-msg err';msg.textContent='Solo un superadmin puede agregar usuarios.';return;}
+  if(!email){msg.className='cfg-msg err';msg.textContent='Completa el correo.';return;}
+  if(pass && pass.length<6){msg.className='cfg-msg err';msg.textContent='Mínimo 6 caracteres.';return;}
+  btn.disabled=true;btn.textContent='Agregando…';msg.textContent='';
   try{
-    // NOTA: signUp inicia sesión como el usuario nuevo (igual que pasaba con Firebase),
-    // por eso cerramos sesión enseguida y recargamos para que el superadmin vuelva a entrar.
-    const {data, error} = await auth.signUp({email, password:pass});
-    if(error) throw error;
-    if(data.user){
-      await db.schema('hea').from('profiles').upsert({id:data.user.id, email, role:'user'});
+    // Con contraseña: crea la cuenta con un cliente aparte (sin guardar sesión),
+    // así el superadmin no pierde la suya. Sin contraseña: el usuario ya existe
+    // (p. ej. el login compartido de los dashboards) y solo se le da acceso.
+    if(pass){
+      const tmp = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY,
+        {auth:{persistSession:false, autoRefreshToken:false, detectSessionInUrl:false, storageKey:'hea-alta-usuario'}});
+      const {error} = await tmp.auth.signUp({email, password:pass});
+      if(error && error.message !== 'User already registered') throw error;
     }
-    await auth.signOut();
-    msg.className='cfg-msg';msg.textContent='✓ Usuario creado. Volviendo…';
+    // hea.agregar_miembro busca el usuario por correo y crea/actualiza su perfil (solo superadmin).
+    const {error:e2} = await db.schema('hea').rpc('agregar_miembro', {p_email:email, p_rol:'user'});
+    if(e2) throw e2;
+    msg.className='cfg-msg';msg.textContent='✓ '+email+' ya tiene acceso (Usuario).';
     document.getElementById('newUserEmail').value='';document.getElementById('newUserPass').value='';
-    setTimeout(()=>window.location.reload(),2000);
+    loadUsers();
   }catch(e){
-    const m={'User already registered':'Ese correo ya existe.','Password should be at least 6 characters':'Contraseña muy débil.'};
+    const m={'Password should be at least 6 characters':'Contraseña muy débil.'};
     msg.className='cfg-msg err';msg.textContent=m[e.message]||'Error: '+e.message;
   }
   btn.disabled=false;btn.textContent='＋ Agregar usuario';
@@ -1955,7 +1963,7 @@ function applyRoleUI(){
     if(headerRight) headerRight.insertBefore(roleEl, headerRight.firstChild);
   }
   const roleLabels = {superadmin:{label:'SUPERADMIN',bg:'rgba(140,217,64,.2)',color:'#8cd940'},admin:{label:'ADMIN',bg:'rgba(100,150,255,.2)',color:'#7ab0f0'},user:{label:'USUARIO',bg:'rgba(240,192,64,.2)',color:'#f0c040'}};
-  const rInfo = roleLabels[currentUserRole] || roleLabels.superadmin;
+  const rInfo = roleLabels[currentUserRole] || roleLabels.user;
   roleEl.textContent = rInfo.label;
   roleEl.style.background = rInfo.bg;
   roleEl.style.color = rInfo.color;
@@ -2067,18 +2075,26 @@ async function initFirebase(){
   async function handleSession(session){
     const user = session ? session.user : null;
     if(user){
-      currentUser=user;
-      document.getElementById('loginOverlay').classList.add('hidden');
+      // Solo entra quien tiene fila en hea.profiles; sin perfil (o si no se pudo
+      // verificar) no hay acceso. Antes se asumía superadmin por defecto.
+      let prof=null, fallo=false;
       try{
-        const {data:prof, error} = await db.schema('hea').from('profiles').select('role').eq('id', user.id).maybeSingle();
-        if(error || !prof){
-          console.warn('Usuario sin perfil en hea.profiles: '+user.email+' ('+user.id+'). Créalo en Supabase para asignarle rol.', error||'');
-          currentUserRole='superadmin';
-        }else{
-          currentUserRole = prof.role || 'superadmin';
-        }
-        applyRoleUI();
-      }catch(e){currentUserRole='superadmin';}
+        const r = await db.schema('hea').from('profiles').select('role').eq('id', user.id).maybeSingle();
+        if(r.error) fallo=true; else prof=r.data;
+      }catch(e){fallo=true;}
+      if(!prof || !prof.role){
+        currentUser=null; currentUserRole=null;
+        document.getElementById('loginError').textContent = fallo
+          ? 'No se pudo verificar tu acceso. Recarga la página e intenta de nuevo.'
+          : 'Tu usuario ('+user.email+') no tiene acceso a HEA. Pídeselo a un superadmin.';
+        document.getElementById('loginOverlay').classList.remove('hidden');
+        await auth.signOut();
+        return;
+      }
+      currentUser=user;
+      currentUserRole=prof.role;
+      document.getElementById('loginOverlay').classList.add('hidden');
+      applyRoleUI();
       if(!dataLoaded)await loadData();
     }else{
       currentUser=null;
