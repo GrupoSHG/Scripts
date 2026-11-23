@@ -149,11 +149,30 @@ def leer_xls(tabla, ruta):
 
 # Errores pasajeros de Supabase que vale la pena reintentar. 57014 = "canceling
 # statement due to statement timeout": la función tarda más que el statement_timeout
-# del rol con que entra la API (8 s por defecto; ver supabase/timeout_service_role.sql).
+# del rol con que entra la API (120 s para service_role; ver supabase/timeout_service_role.sql).
 # Como reemplazar_<tabla> es una sola transacción, reintentar es seguro: o se cargó
 # todo o no se cargó nada.
 REINTENTOS = 3
 PAUSA_REINTENTO = 20        # segundos; la base suele estar atascada por otro job
+# Espera de la respuesta HTTP. Debe superar el statement_timeout de service_role (120 s)
+# más lo que tarda en subir el JSON: con 120 s justos el cliente se cortaba antes que la
+# base y ventas_full quedaba cargada en Supabase pero el robot la daba por fallida (23/11/2026).
+ESPERA_RESPUESTA = 240
+
+
+def _ultima_carga(tabla, key):
+    """(id, filas) de la última fila de cargas_manager para la tabla, o (0, None)."""
+    req = urllib.request.Request(
+        f"{SUPABASE_URL}/rest/v1/cargas_manager?select=id,filas&tabla=eq.{tabla}&order=id.desc&limit=1",
+        headers={"apikey": SUPABASE_APIKEY, "Authorization": "Bearer " + key,
+                 "Accept-Profile": "shg_dashboards"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            datos = json.loads(r.read())
+    except Exception as e:  # solo es una verificación; si falla se reintenta la carga
+        print(f"{tabla}: no se pudo revisar cargas_manager ({e})")
+        return None
+    return (datos[0]["id"], datos[0]["filas"]) if datos else (0, None)
 
 
 def reemplazar(tabla, filas):
@@ -161,6 +180,7 @@ def reemplazar(tabla, filas):
     if not key:
         raise SystemExit("Falta SUPABASE_SERVICE_KEY en .env")
     cuerpo = json.dumps({"filas": filas}).encode("utf-8")
+    previa = _ultima_carga(tabla, key)
     for intento in range(1, REINTENTOS + 1):
         req = urllib.request.Request(
             f"{SUPABASE_URL}/rest/v1/rpc/reemplazar_{tabla}",
@@ -168,9 +188,12 @@ def reemplazar(tabla, filas):
             headers={"apikey": SUPABASE_APIKEY, "Authorization": "Bearer " + key, "Content-Type": "application/json",
                      "Content-Profile": "shg_dashboards"},
             method="POST")
+        inicio = time.monotonic()
         try:
-            with urllib.request.urlopen(req, timeout=120) as r:
-                return json.loads(r.read())
+            with urllib.request.urlopen(req, timeout=ESPERA_RESPUESTA) as r:
+                n = json.loads(r.read())
+            print(f"{tabla}: respuesta de Supabase en {time.monotonic() - inicio:.0f} s")
+            return n
         except urllib.error.HTTPError as e:
             detalle = e.read().decode("utf-8", "replace")[:500]
             pasajero = '"57014"' in detalle or e.code in (502, 503, 504)
@@ -178,11 +201,19 @@ def reemplazar(tabla, filas):
                 raise SystemExit(f"Supabase rechazó la carga de {tabla} (HTTP {e.code}): {detalle}")
             motivo = f"HTTP {e.code}: {detalle}"
         except (urllib.error.URLError, TimeoutError) as e:
-            if intento == REINTENTOS:
-                raise SystemExit(f"No se pudo llegar a Supabase para cargar {tabla}: {e}")
             motivo = str(e)
-        print(f"{tabla}: carga rechazada ({motivo}); reintento {intento}/{REINTENTOS - 1} en {PAUSA_REINTENTO} s")
+        print(f"{tabla}: carga rechazada ({motivo}) tras {time.monotonic() - inicio:.0f} s; "
+              f"reviso cargas_manager en {PAUSA_REINTENTO} s")
         time.sleep(PAUSA_REINTENTO)
+        # Un timeout o un 50x del gateway no significa que la base no haya terminado: si
+        # cargas_manager tiene una fila nueva con las mismas filas, la carga quedó hecha.
+        actual = _ultima_carga(tabla, key)
+        if previa is not None and actual is not None and actual[0] > previa[0] and actual[1] == len(filas):
+            print(f"{tabla}: Supabase sí la cargó (cargas_manager id {actual[0]}); no se reintenta")
+            return actual[1]
+        if intento == REINTENTOS:
+            raise SystemExit(f"No se pudo cargar {tabla} en Supabase: {motivo}")
+        print(f"{tabla}: reintento {intento}/{REINTENTOS - 1}")
 
 
 def cargar(tabla, ruta, simular=False):
